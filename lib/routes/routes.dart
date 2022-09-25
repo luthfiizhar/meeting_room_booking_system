@@ -9,5 +9,6 @@ const String calendarViewPageRoute = '/calendar';
 const String profilePageRoute = '/profile';
 const String adminPageRoute = '/admin';
 const String reportingPageRoute = '/report';
+const String roomPageRoute = '/rooms';
 
 final navKey = GlobalKey<NavigatorState>();

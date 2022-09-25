@@ -38,19 +38,59 @@ class InteractiveTextState extends State<InteractiveText> {
             //         : (widget.selected!)
             //             ? eerieBlack
             //             : Colors.transparent),
-            child: Text(widget.text!,
-                style: _hovering
-                    ? MediaQuery.of(context).size.width <= 600
-                        ? navBarTextMobile.copyWith(color: navBarActiveState)
-                        : navBarText.copyWith(color: navBarActiveState)
-                    : (widget.selected!)
-                        ? MediaQuery.of(context).size.width < 600
+            child: Column(
+              children: [
+                Text(widget.text!,
+                    style: _hovering
+                        ? MediaQuery.of(context).size.width <= 600
                             ? navBarTextMobile.copyWith(
                                 color: navBarActiveState)
                             : navBarText.copyWith(color: navBarActiveState)
-                        : MediaQuery.of(context).size.width < 600
-                            ? navBarTextMobile
-                            : navBarText),
+                        : (widget.selected!)
+                            ? MediaQuery.of(context).size.width < 600
+                                ? navBarTextMobile.copyWith(
+                                    color: navBarActiveState)
+                                : navBarText.copyWith(color: navBarActiveState)
+                            : MediaQuery.of(context).size.width < 600
+                                ? navBarTextMobile
+                                : navBarText),
+                SizedBox(
+                  height: 0,
+                ),
+                SizedBox(
+                  width: 20,
+                  // height: 1,
+                  child: Divider(
+                    height: 2,
+                    thickness: 2,
+                    color: _hovering
+                        ? eerieBlack
+                        : (widget.selected!)
+                            ? eerieBlack
+                            : scaffoldBg,
+                  ),
+                ),
+                // Container(
+                //   width: 20,
+                //   height: 1,
+                //   decoration: BoxDecoration(
+                //     // color: eerieBlack,
+                //     border: Border(
+                //       bottom: BorderSide(
+                //         // style: BorderStyle.solid,
+                //         color: _hovering
+                //             ? eerieBlack
+                //             : (widget.selected!)
+                //                 ? eerieBlack
+                //                 : scaffoldBg,
+                //         width: 3,
+                //       ),
+                //     ),
+                //   ),
+                //   child: SizedBox(),
+                // )
+              ],
+            ),
           ),
         ),
       ),

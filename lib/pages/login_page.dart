@@ -1,4 +1,4 @@
-import 'package:beamer/beamer.dart';
+// import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -19,8 +19,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Align(
+    // print(MediaQuery.of(context).size.width);
+
+    return Align(
       alignment: Alignment.center,
       child: SingleChildScrollView(
         child: Column(
@@ -54,6 +55,6 @@ class _LoginPageState extends State<LoginPage> {
           ],
         ),
       ),
-    ));
+    );
   }
 }

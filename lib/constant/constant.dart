@@ -1,25 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 
-final TextStyle navBarText = TextStyle(
-  fontSize: 14,
+const TextStyle titlePage = TextStyle(
+  fontSize: 24,
+  fontWeight: FontWeight.w700,
+);
+
+const TextStyle bodyText = TextStyle(
+  fontSize: 18,
   fontWeight: FontWeight.w300,
+);
+
+const TextStyle navBarText = TextStyle(
+  fontSize: 16,
+  fontWeight: FontWeight.w700,
   color: navBarInActiveState,
 );
 
-final TextStyle navBarTextMobile = TextStyle(
-  fontSize: 14,
-  fontWeight: FontWeight.w300,
+const TextStyle navBarTextMobile = TextStyle(
+  fontSize: 12,
+  fontWeight: FontWeight.w700,
   color: navBarInActiveState,
 );
 
-final TextStyle kPageTitleStyleMobile =
-    TextStyle(fontSize: 20, fontWeight: FontWeight.w700);
+const TextStyle cardContentText = TextStyle(
+  fontSize: 12,
+  fontWeight: FontWeight.w300,
+);
 
-final TextStyle pageTitle =
-    TextStyle(fontSize: 36, fontWeight: FontWeight.w700);
+const TextStyle cardHeaderText = TextStyle(
+  fontSize: 16,
+  fontWeight: FontWeight.w700,
+);
 
-final TextStyle textButtonRegular = TextStyle(
+const TextStyle kPageTitleStyleMobile = TextStyle(
+  fontSize: 20,
+  fontWeight: FontWeight.w700,
+);
+
+const TextStyle pageTitle = TextStyle(
+  fontSize: 36,
+  fontWeight: FontWeight.w700,
+);
+
+const TextStyle textButtonRegular = TextStyle(
   fontSize: 20,
   fontWeight: FontWeight.w700,
   color: eerieBlack,
