@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 
+const BoxConstraints pageConstraints = BoxConstraints(
+  maxWidth: 1366,
+  minWidth: 480,
+);
+
 const TextStyle titlePage = TextStyle(
   fontSize: 24,
   fontWeight: FontWeight.w700,

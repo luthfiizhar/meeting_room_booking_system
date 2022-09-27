@@ -74,37 +74,42 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: CustomScrollView(
-          slivers: [
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  NavigationBarWeb(
-                    index: 1,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: pageConstraints,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      NavigationBarWeb(
+                        index: 1,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Form(
+                        key: _formKey,
+                        child: searchRoom(),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    height: 20,
+                ),
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: FooterWeb(),
                   ),
-                  Form(
-                    key: _formKey,
-                    child: searchRoom(),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ],
-              ),
+                )
+              ],
             ),
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: FooterWeb(),
-              ),
-            )
-          ],
+          ),
         ),
       ),
     );

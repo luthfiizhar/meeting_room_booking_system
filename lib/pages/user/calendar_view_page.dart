@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/model/event_class.dart';
 import 'package:meeting_room_booking_system/model/event_data_source.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
@@ -128,69 +129,74 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: LayoutBuilder(builder: (context, constraints) {
-        // print(constraints.maxHeight);
-        // print(MediaQuery.of(context).size.height);
-        return ConstrainedBox(
-          constraints: BoxConstraints(
-              minHeight: constraints.maxHeight, maxHeight: double.infinity),
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: CustomScrollView(
-              slivers: [
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      NavigationBarWeb(
-                        index: 4,
-                      ),
-                      // Container(
-                      //   // width: 100,
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       CalendarMenu(
-                      //         menuName: 'My Events',
-                      //         selected: selectedMenu == 1,
-                      //         onHighlight: onHighlight,
-                      //         index: 1,
-                      //       ),
-                      //       CalendarMenu(
-                      //         menuName: 'Meeting Rooms',
-                      //         selected: selectedMenu == 2,
-                      //         onHighlight: onHighlight,
-                      //         index: 2,
-                      //       ),
-                      //       // Chip(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: pageConstraints,
+          child: LayoutBuilder(builder: (context, constraints) {
+            // print(constraints.maxHeight);
+            // print(MediaQuery.of(context).size.height);
+            return ConstrainedBox(
+              constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight, maxHeight: double.infinity),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: CustomScrollView(
+                  slivers: [
+                    SliverList(
+                      delegate: SliverChildListDelegate(
+                        [
+                          NavigationBarWeb(
+                            index: 4,
+                          ),
+                          // Container(
+                          //   // width: 100,
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.center,
+                          //     children: [
+                          //       CalendarMenu(
+                          //         menuName: 'My Events',
+                          //         selected: selectedMenu == 1,
+                          //         onHighlight: onHighlight,
+                          //         index: 1,
+                          //       ),
+                          //       CalendarMenu(
+                          //         menuName: 'Meeting Rooms',
+                          //         selected: selectedMenu == 2,
+                          //         onHighlight: onHighlight,
+                          //         index: 2,
+                          //       ),
+                          //       // Chip(
 
-                      //       //   label: Text('My Calendar'),
-                      //       // ),
-                      //       // Chip(label: Text('Meeting Rooms'))
-                      //     ],
-                      //   ),
-                      // ),
-                      Container(
-                        height: constraints.maxHeight - 80,
-                        child: calendarUserPage(),
+                          //       //   label: Text('My Calendar'),
+                          //       // ),
+                          //       // Chip(label: Text('Meeting Rooms'))
+                          //     ],
+                          //   ),
+                          // ),
+                          Container(
+                            height: constraints.maxHeight - 80,
+                            child: calendarUserPage(),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        height: 20,
+                    ),
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: FooterWeb(),
                       ),
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: FooterWeb(),
-                  ),
-                )
-              ],
-            ),
-          ),
-        );
-      }),
+              ),
+            );
+          }),
+        ),
+      ),
     );
   }
 

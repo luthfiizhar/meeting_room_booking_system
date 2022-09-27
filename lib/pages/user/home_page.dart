@@ -3,6 +3,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/constant/key.dart';
 import 'package:meeting_room_booking_system/model/login_info.dart';
 import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
@@ -315,125 +316,133 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: CustomScrollView(
-          slivers: [
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  NavigationBarWeb(
-                    index: 0,
-                  ),
-                  Column(
-                    children: [
-                      Row(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: pageConstraints,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      NavigationBarWeb(
+                        index: 0,
+                      ),
+                      Column(
                         children: [
-                          Expanded(
-                            child: Container(
-                              key: key1,
-                              height: 100,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              key: key2,
-                              height: 100,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              key: key3,
-                              height: 100,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              key: key4,
-                              height: 100,
-                              color: Colors.green,
-                            ),
-                          ),
-                          Expanded(
-                            key: key5,
-                            child: Container(
-                              height: 100,
-                              color: Colors.amber,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          key: key6,
-                          height: 300,
-                          width: 400,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/gapps.png'),
-                            ),
-                          ),
-                          child: Stack(
+                          Row(
                             children: [
-                              Container(
-                                height: double.infinity,
-                                width: double.infinity,
-                                decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment(0, 0),
-                                    end: Alignment(0, 0.7),
-                                    colors: [
-                                      Color.fromARGB(0, 255, 255, 255),
-                                      eerieBlack,
-                                    ],
-                                    // stops: [0, 200],
-                                  ),
+                              Expanded(
+                                child: Container(
+                                  key: key1,
+                                  height: 100,
+                                  color: Colors.black,
                                 ),
                               ),
-                              Positioned(
-                                bottom: 0,
+                              Expanded(
                                 child: Container(
-                                  width: 400,
-                                  color: eerieBlack,
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Link your Google Account',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      Text(
-                                        'Link your Google Account',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      Text(
-                                        'Link your Google Account',
-                                        style: TextStyle(color: Colors.white),
-                                      )
-                                    ],
-                                  ),
+                                  key: key2,
+                                  height: 100,
+                                  color: Colors.red,
                                 ),
-                              )
+                              ),
                             ],
                           ),
-                        ),
-                      )
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  key: key3,
+                                  height: 100,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  key: key4,
+                                  height: 100,
+                                  color: Colors.green,
+                                ),
+                              ),
+                              Expanded(
+                                key: key5,
+                                child: Container(
+                                  height: 100,
+                                  color: Colors.amber,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              key: key6,
+                              height: 300,
+                              width: 400,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/gapps.png'),
+                                ),
+                              ),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    height: double.infinity,
+                                    width: double.infinity,
+                                    decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment(0, 0),
+                                        end: Alignment(0, 0.7),
+                                        colors: [
+                                          Color.fromARGB(0, 255, 255, 255),
+                                          eerieBlack,
+                                        ],
+                                        // stops: [0, 200],
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    child: Container(
+                                      width: 400,
+                                      color: eerieBlack,
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            'Link your Google Account',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          Text(
+                                            'Link your Google Account',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          Text(
+                                            'Link your Google Account',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
