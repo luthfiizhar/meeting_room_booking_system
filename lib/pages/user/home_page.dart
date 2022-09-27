@@ -272,15 +272,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    addTarget();
-    Future.delayed(
-      Duration(milliseconds: 500),
-      () {
-        showTutorial().then((value) {
-          Provider.of<LoginInfoModel>(context, listen: false).onBoardDone();
-        });
-      },
-    );
+    // addTarget();
+    // Future.delayed(
+    //   Duration(milliseconds: 500),
+    //   () {
+    //     showTutorial().then((value) {
+    //       Provider.of<LoginInfoModel>(context, listen: false).onBoardDone();
+    //     });
+    //   },
+    // );
     // showBoardingPage();
     // checkOnBoardingPage();
     // showBoardingPage();

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
-import 'package:meeting_room_booking_system/widgets/button/regular_button_white.dart';
-import 'package:meeting_room_booking_system/widgets/button/transparent_button_white.dart';
+import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
 
-class ConfirmDialogBlack extends StatelessWidget {
-  const ConfirmDialogBlack({
+class ConfirmDialogWhite extends StatelessWidget {
+  const ConfirmDialogWhite({
     required this.title,
     required this.contentText,
   });
@@ -17,8 +18,10 @@ class ConfirmDialogBlack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: eerieBlack,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      backgroundColor: culturedWhite,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(
           maxWidth: 560,
@@ -49,7 +52,7 @@ class ConfirmDialogBlack extends StatelessWidget {
                         Text(
                           title!,
                           style: titlePage.copyWith(
-                            color: culturedWhite,
+                            color: eerieBlack,
                           ),
                           textAlign: TextAlign.left,
                         ),
@@ -65,7 +68,7 @@ class ConfirmDialogBlack extends StatelessWidget {
                         Text(
                           contentText!,
                           style: bodyText.copyWith(
-                            color: culturedWhite,
+                            color: eerieBlack,
                             fontWeight: FontWeight.w300,
                           ),
                           textAlign: TextAlign.left,
@@ -106,7 +109,7 @@ class ConfirmDialogBlack extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // SizedBox(),
-                    TransparentButtonWhite(
+                    TransparentButtonBlack(
                       text: 'Cancel',
                       onTap: () {
                         Navigator.of(context).pop(false);
@@ -117,7 +120,7 @@ class ConfirmDialogBlack extends StatelessWidget {
                     const SizedBox(
                       width: 15,
                     ),
-                    WhiteRegularButton(
+                    RegularButton(
                       text: 'Confirm',
                       onTap: () {},
                       padding: ButtonSize().mediumSize(),
@@ -131,5 +134,6 @@ class ConfirmDialogBlack extends StatelessWidget {
         ),
       ),
     );
+    ;
   }
 }

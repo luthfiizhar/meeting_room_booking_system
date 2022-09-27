@@ -6,7 +6,7 @@ class WhiteRegularButton extends StatelessWidget {
     required this.text,
     this.fontSize,
     this.onTap,
-    this.disabled,
+    required this.disabled,
     this.padding,
   });
 
@@ -23,18 +23,18 @@ class WhiteRegularButton extends StatelessWidget {
     if (states.any(interactiveStates.contains)) {
       return culturedWhite;
     }
-    return eerieBlack;
+    return disabled! ? grayx11 : eerieBlack;
   }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onTap,
+      onPressed: disabled! ? null : onTap,
       style: ButtonStyle(
         splashFactory: NoSplash.splashFactory,
         foregroundColor: MaterialStateProperty.resolveWith(getColor),
         backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-          return culturedWhite;
+          return disabled! ? platinum : culturedWhite;
         }),
         shape: MaterialStateProperty.resolveWith<OutlinedBorder?>(
           (Set<MaterialState> states) {

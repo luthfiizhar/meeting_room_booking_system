@@ -8,7 +8,7 @@ class RegularButton extends StatelessWidget {
       {required this.text,
       this.fontSize,
       this.onTap,
-      this.disabled,
+      required this.disabled,
       this.padding});
 
   final String? text;

@@ -6,7 +6,7 @@ class TransparentButtonBlack extends StatelessWidget {
     required this.text,
     this.fontSize,
     this.onTap,
-    this.disabled,
+    required this.disabled,
     this.padding,
   });
 
@@ -23,18 +23,18 @@ class TransparentButtonBlack extends StatelessWidget {
     if (states.any(interactiveStates.contains)) {
       return culturedWhite;
     }
-    return eerieBlack;
+    return disabled! ? platinum : eerieBlack;
   }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onTap,
+      onPressed: disabled! ? null : onTap,
       style: ButtonStyle(
         splashFactory: NoSplash.splashFactory,
         foregroundColor: MaterialStateProperty.resolveWith(getColor),
         backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-          return const Color.fromARGB(0, 0, 0, 0);
+          return disabled! ? grayx11 : const Color.fromARGB(0, 0, 0, 0);
         }),
         shape: MaterialStateProperty.resolveWith<OutlinedBorder?>(
           (Set<MaterialState> states) {

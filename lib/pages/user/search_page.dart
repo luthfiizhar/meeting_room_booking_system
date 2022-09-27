@@ -10,9 +10,15 @@ import 'package:meeting_room_booking_system/widgets/button/regular_button_white.
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_white.dart';
 import 'package:meeting_room_booking_system/widgets/calendar_view_page/calendar_menu_item.dart';
+import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
+import 'package:meeting_room_booking_system/widgets/checkboxes/white_checkbox.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_white.dart';
 import 'package:meeting_room_booking_system/widgets/footer.dart';
 import 'package:meeting_room_booking_system/widgets/input/input_search_page.dart';
+import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
+import 'package:meeting_room_booking_system/widgets/input_field/white_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:meeting_room_booking_system/widgets/search_page/check_box_amenities.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -29,6 +35,8 @@ class _SearchPageState extends State<SearchPage> {
   TextEditingController? _startTime = TextEditingController();
   TextEditingController? _endTime = TextEditingController();
   TextEditingController? _participant = TextEditingController();
+
+  TextEditingController? _testInputField = TextEditingController();
 
   int? participant = 1;
 
@@ -109,7 +117,7 @@ class _SearchPageState extends State<SearchPage> {
           padding: EdgeInsets.all(10),
           width: 450,
           decoration: BoxDecoration(
-            color: cardBg,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(7),
             border: Border.all(color: eerieBlack),
           ),
@@ -172,22 +180,139 @@ class _SearchPageState extends State<SearchPage> {
               SizedBox(
                 // height: 40,
                 // width: 250,
+                child: WhiteRegularButton(
+                  text: 'White Version',
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {}
+                  },
+                  disabled: true,
+                  padding: ButtonSize().longSize(),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                // height: 40,
+                // width: 250,
+                child: TransparentButtonBlack(
+                  text: 'Transparent Black Version',
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {}
+                  },
+                  disabled: true,
+                  padding: ButtonSize().longSize(),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                // height: 40,
+                // width: 250,
                 child: TransparentButtonBlack(
                   padding: ButtonSize().longSize(),
-                  text: 'Search',
+                  text: 'Black pop up small',
                   onTap: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return const ConfirmDialogBlack(
                           title: 'Confirmation',
-                          contentText: 'Are you sure?',
+                          contentText: 'Are you sure to change visit time?',
                         );
                       },
                     );
                   },
+                  disabled: false,
                   // backgroundColor: cardBg,
                 ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                // height: 40,
+                // width: 250,
+                child: TransparentButtonBlack(
+                  padding: ButtonSize().longSize(),
+                  text: 'white pop up small',
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const ConfirmDialogWhite(
+                          title: 'Confirmation',
+                          contentText: 'Are you sure to change visit time?',
+                        );
+                      },
+                    ).then((value) {});
+                  },
+                  disabled: false,
+                  // backgroundColor: cardBg,
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                // height: 40,
+                // width: 250,
+                child: TransparentButtonBlack(
+                  padding: ButtonSize().longSize(),
+                  text: 'Alert pop Up small',
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const AlertDialogBlack(
+                          title: 'Success',
+                          contentText: 'Your changes has been saved.',
+                        );
+                      },
+                    ).then((value) {});
+                  },
+                  disabled: false,
+                  // backgroundColor: cardBg,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Container(
+          height: 300,
+          width: 500,
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 250,
+                child: BlackInputField(
+                  controller: _testInputField!,
+                  hintText: 'Please input here',
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              BlackCheckBox(
+                selectedValue: checkBoxAmenTv,
+                onChanged: (value) {
+                  if (checkBoxAmenTv) {
+                    checkBoxAmenTv = false;
+                    selectedAmen!.removeWhere((element) => element == 'tv');
+                  } else {
+                    checkBoxAmenTv = true;
+                    selectedAmen!.add('tv');
+                  }
+                  setState(() {});
+                },
+                label: 'Enabled',
               ),
             ],
           ),
@@ -204,10 +329,40 @@ class _SearchPageState extends State<SearchPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
+                  width: 250,
+                  child: WhiteCheckbox(
+                    selectedValue: checkBoxAmenTv,
+                    onChanged: (value) {
+                      if (checkBoxAmenTv) {
+                        checkBoxAmenTv = false;
+                        selectedAmen!.removeWhere((element) => element == 'tv');
+                      } else {
+                        checkBoxAmenTv = true;
+                        selectedAmen!.add('tv');
+                      }
+                      setState(() {});
+                    },
+                    label: 'Enabled',
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: 250,
+                  child: WhiteInputField(
+                    controller: _testInputField!,
+                    hintText: 'Please input here',
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
                   // width: 250,
                   child: WhiteRegularButton(
-                    padding: ButtonSize().mediumSize(),
-                    text: 'Search',
+                    padding: ButtonSize().longSize(),
+                    text: 'Black pop up big',
                     onTap: () {
                       showDialog(
                         context: context,
@@ -220,6 +375,30 @@ class _SearchPageState extends State<SearchPage> {
                         },
                       );
                     },
+                    disabled: false,
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  // width: 250,
+                  child: WhiteRegularButton(
+                    padding: ButtonSize().longSize(),
+                    text: 'White pop up big',
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const ConfirmDialogWhite(
+                            title: 'Confirmation',
+                            contentText:
+                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed semper ligula quam, id pretium ligula euismod non',
+                          );
+                        },
+                      );
+                    },
+                    disabled: false,
                   ),
                 ),
                 SizedBox(
@@ -228,8 +407,9 @@ class _SearchPageState extends State<SearchPage> {
                 SizedBox(
                   child: TransparentButtonWhite(
                     padding: ButtonSize().mediumSize(),
-                    text: 'Search',
+                    text: 'Transparent White Version',
                     onTap: () {},
+                    disabled: true,
                   ),
                 ),
               ],
@@ -467,9 +647,10 @@ class _SearchPageState extends State<SearchPage> {
                                       ),
                                       RegularButton(
                                         text: 'Book',
-                                        fontSize: 12,
+                                        // fontSize: 12,
                                         onTap: () {},
                                         disabled: false,
+                                        padding: ButtonSize().smallSize(),
                                       ),
                                       const SizedBox(
                                         height: 10,
@@ -782,40 +963,47 @@ class _SearchPageState extends State<SearchPage> {
         SizedBox(
           height: 10,
         ),
-        Row(
-          children: [
-            CheckBoxAmenities(
-              selectedValue: checkBoxAmenTv,
-              onChanged: (value) {
-                print('check');
-                if (checkBoxAmenTv) {
-                  checkBoxAmenTv = false;
-                  selectedAmen!.removeWhere((element) => element == 'tv');
-                } else {
-                  checkBoxAmenTv = true;
-                  selectedAmen!.add('tv');
-                }
-                setState(() {});
-                print(selectedAmen);
-              },
-              label: 'TV',
-            ),
-            CheckBoxAmenities(
-              selectedValue: checkBoxAmenCam,
-              onChanged: (value) {
-                if (checkBoxAmenCam) {
-                  checkBoxAmenCam = false;
-                  selectedAmen!.removeWhere((element) => element == 'cam');
-                } else {
-                  checkBoxAmenCam = true;
-                  selectedAmen!.add('cam');
-                }
-                setState(() {});
-                print(selectedAmen);
-              },
-              label: 'Camera',
-            ),
-          ],
+        Container(
+          child: Column(
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CheckBoxAmenities(
+                selectedValue: checkBoxAmenTv,
+                onChanged: (value) {
+                  print('check');
+                  if (checkBoxAmenTv) {
+                    checkBoxAmenTv = false;
+                    selectedAmen!.removeWhere((element) => element == 'tv');
+                  } else {
+                    checkBoxAmenTv = true;
+                    selectedAmen!.add('tv');
+                  }
+                  setState(() {});
+                  print(selectedAmen);
+                },
+                label: 'Enabled',
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              CheckBoxAmenities(
+                selectedValue: checkBoxAmenCam,
+                onChanged: (value) {
+                  if (checkBoxAmenCam) {
+                    checkBoxAmenCam = false;
+                    selectedAmen!.removeWhere((element) => element == 'cam');
+                  } else {
+                    checkBoxAmenCam = true;
+                    selectedAmen!.add('cam');
+                  }
+                  setState(() {});
+                  print(selectedAmen);
+                },
+                label: 'Camera',
+              ),
+            ],
+          ),
         )
       ],
     );

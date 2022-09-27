@@ -16,6 +16,8 @@ const Color platinum = Color(0xFFE8E8E8);
 const Color davysGray = Color(0xFF4A4A4A);
 const Color culturedWhite = Color(0xFFF3F3F3);
 const Color grayx11 = Color(0xFFBBBBBB);
+const Color greenAcent = Color(0xFF0DB14B);
+const Color lightGray = Color(0xFFD2D2D2);
 
 const Color navBarInActiveState =
     eerieBlack; //Color.fromARGB(255, 255, 255, 255);

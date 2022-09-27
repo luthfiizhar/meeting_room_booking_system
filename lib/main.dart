@@ -148,6 +148,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'Helvetica',
           unselectedWidgetColor: eerieBlack,
+          scaffoldBackgroundColor: scaffoldBg,
         ),
         debugShowCheckedModeBanner: false,
         //routeInformationParser: BeamerParser(),

@@ -5,8 +5,8 @@ import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button_white.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_white.dart';
 
-class ConfirmDialogBlack extends StatelessWidget {
-  const ConfirmDialogBlack({
+class AlertDialogBlack extends StatelessWidget {
+  const AlertDialogBlack({
     required this.title,
     required this.contentText,
   });
@@ -49,7 +49,7 @@ class ConfirmDialogBlack extends StatelessWidget {
                         Text(
                           title!,
                           style: titlePage.copyWith(
-                            color: culturedWhite,
+                            color: greenAcent,
                           ),
                           textAlign: TextAlign.left,
                         ),
@@ -66,7 +66,6 @@ class ConfirmDialogBlack extends StatelessWidget {
                           contentText!,
                           style: bodyText.copyWith(
                             color: culturedWhite,
-                            fontWeight: FontWeight.w300,
                           ),
                           textAlign: TextAlign.left,
                         ),
@@ -106,19 +105,16 @@ class ConfirmDialogBlack extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // SizedBox(),
-                    TransparentButtonWhite(
-                      text: 'Cancel',
-                      onTap: () {
-                        Navigator.of(context).pop(false);
-                      },
-                      padding: ButtonSize().mediumSize(),
-                      disabled: false,
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
+                    // TransparentButtonWhite(
+                    //   text: 'Cancel',
+                    //   onTap: () {
+                    //     Navigator.of(context).pop(false);
+                    //   },
+                    //   padding: ButtonSize().mediumSize(),
+                    // ),
+
                     WhiteRegularButton(
-                      text: 'Confirm',
+                      text: 'Ok',
                       onTap: () {},
                       padding: ButtonSize().mediumSize(),
                       disabled: false,
@@ -131,5 +127,6 @@ class ConfirmDialogBlack extends StatelessWidget {
         ),
       ),
     );
+    ;
   }
 }
