@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/model/login_info.dart';
 import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
@@ -15,12 +17,15 @@ import 'package:meeting_room_booking_system/widgets/checkboxes/white_checkbox.da
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_white.dart';
+import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
+import 'package:meeting_room_booking_system/widgets/dropdown/white_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/footer.dart';
 import 'package:meeting_room_booking_system/widgets/input/input_search_page.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/white_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:meeting_room_booking_system/widgets/search_page/check_box_amenities.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class SearchPage extends StatefulWidget {
@@ -36,7 +41,26 @@ class _SearchPageState extends State<SearchPage> {
   TextEditingController? _endTime = TextEditingController();
   TextEditingController? _participant = TextEditingController();
 
+  FocusNode _testInputNode = FocusNode();
+  FocusNode _testInputWhiteNode = FocusNode();
+  FocusNode _dropdownBlackNode = FocusNode();
+  FocusNode _dropdownWhiteNode = FocusNode();
+  FocusNode _blackDateNode = FocusNode();
+
   TextEditingController? _testInputField = TextEditingController();
+  TextEditingController? _testInputFieldDisabled = TextEditingController();
+  TextEditingController? _testInputWhiteField = TextEditingController();
+
+  String? dropdownBlackValue;
+
+  final List<String> items = [
+    'Item1',
+    'Item2',
+    'Item3',
+    'Item4',
+  ];
+
+  bool isPassword = true;
 
   int? participant = 1;
 
@@ -55,6 +79,13 @@ class _SearchPageState extends State<SearchPage> {
 
   List<Room> roomList = [];
 
+  BoxShadow? navbarShadow = BoxShadow(
+    blurRadius: 0,
+    offset: Offset(0, 0),
+  );
+
+  ScrollController? _scrollController = ScrollController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -69,50 +100,211 @@ class _SearchPageState extends State<SearchPage> {
       capacity: '8',
       roomType: 'medium',
     ));
+
+    _testInputNode.addListener(() {
+      setState(() {});
+    });
+    _testInputWhiteNode.addListener(() {
+      setState(() {});
+    });
+    _dropdownBlackNode.addListener(() {
+      setState(() {});
+    });
+    _dropdownWhiteNode.addListener(() {
+      setState(() {});
+    });
+    _blackDateNode.addListener(() {
+      setState(() {});
+    });
+
+    _scrollController!.addListener(() {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        _scrollListener(_scrollController!,
+            Provider.of<LoginInfoModel>(context, listen: false));
+        // print(Provider.of<LoginInfoModel>(context).toString());
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _testInputNode.dispose();
+    _testInputWhiteNode.dispose();
+    _dropdownBlackNode.dispose();
+    _blackDateNode.dispose();
+  }
+
+  List<DropdownMenuItem<String>> addDividerItem(List<String> items) {
+    List<DropdownMenuItem<String>> _menuItems = [];
+    for (var item in items) {
+      _menuItems.addAll(
+        [
+          DropdownMenuItem<String>(
+            value: item,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              child: Text(
+                item,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            ),
+          ),
+          //If it's last item, we will not add Divider after it.
+          if (item != items.last)
+            DropdownMenuItem<String>(
+              enabled: false,
+              child: Divider(),
+            ),
+        ],
+      );
+    }
+    return _menuItems;
+  }
+
+  List<DropdownMenuItem<String>> addDividerItemWhite(List<String> items) {
+    List<DropdownMenuItem<String>> _menuItems = [];
+    for (var item in items) {
+      _menuItems.addAll(
+        [
+          DropdownMenuItem<String>(
+            value: item,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              child: Text(
+                item,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            ),
+          ),
+          //If it's last item, we will not add Divider after it.
+          if (item != items.last)
+            DropdownMenuItem<String>(
+              enabled: false,
+              child: Divider(
+                color: culturedWhite,
+              ),
+            ),
+        ],
+      );
+    }
+    return _menuItems;
+  }
+
+  List<double> _getCustomItemsHeights(List items) {
+    List<double> _itemsHeights = [];
+    for (var i = 0; i < (items.length * 2) - 1; i++) {
+      if (i.isEven) {
+        _itemsHeights.add(40);
+      }
+      //Dividers indexes will be the odd indexes
+      if (i.isOdd) {
+        _itemsHeights.add(15);
+      }
+    }
+    return _itemsHeights;
+  }
+
+  _scrollListener(ScrollController scrollInfo, LoginInfoModel model) {
+    // setState(() {});
+    // print(scrollInfo.position.minScrollExtent);
+    if (scrollInfo.offset == 0) {
+      Provider.of<LoginInfoModel>(context, listen: false)
+          .setShadowActive(false);
+    } else {
+      Provider.of<LoginInfoModel>(context, listen: false).setShadowActive(true);
+      print('scroll');
+    }
+  }
+
+  _onStartScroll(ScrollMetrics metrics) {
+    print("Scroll Start");
+  }
+
+  _onUpdateScroll(ScrollMetrics metrics) {
+    print("Scroll Update");
+  }
+
+  _onEndScroll(ScrollMetrics metrics) {
+    print("Scroll End");
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ConstrainedBox(
-          constraints: pageConstraints,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: CustomScrollView(
-              slivers: [
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      NavigationBarWeb(
-                        index: 1,
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Form(
-                        key: _formKey,
-                        child: searchRoom(),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                    ],
+    return Consumer<LoginInfoModel>(builder: (context, model, child) {
+      return Scaffold(
+        body: Center(
+          child: ConstrainedBox(
+            constraints: pageConstraints,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(boxShadow: [
+                      // model.navbarShadow
+                      BoxShadow(
+                        blurRadius: !model.shadowActive ? 0 : 40,
+                        offset:
+                            !model.shadowActive ? Offset(0, 0) : Offset(0, 0),
+                        color: Color.fromRGBO(29, 29, 29, 0.1),
+                      )
+                    ]),
+                    child: NavigationBarWeb(
+                      index: 1,
+                    ),
                   ),
-                ),
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: FooterWeb(),
+                  // Container(
+                  //   color: Color.fromRGBO(29, 29, 29, 0.1),
+                  //   height: 1,
+                  // ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 5),
+                      child: CustomScrollView(
+                        controller: _scrollController,
+                        slivers: [
+                          SliverList(
+                            delegate: SliverChildListDelegate(
+                              [
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Form(
+                                  key: _formKey,
+                                  child: searchRoom(),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                          // const SliverFillRemaining(
+                          //   hasScrollBody: false,
+                          //   child: Align(
+                          //     alignment: Alignment.bottomCenter,
+                          //     child: FooterWeb(),
+                          //   ),
+                          // )
+                        ],
+                      ),
+                    ),
                   ),
-                )
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget searchRoom() {
@@ -288,22 +480,219 @@ class _SearchPageState extends State<SearchPage> {
           height: 20,
         ),
         Container(
-          height: 300,
+          padding: EdgeInsets.all(10),
+          // height: 300,
           width: 500,
-          color: Colors.white,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(7),
+            border: Border.all(color: eerieBlack),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 250,
-                child: BlackInputField(
-                  controller: _testInputField!,
-                  hintText: 'Please input here',
+              Container(
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: _testInputNode.hasFocus
+                      ? const [
+                          BoxShadow(
+                            blurRadius: 40,
+                            offset: Offset(0, 10),
+                            // blurStyle: BlurStyle.outer,
+                            color: Color.fromRGBO(29, 29, 29, 0.2),
+                          )
+                        ]
+                      : null,
+                ),
+                child: SizedBox(
+                  width: 250,
+                  child: BlackInputField(
+                    enabled: true,
+                    controller: _testInputField!,
+                    hintText: 'Please input here',
+                    focusNode: _testInputNode,
+                    obsecureText: false,
+                    suffixIcon: _testInputNode.hasFocus
+                        ? IconButton(
+                            onPressed: () {
+                              _testInputField!.text = "";
+                            },
+                            icon: const Icon(
+                              Icons.close,
+                              color: eerieBlack,
+                            ),
+                          )
+                        : SizedBox(),
+                  ),
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: 50,
+              ),
+              Container(
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: _testInputNode.hasFocus
+                      ? const [
+                          BoxShadow(
+                            blurRadius: 40,
+                            offset: Offset(0, 10),
+                            // blurStyle: BlurStyle.outer,
+                            color: Color.fromRGBO(29, 29, 29, 0.2),
+                          )
+                        ]
+                      : null,
+                ),
+                child: SizedBox(
+                  width: 250,
+                  child: BlackInputField(
+                    enabled: true,
+                    controller: _testInputField!,
+                    hintText: 'Password',
+                    focusNode: _testInputNode,
+                    obsecureText: isPassword,
+                    suffixIcon: _testInputNode.hasFocus
+                        ? IconButton(
+                            onPressed: () {
+                              if (isPassword) {
+                                isPassword = false;
+                              } else {
+                                isPassword = true;
+                              }
+                              setState(() {});
+                            },
+                            icon: isPassword
+                                ? Icon(
+                                    FontAwesomeIcons.eyeSlash,
+                                    color: eerieBlack,
+                                    size: 18,
+                                  )
+                                : Icon(
+                                    FontAwesomeIcons.eye,
+                                    color: eerieBlack,
+                                    size: 18,
+                                  ),
+                          )
+                        : SizedBox(),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Container(
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  // boxShadow: _testInputNode.hasFocus
+                  //     ? const [
+                  //         BoxShadow(
+                  //           blurRadius: 40,
+                  //           offset: Offset(0, 10),
+                  //           // blurStyle: BlurStyle.outer,
+                  //           color: Color.fromRGBO(29, 29, 29, 0.2),
+                  //         )
+                  //       ]
+                  //     : null,
+                ),
+                child: SizedBox(
+                  width: 250,
+                  child: BlackInputField(
+                    enabled: false,
+                    controller: _testInputFieldDisabled!,
+                    hintText: 'Please input here',
+                    // focusNode: _testInputNode,
+                    obsecureText: false,
+                    suffixIcon: SizedBox(),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Container(
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: _dropdownBlackNode.hasFocus
+                      ? const [
+                          BoxShadow(
+                            blurRadius: 40,
+                            offset: Offset(0, 10),
+                            // blurStyle: BlurStyle.outer,
+                            color: Color.fromRGBO(29, 29, 29, 0.2),
+                          )
+                        ]
+                      : null,
+                ),
+                child: SizedBox(
+                  width: 250,
+                  child: BlackDropdown(
+                    // value: dropdownBlackValue,
+                    focusNode: _dropdownBlackNode,
+                    items: addDividerItem(items),
+                    // items: items.map((e) {
+                    //   return DropdownMenuItem(
+                    //     child: Text(e),
+                    //     value: e,
+                    //   );
+                    // }).toList(),
+                    customHeights: _getCustomItemsHeights(items),
+                    enabled: true,
+                    hintText: 'Choose',
+                    suffixIcon: Icon(
+                      Icons.keyboard_arrow_down_outlined,
+                      color: eerieBlack,
+                    ),
+                    onChanged: (value) {
+                      dropdownBlackValue = value;
+                      _dropdownBlackNode.unfocus();
+                      setState(() {});
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Container(
+                width: 250,
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: _blackDateNode.hasFocus
+                      ? const [
+                          BoxShadow(
+                            blurRadius: 40,
+                            offset: Offset(0, 10),
+                            // blurStyle: BlurStyle.outer,
+                            color: Color.fromRGBO(29, 29, 29, 0.2),
+                          )
+                        ]
+                      : null,
+                ),
+                child: BlackInputField(
+                  controller: _bookDate!,
+                  focusNode: _blackDateNode,
+                  obsecureText: false,
+                  enabled: true,
+                  onTap: () {
+                    _selectStartDate();
+                  },
+                  hintText: 'Select date',
+                  suffixIcon: const Icon(
+                    FontAwesomeIcons.calendarDays,
+                    size: 16,
+                    color: eerieBlack,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 50,
               ),
               BlackCheckBox(
                 selectedValue: checkBoxAmenTv,
@@ -326,7 +715,8 @@ class _SearchPageState extends State<SearchPage> {
           height: 20,
         ),
         Container(
-          height: 300,
+          padding: EdgeInsets.all(8),
+          // height: 300,
           width: 500,
           color: Colors.black,
           child: Center(
@@ -355,13 +745,134 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 SizedBox(
                   width: 250,
-                  child: WhiteInputField(
-                    controller: _testInputField!,
-                    hintText: 'Please input here',
+                  child: Container(
+                    padding: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: _testInputWhiteNode.hasFocus
+                          ? [
+                              BoxShadow(
+                                // spreadRadius: 40,
+                                blurRadius: 40,
+                                offset: Offset(0, 10),
+                                // blurStyle: BlurStyle.outer,
+                                color: Color.fromRGBO(243, 243, 243, 0.2),
+                              )
+                            ]
+                          : null,
+                    ),
+                    child: WhiteInputField(
+                      enabled: true,
+                      focusNode: _testInputWhiteNode,
+                      controller: _testInputWhiteField!,
+                      hintText: 'Please input here',
+                      obsecureText: false,
+                      suffixIcon: _testInputWhiteNode.hasFocus
+                          ? IconButton(
+                              onPressed: () {
+                                _testInputWhiteField!.text = "";
+                              },
+                              icon: Icon(
+                                Icons.close,
+                                color: culturedWhite,
+                                size: 18,
+                              ),
+                            )
+                          : SizedBox(),
+                    ),
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 60,
+                ),
+                SizedBox(
+                  width: 250,
+                  child: Container(
+                    padding: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: _testInputWhiteNode.hasFocus
+                          ? const [
+                              BoxShadow(
+                                blurRadius: 40,
+                                offset: Offset(0, 10),
+                                color: Color.fromRGBO(243, 243, 243, 0.2),
+                              )
+                            ]
+                          : null,
+                    ),
+                    child: WhiteInputField(
+                      enabled: true,
+                      focusNode: _testInputWhiteNode,
+                      controller: _testInputWhiteField!,
+                      hintText: 'Password',
+                      obsecureText: isPassword,
+                      suffixIcon: _testInputWhiteNode.hasFocus
+                          ? IconButton(
+                              onPressed: () {
+                                if (isPassword) {
+                                  isPassword = false;
+                                } else {
+                                  isPassword = true;
+                                }
+                                setState(() {});
+                              },
+                              icon: isPassword
+                                  ? Icon(
+                                      FontAwesomeIcons.eye,
+                                      color: culturedWhite,
+                                      size: 18,
+                                    )
+                                  : Icon(
+                                      FontAwesomeIcons.eyeSlash,
+                                      color: culturedWhite,
+                                      size: 18,
+                                    ),
+                            )
+                          : SizedBox(),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                Container(
+                  padding: EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: _dropdownWhiteNode.hasFocus
+                        ? const [
+                            BoxShadow(
+                              blurRadius: 40,
+                              offset: Offset(0, 10),
+                              // blurStyle: BlurStyle.outer,
+                              color: Color.fromRGBO(243, 243, 243, 0.2),
+                            )
+                          ]
+                        : null,
+                  ),
+                  child: SizedBox(
+                    width: 250,
+                    child: WhiteDropdown(
+                      focusNode: _dropdownWhiteNode,
+                      items: addDividerItemWhite(items),
+                      customHeights: _getCustomItemsHeights(items),
+                      enabled: true,
+                      hintText: 'Choose',
+                      suffixIcon: const Icon(
+                        Icons.keyboard_arrow_down_outlined,
+                        color: culturedWhite,
+                      ),
+                      onChanged: (value) {
+                        dropdownBlackValue = value;
+                        _dropdownWhiteNode.unfocus();
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
                 ),
                 SizedBox(
                   // width: 250,

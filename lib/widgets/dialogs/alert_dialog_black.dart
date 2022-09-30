@@ -114,7 +114,7 @@ class AlertDialogBlack extends StatelessWidget {
                     // ),
 
                     WhiteRegularButton(
-                      text: 'Ok',
+                      text: 'OK',
                       onTap: () {},
                       padding: ButtonSize().mediumSize(),
                       disabled: false,

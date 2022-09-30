@@ -4,12 +4,14 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/model/event_class.dart';
 import 'package:meeting_room_booking_system/model/event_data_source.dart';
+import 'package:meeting_room_booking_system/model/login_info.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/widgets/calendar_view_page/calendar_menu_item.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/dialog_detail_event.dart';
 import 'package:meeting_room_booking_system/widgets/footer.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class CalendarViewPage extends StatefulWidget {
@@ -21,6 +23,7 @@ class CalendarViewPage extends StatefulWidget {
 
 class _CalendarViewPageState extends State<CalendarViewPage> {
   CalendarController _calendar = CalendarController();
+  ScrollController? _scrollController = ScrollController();
   EventDataSource _getCalendarDataSource() {
     List<Event> events = <Event>[];
     events.add(
@@ -127,76 +130,113 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _scrollController!.addListener(() {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        _scrollListener(_scrollController!);
+        // print(Provider.of<LoginInfoModel>(context).toString());
+      });
+    });
+  }
+
+  _scrollListener(ScrollController scrollInfo) {
+    // setState(() {});
+    // print(scrollInfo.position.minScrollExtent);
+    if (scrollInfo.offset == 0) {
+      Provider.of<LoginInfoModel>(context, listen: false)
+          .setShadowActive(false);
+    } else {
+      Provider.of<LoginInfoModel>(context, listen: false).setShadowActive(true);
+      print('scroll');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ConstrainedBox(
-          constraints: pageConstraints,
-          child: LayoutBuilder(builder: (context, constraints) {
-            // print(constraints.maxHeight);
-            // print(MediaQuery.of(context).size.height);
-            return ConstrainedBox(
-              constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight, maxHeight: double.infinity),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: CustomScrollView(
-                  slivers: [
-                    SliverList(
-                      delegate: SliverChildListDelegate(
-                        [
-                          NavigationBarWeb(
-                            index: 4,
-                          ),
-                          // Container(
-                          //   // width: 100,
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.center,
-                          //     children: [
-                          //       CalendarMenu(
-                          //         menuName: 'My Events',
-                          //         selected: selectedMenu == 1,
-                          //         onHighlight: onHighlight,
-                          //         index: 1,
-                          //       ),
-                          //       CalendarMenu(
-                          //         menuName: 'Meeting Rooms',
-                          //         selected: selectedMenu == 2,
-                          //         onHighlight: onHighlight,
-                          //         index: 2,
-                          //       ),
-                          //       // Chip(
-
-                          //       //   label: Text('My Calendar'),
-                          //       // ),
-                          //       // Chip(label: Text('Meeting Rooms'))
-                          //     ],
-                          //   ),
-                          // ),
-                          Container(
-                            height: constraints.maxHeight - 80,
-                            child: calendarUserPage(),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: FooterWeb(),
-                      ),
-                    )
-                  ],
+      body: Consumer<LoginInfoModel>(builder: (context, model, child) {
+        return Center(
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(boxShadow: [
+                  // model.navbarShadow
+                  BoxShadow(
+                    blurRadius: !model.shadowActive ? 0 : 40,
+                    offset: !model.shadowActive ? Offset(0, 0) : Offset(0, 0),
+                    color: Color.fromRGBO(29, 29, 29, 0.1),
+                  )
+                ]),
+                child: NavigationBarWeb(
+                  index: 4,
                 ),
               ),
-            );
-          }),
-        ),
-      ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 10,
+                  ),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: CustomScrollView(
+                      controller: _scrollController,
+                      slivers: [
+                        SliverList(
+                          delegate: SliverChildListDelegate(
+                            [
+                              // Container(
+                              //   // width: 100,
+                              //   child: Row(
+                              //     mainAxisAlignment: MainAxisAlignment.center,
+                              //     children: [
+                              //       CalendarMenu(
+                              //         menuName: 'My Events',
+                              //         selected: selectedMenu == 1,
+                              //         onHighlight: onHighlight,
+                              //         index: 1,
+                              //       ),
+                              //       CalendarMenu(
+                              //         menuName: 'Meeting Rooms',
+                              //         selected: selectedMenu == 2,
+                              //         onHighlight: onHighlight,
+                              //         index: 2,
+                              //       ),
+                              //       // Chip(
+
+                              //       //   label: Text('My Calendar'),
+                              //       // ),
+                              //       // Chip(label: Text('Meeting Rooms'))
+                              //     ],
+                              //   ),
+                              // ),
+                              Container(
+                                height: MediaQuery.of(context).size.height,
+                                child: calendarUserPage(),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: FooterWeb(),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 

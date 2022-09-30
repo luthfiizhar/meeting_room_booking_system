@@ -8,12 +8,17 @@ import 'package:meeting_room_booking_system/app_view.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/model/booking_room_info.dart';
 import 'package:meeting_room_booking_system/model/login_info.dart';
-import 'package:meeting_room_booking_system/pages/login_page.dart';
-import 'package:meeting_room_booking_system/pages/user/calendar_view_page.dart';
-import 'package:meeting_room_booking_system/pages/user/home_page.dart';
-import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
+import 'package:meeting_room_booking_system/pages/login_page.dart'
+    deferred as loginPage;
+import 'package:meeting_room_booking_system/pages/user/calendar_view_page.dart'
+    deferred as calendarViewPage;
+import 'package:meeting_room_booking_system/pages/user/home_page.dart'
+    deferred as homePage;
+import 'package:meeting_room_booking_system/pages/user/my_book_page.dart'
+    deferred as myBookPage;
 import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
-import 'package:meeting_room_booking_system/pages/user/rooms_page.dart';
+import 'package:meeting_room_booking_system/pages/user/rooms_page.dart'
+    deferred as roomPage;
 import 'package:meeting_room_booking_system/pages/user/search_page.dart'
     deferred as searchPage;
 import 'package:meeting_room_booking_system/routes/generate_route.dart';
@@ -50,18 +55,37 @@ class MyApp extends StatelessWidget {
         name: 'home',
         path: '/',
         // builder: (context, state) => HomePage(),
-        pageBuilder: (context, state) =>
-            NoTransitionPage<void>(key: state.pageKey, child: HomePage()),
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: FutureBuilder(
+            future: homePage.loadLibrary(),
+            builder: (context, snapshot) {
+              return homePage.HomePage();
+            },
+          ),
+        ),
       ),
       GoRoute(
         path: '/login',
-        builder: (context, state) => LoginPage(),
+        builder: (context, state) => FutureBuilder(
+          future: loginPage.loadLibrary(),
+          builder: (context, snapshot) {
+            return loginPage.LoginPage();
+          },
+        ),
       ),
       GoRoute(
         path: '/calendar',
         // builder: (context, state) => CalendarViewPage(),
         pageBuilder: (context, state) => NoTransitionPage<void>(
-            key: state.pageKey, child: CalendarViewPage()),
+          key: state.pageKey,
+          child: FutureBuilder(
+            future: calendarViewPage.loadLibrary(),
+            builder: (context, snapshot) {
+              return calendarViewPage.CalendarViewPage();
+            },
+          ),
+        ),
       ),
       // GoRoute(
       //   path: '/search',
@@ -75,7 +99,7 @@ class MyApp extends StatelessWidget {
         pageBuilder: (context, state) => NoTransitionPage<void>(
             key: state.pageKey,
             child: FutureBuilder(
-              future: loadedLibrary,
+              future: searchPage.loadLibrary(),
               builder: (context, snapshot) {
                 return searchPage.SearchPage();
               },
@@ -84,14 +108,25 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/rooms',
         // builder: (context, state) => CalendarViewPage(),
-        pageBuilder: (context, state) =>
-            NoTransitionPage<void>(key: state.pageKey, child: RoomsPage()),
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+            key: state.pageKey,
+            child: FutureBuilder(
+                future: roomPage.loadLibrary(),
+                builder: (context, snapshot) {
+                  return roomPage.RoomsPage();
+                })),
       ),
       GoRoute(
         path: '/my_booking',
         // builder: (context, state) => CalendarViewPage(),
-        pageBuilder: (context, state) =>
-            NoTransitionPage<void>(key: state.pageKey, child: MyBookingPage()),
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: FutureBuilder(
+              future: myBookPage.loadLibrary(),
+              builder: (context, snapshot) {
+                return myBookPage.MyBookingPage();
+              }),
+        ),
       ),
       // GoRoute(
       //   path: '/on_boarding',
@@ -100,16 +135,17 @@ class MyApp extends StatelessWidget {
       //       NoTransitionPage<void>(key: state.pageKey, child: OnBoardPage()),
       // )
     ],
-    redirect: (state) {
-      final loggingIn = state.subloc == '/login';
+    // redirect: (state) {
+    //   final loggingIn = state.subloc == '/login';
 
-      if (jwtToken == null || jwtToken == "")
-        return loggingIn ? null : '/login';
+    //   if (jwtToken == null || jwtToken == "")
+    //     return loggingIn ? null : '/login';
 
-      if (loggingIn) return '/';
+    //   if (loggingIn) return '/';
 
-      return null;
-    },
+    //   return null;
+    // },
+    initialLocation: '/',
   );
 
   // final routerDelegate = BeamerDelegate(
@@ -134,15 +170,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => LoginInfoModel(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => BookingRoomInfoModel(),
-        ),
-      ],
+    return ChangeNotifierProvider<LoginInfoModel>(
+      create: (context) => LoginInfoModel(),
       child: MaterialApp.router(
         title: 'MRBS',
         theme: ThemeData(

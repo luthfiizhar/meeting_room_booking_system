@@ -18,8 +18,10 @@ const Color culturedWhite = Color(0xFFF3F3F3);
 const Color grayx11 = Color(0xFFBBBBBB);
 const Color greenAcent = Color(0xFF0DB14B);
 const Color lightGray = Color(0xFFD2D2D2);
+const Color sonicSilver = Color(0xFF777777);
+const Color orangeAccent = Color(0xFFF26529);
 
 const Color navBarInActiveState =
-    eerieBlack; //Color.fromARGB(255, 255, 255, 255);
-const Color navBarActiveState = const Color(0xFF8e8e8e);
+    Color(0xFF8E8E8E); //Color.fromARGB(255, 255, 255, 255);
+const Color navBarActiveState = davysGray; //const Color(0xFF8e8e8e);
 const Color navBarBackGroundBlack = const Color(0xFF1d1d1d);

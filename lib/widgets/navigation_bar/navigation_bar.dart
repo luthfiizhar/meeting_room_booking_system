@@ -288,7 +288,10 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: scaffoldBg,
+      // color: scaffoldBg,
+      decoration: const BoxDecoration(
+        color: scaffoldBg,
+      ),
       child: Column(
         children: [
           Row(
@@ -305,10 +308,13 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
               ),
               Expanded(
                 child: Container(
+                  padding: const EdgeInsets.only(
+                    right: 10,
+                  ),
                   // color: Colors.amber,
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       NavigationItem(
                         title: 'Home',
@@ -317,20 +323,12 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         onHighlight: onHighlight,
                         key: keyButton,
                       ),
-                      const Icon(
-                        Icons.circle,
-                        size: 5,
-                      ),
                       NavigationItem(
                         title: 'Search',
                         routeName: searchinPageRoute,
                         selected: index == 1,
                         onHighlight: onHighlight,
                         key: keyButton2,
-                      ),
-                      const Icon(
-                        Icons.circle,
-                        size: 5,
                       ),
                       NavigationItem(
                         title: 'Rooms',
@@ -339,20 +337,12 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         onHighlight: onHighlight,
                         // key: keyButton2,
                       ),
-                      const Icon(
-                        Icons.circle,
-                        size: 5,
-                      ),
                       NavigationItem(
                         title: 'My Bookings',
                         routeName: myBookingPageRoute,
                         selected: index == 3,
                         onHighlight: onHighlight,
                         key: keyButton3,
-                      ),
-                      const Icon(
-                        Icons.circle,
-                        size: 5,
                       ),
                       NavigationItem(
                         title: 'Calendar',
@@ -361,49 +351,55 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         onHighlight: onHighlight,
                         key: keyButton4,
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: 175,
-                // color: Colors.green,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  // crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // NavigationItem(
-                    //   title: 'Logout',
-                    //   routeName: loginPageRoute,
-                    //   selected: index == 5,
-                    //   onHighlight: onHighlight,
-                    //   key: keyButton5,
-                    // ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 10),
-                      child: LogoutButton(
+                      LogoutButton(
                         label: 'Logout',
                         onPressed: () {
                           jwtToken = "";
                         },
                       ),
-                    ),
-                    // LogoutButton(
-                    //   title: 'Logout',
-                    //   selected: index == 4,
-                    //   onHighlight: onHighlight,
-                    //   onTap: () {
-                    //     logout().then((value) {
-                    //       // jwtToken = "";
-                    //       Navigator.pushReplacementNamed(
-                    //           navKey.currentState!.context, routeLogin);
-                    //     });
-                    //   },
-                    // )
-                  ],
+                    ],
+                  ),
                 ),
               ),
+              // Container(
+              //   width: 175,
+              //   // color: Colors.green,
+              //   child: Row(
+              //     mainAxisSize: MainAxisSize.max,
+              //     mainAxisAlignment: MainAxisAlignment.end,
+              //     // crossAxisAlignment: CrossAxisAlignment.center,
+              //     children: [
+              //       // NavigationItem(
+              //       //   title: 'Logout',
+              //       //   routeName: loginPageRoute,
+              //       //   selected: index == 5,
+              //       //   onHighlight: onHighlight,
+              //       //   key: keyButton5,
+              //       // ),
+              //       Padding(
+              //         padding: EdgeInsets.only(right: 10),
+              //         child: LogoutButton(
+              //           label: 'Logout',
+              //           onPressed: () {
+              //             jwtToken = "";
+              //           },
+              //         ),
+              //       ),
+              //       // LogoutButton(
+              //       //   title: 'Logout',
+              //       //   selected: index == 4,
+              //       //   onHighlight: onHighlight,
+              //       //   onTap: () {
+              //       //     logout().then((value) {
+              //       //       // jwtToken = "";
+              //       //       Navigator.pushReplacementNamed(
+              //       //           navKey.currentState!.context, routeLogin);
+              //       //     });
+              //       //   },
+              //       // )
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ],

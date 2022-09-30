@@ -52,8 +52,8 @@ class TransparentButtonBlack extends StatelessWidget {
         overlayColor: MaterialStateProperty.resolveWith<Color?>(
           (Set<MaterialState> states) {
             if (states.contains(MaterialState.pressed)) return eerieBlack;
-            if (states.contains(MaterialState.hovered))
-              return Colors.transparent;
+            // if (states.contains(MaterialState.hovered))
+            //   return Colors.transparent;
             return null;
           },
         ),
@@ -71,9 +71,9 @@ class TransparentButtonBlack extends StatelessWidget {
           },
         ),
         elevation: MaterialStateProperty.resolveWith<double?>((states) {
-          if (states.contains(MaterialState.hovered)) {
-            return 0.2;
-          }
+          // if (states.contains(MaterialState.hovered)) {
+          //   return 0.2;
+          // }
           return 0;
         }),
       ),

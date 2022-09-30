@@ -70,12 +70,15 @@ class BlackCheckBox extends StatelessWidget {
         const SizedBox(
           width: 15,
         ),
-        Text(
-          label!,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: eerieBlack,
+        Padding(
+          padding: const EdgeInsets.only(top: 3),
+          child: Text(
+            label!,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              color: eerieBlack,
+            ),
           ),
         ),
       ],
