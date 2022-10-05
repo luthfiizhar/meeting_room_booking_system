@@ -8,7 +8,9 @@ import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/model/login_info.dart';
 // import 'package:meeting_room_booking_system/constant/key.dart';
 import 'package:meeting_room_booking_system/routes/routes.dart';
+import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/login_pop_up.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/logout_button.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar_item.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +18,11 @@ import 'package:showcaseview/showcaseview.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class NavigationBarWeb extends StatefulWidget {
-  NavigationBarWeb({this.index});
+  NavigationBarWeb({this.index, this.popUpProfile, this.popUpStatus});
 
   int? index;
+  Function? popUpProfile;
+  bool? popUpStatus;
 
   @override
   State<NavigationBarWeb> createState() => _NavigationBarWebState();
@@ -27,6 +31,7 @@ class NavigationBarWeb extends StatefulWidget {
 class _NavigationBarWebState extends State<NavigationBarWeb> {
   int? index;
 
+  bool profileVisible = false;
   GlobalKey keyButton = GlobalKey();
   GlobalKey keyButton1 = GlobalKey();
   GlobalKey keyButton2 = GlobalKey();
@@ -244,6 +249,42 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
     });
   }
 
+  _showProfileLayer() {
+    // showGeneralDialog(
+    //   // anchorPoint: Offset(0, 100),
+    //   // barrierDismissible: true,
+    //   barrierColor: Color.fromRGBO(255, 255, 255, 0),
+    //   context: context,
+    //   pageBuilder: (context, animation, secondaryAnimation) {
+    //     return const Material(child: Text('halo'));
+    //   },
+    // );
+    showMenu(
+      context: context,
+      position: RelativeRect.fromDirectional(
+          textDirection: TextDirection.rtl,
+          start: 0,
+          top: 100,
+          end: 10,
+          bottom: 0),
+      items: [
+        PopupMenuItem(child: Text('hahah')),
+      ],
+    );
+    // showDialog(
+    //   anchorPoint: Offset(0, 100),
+    //   barrierDismissible: true,
+    //   context: context,
+    //   useSafeArea: true,
+    //   barrierColor: Color.fromRGBO(255, 255, 255, 0),
+    //   builder: (context) {
+    //     return Dialog(
+    //       child: Text('halo'),
+    //     );
+    //   },
+    // );
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -253,7 +294,6 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   ShowCaseWidget.of(context).startShowCase([keyButton]);
     // });
-
     // addTarget();
     // Future.delayed(
     //   Duration(milliseconds: 500),
@@ -291,6 +331,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
       // color: scaffoldBg,
       decoration: const BoxDecoration(
         color: scaffoldBg,
+        // color: Colors.purple,
       ),
       child: Column(
         children: [
@@ -301,9 +342,27 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                 // color: Colors.amber,
                 width: 175,
                 height: 60,
-                child: SvgPicture.asset(
-                  'assets/klg_logo_tagline_black.svg',
-                  fit: BoxFit.cover,
+                // child: SvgPicture.asset(
+                //   'assets/klg_logo_tagline_black.svg',
+                //   fit: BoxFit.cover,
+                // ),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    // vertical: 16,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'MRBS',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: davysGray,
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
                 ),
               ),
               Expanded(
@@ -311,10 +370,12 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                   padding: const EdgeInsets.only(
                     right: 10,
                   ),
-                  // color: Colors.amber,
+                  // height: 60,
+                  // color: Colors.deepPurple,
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       NavigationItem(
                         title: 'Home',
@@ -323,12 +384,18 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         onHighlight: onHighlight,
                         key: keyButton,
                       ),
+                      const SizedBox(
+                        width: 50,
+                      ),
                       NavigationItem(
                         title: 'Search',
                         routeName: searchinPageRoute,
                         selected: index == 1,
                         onHighlight: onHighlight,
                         key: keyButton2,
+                      ),
+                      const SizedBox(
+                        width: 50,
                       ),
                       NavigationItem(
                         title: 'Rooms',
@@ -337,12 +404,18 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         onHighlight: onHighlight,
                         // key: keyButton2,
                       ),
+                      const SizedBox(
+                        width: 50,
+                      ),
                       NavigationItem(
                         title: 'My Bookings',
                         routeName: myBookingPageRoute,
                         selected: index == 3,
                         onHighlight: onHighlight,
                         key: keyButton3,
+                      ),
+                      const SizedBox(
+                        width: 50,
                       ),
                       NavigationItem(
                         title: 'Calendar',
@@ -351,12 +424,93 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         onHighlight: onHighlight,
                         key: keyButton4,
                       ),
-                      LogoutButton(
-                        label: 'Logout',
-                        onPressed: () {
-                          jwtToken = "";
-                        },
+                      const SizedBox(
+                        width: 50,
                       ),
+                      jwtToken == null || jwtToken == ""
+                          ? RegularButton(
+                              text: 'Login',
+                              disabled: false,
+                              padding: ButtonSize().loginButotn(),
+                              onTap: () {
+                                // jwtToken = "login";
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) {
+                                    return LoginPopUp();
+                                  },
+                                ).then((value) {
+                                  setState(() {});
+                                });
+                                setState(() {});
+                              },
+                            )
+                          // LogoutButton(
+                          //     label: 'Login',
+                          //     onPressed: () {
+                          //       // jwtToken = "login";
+                          //       showDialog(
+                          //         context: context,
+                          //         barrierDismissible: false,
+                          //         builder: (context) {
+                          //           return LoginPopUp();
+                          //         },
+                          //       ).then((value) {
+                          //         setState(() {});
+                          //       });
+                          //       setState(() {});
+                          //     },
+                          //   )
+                          : MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              onHover: (event) {
+                                widget.popUpProfile!(true);
+                                // profileVisible = true;
+                                // setState(() {});
+                              },
+                              // // onEnter: (event) {
+                              // //   profileVisible = true;
+                              // //   setState(() {});
+                              // // },
+                              onExit: (event) {
+                                widget.popUpProfile!(false);
+                                // setState(() {});
+                              },
+                              child: GestureDetector(
+                                onTap: () {
+                                  // if (widget.popUpStatus!) {
+                                  //   widget.popUpProfile!(false);
+                                  // } else {
+                                  //   widget.popUpProfile!(true);
+                                  // }
+                                },
+                                child: Container(
+                                  width: 55,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: const BoxDecoration(
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                              'assets/male_user.png',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const Expanded(
+                                        child: Icon(
+                                          Icons.keyboard_arrow_down_outlined,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                     ],
                   ),
                 ),

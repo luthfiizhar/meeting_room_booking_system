@@ -20,10 +20,10 @@ class WhiteCheckbox extends StatelessWidget {
       children: [
         Container(
           color: culturedWhite,
-          width: 20,
-          height: 20,
+          width: 17,
+          height: 17,
           child: Transform.scale(
-            scale: 1.3,
+            scale: 1.1,
             child: Checkbox(
               splashRadius: 0,
               fillColor: MaterialStateProperty.resolveWith<Color>((states) {

@@ -8,9 +8,12 @@ class LoginInfoModel extends ChangeNotifier {
   double _blurRadiusNavbar = 0;
   Offset _offsetNavbar = Offset(0, 0);
 
+  bool _profilePopup = false;
+
   bool _shadowActive = false;
 
   bool get shadowActive => _shadowActive;
+  bool get profilePopup => _profilePopup;
 
   int _testScroll = 0;
 
@@ -24,6 +27,11 @@ class LoginInfoModel extends ChangeNotifier {
   Offset get offsetNavbar => _offsetNavbar;
 
   int get testScroll => _testScroll;
+
+  void setProfilePopup(bool value) {
+    _profilePopup = value;
+    notifyListeners();
+  }
 
   void setShadowActive(bool value) {
     _shadowActive = value;

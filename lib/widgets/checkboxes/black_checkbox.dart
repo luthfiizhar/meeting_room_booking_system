@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 
 class BlackCheckBox extends StatelessWidget {
-  const BlackCheckBox({
+  BlackCheckBox({
     required this.selectedValue,
     required this.onChanged,
     this.label,
+    this.filled,
   });
 
   final bool? selectedValue;
   final ValueChanged? onChanged;
   final String? label;
+  bool? filled;
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +21,11 @@ class BlackCheckBox extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          color: eerieBlack,
-          width: 20,
-          height: 20,
+          color: !filled! ? culturedWhite : eerieBlack,
+          width: 17,
+          height: 17,
           child: Transform.scale(
-            scale: 1.3,
+            scale: 1.1,
             child: Checkbox(
               hoverColor: davysGray,
               splashRadius: 0,
@@ -36,6 +38,9 @@ class BlackCheckBox extends StatelessWidget {
                 }
                 if (states.contains(MaterialState.disabled)) {
                   return platinum;
+                }
+                if (filled! == false) {
+                  return culturedWhite;
                 }
                 return eerieBlack;
               }),

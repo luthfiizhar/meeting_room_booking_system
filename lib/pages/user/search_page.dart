@@ -23,7 +23,9 @@ import 'package:meeting_room_booking_system/widgets/footer.dart';
 import 'package:meeting_room_booking_system/widgets/input/input_search_page.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/white_input_field.dart';
+import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
+import 'package:meeting_room_booking_system/widgets/pop_up_profile.dart';
 import 'package:meeting_room_booking_system/widgets/search_page/check_box_amenities.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -42,6 +44,7 @@ class _SearchPageState extends State<SearchPage> {
   TextEditingController? _participant = TextEditingController();
 
   FocusNode _testInputNode = FocusNode();
+  FocusNode _testInput2Node = FocusNode();
   FocusNode _testInputWhiteNode = FocusNode();
   FocusNode _dropdownBlackNode = FocusNode();
   FocusNode _dropdownWhiteNode = FocusNode();
@@ -86,8 +89,15 @@ class _SearchPageState extends State<SearchPage> {
 
   ScrollController? _scrollController = ScrollController();
 
+  bool profileVisible = false;
+
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<LoginInfoModel>(context, listen: false)
+          .setShadowActive(false);
+    });
+
     // TODO: implement initState
     super.initState();
     _participant!.text = participant.toString();
@@ -116,6 +126,9 @@ class _SearchPageState extends State<SearchPage> {
     _blackDateNode.addListener(() {
       setState(() {});
     });
+    _testInput2Node.addListener(() {
+      setState(() {});
+    });
 
     _scrollController!.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -134,6 +147,12 @@ class _SearchPageState extends State<SearchPage> {
     _testInputWhiteNode.dispose();
     _dropdownBlackNode.dispose();
     _blackDateNode.dispose();
+    _bookDate!.dispose();
+    _endTime!.dispose();
+    _participant!.dispose();
+    _startTime!.dispose();
+    _testInputField!.dispose();
+    _testInputWhiteField!.dispose();
   }
 
   List<DropdownMenuItem<String>> addDividerItem(List<String> items) {
@@ -236,75 +255,113 @@ class _SearchPageState extends State<SearchPage> {
     print("Scroll End");
   }
 
+  popUpProfile(bool value) {
+    if (profileVisible) {
+      profileVisible = value;
+    } else {
+      profileVisible = value;
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<LoginInfoModel>(builder: (context, model, child) {
-      return Scaffold(
-        body: Center(
-          child: ConstrainedBox(
-            constraints: pageConstraints,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(boxShadow: [
-                      // model.navbarShadow
-                      BoxShadow(
-                        blurRadius: !model.shadowActive ? 0 : 40,
-                        offset:
-                            !model.shadowActive ? Offset(0, 0) : Offset(0, 0),
-                        color: Color.fromRGBO(29, 29, 29, 0.1),
-                      )
-                    ]),
-                    child: NavigationBarWeb(
-                      index: 1,
-                    ),
-                  ),
-                  // Container(
-                  //   color: Color.fromRGBO(29, 29, 29, 0.1),
-                  //   height: 1,
-                  // ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: CustomScrollView(
-                        controller: _scrollController,
-                        slivers: [
-                          SliverList(
-                            delegate: SliverChildListDelegate(
-                              [
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Form(
-                                  key: _formKey,
-                                  child: searchRoom(),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                              ],
-                            ),
-                          ),
-                          // const SliverFillRemaining(
-                          //   hasScrollBody: false,
-                          //   child: Align(
-                          //     alignment: Alignment.bottomCenter,
-                          //     child: FooterWeb(),
-                          //   ),
-                          // )
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    });
+    return LayoutPageWeb(
+      index: 1,
+      child: Form(
+        key: _formKey,
+        child: searchRoom(),
+      ),
+    );
+    // return Consumer<LoginInfoModel>(builder: (context, model, child) {
+    //   return Scaffold(
+    //     body: Center(
+    //       child: ConstrainedBox(
+    //         constraints: pageConstraints,
+    //         child: Align(
+    //           alignment: Alignment.topCenter,
+    //           child: Stack(
+    //             children: [
+    //               Column(
+    //                 children: [
+    //                   Container(
+    //                     decoration: BoxDecoration(
+    //                       boxShadow: [
+    //                         // model.navbarShadow
+    //                         BoxShadow(
+    //                           blurRadius: !model.shadowActive ? 0 : 40,
+    //                           offset: !model.shadowActive
+    //                               ? Offset(0, 0)
+    //                               : Offset(0, 0),
+    //                           color: Color.fromRGBO(29, 29, 29, 0.1),
+    //                         )
+    //                       ],
+    //                     ),
+    //                     child: NavigationBarWeb(
+    //                       index: 1,
+    //                       popUpProfile: popUpProfile,
+    //                     ),
+    //                   ),
+    //                   // Container(
+    //                   //   color: Color.fromRGBO(29, 29, 29, 0.1),
+    //                   //   height: 1,
+    //                   // ),
+    //                   Expanded(
+    //                     child: Padding(
+    //                       padding: const EdgeInsets.only(top: 5),
+    //                       child: CustomScrollView(
+    //                         controller: _scrollController,
+    //                         slivers: [
+    //                           SliverList(
+    //                             delegate: SliverChildListDelegate(
+    //                               [
+    //                                 SizedBox(
+    //                                   height: 20,
+    //                                 ),
+    //                                 Form(
+    //                                   key: _formKey,
+    //                                   child: searchRoom(),
+    //                                 ),
+    //                                 SizedBox(
+    //                                   height: 20,
+    //                                 ),
+    //                               ],
+    //                             ),
+    //                           ),
+    //                           // const SliverFillRemaining(
+    //                           //   hasScrollBody: false,
+    //                           //   child: Align(
+    //                           //     alignment: Alignment.bottomCenter,
+    //                           //     child: FooterWeb(),
+    //                           //   ),
+    //                           // )
+    //                         ],
+    //                       ),
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //               Positioned(
+    //                 right: 20,
+    //                 top: 65,
+    //                 child: Visibility(
+    //                   visible: profileVisible,
+    //                   child: Container(
+    //                     // color: Colors.amber,
+    //                     child: PopUpProfile(
+    //                       name: 'Luthfi',
+    //                       email: 'luthfiizhar@gmail.com',
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // });
   }
 
   Widget searchRoom() {
@@ -368,6 +425,22 @@ class _SearchPageState extends State<SearchPage> {
                     if (_formKey.currentState!.validate()) {}
                   },
                   disabled: true,
+                  padding: ButtonSize().longSize(),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                // height: 40,
+                // width: 250,
+                child: RegularButton(
+                  text: 'Dialog test',
+                  onTap: () {
+                    // if (_formKey.currentState!.validate()) {}
+                    // _showProfileLayer();
+                  },
+                  disabled: false,
                   padding: ButtonSize().longSize(),
                 ),
               ),
@@ -492,41 +565,25 @@ class _SearchPageState extends State<SearchPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: EdgeInsets.zero,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: _testInputNode.hasFocus
-                      ? const [
-                          BoxShadow(
-                            blurRadius: 40,
-                            offset: Offset(0, 10),
-                            // blurStyle: BlurStyle.outer,
-                            color: Color.fromRGBO(29, 29, 29, 0.2),
-                          )
-                        ]
-                      : null,
-                ),
-                child: SizedBox(
-                  width: 250,
-                  child: BlackInputField(
-                    enabled: true,
-                    controller: _testInputField!,
-                    hintText: 'Please input here',
-                    focusNode: _testInputNode,
-                    obsecureText: false,
-                    suffixIcon: _testInputNode.hasFocus
-                        ? IconButton(
-                            onPressed: () {
-                              _testInputField!.text = "";
-                            },
-                            icon: const Icon(
-                              Icons.close,
-                              color: eerieBlack,
-                            ),
-                          )
-                        : SizedBox(),
-                  ),
+              SizedBox(
+                width: 250,
+                child: BlackInputField(
+                  enabled: true,
+                  controller: _testInputField!,
+                  hintText: 'Please input here',
+                  focusNode: _testInputNode,
+                  obsecureText: false,
+                  suffixIcon: _testInputNode.hasFocus
+                      ? IconButton(
+                          onPressed: () {
+                            _testInputField!.text = "";
+                          },
+                          icon: const Icon(
+                            Icons.close,
+                            color: eerieBlack,
+                          ),
+                        )
+                      : SizedBox(),
                 ),
               ),
               SizedBox(
@@ -534,19 +591,19 @@ class _SearchPageState extends State<SearchPage> {
               ),
               Container(
                 padding: EdgeInsets.zero,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: _testInputNode.hasFocus
-                      ? const [
-                          BoxShadow(
-                            blurRadius: 40,
-                            offset: Offset(0, 10),
-                            // blurStyle: BlurStyle.outer,
-                            color: Color.fromRGBO(29, 29, 29, 0.2),
-                          )
-                        ]
-                      : null,
-                ),
+                // decoration: BoxDecoration(
+                //   borderRadius: BorderRadius.circular(5),
+                //   boxShadow: _testInputNode.hasFocus
+                //       ? const [
+                //           BoxShadow(
+                //             blurRadius: 40,
+                //             offset: Offset(0, 10),
+                //             // blurStyle: BlurStyle.outer,
+                //             color: Color.fromRGBO(29, 29, 29, 0.2),
+                //           )
+                //         ]
+                //       : null,
+                // ),
                 child: SizedBox(
                   width: 250,
                   child: BlackInputField(
@@ -605,7 +662,7 @@ class _SearchPageState extends State<SearchPage> {
                     enabled: false,
                     controller: _testInputFieldDisabled!,
                     hintText: 'Please input here',
-                    // focusNode: _testInputNode,
+                    focusNode: _testInput2Node,
                     obsecureText: false,
                     suffixIcon: SizedBox(),
                   ),
@@ -707,6 +764,7 @@ class _SearchPageState extends State<SearchPage> {
                   setState(() {});
                 },
                 label: 'Enabled',
+                filled: true,
               ),
             ],
           ),
@@ -738,6 +796,19 @@ class _SearchPageState extends State<SearchPage> {
                       setState(() {});
                     },
                     label: 'Enabled',
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: 250,
+                  child: WhiteInputField(
+                    controller: _testInputWhiteField!,
+                    enabled: false,
+                    focusNode: _testInputWhiteNode,
+                    hintText: 'Placeholder',
+                    obsecureText: false,
                   ),
                 ),
                 SizedBox(

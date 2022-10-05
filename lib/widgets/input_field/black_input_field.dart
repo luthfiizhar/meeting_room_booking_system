@@ -26,78 +26,96 @@ class BlackInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      enabled: enabled,
-      controller: controller,
-      focusNode: focusNode,
-      obscureText: obsecureText!,
-      cursorColor: eerieBlack,
-      onTap: onTap,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(
-            color: davysGray,
-            width: 1,
+    return Container(
+      padding: EdgeInsets.zero,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        boxShadow: focusNode!.hasFocus
+            ? const [
+                BoxShadow(
+                  blurRadius: 40,
+                  offset: Offset(0, 10),
+                  // blurStyle: BlurStyle.outer,
+                  color: Color.fromRGBO(29, 29, 29, 0.2),
+                )
+              ]
+            : null,
+      ),
+      child: TextFormField(
+        validator: validator,
+        onSaved: onSaved,
+        enabled: enabled,
+        controller: controller,
+        focusNode: focusNode,
+        obscureText: obsecureText!,
+        cursorColor: eerieBlack,
+        onTap: onTap,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: const BorderSide(
+              color: davysGray,
+              width: 1,
+            ),
           ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(
-            color: davysGray,
-            width: 1,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: const BorderSide(
+              color: davysGray,
+              width: 1,
+            ),
           ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(
-            color: davysGray,
-            width: 2,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: const BorderSide(
+              color: davysGray,
+              width: 2,
+            ),
           ),
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(
-            color: grayx11,
-            width: 1,
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: const BorderSide(
+              color: grayx11,
+              width: 1,
+            ),
           ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: const BorderSide(
+              color: orangeAccent,
+              width: 1,
+            ),
+          ),
+          errorStyle: const TextStyle(
             color: orangeAccent,
-            width: 1,
+            fontSize: 14,
+            fontWeight: FontWeight.w300,
           ),
+          fillColor: enabled! ? culturedWhite : platinum,
+          filled: true,
+          // isDense: true,
+          isCollapsed: true,
+          focusColor: culturedWhite,
+          hintText: hintText,
+          hintStyle: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w300,
+            color: sonicSilver,
+          ),
+          contentPadding: const EdgeInsets.only(
+            right: 15,
+            left: 15,
+            top: 18,
+            bottom: 15,
+          ),
+          suffixIcon: suffixIcon,
+          suffixIconColor: eerieBlack,
         ),
-        errorStyle: const TextStyle(
-          color: orangeAccent,
-          fontSize: 14,
-          fontWeight: FontWeight.w300,
-        ),
-        fillColor: enabled! ? culturedWhite : platinum,
-        filled: true,
-        // isDense: true,
-        isCollapsed: true,
-        focusColor: culturedWhite,
-        hintText: hintText,
-        hintStyle: const TextStyle(
+        style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w300,
-          color: lightGray,
+          color: eerieBlack,
         ),
-        contentPadding: const EdgeInsets.only(
-          right: 15,
-          left: 15,
-          top: 18,
-          bottom: 15,
-        ),
-        suffixIcon: suffixIcon,
-        suffixIconColor: eerieBlack,
-      ),
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w300,
-        color: eerieBlack,
       ),
     );
   }

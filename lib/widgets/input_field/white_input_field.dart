@@ -31,10 +31,18 @@ class WhiteInputField extends StatelessWidget {
       focusNode: focusNode,
       obscureText: obsecureText!,
       decoration: InputDecoration(
+        enabled: enabled!,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
           borderSide: const BorderSide(
             color: lightGray,
+            width: 1,
+          ),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: const BorderSide(
+            color: grayx11,
             width: 1,
           ),
         ),
@@ -48,7 +56,7 @@ class WhiteInputField extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
           borderSide: const BorderSide(
-            color: lightGray,
+            color: platinum,
             width: 2,
           ),
         ),
@@ -64,7 +72,7 @@ class WhiteInputField extends StatelessWidget {
           fontSize: 14,
           fontWeight: FontWeight.w300,
         ),
-        fillColor: eerieBlack,
+        fillColor: enabled! ? eerieBlack : sonicSilver,
         filled: true,
         isCollapsed: true,
         // isDense: true,
@@ -73,7 +81,7 @@ class WhiteInputField extends StatelessWidget {
         hintStyle: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w300,
-          color: sonicSilver,
+          color: lightGray,
         ),
         // conte
         contentPadding: const EdgeInsets.only(
@@ -88,7 +96,7 @@ class WhiteInputField extends StatelessWidget {
       style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w300,
-        color: lightGray,
+        color: platinum,
       ),
       onSaved: onSaved,
       validator: validator,

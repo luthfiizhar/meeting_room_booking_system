@@ -107,7 +107,7 @@ class WhiteDropdown extends StatelessWidget {
           fontSize: 18,
           fontWeight: FontWeight.w300,
           fontFamily: 'Helvetica',
-          color: sonicSilver,
+          color: lightGray,
         ),
       ),
       // buttonPadding: EdgeInsets.only(

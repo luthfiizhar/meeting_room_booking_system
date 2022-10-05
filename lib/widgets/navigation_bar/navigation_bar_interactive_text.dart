@@ -22,15 +22,10 @@ class InteractiveTextState extends State<InteractiveText> {
       onHover: (_) => _hovered(true),
       onExit: (_) => _hovered(false),
       child: Container(
-        // padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        // width: 160,
-        // height: 40,
-
         child: Align(
           alignment: Alignment.center,
           child: Container(
-            padding:
-                const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 8),
+            padding: EdgeInsets.zero,
             // decoration: BoxDecoration(
             //     borderRadius: BorderRadius.circular(5),
             //     color: _hovering
@@ -38,69 +33,25 @@ class InteractiveTextState extends State<InteractiveText> {
             //         : (widget.selected!)
             //             ? eerieBlack
             //             : Colors.transparent),
-            child: Column(
-              children: [
-                Text(widget.text!,
-                    style: _hovering
-                        ? MediaQuery.of(context).size.width <= 600
+            child: Text(widget.text!,
+                style: _hovering
+                    ? MediaQuery.of(context).size.width <= 600
+                        ? navBarTextMobile.copyWith(
+                            color: navBarActiveState, height: 1.3)
+                        : navBarText.copyWith(
+                            color: navBarActiveState, height: 1.3)
+                    : (widget.selected!)
+                        ? MediaQuery.of(context).size.width < 600
                             ? navBarTextMobile.copyWith(
-                                color: navBarActiveState)
-                            : navBarText.copyWith(color: navBarActiveState)
-                        : (widget.selected!)
-                            ? MediaQuery.of(context).size.width < 600
-                                ? navBarTextMobile.copyWith(
-                                    color: navBarActiveState)
-                                : navBarText.copyWith(color: navBarActiveState)
-                            : MediaQuery.of(context).size.width < 600
-                                ? navBarTextMobile
-                                : navBarText),
-                SizedBox(
-                  height: 0,
-                ),
-                SizedBox(
-                  width: 20,
-                  // height: 1,
-                  child: Divider(
-                    height: 2,
-                    thickness: 2,
-                    color: _hovering
-                        ? eerieBlack
-                        : (widget.selected!)
-                            ? eerieBlack
-                            : scaffoldBg,
-                  ),
-                ),
-                // Container(
-                //   width: 20,
-                //   height: 1,
-                //   decoration: BoxDecoration(
-                //     // color: eerieBlack,
-                //     border: Border(
-                //       bottom: BorderSide(
-                //         // style: BorderStyle.solid,
-                //         color: _hovering
-                //             ? eerieBlack
-                //             : (widget.selected!)
-                //                 ? eerieBlack
-                //                 : scaffoldBg,
-                //         width: 3,
-                //       ),
-                //     ),
-                //   ),
-                //   child: SizedBox(),
-                // )
-              ],
-            ),
+                                color: navBarActiveState, height: 1.3)
+                            : navBarText.copyWith(
+                                color: navBarActiveState, height: 1.3)
+                        : MediaQuery.of(context).size.width < 600
+                            ? navBarTextMobile.copyWith(height: 1.3)
+                            : navBarText.copyWith(height: 1.3)),
           ),
         ),
       ),
-
-      // Text(widget.text!,
-      // style: _hovering
-      //     ? kPageTitleStyle.copyWith(color: Colors.indigo)
-      //     : (widget.selected!)
-      //         ? kPageTitleStyle.copyWith(color: Colors.red)
-      //         : kPageTitleStyle),
     );
   }
 

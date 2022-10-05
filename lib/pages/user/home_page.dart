@@ -7,7 +7,9 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/constant/key.dart';
 import 'package:meeting_room_booking_system/model/login_info.dart';
 import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
+import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
+import 'package:meeting_room_booking_system/widgets/pop_up_profile.dart';
 import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -20,6 +22,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool showOnBoard = false;
+
+  bool profileVisible = false;
   // final loginInfo = LoginInfoModel();
 
   List<TargetFocus> targets = [];
@@ -287,6 +291,15 @@ class _HomePageState extends State<HomePage> {
     // showBoardingPage();
   }
 
+  popUpProfile(bool value) {
+    if (profileVisible) {
+      profileVisible = value;
+    } else {
+      profileVisible = value;
+    }
+    setState(() {});
+  }
+
   checkOnBoardingPage() async {
     var box = await Hive.openBox('userLogin');
 
@@ -315,136 +328,290 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ConstrainedBox(
-          constraints: pageConstraints,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: CustomScrollView(
-              slivers: [
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      NavigationBarWeb(
-                        index: 0,
+    return LayoutPageWeb(
+      index: 0,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  key: key1,
+                  height: 100,
+                  color: Colors.black,
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  key: key2,
+                  height: 100,
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  key: key3,
+                  height: 100,
+                  color: Colors.blue,
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  key: key4,
+                  height: 100,
+                  color: Colors.green,
+                ),
+              ),
+              Expanded(
+                key: key5,
+                child: Container(
+                  height: 100,
+                  color: Colors.amber,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              key: key6,
+              height: 300,
+              width: 400,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/gapps.png'),
+                ),
+              ),
+              child: Stack(
+                children: [
+                  Container(
+                    height: double.infinity,
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment(0, 0),
+                        end: Alignment(0, 0.7),
+                        colors: [
+                          Color.fromARGB(0, 255, 255, 255),
+                          eerieBlack,
+                        ],
+                        // stops: [0, 200],
                       ),
-                      Column(
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      width: 400,
+                      color: eerieBlack,
+                      child: Column(
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  key: key1,
-                                  height: 100,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  key: key2,
-                                  height: 100,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            'Link your Google Account',
+                            style: TextStyle(color: Colors.white),
                           ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  key: key3,
-                                  height: 100,
-                                  color: Colors.blue,
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  key: key4,
-                                  height: 100,
-                                  color: Colors.green,
-                                ),
-                              ),
-                              Expanded(
-                                key: key5,
-                                child: Container(
-                                  height: 100,
-                                  color: Colors.amber,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            'Link your Google Account',
+                            style: TextStyle(color: Colors.white),
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              key: key6,
-                              height: 300,
-                              width: 400,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage('assets/gapps.png'),
-                                ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    height: double.infinity,
-                                    width: double.infinity,
-                                    decoration: const BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment(0, 0),
-                                        end: Alignment(0, 0.7),
-                                        colors: [
-                                          Color.fromARGB(0, 255, 255, 255),
-                                          eerieBlack,
-                                        ],
-                                        // stops: [0, 200],
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    bottom: 0,
-                                    child: Container(
-                                      width: 400,
-                                      color: eerieBlack,
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            'Link your Google Account',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          Text(
-                                            'Link your Google Account',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          Text(
-                                            'Link your Google Account',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
+                          Text(
+                            'Link your Google Account',
+                            style: TextStyle(color: Colors.white),
                           )
                         ],
                       ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+    return Consumer<LoginInfoModel>(builder: (context, model, child) {
+      return Scaffold(
+        body: Center(
+          child: ConstrainedBox(
+            constraints: pageConstraints,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Stack(
+                children: [
+                  Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            // model.navbarShadow
+                            BoxShadow(
+                              blurRadius: !model.shadowActive ? 0 : 40,
+                              offset: !model.shadowActive
+                                  ? Offset(0, 0)
+                                  : Offset(0, 0),
+                              color: Color.fromRGBO(29, 29, 29, 0.1),
+                            )
+                          ],
+                        ),
+                        child: NavigationBarWeb(
+                          index: 0,
+                          popUpProfile: popUpProfile,
+                        ),
+                      ),
+                      Expanded(
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverList(
+                              delegate: SliverChildListDelegate(
+                                [
+                                  Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              key: key1,
+                                              height: 100,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              key: key2,
+                                              height: 100,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              key: key3,
+                                              height: 100,
+                                              color: Colors.blue,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              key: key4,
+                                              height: 100,
+                                              color: Colors.green,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            key: key5,
+                                            child: Container(
+                                              height: 100,
+                                              color: Colors.amber,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                          key: key6,
+                                          height: 300,
+                                          width: 400,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: AssetImage(
+                                                  'assets/gapps.png'),
+                                            ),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Container(
+                                                height: double.infinity,
+                                                width: double.infinity,
+                                                decoration: const BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment(0, 0),
+                                                    end: Alignment(0, 0.7),
+                                                    colors: [
+                                                      Color.fromARGB(
+                                                          0, 255, 255, 255),
+                                                      eerieBlack,
+                                                    ],
+                                                    // stops: [0, 200],
+                                                  ),
+                                                ),
+                                              ),
+                                              Positioned(
+                                                bottom: 0,
+                                                child: Container(
+                                                  width: 400,
+                                                  color: eerieBlack,
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        'Link your Google Account',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                      Text(
+                                                        'Link your Google Account',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                      Text(
+                                                        'Link your Google Account',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
+                  Positioned(
+                    right: 20,
+                    top: 65,
+                    child: Visibility(
+                      visible: profileVisible,
+                      child: Container(
+                        // color: Colors.amber,
+                        child: PopUpProfile(
+                          name: 'Luthfi',
+                          email: 'luthfiizhar@gmail.com',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

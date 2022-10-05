@@ -88,10 +88,10 @@ class BlackDropdown extends StatelessWidget {
       icon: suffixIcon,
       hint: Text(
         hintText!,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w300,
-          color: lightGray,
+          color: sonicSilver,
         ),
       ),
       // buttonPadding: EdgeInsets.only(

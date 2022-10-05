@@ -10,6 +10,7 @@ import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/widgets/calendar_view_page/calendar_menu_item.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/dialog_detail_event.dart';
 import 'package:meeting_room_booking_system/widgets/footer.dart';
+import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -131,6 +132,11 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<LoginInfoModel>(context, listen: false)
+          .setShadowActive(false);
+    });
+
     // TODO: implement initState
     super.initState();
     _scrollController!.addListener(() {
@@ -155,20 +161,30 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
 
   @override
   Widget build(BuildContext context) {
+    return LayoutPageWeb(
+      index: 4,
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        child: calendarUserPage(),
+      ),
+    );
     return Scaffold(
       body: Consumer<LoginInfoModel>(builder: (context, model, child) {
         return Center(
           child: Column(
             children: [
               Container(
-                decoration: BoxDecoration(boxShadow: [
-                  // model.navbarShadow
-                  BoxShadow(
-                    blurRadius: !model.shadowActive ? 0 : 40,
-                    offset: !model.shadowActive ? Offset(0, 0) : Offset(0, 0),
-                    color: Color.fromRGBO(29, 29, 29, 0.1),
-                  )
-                ]),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    // model.navbarShadow
+                    BoxShadow(
+                      blurRadius: !model.shadowActive ? 0 : 40,
+                      offset: !model.shadowActive ? Offset(0, 0) : Offset(0, 0),
+                      color: Color.fromRGBO(29, 29, 29, 0.1),
+                      blurStyle: BlurStyle.normal,
+                    )
+                  ],
+                ),
                 child: NavigationBarWeb(
                   index: 4,
                 ),

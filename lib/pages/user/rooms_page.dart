@@ -5,6 +5,7 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/widgets/footer.dart';
+import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -21,6 +22,59 @@ class _RoomsPageState extends State<RoomsPage> {
 
   @override
   Widget build(BuildContext context) {
+    return LayoutPageWeb(
+      index: 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            // color: Colors.amber,
+            width: 100,
+            child: DropdownButtonFormField(
+              borderRadius: BorderRadius.circular(7),
+              style: TextStyle(fontSize: 14),
+              decoration: InputDecoration(
+                isCollapsed: true,
+                isDense: true,
+                focusColor: eerieBlack,
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(color: eerieBlack, width: 2)),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(color: Color(0xFF929AAB), width: 2)),
+                fillColor: graySand,
+                filled: true,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(color: Color(0xFF929AAB), width: 2)),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: 1,
+                  child: Text('Lantai 1'),
+                ),
+                DropdownMenuItem(
+                  value: 2,
+                  child: Text('Lantai 2'),
+                )
+              ],
+              onChanged: (value) {
+                selectedRoom = int.parse(value.toString());
+                setState(() {});
+              },
+              value: selectedRoom,
+            ),
+          ),
+          calendarRoomPage(),
+          SizedBox(
+            height: 20,
+          ),
+        ],
+      ),
+    );
     return Scaffold(
       body: Center(
         child: ConstrainedBox(
