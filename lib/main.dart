@@ -177,7 +177,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'Helvetica',
           unselectedWidgetColor: eerieBlack,
-          scaffoldBackgroundColor: scaffoldBg,
+          scaffoldBackgroundColor: white,
         ),
         debugShowCheckedModeBanner: false,
         //routeInformationParser: BeamerParser(),

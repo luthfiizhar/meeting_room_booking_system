@@ -53,6 +53,8 @@ dependencies:
   flutter_screenutil: ^5.5.4
   font_awesome_flutter: ^10.2.1
   dropdown_button2: ^1.8.2
+  syncfusion_flutter_datepicker: ^20.3.48
+  material_design_icons_flutter: ^5.0.6996
 
 dev_dependencies:
   flutter_test:

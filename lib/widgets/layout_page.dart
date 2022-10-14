@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/model/login_info.dart';
 import 'package:meeting_room_booking_system/widgets/footer.dart';
@@ -10,10 +11,12 @@ class LayoutPageWeb extends StatefulWidget {
   LayoutPageWeb({
     required this.child,
     this.index,
+    this.setDatePickerStatus,
   });
 
   Widget? child;
   int? index;
+  Function? setDatePickerStatus;
 
   @override
   State<LayoutPageWeb> createState() => _LayoutPageWebState();
@@ -42,6 +45,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
       Provider.of<LoginInfoModel>(context, listen: false).setShadowActive(true);
       // print('scroll');
     }
+    widget.setDatePickerStatus!(false);
   }
 
   @override
@@ -76,9 +80,14 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   Widget build(BuildContext context) {
     return Consumer<LoginInfoModel>(builder: (context, model, child) {
       return Scaffold(
+        endDrawer: Drawer(
+          backgroundColor: white,
+          child: Text('Drawer'),
+        ),
         body: GestureDetector(
           onTap: () {
             popUpProfile(false);
+            widget.setDatePickerStatus!(false);
           },
           child: Center(
             child: ConstrainedBox(

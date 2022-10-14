@@ -19,7 +19,7 @@ class FooterWeb extends StatelessWidget {
         //   topLeft: Radius.circular(10),
         //   topRight: Radius.circular(10),
         // ),
-        color: culturedWhite,
+        color: white,
       ),
       // color: eerieBlack,
       child: Stack(

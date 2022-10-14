@@ -17,7 +17,7 @@ class WhiteBannerLandscape extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxWidth: 800,
+        maxWidth: 1000,
         maxHeight: 100,
       ),
       child: Row(

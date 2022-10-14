@@ -1,15 +1,23 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
+import 'package:introduction_screen/introduction_screen.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/constant/key.dart';
 import 'package:meeting_room_booking_system/model/login_info.dart';
 import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
+import 'package:meeting_room_booking_system/widgets/amenities_container.dart';
+import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
+import 'package:meeting_room_booking_system/widgets/participant_container.dart';
 import 'package:meeting_room_booking_system/widgets/pop_up_profile.dart';
+import 'package:meeting_room_booking_system/widgets/search_container.dart';
 import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -21,10 +29,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController _facilityController = TextEditingController();
+  TextEditingController _timeController = TextEditingController();
+  TextEditingController _participantController = TextEditingController();
+
   bool showOnBoard = false;
 
   bool profileVisible = false;
   // final loginInfo = LoginInfoModel();
+
+  bool checkBoxTv = false;
+  bool checkBoxCamera = false;
+  List facilitySelected = [];
+  String participantSelected = "";
+
+  DateTime selectedDate = DateTime.now();
 
   List<TargetFocus> targets = [];
   late TutorialCoachMark tutorialCoachMark;
@@ -274,9 +294,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _dateController.dispose();
+    _facilityController.dispose();
+    _timeController.dispose();
+    _participantController.dispose();
+  }
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
+    _dateController.text = formattedDate;
+    _facilityController.text = 'None';
+    _timeController.text = 'Choose Time';
+    _participantController.text = 'Participant';
+    participantSelected = "0";
     // addTarget();
     // Future.delayed(
     //   Duration(milliseconds: 500),
@@ -289,6 +326,11 @@ class _HomePageState extends State<HomePage> {
     // showBoardingPage();
     // checkOnBoardingPage();
     // showBoardingPage();
+    dateNode.addListener(() {
+      setState(() {
+        // getPosition();
+      });
+    });
   }
 
   popUpProfile(bool value) {
@@ -326,113 +368,341 @@ class _HomePageState extends State<HomePage> {
     } else {}
   }
 
+  FocusNode dateNode = FocusNode();
+
+  String datePicked = "";
+
+  double mouseX = 0;
+  double mouseY = 0;
+
+  GlobalKey searchContainerKey = GlobalKey();
+
+  bool datePickerVisible = false;
+  bool amenitiesContainerVisible = false;
+  bool participantContainerVisible = false;
+
+  void _updateLocation(PointerHoverEvent event) {
+    setState(() {
+      mouseX = event.localPosition.dx;
+      mouseY = event.localPosition.dy;
+    });
+  }
+
+  void getPositionDatePicker() {
+    RenderBox box =
+        searchContainerKey.currentContext!.findRenderObject() as RenderBox;
+    Offset position = box.localToGlobal(Offset.zero);
+    double y = position.dy;
+    double x = position.dx;
+    mouseX = x;
+    mouseY = y;
+    // if (datePickerVisible) {
+    //   datePickerVisible = false;
+    // } else {
+    //   datePickerVisible = true;
+    // }
+    datePickerVisible = true;
+
+    // print(y);
+    setState(() {});
+  }
+
+  void getPositionAmenities() {
+    RenderBox box =
+        searchContainerKey.currentContext!.findRenderObject() as RenderBox;
+    Offset position = box.localToGlobal(Offset.zero);
+    double y = position.dy;
+    double x = position.dx;
+    mouseX = x;
+    mouseY = y;
+    // if (datePickerVisible) {
+    //   datePickerVisible = false;
+    // } else {
+    //   datePickerVisible = true;
+    // }
+    amenitiesContainerVisible = true;
+
+    // print(y);
+    setState(() {});
+  }
+
+  void getPositionParticipant() {
+    RenderBox box =
+        searchContainerKey.currentContext!.findRenderObject() as RenderBox;
+    Offset position = box.localToGlobal(Offset.zero);
+    double y = position.dy;
+    double x = position.dx;
+    mouseX = x;
+    mouseY = y;
+    // if (datePickerVisible) {
+    //   datePickerVisible = false;
+    // } else {
+    //   datePickerVisible = true;
+    // }
+    participantContainerVisible = true;
+
+    // print(y);
+    setState(() {});
+  }
+
+  onDateChanged(String value, DateTime date) {
+    datePicked = value;
+    selectedDate = date;
+    _dateController.text = datePicked;
+    setState(() {});
+  }
+
+  onParticipanSelected(String value) {
+    participantSelected = value;
+    _participantController.text = "$participantSelected Person";
+    setState(() {});
+  }
+
+  setAmenitiesStatus(bool value) {
+    amenitiesContainerVisible = value;
+    setState(() {});
+  }
+
+  setDatePickerVisible(bool value) {
+    datePickerVisible = value;
+    setState(() {});
+  }
+
+  setParticipantStatus(bool value) {
+    participantContainerVisible = value;
+    setState(() {});
+  }
+
+  resetAllVisibleStatus(bool value) {
+    datePickerVisible = value;
+    amenitiesContainerVisible = value;
+    participantContainerVisible = value;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       index: 0,
-      child: Column(
+      setDatePickerStatus: resetAllVisibleStatus,
+      child: Stack(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  key: key1,
-                  height: 100,
-                  color: Colors.black,
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  key: key2,
-                  height: 100,
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  key: key3,
-                  height: 100,
-                  color: Colors.blue,
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  key: key4,
-                  height: 100,
-                  color: Colors.green,
-                ),
-              ),
-              Expanded(
-                key: key5,
-                child: Container(
-                  height: 100,
-                  color: Colors.amber,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Align(
-            alignment: Alignment.center,
+          Center(
             child: Container(
-              key: key6,
-              height: 300,
-              width: 400,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/gapps.png'),
-                ),
-              ),
-              child: Stack(
+              // key: key,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    height: double.infinity,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment(0, 0),
-                        end: Alignment(0, 0.7),
-                        colors: [
-                          Color.fromARGB(0, 255, 255, 255),
-                          eerieBlack,
-                        ],
-                        // stops: [0, 200],
-                      ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      resetAllVisibleStatus(false);
+                      // setDatePickerVisible(false);
+                      // setAmenitiesStatus(false);
+                    },
+                    child: SearchContainer(
+                      key: searchContainerKey,
+                      dateNode: dateNode,
+                      getPositionDatePicker: getPositionDatePicker,
+                      getPositionAmenities: getPositionAmenities,
+                      getPositionparticipant: getPositionParticipant,
+                      setPickerStatus: setDatePickerVisible,
+                      setAmenitiesStatus: setAmenitiesStatus,
+                      setParticipantStatus: setParticipantStatus,
+                      pickerStatus: datePickerVisible,
+                      amenitiesStatus: amenitiesContainerVisible,
+                      participantStatus: participantContainerVisible,
+                      dateController: _dateController,
+                      facilityController: _facilityController,
+                      timeController: _timeController,
+                      participantController: _participantController,
                     ),
                   ),
-                  Positioned(
-                    bottom: 0,
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: 500,
+                      maxHeight: MediaQuery.of(context).size.width,
+                      maxWidth: 1000,
+                    ),
                     child: Container(
-                      width: 400,
-                      color: eerieBlack,
-                      child: Column(
+                      width: 1000,
+                      // height: double.infinity,
+                      child: Stack(
                         children: [
-                          Text(
-                            'Link your Google Account',
-                            style: TextStyle(color: Colors.white),
+                          Visibility(
+                            visible: datePickerVisible,
+                            child: Positioned(
+                              // bottom: 0,
+                              top: 0,
+                              left: 0,
+                              child: CustomDatePicker(
+                                changeDate: onDateChanged,
+                                setPickerStatus: setDatePickerVisible,
+                                currentDate: selectedDate,
+                              ),
+                            ),
                           ),
-                          Text(
-                            'Link your Google Account',
-                            style: TextStyle(color: Colors.white),
+                          Visibility(
+                            visible: amenitiesContainerVisible,
+                            child: Positioned(
+                              // bottom: 0,
+                              top: 0,
+                              right: 200,
+                              child: AmenitiesContainer(
+                                tvOnChange: (value) {
+                                  if (checkBoxTv) {
+                                    checkBoxTv = false;
+                                    facilitySelected.removeWhere(
+                                        (element) => element == 'TV');
+                                  } else {
+                                    checkBoxTv = true;
+                                    facilitySelected.add('TV');
+                                  }
+                                  if (facilitySelected.isNotEmpty) {
+                                    if (facilitySelected.length > 1) {
+                                      _facilityController.text = "TV & Camera";
+                                    } else if (facilitySelected.length == 1) {
+                                      _facilityController.text =
+                                          facilitySelected[0].toString();
+                                    }
+                                  } else {
+                                    _facilityController.text = "None";
+                                  }
+                                  print(facilitySelected);
+                                  setState(() {});
+                                },
+                                cameraOnChange: (value) {
+                                  if (checkBoxCamera) {
+                                    checkBoxCamera = false;
+                                    facilitySelected.removeWhere(
+                                        (element) => element == 'Camera');
+                                  } else {
+                                    checkBoxCamera = true;
+                                    facilitySelected.add('Camera');
+                                  }
+                                  if (facilitySelected.isNotEmpty) {
+                                    if (facilitySelected.length > 1) {
+                                      _facilityController.text = "TV & Camera";
+                                    } else if (facilitySelected.length == 1) {
+                                      _facilityController.text =
+                                          facilitySelected[0].toString();
+                                    }
+                                  } else {
+                                    _facilityController.text = "None";
+                                  }
+                                  print(facilitySelected);
+
+                                  setState(() {});
+                                },
+                                cameraValue: checkBoxCamera,
+                                tvValue: checkBoxTv,
+                              ),
+                            ),
                           ),
-                          Text(
-                            'Link your Google Account',
-                            style: TextStyle(color: Colors.white),
+                          Visibility(
+                            visible: participantContainerVisible,
+                            child: Positioned(
+                              top: 0,
+                              right: 375,
+                              child: ParticipantContainer(
+                                setParticipantStatus: setParticipantStatus,
+                                onChangeParticipant: onParticipanSelected,
+                              ),
+                            ),
                           )
                         ],
                       ),
                     ),
-                  )
+                  ),
+                  // Center(
+                  //   child: Text(
+                  //     datePicked,
+                  //   ),
+                  // ),
+                  // Container(
+                  //   height: 1000,
+                  // ),
                 ],
               ),
             ),
-          )
+          ),
+          // Visibility(
+          //   visible: datePickerVisible,
+          //   child: Positioned(
+          //     // bottom: 0,
+          //     top: mouseY + 20,
+          //     left: mouseX + 35,
+          //     child: CustomDatePicker(
+          //       changeDate: onDateChanged,
+          //       setPickerStatus: setDatePickerVisible,
+          //       currentDate: selectedDate,
+          //     ),
+          //   ),
+          // ),
+          // Visibility(
+          //   visible: amenitiesContainerVisible,
+          //   child: Positioned(
+          //     // bottom: 0,
+          //     top: mouseY + 20,
+          //     right: mouseX + 200,
+          //     child: AmenitiesContainer(
+          //       tvOnChange: (value) {
+          //         if (checkBoxTv) {
+          //           checkBoxTv = false;
+          //           facilitySelected.removeWhere((element) => element == 'TV');
+          //         } else {
+          //           checkBoxTv = true;
+          //           facilitySelected.add('TV');
+          //         }
+          //         if (facilitySelected.isNotEmpty) {
+          //           if (facilitySelected.length > 1) {
+          //             _facilityController.text = "TV & Camera";
+          //           } else if (facilitySelected.length == 1) {
+          //             _facilityController.text = facilitySelected[0].toString();
+          //           }
+          //         } else {
+          //           _facilityController.text = "None";
+          //         }
+          //         print(facilitySelected);
+          //         setState(() {});
+          //       },
+          //       cameraOnChange: (value) {
+          //         if (checkBoxCamera) {
+          //           checkBoxCamera = false;
+          //           facilitySelected
+          //               .removeWhere((element) => element == 'Camera');
+          //         } else {
+          //           checkBoxCamera = true;
+          //           facilitySelected.add('Camera');
+          //         }
+          //         if (facilitySelected.isNotEmpty) {
+          //           if (facilitySelected.length > 1) {
+          //             _facilityController.text = "TV & Camera";
+          //           } else if (facilitySelected.length == 1) {
+          //             _facilityController.text = facilitySelected[0].toString();
+          //           }
+          //         } else {
+          //           _facilityController.text = "None";
+          //         }
+          //         print(facilitySelected);
+
+          //         setState(() {});
+          //       },
+          //       cameraValue: checkBoxCamera,
+          //       tvValue: checkBoxTv,
+          //     ),
+          //   ),
+          // ),
+          // Visibility(
+          //   visible: participantContainerVisible,
+          //   child: Positioned(
+          //     top: mouseY + 20,
+          //     right: mouseX + 375,
+          //     child: ParticipantContainer(),
+          //   ),
+          // )
         ],
       ),
     );

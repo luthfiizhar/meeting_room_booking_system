@@ -22,7 +22,7 @@ class _MyBookingPageState extends State<MyBookingPage> {
     return LayoutPageWeb(
       index: 3,
       child: Container(
-        color: Colors.grey,
+        // color: Colors.grey,
         child: Column(
           children: [
             const SizedBox(

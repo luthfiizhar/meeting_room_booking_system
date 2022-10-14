@@ -330,7 +330,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
     return Container(
       // color: scaffoldBg,
       decoration: const BoxDecoration(
-        color: scaffoldBg,
+        color: white,
         // color: Colors.purple,
       ),
       child: Column(
@@ -434,6 +434,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                               padding: ButtonSize().loginButotn(),
                               onTap: () {
                                 // jwtToken = "login";
+                                // Scaffold.of(context).openEndDrawer();
                                 showDialog(
                                   context: context,
                                   barrierDismissible: false,
@@ -559,5 +560,19 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
         ],
       ),
     );
+  }
+}
+
+class NavigationBarMobile extends StatefulWidget {
+  const NavigationBarMobile({super.key});
+
+  @override
+  State<NavigationBarMobile> createState() => _NavigationBarMobileState();
+}
+
+class _NavigationBarMobileState extends State<NavigationBarMobile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
