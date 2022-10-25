@@ -62,6 +62,8 @@ class RegularButton extends StatelessWidget {
             return const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
+              fontFamily: 'Helvetica',
+              height: 1.15,
             );
           },
         ),

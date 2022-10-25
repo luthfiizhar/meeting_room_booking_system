@@ -17,7 +17,7 @@ class BlackCheckBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
@@ -31,7 +31,7 @@ class BlackCheckBox extends StatelessWidget {
               splashRadius: 0,
               fillColor: MaterialStateProperty.resolveWith<Color>((states) {
                 if (states.contains(MaterialState.selected)) {
-                  return eerieBlack;
+                  return culturedWhite;
                 }
                 if (states.contains(MaterialState.hovered)) {
                   return davysGray;
@@ -42,7 +42,7 @@ class BlackCheckBox extends StatelessWidget {
                 if (filled! == false) {
                   return culturedWhite;
                 }
-                return eerieBlack;
+                return culturedWhite;
               }),
               overlayColor: MaterialStateProperty.resolveWith<Color>((states) {
                 if (states.contains(MaterialState.hovered)) {
@@ -66,7 +66,7 @@ class BlackCheckBox extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2.5),
               ),
               // activeColor: culturedWhite,
-              checkColor: culturedWhite,
+              checkColor: eerieBlack, //culturedWhite,
               value: selectedValue,
               onChanged: onChanged,
             ),
@@ -80,7 +80,7 @@ class BlackCheckBox extends StatelessWidget {
           child: Text(
             label!,
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 18, // 16,
               fontWeight: FontWeight.w300,
               color: eerieBlack,
             ),
@@ -89,4 +89,14 @@ class BlackCheckBox extends StatelessWidget {
       ],
     );
   }
+}
+
+class CheckBoxModel {
+  CheckBoxModel({
+    this.selected,
+    this.value,
+  });
+
+  bool? selected;
+  String? value;
 }

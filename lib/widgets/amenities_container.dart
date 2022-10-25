@@ -25,8 +25,8 @@ class AmenitiesContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           color: culturedWhite,
           border: Border.all(
-            color: eerieBlack,
-            width: 0.5,
+            color: lightGray,
+            width: 1,
           ),
         ),
         padding: const EdgeInsets.symmetric(

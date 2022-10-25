@@ -29,6 +29,7 @@ class NavigationItem extends StatelessWidget {
           // context.go(routeName!);
           jwtToken = "";
         }
+        // context.dependOnInheritedWidgetOfExactType();
         context.go(routeName!);
         onHighlight!(routeName);
       },

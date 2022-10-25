@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
-import 'package:meeting_room_booking_system/model/login_info.dart';
+import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
@@ -87,15 +87,14 @@ class _SearchPageState extends State<SearchPage> {
     offset: Offset(0, 0),
   );
 
-  ScrollController? _scrollController = ScrollController();
+  // ScrollController? _scrollController = ScrollController();
 
   bool profileVisible = false;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<LoginInfoModel>(context, listen: false)
-          .setShadowActive(false);
+      Provider.of<MainModel>(context, listen: false).setShadowActive(false);
     });
 
     // TODO: implement initState
@@ -130,13 +129,13 @@ class _SearchPageState extends State<SearchPage> {
       setState(() {});
     });
 
-    _scrollController!.addListener(() {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        _scrollListener(_scrollController!,
-            Provider.of<LoginInfoModel>(context, listen: false));
-        // print(Provider.of<LoginInfoModel>(context).toString());
-      });
-    });
+    // _scrollController!.addListener(() {
+    //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //     _scrollListener(_scrollController!,
+    //         Provider.of<MainModel>(context, listen: false));
+    //     // print(Provider.of<MainModel>(context).toString());
+    //   });
+    // });
   }
 
   @override
@@ -231,29 +230,29 @@ class _SearchPageState extends State<SearchPage> {
     return _itemsHeights;
   }
 
-  _scrollListener(ScrollController scrollInfo, LoginInfoModel model) {
-    // setState(() {});
-    // print(scrollInfo.position.minScrollExtent);
-    if (scrollInfo.offset == 0) {
-      Provider.of<LoginInfoModel>(context, listen: false)
-          .setShadowActive(false);
-    } else {
-      Provider.of<LoginInfoModel>(context, listen: false).setShadowActive(true);
-      print('scroll');
-    }
-  }
+  // _scrollListener(ScrollController scrollInfo, MainModel model) {
+  //   // setState(() {});
+  //   // print(scrollInfo.position.minScrollExtent);
+  //   if (scrollInfo.offset == 0) {
+  //     Provider.of<MainModel>(context, listen: false)
+  //         .setShadowActive(false);
+  //   } else {
+  //     Provider.of<MainModel>(context, listen: false).setShadowActive(true);
+  //     print('scroll');
+  //   }
+  // }
 
-  _onStartScroll(ScrollMetrics metrics) {
-    print("Scroll Start");
-  }
+  // _onStartScroll(ScrollMetrics metrics) {
+  //   print("Scroll Start");
+  // }
 
-  _onUpdateScroll(ScrollMetrics metrics) {
-    print("Scroll Update");
-  }
+  // _onUpdateScroll(ScrollMetrics metrics) {
+  //   print("Scroll Update");
+  // }
 
-  _onEndScroll(ScrollMetrics metrics) {
-    print("Scroll End");
-  }
+  // _onEndScroll(ScrollMetrics metrics) {
+  //   print("Scroll End");
+  // }
 
   popUpProfile(bool value) {
     if (profileVisible) {
@@ -264,16 +263,20 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {});
   }
 
+  setDatePickerStatus(bool value) {}
+
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       index: 1,
+      setDatePickerStatus: setDatePickerStatus,
       child: Form(
         key: _formKey,
-        child: searchRoom(),
+        // child: searchRoom(),
+        child: SizedBox(),
       ),
     );
-    // return Consumer<LoginInfoModel>(builder: (context, model, child) {
+    // return Consumer<MainModel>(builder: (context, model, child) {
     //   return Scaffold(
     //     body: Center(
     //       child: ConstrainedBox(

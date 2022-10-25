@@ -21,61 +21,71 @@ class CustomDatePicker extends StatelessWidget {
       onTap: () {},
       child: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: culturedWhite,
-            border: Border.all(
-              color: eerieBlack,
-              width: 0.5,
-            )),
-        height: 400,
-        width: 300,
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: eerieBlack,
-              onPrimary: silver,
-              onSurface: eerieBlack,
-            ),
-          ),
-          child: CalendarDatePicker(
-            initialDate: currentDate!,
-            firstDate: DateTime.now(),
-            lastDate: DateTime(2100),
-            currentDate: DateTime.now(),
-            onDateChanged: (DateTime value) {
-              String formattedDate = DateFormat('d MMM yyyy').format(value);
-              currentDate = value;
-              changeDate!(formattedDate, value);
-              setPickerStatus!(false);
-            },
+          borderRadius: BorderRadius.circular(10),
+          color: culturedWhite,
+          border: Border.all(
+            color: lightGray,
+            width: 1,
           ),
         ),
-        // child: SfDateRangePicker(
-        //   view: DateRangePickerView.month,
-        //   selectionMode: DateRangePickerSelectionMode.single,
-        //   selectionColor: eerieBlack,
-        //   todayHighlightColor: eerieBlack,
-        //   monthCellStyle: const DateRangePickerMonthCellStyle(
-        //     todayTextStyle: TextStyle(
-        //       fontSize: 12,
-        //       color: eerieBlack,
+        height: 400,
+        width: 300,
+        // child: Theme(
+        //   data: Theme.of(context).copyWith(
+        //     colorScheme: const ColorScheme.light(
+        //       primary: eerieBlack,
+        //       onPrimary: silver,
+        //       onSurface: eerieBlack,
         //     ),
+
         //   ),
-        //   yearCellStyle: const DateRangePickerYearCellStyle(
-        //     todayTextStyle: TextStyle(
-        //       fontSize: 12,
-        //       color: eerieBlack,
-        //     ),
+        //   child: CalendarDatePicker(
+        //     initialDate: currentDate!,
+        //     firstDate: DateTime.now(),
+        //     lastDate: DateTime(3000),
+        //     currentDate: DateTime.now(),
+        //     onDateChanged: (DateTime value) {
+        //       String formattedDate = DateFormat('d MMM yyyy').format(value);
+        //       currentDate = value;
+        //       changeDate!(formattedDate, value);
+        //       setPickerStatus!(false);
+        //     },
         //   ),
-        //   // startRangeSelectionColor: orangeAccent,
-        //   onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
-        //     print(dateRangePickerSelectionChangedArgs.value);
-        //     String formattedDate = DateFormat('d MMM yyyy')
-        //         .format(dateRangePickerSelectionChangedArgs.value);
-        //     changeDate!(formattedDate);
-        //     setPickerStatus!(false);
-        //   },
         // ),
+        child: SfDateRangePicker(
+          initialSelectedDate: currentDate,
+          showNavigationArrow: true,
+          view: DateRangePickerView.month,
+          selectionMode: DateRangePickerSelectionMode.single,
+          selectionColor: eerieBlack,
+          todayHighlightColor: eerieBlack,
+          monthCellStyle: const DateRangePickerMonthCellStyle(
+            todayTextStyle: TextStyle(
+              fontSize: 12,
+              color: eerieBlack,
+            ),
+          ),
+          yearCellStyle: const DateRangePickerYearCellStyle(
+            todayTextStyle: TextStyle(
+              fontSize: 12,
+              color: eerieBlack,
+            ),
+          ),
+          selectionShape: DateRangePickerSelectionShape.rectangle,
+          // startRangeSelectionColor: orangeAccent,
+          onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
+            print(dateRangePickerSelectionChangedArgs.value);
+            String formattedDate = DateFormat('d MMM yyyy')
+                .format(dateRangePickerSelectionChangedArgs.value);
+            changeDate!(
+                formattedDate, dateRangePickerSelectionChangedArgs.value);
+            setPickerStatus!(false);
+            //       String formattedDate = DateFormat('d MMM yyyy').format(value);
+            //       currentDate = value;
+            //       changeDate!(formattedDate, value);
+            //       setPickerStatus!(false);
+          },
+        ),
       ),
     );
   }

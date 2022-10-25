@@ -45,6 +45,7 @@ class BlackBannerLandscape extends StatelessWidget {
                       Text(
                         title!,
                         style: const TextStyle(
+                          fontFamily: 'Helvetica',
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: culturedWhite,
@@ -56,6 +57,7 @@ class BlackBannerLandscape extends StatelessWidget {
                       Text(
                         subtitle!,
                         style: const TextStyle(
+                          fontFamily: 'Helvetica',
                           fontSize: 16,
                           fontWeight: FontWeight.w300,
                           color: culturedWhite,
@@ -72,6 +74,7 @@ class BlackBannerLandscape extends StatelessWidget {
                       Text(
                         'See more',
                         style: TextStyle(
+                          fontFamily: 'Helvetica',
                           fontSize: 14,
                           fontWeight: FontWeight.w300,
                           color: culturedWhite,

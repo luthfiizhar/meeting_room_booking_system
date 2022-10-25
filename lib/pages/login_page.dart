@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/main.dart';
-import 'package:meeting_room_booking_system/model/login_info.dart';
+import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                context.read<LoginInfoModel>().login();
+                context.read<MainModel>().login();
                 jwtToken = "asd";
                 context.go('/');
                 //context.beamToNamed('/');

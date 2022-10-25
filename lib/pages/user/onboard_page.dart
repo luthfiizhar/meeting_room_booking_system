@@ -3,17 +3,17 @@ import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:meeting_room_booking_system/main.dart';
-import 'package:meeting_room_booking_system/model/login_info.dart';
+import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/pages/user/home_page.dart';
 import 'package:provider/provider.dart';
 
 class OnBoardPage extends StatelessWidget {
   OnBoardPage({Key? key}) : super(key: key);
-  final loginInfo = LoginInfoModel();
+  final loginInfo = MainModel();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LoginInfoModel>(builder: (context, model, child) {
+    return Consumer<MainModel>(builder: (context, model, child) {
       return Dialog(
         child: IntroductionScreen(
           scrollPhysics: const BouncingScrollPhysics(),

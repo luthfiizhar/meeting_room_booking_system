@@ -6,18 +6,31 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/constant/key.dart';
-import 'package:meeting_room_booking_system/model/login_info.dart';
+import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
 import 'package:meeting_room_booking_system/widgets/amenities_container.dart';
+import 'package:meeting_room_booking_system/widgets/banner/landscape_white_banner.dart';
+import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
+import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
+import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
+import 'package:meeting_room_booking_system/widgets/end_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
+import 'package:meeting_room_booking_system/widgets/meeting_type_container.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:meeting_room_booking_system/widgets/participant_container.dart';
 import 'package:meeting_room_booking_system/widgets/pop_up_profile.dart';
 import 'package:meeting_room_booking_system/widgets/search_container.dart';
+import 'package:meeting_room_booking_system/widgets/search_page/filter_container.dart';
+import 'package:meeting_room_booking_system/widgets/search_page/list_card.dart';
+import 'package:meeting_room_booking_system/widgets/search_page/sorting_container.dart';
+import 'package:meeting_room_booking_system/widgets/start_time_container.dart';
+import 'package:meeting_room_booking_system/widgets/time_picker_container.dart';
 import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -37,12 +50,41 @@ class _HomePageState extends State<HomePage> {
   bool showOnBoard = false;
 
   bool profileVisible = false;
-  // final loginInfo = LoginInfoModel();
+  // final loginInfo = MainModel();
 
   bool checkBoxTv = false;
   bool checkBoxCamera = false;
   List facilitySelected = [];
+  List startTimeList = [];
+  List endTimeList = [];
   String participantSelected = "";
+  String startTime = "";
+  String endTime = "";
+  String initialEndTime = "";
+  String meetingTypeSelected = "Meeting Room";
+
+  List<RadioModel> listSorting = [
+    RadioModel(isSelected: false, text: 'Lowest Floor'),
+    RadioModel(isSelected: false, text: 'Highest Floor'),
+    RadioModel(isSelected: false, text: 'Lowest Capacity'),
+    RadioModel(isSelected: false, text: 'Highest Capacity'),
+    RadioModel(isSelected: false, text: 'Alphabetical'),
+  ];
+  String selectedSorting = "Lowest Floor";
+
+  List<CheckBoxModel>? listFilter = [
+    CheckBoxModel(selected: true, value: '1st Floor'),
+    CheckBoxModel(selected: true, value: '2nd Floor'),
+    CheckBoxModel(selected: true, value: '3rd Floor'),
+    CheckBoxModel(selected: true, value: '4th Floor'),
+    CheckBoxModel(selected: true, value: '5th Floor'),
+    CheckBoxModel(selected: true, value: '1st Floor'),
+    CheckBoxModel(selected: true, value: '1st Floor'),
+    CheckBoxModel(selected: true, value: '1st Floor'),
+    CheckBoxModel(selected: true, value: '1st Floor'),
+    CheckBoxModel(selected: true, value: '1st Floor'),
+  ];
+  List selectedFilter = ['1', '2', '3', '4'];
 
   DateTime selectedDate = DateTime.now();
 
@@ -76,7 +118,7 @@ class _HomePageState extends State<HomePage> {
         print(target);
       },
       onSkip: () {
-        Provider.of<LoginInfoModel>(context, listen: false).onBoardDone();
+        Provider.of<MainModel>(context, listen: false).onBoardDone();
         print("skip");
       },
       onFinish: () {
@@ -84,7 +126,7 @@ class _HomePageState extends State<HomePage> {
       },
     );
     // TutorialCoachMark().show(context: context);
-    if (Provider.of<LoginInfoModel>(context, listen: false).firstLogin) {
+    if (Provider.of<MainModel>(context, listen: false).firstLogin) {
       tutorialCoachMark.show(context: context);
     }
     // return "";
@@ -284,7 +326,7 @@ class _HomePageState extends State<HomePage> {
                     "Konten.",
                     style: TextStyle(color: Colors.white),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -312,14 +354,43 @@ class _HomePageState extends State<HomePage> {
     _dateController.text = formattedDate;
     _facilityController.text = 'None';
     _timeController.text = 'Choose Time';
-    _participantController.text = 'Participant';
+    _participantController.text = 'Total Participant';
     participantSelected = "0";
+
+    int minute = TimeOfDay.now().minute;
+    int hour = TimeOfDay.now().hour;
+    int minuteEndInit = 0;
+    if (TimeOfDay.now().minute >= 0 && TimeOfDay.now().minute < 15) {
+      minute = TimeOfDay.now().replacing(minute: 15).minute;
+    } else if (TimeOfDay.now().minute > 15 && TimeOfDay.now().minute <= 30) {
+      minute = TimeOfDay.now().replacing(minute: 30).minute;
+    } else if (TimeOfDay.now().minute > 30 && TimeOfDay.now().minute <= 45) {
+      minute = TimeOfDay.now().replacing(minute: 45).minute;
+    } else if (TimeOfDay.now().minute > 45 && TimeOfDay.now().minute <= 60) {
+      minute = TimeOfDay.now().replacing(minute: 0).minute;
+      hour = TimeOfDay.now().hour + 1;
+    }
+    var hourString =
+        TimeOfDay(hour: hour, minute: minute).hour.toString().padLeft(2, '0');
+    var minuteString =
+        TimeOfDay(hour: hour, minute: minute).minute.toString().padLeft(2, '0');
+    minuteEndInit = minute + 15;
+    var minuteEndString =
+        TimeOfDay(hour: hour, minute: minute).minute.toString().padLeft(2, '0');
+    if (minuteEndInit == 60) {
+      minuteEndString =
+          TimeOfDay(hour: hour, minute: 0).minute.toString().padLeft(2, '0');
+    }
+    startTime = "$hourString:$minuteString";
+    initialEndTime = "$hourString:${minuteEndInit.toString()}";
+    endTime = initialEndTime;
+
     // addTarget();
     // Future.delayed(
     //   Duration(milliseconds: 500),
     //   () {
     //     showTutorial().then((value) {
-    //       Provider.of<LoginInfoModel>(context, listen: false).onBoardDone();
+    //       Provider.of<MainModel>(context, listen: false).onBoardDone();
     //     });
     //   },
     // );
@@ -352,8 +423,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   showBoardingPage() {
-    print(Provider.of<LoginInfoModel>(context, listen: false).firstLogin);
-    if (Provider.of<LoginInfoModel>(context, listen: false).firstLogin) {
+    print(Provider.of<MainModel>(context, listen: false).firstLogin);
+    if (Provider.of<MainModel>(context, listen: false).firstLogin) {
       Future.delayed(
         Duration(milliseconds: 500),
         () {
@@ -376,10 +447,19 @@ class _HomePageState extends State<HomePage> {
   double mouseY = 0;
 
   GlobalKey searchContainerKey = GlobalKey();
+  GlobalKey dateKey = GlobalKey();
+  GlobalKey timeKey = GlobalKey();
+  GlobalKey participantKey = GlobalKey();
+  GlobalKey amenitiesKey = GlobalKey();
+  GlobalKey meetingTypeKey = GlobalKey();
 
   bool datePickerVisible = false;
   bool amenitiesContainerVisible = false;
   bool participantContainerVisible = false;
+  bool timePickerContainerVisible = false;
+  bool startTimeContainerVisible = false;
+  bool endTimeContainerVisible = false;
+  bool meetingTypeContainerVisible = false;
 
   void _updateLocation(PointerHoverEvent event) {
     setState(() {
@@ -434,6 +514,7 @@ class _HomePageState extends State<HomePage> {
     double x = position.dx;
     mouseX = x;
     mouseY = y;
+
     // if (datePickerVisible) {
     //   datePickerVisible = false;
     // } else {
@@ -442,6 +523,16 @@ class _HomePageState extends State<HomePage> {
     participantContainerVisible = true;
 
     // print(y);
+    setState(() {});
+  }
+
+  setStartTimeList(List value) {
+    startTimeList = value;
+    setState(() {});
+  }
+
+  setEndTimeList(List value) {
+    endTimeList = value;
     setState(() {});
   }
 
@@ -458,12 +549,62 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  onMeetingTypeSelected(String value) {
+    meetingTypeSelected = value;
+    setState(() {});
+  }
+
+  setStartTime(String start) {
+    startTime = start;
+    setState(() {});
+  }
+
+  setEndTime(String end) {
+    endTime = end;
+    setState(() {});
+  }
+
+  setInitialEndTime(String value) {
+    initialEndTime = value;
+    setState(() {});
+  }
+
+  setTime(String start, String end) {
+    startTime = start;
+    endTime = end;
+    _timeController.text = "$startTime - $endTime";
+    setState(() {});
+  }
+
+  setStartTimeStatus(bool value) {
+    startTimeContainerVisible = value;
+    setState(() {});
+  }
+
+  setEndTimeStatus(bool value) {
+    endTimeContainerVisible = value;
+    setState(() {});
+  }
+
+  setMeetingTypeContainerStatus(bool value) {
+    meetingTypeContainerVisible = value;
+    setState(() {});
+  }
+
   setAmenitiesStatus(bool value) {
     amenitiesContainerVisible = value;
     setState(() {});
   }
 
   setDatePickerVisible(bool value) {
+    // RenderBox box = dateKey.currentContext!.findRenderObject() as RenderBox;
+    // Offset position = box.localToGlobal(Offset.zero);
+    // double y = position.dy;
+    // double x = position.dx;
+    // mouseX = x;
+    // mouseY = y;
+    // print(mouseX);
+    // print(mouseY);
     datePickerVisible = value;
     setState(() {});
   }
@@ -473,10 +614,19 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  setTimePickerStatus(bool value) {
+    timePickerContainerVisible = value;
+    setState(() {});
+  }
+
   resetAllVisibleStatus(bool value) {
     datePickerVisible = value;
     amenitiesContainerVisible = value;
     participantContainerVisible = value;
+    timePickerContainerVisible = value;
+    startTimeContainerVisible = value;
+    endTimeContainerVisible = value;
+    meetingTypeContainerVisible = value;
     setState(() {});
   }
 
@@ -485,137 +635,284 @@ class _HomePageState extends State<HomePage> {
     return LayoutPageWeb(
       index: 0,
       setDatePickerStatus: resetAllVisibleStatus,
-      child: Stack(
-        children: [
-          Center(
-            child: Container(
-              // key: key,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minWidth: 1100,
+          maxWidth: 1100,
+        ),
+        child: Container(
+          // color: Colors.blue,
+          width: 1100,
+          child: Stack(
+            children: [
+              Column(
+                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      resetAllVisibleStatus(false);
-                      // setDatePickerVisible(false);
-                      // setAmenitiesStatus(false);
-                    },
-                    child: SearchContainer(
-                      key: searchContainerKey,
-                      dateNode: dateNode,
-                      getPositionDatePicker: getPositionDatePicker,
-                      getPositionAmenities: getPositionAmenities,
-                      getPositionparticipant: getPositionParticipant,
-                      setPickerStatus: setDatePickerVisible,
-                      setAmenitiesStatus: setAmenitiesStatus,
-                      setParticipantStatus: setParticipantStatus,
-                      pickerStatus: datePickerVisible,
-                      amenitiesStatus: amenitiesContainerVisible,
-                      participantStatus: participantContainerVisible,
-                      dateController: _dateController,
-                      facilityController: _facilityController,
-                      timeController: _timeController,
-                      participantController: _participantController,
-                    ),
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: 500,
-                      maxHeight: MediaQuery.of(context).size.width,
-                      maxWidth: 1000,
-                    ),
-                    child: Container(
-                      width: 1000,
-                      // height: double.infinity,
-                      child: Stack(
-                        children: [
-                          Visibility(
-                            visible: datePickerVisible,
-                            child: Positioned(
-                              // bottom: 0,
-                              top: 0,
-                              left: 0,
-                              child: CustomDatePicker(
-                                changeDate: onDateChanged,
-                                setPickerStatus: setDatePickerVisible,
-                                currentDate: selectedDate,
+                  // const SizedBox(
+                  //   height: 20,
+                  // ),
+                  Container(
+                    // color: Colors.amber,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxHeight: 475,
+                          maxWidth: 1100,
+                        ),
+                        child: Container(
+                          // color: Colors.greenAccent,
+                          height: 475,
+                          width: 1100,
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                child: Container(
+                                  width: 1100,
+                                  height: 400,
+                                  decoration: BoxDecoration(
+                                    color: graySand,
+                                    borderRadius: BorderRadius.circular(10),
+                                    // image: DecorationImage(
+                                    //   image:
+                                    //       AssetImage('assets/social_hub.jpg'),
+                                    //   fit: BoxFit.cover,
+                                    // ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              Positioned(
+                                bottom: 185,
+                                right: 0,
+                                child: Container(
+                                  // color: Colors.black,
+                                  decoration: BoxDecoration(
+                                    color: eerieBlack,
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(5),
+                                      bottomLeft: Radius.circular(5),
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.only(
+                                    right: 15,
+                                    left: 25,
+                                    top: 10,
+                                    bottom: 10,
+                                  ),
+                                  // height: 30,
+                                  // width: 30,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        'Social Hub',
+                                        style: TextStyle(
+                                          fontFamily: 'Helvetica',
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                          color: culturedWhite,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        '- Head Office',
+                                        style: TextStyle(
+                                          fontFamily: 'Helvetica',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                          color: culturedWhite,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                left: 50,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    resetAllVisibleStatus(false);
+                                    // setDatePickerVisible(false);
+                                    // setAmenitiesStatus(false);
+                                  },
+                                  child: SearchContainer(
+                                    key: searchContainerKey,
+                                    dateNode: dateNode,
+                                    getPositionDatePicker:
+                                        getPositionDatePicker,
+                                    getPositionAmenities: getPositionAmenities,
+                                    getPositionparticipant:
+                                        getPositionParticipant,
+                                    setPickerStatus: setDatePickerVisible,
+                                    setAmenitiesStatus: setAmenitiesStatus,
+                                    setParticipantStatus: setParticipantStatus,
+                                    setTimeStatus: setTimePickerStatus,
+                                    setStartTimeStatus: setStartTimeStatus,
+                                    setEndTimeStatus: setEndTimeStatus,
+                                    pickerStatus: datePickerVisible,
+                                    amenitiesStatus: amenitiesContainerVisible,
+                                    participantStatus:
+                                        participantContainerVisible,
+                                    timePickerStatus:
+                                        timePickerContainerVisible,
+                                    dateController: _dateController,
+                                    facilityController: _facilityController,
+                                    timeController: _timeController,
+                                    participantController:
+                                        _participantController,
+                                    meetingTypeSelected: meetingTypeSelected,
+                                    meetingTypeStatus:
+                                        meetingTypeContainerVisible,
+                                    setMeetingTypeStatus:
+                                        setMeetingTypeContainerStatus,
+                                    dateKey: dateKey,
+                                    timeKey: timeKey,
+                                    amenitiesKey: amenitiesKey,
+                                    meetingTypeKey: meetingTypeKey,
+                                    participantKey: participantKey,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          Visibility(
-                            visible: amenitiesContainerVisible,
-                            child: Positioned(
-                              // bottom: 0,
-                              top: 0,
-                              right: 200,
-                              child: AmenitiesContainer(
-                                tvOnChange: (value) {
-                                  if (checkBoxTv) {
-                                    checkBoxTv = false;
-                                    facilitySelected.removeWhere(
-                                        (element) => element == 'TV');
-                                  } else {
-                                    checkBoxTv = true;
-                                    facilitySelected.add('TV');
-                                  }
-                                  if (facilitySelected.isNotEmpty) {
-                                    if (facilitySelected.length > 1) {
-                                      _facilityController.text = "TV & Camera";
-                                    } else if (facilitySelected.length == 1) {
-                                      _facilityController.text =
-                                          facilitySelected[0].toString();
-                                    }
-                                  } else {
-                                    _facilityController.text = "None";
-                                  }
-                                  print(facilitySelected);
-                                  setState(() {});
-                                },
-                                cameraOnChange: (value) {
-                                  if (checkBoxCamera) {
-                                    checkBoxCamera = false;
-                                    facilitySelected.removeWhere(
-                                        (element) => element == 'Camera');
-                                  } else {
-                                    checkBoxCamera = true;
-                                    facilitySelected.add('Camera');
-                                  }
-                                  if (facilitySelected.isNotEmpty) {
-                                    if (facilitySelected.length > 1) {
-                                      _facilityController.text = "TV & Camera";
-                                    } else if (facilitySelected.length == 1) {
-                                      _facilityController.text =
-                                          facilitySelected[0].toString();
-                                    }
-                                  } else {
-                                    _facilityController.text = "None";
-                                  }
-                                  print(facilitySelected);
-
-                                  setState(() {});
-                                },
-                                cameraValue: checkBoxCamera,
-                                tvValue: checkBoxTv,
-                              ),
-                            ),
-                          ),
-                          Visibility(
-                            visible: participantContainerVisible,
-                            child: Positioned(
-                              top: 0,
-                              right: 375,
-                              child: ParticipantContainer(
-                                setParticipantStatus: setParticipantStatus,
-                                onChangeParticipant: onParticipanSelected,
-                              ),
-                            ),
-                          )
-                        ],
+                        ),
                       ),
                     ),
                   ),
+                  Container(
+                    // color: Colors.green,
+                    child: Stack(
+                      children: [
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minHeight: 600,
+                            // maxHeight: MediaQuery.of(context).size.width,
+                            minWidth: 1000,
+                            maxWidth: 1000,
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                              top: 35,
+                            ),
+                            width: 1000,
+                            // decoration: BoxDecoration(
+                            //   border: Border.all(
+                            //     color: eerieBlack,
+                            //   ),
+                            // ),
+                            // height: double.infinity,
+                            child: Column(
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  // mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      // color: Colors.amber,
+                                      width: 235,
+                                      // height: 1000,
+                                      // child: Text('Filter'),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          SortingContainer(
+                                            listSorting: listSorting,
+                                            selectedSorting: selectedSorting,
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          FilterContainer(
+                                            listFilter: listFilter,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 35,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        child: ListView.builder(
+                                          // physics: NeverScrollableScrollPhysics,
+                                          shrinkWrap: true,
+                                          itemCount: 2,
+                                          itemBuilder: (context, index) {
+                                            return ListRoomContainer();
+                                          },
+                                        ),
+                                        // height: 1000,
+                                        // color: Colors.greenAccent,
+                                        // child: Column(
+                                        //   crossAxisAlignment:
+                                        //       CrossAxisAlignment.end,
+                                        //   children: [
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //     ListRoomContainer(),
+                                        //   ],
+                                        // ),
+                                      ),
+                                    ),
+
+                                    // RegularButton(
+                                    //   text: 'Start Time',
+                                    //   disabled: false,
+                                    //   onTap: () {
+                                    //     setStartTime();
+                                    //   },
+                                    // ),
+                                    // SizedBox(
+                                    //   height: 10,
+                                    // ),
+                                    // RegularButton(
+                                    //   text: 'End Time',
+                                    //   disabled: false,
+                                    //   onTap: () {
+                                    //     setEndTime("09:45");
+                                    //   },
+                                    // ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 35,
+                                ),
+                                WhiteBannerLandscape(
+                                  title: 'Link your Google account',
+                                  subtitle: '& enjoy your benefits.',
+                                  imagePath: 'assets/banner_pict_google.png',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   // Center(
                   //   child: Text(
                   //     datePicked,
@@ -626,87 +923,153 @@ class _HomePageState extends State<HomePage> {
                   // ),
                 ],
               ),
-            ),
-          ),
-          // Visibility(
-          //   visible: datePickerVisible,
-          //   child: Positioned(
-          //     // bottom: 0,
-          //     top: mouseY + 20,
-          //     left: mouseX + 35,
-          //     child: CustomDatePicker(
-          //       changeDate: onDateChanged,
-          //       setPickerStatus: setDatePickerVisible,
-          //       currentDate: selectedDate,
-          //     ),
-          //   ),
-          // ),
-          // Visibility(
-          //   visible: amenitiesContainerVisible,
-          //   child: Positioned(
-          //     // bottom: 0,
-          //     top: mouseY + 20,
-          //     right: mouseX + 200,
-          //     child: AmenitiesContainer(
-          //       tvOnChange: (value) {
-          //         if (checkBoxTv) {
-          //           checkBoxTv = false;
-          //           facilitySelected.removeWhere((element) => element == 'TV');
-          //         } else {
-          //           checkBoxTv = true;
-          //           facilitySelected.add('TV');
-          //         }
-          //         if (facilitySelected.isNotEmpty) {
-          //           if (facilitySelected.length > 1) {
-          //             _facilityController.text = "TV & Camera";
-          //           } else if (facilitySelected.length == 1) {
-          //             _facilityController.text = facilitySelected[0].toString();
-          //           }
-          //         } else {
-          //           _facilityController.text = "None";
-          //         }
-          //         print(facilitySelected);
-          //         setState(() {});
-          //       },
-          //       cameraOnChange: (value) {
-          //         if (checkBoxCamera) {
-          //           checkBoxCamera = false;
-          //           facilitySelected
-          //               .removeWhere((element) => element == 'Camera');
-          //         } else {
-          //           checkBoxCamera = true;
-          //           facilitySelected.add('Camera');
-          //         }
-          //         if (facilitySelected.isNotEmpty) {
-          //           if (facilitySelected.length > 1) {
-          //             _facilityController.text = "TV & Camera";
-          //           } else if (facilitySelected.length == 1) {
-          //             _facilityController.text = facilitySelected[0].toString();
-          //           }
-          //         } else {
-          //           _facilityController.text = "None";
-          //         }
-          //         print(facilitySelected);
+              Visibility(
+                visible: meetingTypeContainerVisible,
+                child: Positioned(
+                  top: 360,
+                  left: 330,
+                  child: MeetingTypeContainer(
+                    meetingTypeStatus: meetingTypeContainerVisible,
+                    setMeetingType: onMeetingTypeSelected,
+                    selectedMeetingType: meetingTypeSelected,
+                    setMeetingTypeStatus: setMeetingTypeContainerStatus,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: datePickerVisible,
+                child: Positioned(
+                  // bottom: 0,
+                  top: 485,
+                  left: 183,
+                  child: CustomDatePicker(
+                    changeDate: onDateChanged,
+                    setPickerStatus: setDatePickerVisible,
+                    currentDate: selectedDate,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: amenitiesContainerVisible,
+                child: Positioned(
+                  // bottom: 0,
+                  top: 485,
+                  right: 370,
+                  child: AmenitiesContainer(
+                    tvOnChange: (value) {
+                      if (checkBoxTv) {
+                        checkBoxTv = false;
+                        facilitySelected
+                            .removeWhere((element) => element == 'TV');
+                      } else {
+                        checkBoxTv = true;
+                        facilitySelected.add('TV');
+                      }
+                      if (facilitySelected.isNotEmpty) {
+                        if (facilitySelected.length > 1) {
+                          _facilityController.text = "TV & Camera";
+                        } else if (facilitySelected.length == 1) {
+                          _facilityController.text =
+                              facilitySelected[0].toString();
+                        }
+                      } else {
+                        _facilityController.text = "None";
+                      }
+                      print(facilitySelected);
+                      setState(() {});
+                    },
+                    cameraOnChange: (value) {
+                      if (checkBoxCamera) {
+                        checkBoxCamera = false;
+                        facilitySelected
+                            .removeWhere((element) => element == 'Camera');
+                      } else {
+                        checkBoxCamera = true;
+                        facilitySelected.add('Camera');
+                      }
+                      if (facilitySelected.isNotEmpty) {
+                        if (facilitySelected.length > 1) {
+                          _facilityController.text = "TV & Camera";
+                        } else if (facilitySelected.length == 1) {
+                          _facilityController.text =
+                              facilitySelected[0].toString();
+                        }
+                      } else {
+                        _facilityController.text = "None";
+                      }
+                      print(facilitySelected);
 
-          //         setState(() {});
-          //       },
-          //       cameraValue: checkBoxCamera,
-          //       tvValue: checkBoxTv,
-          //     ),
-          //   ),
-          // ),
-          // Visibility(
-          //   visible: participantContainerVisible,
-          //   child: Positioned(
-          //     top: mouseY + 20,
-          //     right: mouseX + 375,
-          //     child: ParticipantContainer(),
-          //   ),
-          // )
-        ],
+                      setState(() {});
+                    },
+                    cameraValue: checkBoxCamera,
+                    tvValue: checkBoxTv,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: participantContainerVisible,
+                child: Positioned(
+                  top: 485,
+                  right: 575,
+                  child: ParticipantContainer(
+                    setParticipantStatus: setParticipantStatus,
+                    onChangeParticipant: onParticipanSelected,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: timePickerContainerVisible,
+                child: Positioned(
+                  top: 485,
+                  left: 408,
+                  child: TimePickerContainer(
+                    startTimeStatus: startTimeContainerVisible,
+                    endTimeStatus: endTimeContainerVisible,
+                    setTime: setTime,
+                    startTime: startTime,
+                    endTime: endTime,
+                    setTimePickerStatus: setTimePickerStatus,
+                    setListStartTime: setStartTimeList,
+                    setEndTimeStatus: setEndTimeStatus,
+                    setListEndTime: setEndTimeList,
+                    setStartTimeStatus: setStartTimeStatus,
+                    initialEndTime: initialEndTime,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: startTimeContainerVisible,
+                child: Positioned(
+                  top: 595,
+                  left: 425,
+                  child: StartTimeContainer(
+                    items: startTimeList,
+                    setStartTime: setStartTime,
+                    setStartTimeStatus: setStartTimeStatus,
+                    setInitialEndTime: setInitialEndTime,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: endTimeContainerVisible,
+                child: Positioned(
+                  top: 595,
+                  left: 545,
+                  child: EndTimeContainer(
+                    items: endTimeList,
+                    setEndTime: setEndTime,
+                    setEndTimeStatus: setEndTimeStatus,
+                    startTime: startTime,
+                    setTime: setTime,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
-    return Consumer<LoginInfoModel>(builder: (context, model, child) {
+    return Consumer<MainModel>(builder: (context, model, child) {
       return Scaffold(
         body: Center(
           child: ConstrainedBox(

@@ -7,7 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meeting_room_booking_system/app_view.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/model/booking_room_info.dart';
-import 'package:meeting_room_booking_system/model/login_info.dart';
+import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/pages/login_page.dart'
     deferred as loginPage;
 import 'package:meeting_room_booking_system/pages/user/calendar_view_page.dart'
@@ -47,7 +47,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   // MyApp({Key? key}) : super(key: key);
-  // final loginInfo = LoginInfoModel();
+  // final loginInfo = MainModel();
   final Future<void> loadedLibrary = searchPage.loadLibrary();
   late final _router = GoRouter(
     routes: [
@@ -66,6 +66,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       GoRoute(
+        name: 'login',
         path: '/login',
         builder: (context, state) => FutureBuilder(
           future: loginPage.loadLibrary(),
@@ -75,6 +76,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       GoRoute(
+        name: 'calendar',
         path: '/calendar',
         // builder: (context, state) => CalendarViewPage(),
         pageBuilder: (context, state) => NoTransitionPage<void>(
@@ -94,6 +96,7 @@ class MyApp extends StatelessWidget {
       //       NoTransitionPage<void>(key: state.pageKey, child: SearchPage()),
       // ),
       GoRoute(
+        name: 'search',
         path: '/search',
         // builder: (context, state) => CalendarViewPage(),
         pageBuilder: (context, state) => NoTransitionPage<void>(
@@ -106,6 +109,7 @@ class MyApp extends StatelessWidget {
             )),
       ),
       GoRoute(
+        name: 'rooms',
         path: '/rooms',
         // builder: (context, state) => CalendarViewPage(),
         pageBuilder: (context, state) => NoTransitionPage<void>(
@@ -117,6 +121,7 @@ class MyApp extends StatelessWidget {
                 })),
       ),
       GoRoute(
+        name: 'my_booking',
         path: '/my_booking',
         // builder: (context, state) => CalendarViewPage(),
         pageBuilder: (context, state) => NoTransitionPage<void>(
@@ -170,8 +175,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<LoginInfoModel>(
-      create: (context) => LoginInfoModel(),
+    return ChangeNotifierProvider<MainModel>(
+      create: (context) => MainModel(),
       child: MaterialApp.router(
         title: 'MRBS',
         theme: ThemeData(

@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/key.dart';
 import 'package:meeting_room_booking_system/main.dart';
-import 'package:meeting_room_booking_system/model/login_info.dart';
+import 'package:meeting_room_booking_system/model/main_model.dart';
 // import 'package:meeting_room_booking_system/constant/key.dart';
 import 'package:meeting_room_booking_system/routes/routes.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
@@ -18,11 +18,17 @@ import 'package:showcaseview/showcaseview.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class NavigationBarWeb extends StatefulWidget {
-  NavigationBarWeb({this.index, this.popUpProfile, this.popUpStatus});
+  NavigationBarWeb({
+    this.index,
+    this.popUpProfile,
+    this.popUpStatus,
+    this.getProfile,
+  });
 
   int? index;
   Function? popUpProfile;
   bool? popUpStatus;
+  OverlayEntry? getProfile;
 
   @override
   State<NavigationBarWeb> createState() => _NavigationBarWebState();
@@ -62,7 +68,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
         print(target);
       },
       onSkip: () {
-        Provider.of<LoginInfoModel>(context, listen: false).onBoardDone();
+        Provider.of<MainModel>(context, listen: false).onBoardDone();
         print("skip");
       },
       onFinish: () {
@@ -70,7 +76,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
       },
     );
     // TutorialCoachMark().show(context: context);
-    if (Provider.of<LoginInfoModel>(context, listen: false).firstLogin) {
+    if (Provider.of<MainModel>(context, listen: false).firstLogin) {
       tutorialCoachMark.show(context: context);
     }
     // return "";
@@ -290,7 +296,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
     // TODO: implement initState
     super.initState();
     index = widget.index;
-    print(Provider.of<LoginInfoModel>(context, listen: false).firstLogin);
+    // print(Provider.of<MainModel>(context, listen: false).firstLogin);
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   ShowCaseWidget.of(context).startShowCase([keyButton]);
     // });
@@ -299,7 +305,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
     //   Duration(milliseconds: 500),
     //   () {
     //     showTutorial().then((value) {
-    //       Provider.of<LoginInfoModel>(context, listen: false).onBoardDone();
+    //       Provider.of<MainModel>(context, listen: false).onBoardDone();
     //     });
     //   },
     // );
@@ -328,6 +334,9 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20,
+      ),
       // color: scaffoldBg,
       decoration: const BoxDecoration(
         color: white,
@@ -356,6 +365,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                     child: Text(
                       'MRBS',
                       style: TextStyle(
+                        fontFamily: 'Helvetica',
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
                         color: davysGray,
@@ -385,7 +395,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         key: keyButton,
                       ),
                       const SizedBox(
-                        width: 50,
+                        width: 25,
                       ),
                       NavigationItem(
                         title: 'Search',
@@ -395,7 +405,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         key: keyButton2,
                       ),
                       const SizedBox(
-                        width: 50,
+                        width: 25,
                       ),
                       NavigationItem(
                         title: 'Rooms',
@@ -405,7 +415,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         // key: keyButton2,
                       ),
                       const SizedBox(
-                        width: 50,
+                        width: 25,
                       ),
                       NavigationItem(
                         title: 'My Bookings',
@@ -415,7 +425,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         key: keyButton3,
                       ),
                       const SizedBox(
-                        width: 50,
+                        width: 25,
                       ),
                       NavigationItem(
                         title: 'Calendar',
@@ -425,7 +435,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         key: keyButton4,
                       ),
                       const SizedBox(
-                        width: 50,
+                        width: 25,
                       ),
                       jwtToken == null || jwtToken == ""
                           ? RegularButton(
@@ -465,10 +475,11 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                           //   )
                           : MouseRegion(
                               cursor: SystemMouseCursors.click,
-                              onHover: (event) {
+                              onEnter: (event) {
                                 widget.popUpProfile!(true);
                                 // profileVisible = true;
                                 // setState(() {});
+                                // Overlay.of(context)!.insert(widget.getProfile!);
                               },
                               // // onEnter: (event) {
                               // //   profileVisible = true;
@@ -480,11 +491,11 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                               },
                               child: GestureDetector(
                                 onTap: () {
-                                  // if (widget.popUpStatus!) {
-                                  //   widget.popUpProfile!(false);
-                                  // } else {
-                                  //   widget.popUpProfile!(true);
-                                  // }
+                                  if (widget.popUpStatus!) {
+                                    widget.popUpProfile!(false);
+                                  } else {
+                                    widget.popUpProfile!(true);
+                                  }
                                 },
                                 child: Container(
                                   width: 55,
@@ -512,6 +523,9 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                                 ),
                               ),
                             ),
+                      // const SizedBox(
+                      //   width: 25,
+                      // ),
                     ],
                   ),
                 ),

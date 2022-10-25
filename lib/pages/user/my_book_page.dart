@@ -17,10 +17,12 @@ class MyBookingPage extends StatefulWidget {
 }
 
 class _MyBookingPageState extends State<MyBookingPage> {
+  setDatePickerStatus(bool value) {}
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       index: 3,
+      setDatePickerStatus: setDatePickerStatus,
       child: Container(
         // color: Colors.grey,
         child: Column(

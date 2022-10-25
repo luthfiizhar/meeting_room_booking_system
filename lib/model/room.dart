@@ -1,5 +1,10 @@
+import 'package:flutter/material.dart';
+
 class Room {
   Room({
+    this.id,
+    this.displayName,
+    this.color,
     this.roomId,
     this.areaId,
     this.roomName,
@@ -9,6 +14,9 @@ class Room {
     this.availability,
   });
 
+  String? id;
+  String? displayName;
+  Color? color;
   String? roomId;
   String? areaId;
   String? roomName;

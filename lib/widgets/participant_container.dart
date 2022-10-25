@@ -17,13 +17,13 @@ class ParticipantContainer extends StatelessWidget {
   //   '7 - 10',
   //   'More than 10',
   // ];
-  List? items = ['1', '2', '3', '4', '> 5'];
+  List? items = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '>10'];
 
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        minWidth: 100,
+        minWidth: 70,
         maxWidth: 150,
         maxHeight: 300,
       ),
@@ -38,8 +38,8 @@ class ParticipantContainer extends StatelessWidget {
           color: culturedWhite,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: eerieBlack,
-            width: 0.5,
+            color: lightGray,
+            width: 1,
           ),
         ),
         child: ListView.builder(

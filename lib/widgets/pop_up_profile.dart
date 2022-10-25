@@ -34,7 +34,8 @@ class PopUpProfile extends StatelessWidget {
           ),
           width: 350,
           decoration: BoxDecoration(
-            color: culturedWhite,
+            // color: culturedWhite,
+            color: white,
             borderRadius: BorderRadius.circular(10),
             boxShadow: const [
               BoxShadow(

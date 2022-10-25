@@ -4,7 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/model/event_class.dart';
 import 'package:meeting_room_booking_system/model/event_data_source.dart';
-import 'package:meeting_room_booking_system/model/login_info.dart';
+import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/widgets/calendar_view_page/calendar_menu_item.dart';
@@ -24,7 +24,10 @@ class CalendarViewPage extends StatefulWidget {
 
 class _CalendarViewPageState extends State<CalendarViewPage> {
   CalendarController _calendar = CalendarController();
-  ScrollController? _scrollController = ScrollController();
+
+  double startTime = 6;
+  double endTime = 20;
+  // ScrollController? _scrollController = ScrollController();
   EventDataSource _getCalendarDataSource() {
     List<Event> events = <Event>[];
     events.add(
@@ -133,43 +136,45 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<LoginInfoModel>(context, listen: false)
-          .setShadowActive(false);
+      Provider.of<MainModel>(context, listen: false).setShadowActive(false);
     });
 
     // TODO: implement initState
     super.initState();
-    _scrollController!.addListener(() {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        _scrollListener(_scrollController!);
-        // print(Provider.of<LoginInfoModel>(context).toString());
-      });
-    });
+    startTime = 7;
+    endTime = 19;
+    // _scrollController!.addListener(() {
+    //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //     _scrollListener(_scrollController!);
+    //     // print(Provider.of<MainModel>(context).toString());
+    //   });
+    // });
   }
 
-  _scrollListener(ScrollController scrollInfo) {
-    // setState(() {});
-    // print(scrollInfo.position.minScrollExtent);
-    if (scrollInfo.offset == 0) {
-      Provider.of<LoginInfoModel>(context, listen: false)
-          .setShadowActive(false);
-    } else {
-      Provider.of<LoginInfoModel>(context, listen: false).setShadowActive(true);
-      print('scroll');
-    }
-  }
-
+  // _scrollListener(ScrollController scrollInfo) {
+  //   // setState(() {});
+  //   // print(scrollInfo.position.minScrollExtent);
+  //   if (scrollInfo.offset == 0) {
+  //     Provider.of<MainModel>(context, listen: false)
+  //         .setShadowActive(false);
+  //   } else {
+  //     Provider.of<MainModel>(context, listen: false).setShadowActive(true);
+  //     print('scroll');
+  //   }
+  // }
+  setDatePickerStatus(bool value) {}
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       index: 4,
+      setDatePickerStatus: setDatePickerStatus,
       child: Container(
-        height: MediaQuery.of(context).size.height,
+        height: MediaQuery.of(context).size.height * 2.5,
         child: calendarUserPage(),
       ),
     );
     return Scaffold(
-      body: Consumer<LoginInfoModel>(builder: (context, model, child) {
+      body: Consumer<MainModel>(builder: (context, model, child) {
         return Center(
           child: Column(
             children: [
@@ -197,7 +202,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: CustomScrollView(
-                      controller: _scrollController,
+                      // controller: _scrollController,
                       slivers: [
                         SliverList(
                           delegate: SliverChildListDelegate(
@@ -285,14 +290,18 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
         showNavigationArrow: true,
         view: CalendarView.week,
         todayHighlightColor: Colors.black,
-        timeSlotViewSettings: const TimeSlotViewSettings(
+        timeSlotViewSettings: TimeSlotViewSettings(
             // timelineAppointmentHeight: -1,
             timeIntervalHeight: -1,
+            timeFormat: 'h:m a',
             // timeIntervalWidth: -1,
+            timeInterval: const Duration(
+              minutes: 15,
+            ),
             dateFormat: 'd',
             dayFormat: 'EEE',
-            startHour: 6,
-            endHour: 24,
+            startHour: startTime,
+            endHour: endTime,
             nonWorkingDays: <int>[DateTime.friday, DateTime.saturday]),
       ),
     );
