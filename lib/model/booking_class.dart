@@ -1,18 +1,20 @@
+import 'package:meeting_room_booking_system/model/amenities_class.dart';
+
 class Booking {
-  Booking({
-    this.roomId,
-    this.summary,
-    this.description,
-    this.startDate,
-    this.endDate,
-    this.recursive,
-    this.repeatInterval,
-    this.repeatEndDate,
-    this.meetingType,
-    this.attendantsNumber,
-    this.amenities,
-    this.attendants,
-  });
+  Booking(
+      {this.roomId,
+      this.summary,
+      this.description,
+      this.startDate,
+      this.endDate,
+      this.recursive,
+      this.repeatInterval,
+      this.repeatEndDate,
+      this.meetingType,
+      this.attendantsNumber,
+      this.amenities,
+      this.attendants,
+      this.foodAmenities});
 
   String? roomId;
   String? summary;
@@ -26,6 +28,7 @@ class Booking {
   String? attendantsNumber;
   List? amenities;
   List? attendants;
+  List? foodAmenities;
 
   Booking.fromJSon(Map<String, dynamic> json)
       : roomId = json['RoomID'],
@@ -47,12 +50,13 @@ class Booking {
         'Description': description ?? "",
         'StartDate': startDate.toString().substring(0, 19),
         'EndDate': endDate.toString().substring(0, 19),
-        'Recursive': recursive,
+        'Recursive': recursive ?? "NONE",
         'RepeatInterval': repeatInterval ?? "",
         'RepeatEndDate': repeatEndDate ?? "",
         'MeetingType': meetingType ?? "",
         'AttendantsNumber': attendantsNumber ?? "",
-        'Amenities': amenities ?? [],
-        'Attendants': attendants ?? [],
+        'Amenities': amenities ?? [].toString(),
+        'Attendants': attendants ?? [].toString(),
+        'FoodAmenities': foodAmenities ?? [].toString()
       };
 }

@@ -18,6 +18,7 @@ class TimePickerContainer extends StatefulWidget {
     this.setListEndTime,
     this.setEndTimeStatus,
     this.initialEndTime,
+    this.isDark = true,
   });
 
   bool? startTimeStatus;
@@ -31,6 +32,7 @@ class TimePickerContainer extends StatefulWidget {
   Function? setStartTimeStatus;
   Function? setListEndTime;
   Function? setEndTimeStatus;
+  bool isDark;
 
   @override
   State<TimePickerContainer> createState() => _TimePickerContainerState();
@@ -142,12 +144,14 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: culturedWhite,
+            color: widget.isDark ? eerieBlack : culturedWhite,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: lightGray,
-              width: 1,
-            ),
+            border: widget.isDark
+                ? null
+                : Border.all(
+                    color: lightGray,
+                    width: 1,
+                  ),
           ),
           child: Stack(
             children: [
@@ -193,13 +197,15 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'From',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
-                                    // height: 1.2,
-                                    color: eerieBlack,
+                                    height: 1.2,
+                                    color: widget.isDark
+                                        ? culturedWhite
+                                        : davysGray,
                                   ),
                                 ),
                                 const SizedBox(
@@ -211,20 +217,23 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
                                       widget.startTime != ""
                                           ? widget.startTime!
                                           : '00:00',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w300,
-                                        // height: 1.2,
-                                        color: davysGray,
+                                        height: 1.2,
+                                        color: widget.isDark
+                                            ? platinum
+                                            : davysGray,
                                       ),
                                     ),
                                     const SizedBox(
                                       width: 5,
                                     ),
-                                    const Icon(
+                                    Icon(
                                       Icons.keyboard_arrow_down_sharp,
                                       size: 24,
-                                      color: eerieBlack,
+                                      color:
+                                          widget.isDark ? platinum : davysGray,
                                     ),
                                   ],
                                 ),
@@ -294,13 +303,15 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'To',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
-                                    // height: 1.3,
-                                    color: eerieBlack,
+                                    height: 1.2,
+                                    color: widget.isDark
+                                        ? culturedWhite
+                                        : davysGray,
                                   ),
                                 ),
                                 const SizedBox(
@@ -312,11 +323,13 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
                                       widget.endTime != ""
                                           ? widget.endTime!
                                           : '00:00',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w300,
-                                        // height: 1.3,
-                                        color: davysGray,
+                                        height: 1.2,
+                                        color: widget.isDark
+                                            ? culturedWhite
+                                            : davysGray,
                                       ),
                                     ),
                                     const SizedBox(
@@ -325,7 +338,7 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
                                     const Icon(
                                       Icons.keyboard_arrow_down_sharp,
                                       size: 24,
-                                      color: eerieBlack,
+                                      color: culturedWhite,
                                     )
                                   ],
                                 ),

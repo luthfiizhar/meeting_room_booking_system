@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
@@ -202,7 +203,18 @@ class ListRoomContainer extends StatelessWidget {
               child: RegularButton(
                 text: 'Book',
                 disabled: false,
-                onTap: () {},
+                onTap: () {
+                  // context.go('/home/booking');
+                  context.goNamed('booking', params: {
+                    "roomId": '103',
+                    'date': '01/11/2022',
+                    'startTime': '10:30',
+                    'endTime': '11.30',
+                    'participant': '5',
+                    'facilities': '[tv,camera]',
+                    'roomType': 'audi'
+                  });
+                },
                 padding: ButtonSize().smallSize(),
               ),
             )

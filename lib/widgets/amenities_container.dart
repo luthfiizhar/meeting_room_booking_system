@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
+import 'package:meeting_room_booking_system/widgets/checkboxes/white_checkbox.dart';
 
 class AmenitiesContainer extends StatelessWidget {
   AmenitiesContainer({
@@ -9,12 +10,14 @@ class AmenitiesContainer extends StatelessWidget {
     required this.tvValue,
     required this.cameraOnChange,
     required this.tvOnChange,
+    this.isDark = true,
   });
 
   bool? cameraValue;
   ValueChanged? cameraOnChange;
   bool? tvValue;
   ValueChanged? tvOnChange;
+  bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +26,13 @@ class AmenitiesContainer extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: culturedWhite,
-          border: Border.all(
-            color: lightGray,
-            width: 1,
-          ),
+          color: isDark ? eerieBlack : culturedWhite,
+          border: isDark
+              ? null
+              : Border.all(
+                  color: lightGray,
+                  width: 1,
+                ),
         ),
         padding: const EdgeInsets.symmetric(
           horizontal: 20,
@@ -38,21 +43,33 @@ class AmenitiesContainer extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            BlackCheckBox(
-              selectedValue: tvValue,
-              onChanged: tvOnChange,
-              label: 'TV',
-              filled: false,
-            ),
+            isDark
+                ? WhiteCheckbox(
+                    selectedValue: tvValue,
+                    onChanged: tvOnChange,
+                    label: 'TV',
+                  )
+                : BlackCheckBox(
+                    selectedValue: tvValue,
+                    onChanged: tvOnChange,
+                    label: 'TV',
+                    filled: false,
+                  ),
             const SizedBox(
               height: 15,
             ),
-            BlackCheckBox(
-              selectedValue: cameraValue,
-              onChanged: cameraOnChange,
-              label: 'Camera',
-              filled: false,
-            ),
+            isDark
+                ? WhiteCheckbox(
+                    selectedValue: cameraValue,
+                    onChanged: cameraOnChange,
+                    label: 'Camera',
+                  )
+                : BlackCheckBox(
+                    selectedValue: cameraValue,
+                    onChanged: cameraOnChange,
+                    label: 'Camera',
+                    filled: false,
+                  ),
             const SizedBox(
               height: 20,
             ),

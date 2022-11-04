@@ -3,8 +3,13 @@ import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class RoomEventDataSource extends CalendarDataSource {
+  // RoomEventDataSource(
+  //     List<Appointment> source, List<CalendarResource> resourceColl) {
+  //   appointments = source;
+  //   resources = resourceColl;
+  // }
   RoomEventDataSource(
-      List<Appointment> source, List<CalendarResource> resourceColl) {
+      List<RoomEvent> source, List<CalendarResource> resourceColl) {
     appointments = source;
     resources = resourceColl;
   }
@@ -48,4 +53,9 @@ class RoomEventDataSource extends CalendarDataSource {
   List<Object> getResourceIds(int index) {
     return appointments![index].resourceIds;
   }
+
+  // @override
+  // String getRecurrenceRule(int index) {
+  //   return appointments![index].recurrenceRule;
+  // }
 }

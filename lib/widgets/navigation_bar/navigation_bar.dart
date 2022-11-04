@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/key.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 // import 'package:meeting_room_booking_system/constant/key.dart';
@@ -445,15 +446,17 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                               onTap: () {
                                 // jwtToken = "login";
                                 // Scaffold.of(context).openEndDrawer();
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (context) {
-                                    return LoginPopUp();
-                                  },
-                                ).then((value) {
-                                  setState(() {});
-                                });
+                                loginDummy().then((value) {});
+                                // loginCerberus().then((value) {});
+                                // showDialog(
+                                //   context: context,
+                                //   barrierDismissible: false,
+                                //   builder: (context) {
+                                //     return LoginPopUp();
+                                //   },
+                                // ).then((value) {
+                                //   setState(() {});
+                                // });
                                 setState(() {});
                               },
                             )

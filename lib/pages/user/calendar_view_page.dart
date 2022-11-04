@@ -5,6 +5,7 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/model/event_class.dart';
 import 'package:meeting_room_booking_system/model/event_data_source.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
+import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/widgets/calendar_view_page/calendar_menu_item.dart';
@@ -79,7 +80,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
   }
 
   RoomEventDataSource _getRoomDataSource() {
-    List<Appointment> roomEvents = <Appointment>[];
+    List<RoomEvent> roomEvents = <RoomEvent>[];
     List<CalendarResource> resourceCol = <CalendarResource>[];
     resourceCol.add(CalendarResource(
       displayName: 'John',
@@ -91,25 +92,25 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
       id: '0002',
       color: Colors.blue,
     ));
-    roomEvents.add(
-      Appointment(
-        startTime: DateTime(2022, 08, 31, 14, 0, 0),
-        endTime: DateTime(2022, 08, 31, 14, 30, 0),
-        subject: 'General Meeting',
-        color: Colors.red,
-        resourceIds: ['0001', '0002'],
-      ),
-    );
+    // roomEvents.add(
+    //   Appointment(
+    //     startTime: DateTime(2022, 08, 31, 14, 0, 0),
+    //     endTime: DateTime(2022, 08, 31, 14, 30, 0),
+    //     subject: 'General Meeting',
+    //     color: Colors.red,
+    //     resourceIds: ['0001', '0002'],
+    //   ),
+    // );
 
-    roomEvents.add(
-      Appointment(
-        startTime: DateTime(2022, 09, 2, 11, 0, 0),
-        endTime: DateTime(2022, 09, 2, 14, 30, 0),
-        subject: 'General Meeting',
-        color: Colors.blue,
-        resourceIds: ['0001', '0002'],
-      ),
-    );
+    // roomEvents.add(
+    //   Appointment(
+    //     startTime: DateTime(2022, 09, 2, 11, 0, 0),
+    //     endTime: DateTime(2022, 09, 2, 14, 30, 0),
+    //     subject: 'General Meeting',
+    //     color: Colors.blue,
+    //     resourceIds: ['0001', '0002'],
+    //   ),
+    // );
     return RoomEventDataSource(roomEvents, resourceCol);
   }
 
@@ -265,14 +266,16 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
     return SafeArea(
       child: SfCalendar(
         controller: _calendar,
-        onViewChanged: (viewChangedDetails) {
-          print(viewChangedDetails.visibleDates);
-        },
+        showDatePickerButton: true,
+        allowViewNavigation: true,
+        onViewChanged: (viewChangedDetails) {},
+        headerDateFormat: 'MMMM y',
         initialDisplayDate: DateTime.now(),
         onTap: (calendarTapDetails) {
           // print(_calendar.forward);
-
-          if (calendarTapDetails.appointments![0] != null) {
+          if (calendarTapDetails.targetElement ==
+              CalendarElement.calendarCell) {}
+          if (calendarTapDetails.targetElement == CalendarElement.appointment) {
             Event list = calendarTapDetails.appointments![0];
             print(list.capacity);
             showDialog(
@@ -280,54 +283,40 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                 builder: (BuildContext context) {
                   return DetailEventDialog();
                 });
-          } else {
-            print("kosong");
           }
+          // if (calendarTapDetails.appointments![0] != null) {
+          // } else {
+          //   print("kosong");
+          // }
         },
         dataSource: _getCalendarDataSource(),
         // showDatePickerButton: true,
         // headerDateFormat: 'MMM,yyy',
         showNavigationArrow: true,
         view: CalendarView.week,
+        allowedViews: [
+          CalendarView.month,
+          CalendarView.day,
+          CalendarView.week,
+        ],
+        monthViewSettings: MonthViewSettings(
+          appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+        ),
+        // scheduleViewSettings: ScheduleViewSettings(),
         todayHighlightColor: Colors.black,
         timeSlotViewSettings: TimeSlotViewSettings(
-            // timelineAppointmentHeight: -1,
-            timeIntervalHeight: -1,
-            timeFormat: 'h:m a',
-            // timeIntervalWidth: -1,
-            timeInterval: const Duration(
-              minutes: 15,
-            ),
-            dateFormat: 'd',
-            dayFormat: 'EEE',
-            startHour: startTime,
-            endHour: endTime,
-            nonWorkingDays: <int>[DateTime.friday, DateTime.saturday]),
-      ),
-    );
-  }
-
-  calendarRoomPage() {
-    return Container(
-      // color: Colors.amber,
-      height: MediaQuery.of(context).size.height - 130,
-      child: SfCalendar(
-        // onTap: (calendarTapDetails) {
-        //   print(calendarTapDetails.appointments.toString());
-        // },
-        dataSource: _getRoomDataSource(),
-        // showNavigationArrow: true,
-        view: CalendarView.timelineWeek,
-        timeSlotViewSettings: TimeSlotViewSettings(
+          // timelineAppointmentHeight: -1,
           timeIntervalHeight: -1,
+          timeFormat: 'H:mm ',
+          // timeIntervalWidth: -1,
+          timeInterval: const Duration(
+            minutes: 15,
+          ),
           // dateFormat: 'd',
           // dayFormat: 'EEE',
-          // startHour: 7,
-          // endHour: 21,
-          // nonWorkingDays: <int>[DateTime.friday, DateTime.saturday],
+          startHour: startTime,
+          endHour: endTime,
         ),
-        todayHighlightColor: Colors.black,
-        resourceViewSettings: ResourceViewSettings(showAvatar: false),
       ),
     );
   }

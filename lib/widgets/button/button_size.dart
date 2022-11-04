@@ -16,4 +16,8 @@ class ButtonSize {
   EdgeInsetsGeometry loginButotn() {
     return const EdgeInsets.symmetric(horizontal: 32, vertical: 17);
   }
+
+  EdgeInsetsGeometry itemQtyButton() {
+    return const EdgeInsets.symmetric(horizontal: 5, vertical: 5);
+  }
 }

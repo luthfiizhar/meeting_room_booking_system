@@ -7,6 +7,7 @@ class StartTimeContainer extends StatelessWidget {
     this.setStartTime,
     this.items,
     this.setInitialEndTime,
+    this.isDark = true,
   });
 
   // Function? setTime;
@@ -14,6 +15,7 @@ class StartTimeContainer extends StatelessWidget {
   Function? setStartTimeStatus;
   Function? setStartTime;
   Function? setInitialEndTime;
+  bool isDark;
   // String? startTime;
   // String? endTime;
 
@@ -117,51 +119,59 @@ class StartTimeContainer extends StatelessWidget {
             vertical: 20,
           ),
           decoration: BoxDecoration(
-            color: culturedWhite,
+            color: isDark ? eerieBlack : culturedWhite,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: lightGray,
-              width: 1,
-            ),
+            border: isDark
+                ? null
+                : Border.all(
+                    color: lightGray,
+                    width: 1,
+                  ),
           ),
-          child: ListView.builder(
-            itemCount: items!.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  // onChangeParticipant!(items![index]);
-                  // setParticipantStatus!(false);
-                  setStartTimeStatus!(false);
-                  setStartTime!(items![index]);
-                  setInitialEndTime!(items![index + 1]);
-                  print(items![index + 1]);
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  // mainAxisSize: MainAxisSize.min,
-                  children: [
-                    index == 0 || index == items!.length
-                        ? const SizedBox()
-                        : const Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 10,
+          child: ScrollConfiguration(
+            behavior:
+                ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            child: ListView.builder(
+              itemCount: items!.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () {
+                    // onChangeParticipant!(items![index]);
+                    // setParticipantStatus!(false);
+                    setStartTimeStatus!(false);
+                    setStartTime!(items![index]);
+                    setInitialEndTime!(items![index + 1]);
+                    print(items![index + 1]);
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    // mainAxisSize: MainAxisSize.min,
+                    children: [
+                      index == 0 || index == items!.length
+                          ? const SizedBox()
+                          : Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                              ),
+                              child: Divider(
+                                color: isDark ? platinum : davysGray,
+                              ),
                             ),
-                            child: Divider(),
-                          ),
-                    Text(
-                      items![index],
-                      style: const TextStyle(
-                        color: davysGray,
-                        fontSize: 16,
-                        height: 1.3,
-                        fontWeight: FontWeight.w300,
+                      Text(
+                        items![index],
+                        style: TextStyle(
+                          color: isDark ? platinum : davysGray,
+                          fontSize: 16,
+                          height: 1.3,
+                          fontWeight: FontWeight.w300,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),

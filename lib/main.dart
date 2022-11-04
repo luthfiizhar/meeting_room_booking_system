@@ -6,6 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meeting_room_booking_system/app_view.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/custom_scroll_behavior.dart';
 import 'package:meeting_room_booking_system/model/booking_room_info.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/pages/login_page.dart'
@@ -21,6 +22,10 @@ import 'package:meeting_room_booking_system/pages/user/rooms_page.dart'
     deferred as roomPage;
 import 'package:meeting_room_booking_system/pages/user/search_page.dart'
     deferred as searchPage;
+import 'package:meeting_room_booking_system/pages/user/booking_page.dart'
+    deferred as bookPage;
+import 'package:meeting_room_booking_system/pages/user/detail_event_page.dart'
+    deferred as detailEventPage;
 import 'package:meeting_room_booking_system/routes/generate_route.dart';
 import 'package:meeting_room_booking_system/routes/locations/locations.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +33,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 
 bool isLoggedIn = false;
 String? jwtToken = "";
+String? token = "";
 bool firstLogIn = true;
 
 loginCheck() async {
@@ -40,6 +46,8 @@ loginCheck() async {
 
 void main() async {
   await Hive.initFlutter();
+  // final ipv4 = await Ipify.ipv4();
+  // print(ipv4);
   loginCheck().then((_) {
     runApp(MyApp());
   });
@@ -49,22 +57,48 @@ class MyApp extends StatelessWidget {
   // MyApp({Key? key}) : super(key: key);
   // final loginInfo = MainModel();
   final Future<void> loadedLibrary = searchPage.loadLibrary();
+  final GlobalKey<NavigatorState> _rootNavigatorKey =
+      GlobalKey<NavigatorState>();
   late final _router = GoRouter(
+    navigatorKey: _rootNavigatorKey,
     routes: [
       GoRoute(
-        name: 'home',
-        path: '/',
-        // builder: (context, state) => HomePage(),
-        pageBuilder: (context, state) => NoTransitionPage<void>(
-          key: state.pageKey,
-          child: FutureBuilder(
-            future: homePage.loadLibrary(),
-            builder: (context, snapshot) {
-              return homePage.HomePage();
-            },
-          ),
-        ),
-      ),
+          name: 'home',
+          path: '/home',
+          // builder: (context, state) => HomePage(),
+          pageBuilder: (context, state) => NoTransitionPage<void>(
+                key: state.pageKey,
+                child: FutureBuilder(
+                  future: homePage.loadLibrary(),
+                  builder: (context, snapshot) {
+                    return homePage.HomePage();
+                  },
+                ),
+              ),
+          routes: [
+            GoRoute(
+              name: 'booking',
+              path:
+                  'booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType',
+              pageBuilder: (context, state) => NoTransitionPage<void>(
+                key: state.pageKey,
+                child: FutureBuilder(
+                  future: bookPage.loadLibrary(),
+                  builder: (context, snapshot) {
+                    return bookPage.BookingRoomPage(
+                      roomId: state.params['roomId'],
+                      date: state.params['date'],
+                      startTime: state.params['startTime'],
+                      endTime: state.params['endTime'],
+                      participant: state.params['participant'],
+                      facilities: state.params['facilities'],
+                      roomType: state.params['roomType'],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ]),
       GoRoute(
         name: 'login',
         path: '/login',
@@ -119,19 +153,36 @@ class MyApp extends StatelessWidget {
                 builder: (context, snapshot) {
                   return roomPage.RoomsPage();
                 })),
+        routes: [],
       ),
       GoRoute(
-        name: 'my_booking',
-        path: '/my_booking',
+        name: 'booking_list',
+        path: '/booking_list',
         // builder: (context, state) => CalendarViewPage(),
         pageBuilder: (context, state) => NoTransitionPage<void>(
           key: state.pageKey,
           child: FutureBuilder(
-              future: myBookPage.loadLibrary(),
-              builder: (context, snapshot) {
-                return myBookPage.MyBookingPage();
-              }),
+            future: myBookPage.loadLibrary(),
+            builder: (context, snapshot) {
+              return myBookPage.MyBookingPage();
+            },
+          ),
         ),
+        routes: [
+          GoRoute(
+            name: 'detail_event',
+            path: 'detail_event/eventID=:eventId',
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              child: FutureBuilder(
+                future: detailEventPage.loadLibrary(),
+                builder: (context, snapshot) {
+                  return detailEventPage.DetailEventPage();
+                },
+              ),
+            ),
+          )
+        ],
       ),
       // GoRoute(
       //   path: '/on_boarding',
@@ -150,7 +201,7 @@ class MyApp extends StatelessWidget {
 
     //   return null;
     // },
-    initialLocation: '/',
+    initialLocation: '/home',
   );
 
   // final routerDelegate = BeamerDelegate(

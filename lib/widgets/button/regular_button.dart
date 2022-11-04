@@ -4,18 +4,23 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 
 class RegularButton extends StatelessWidget {
-  RegularButton(
-      {required this.text,
-      this.fontSize,
-      this.onTap,
-      required this.disabled,
-      this.padding});
+  RegularButton({
+    required this.text,
+    this.fontSize,
+    this.onTap,
+    required this.disabled,
+    this.padding,
+    this.fontWeight = FontWeight.w700,
+    this.radius = 7.5,
+  });
 
   final String? text;
   final double? fontSize;
   final VoidCallback? onTap;
   bool? disabled = false;
   final EdgeInsetsGeometry? padding;
+  FontWeight fontWeight;
+  double radius;
 
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
@@ -41,12 +46,12 @@ class RegularButton extends StatelessWidget {
           (Set<MaterialState> states) {
             if (states.contains(MaterialState.pressed)) {
               return RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(7.5),
+                borderRadius: BorderRadius.circular(radius),
                 side: BorderSide(color: eerieBlack, width: 1),
               );
             }
             return RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(7.5),
+              borderRadius: BorderRadius.circular(radius),
             );
           },
         ),
@@ -59,9 +64,9 @@ class RegularButton extends StatelessWidget {
         ),
         textStyle: MaterialStateProperty.resolveWith<TextStyle>(
           (states) {
-            return const TextStyle(
+            return TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontWeight: fontWeight,
               fontFamily: 'Helvetica',
               height: 1.15,
             );

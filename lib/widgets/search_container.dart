@@ -16,6 +16,7 @@ class SearchContainer extends StatelessWidget {
     this.setTimeStatus,
     this.setStartTimeStatus,
     this.setEndTimeStatus,
+    this.setOpacityOn,
     this.getPositionDatePicker,
     this.getPositionAmenities,
     this.getPositionparticipant,
@@ -49,6 +50,7 @@ class SearchContainer extends StatelessWidget {
   Function? setStartTimeStatus;
   Function? setEndTimeStatus;
   Function? setMeetingTypeStatus;
+  Function? setOpacityOn;
   Function? getPositionDatePicker;
   Function? getPositionAmenities;
   Function? getPositionparticipant;
@@ -84,8 +86,10 @@ class SearchContainer extends StatelessWidget {
               onTap: () {
                 if (meetingTypeStatus!) {
                   setMeetingTypeStatus!(false);
+                  setOpacityOn!(false);
                 } else {
                   setMeetingTypeStatus!(true);
+                  setOpacityOn!(true);
                   setPickerStatus!(false);
                   setAmenitiesStatus!(false);
                   setParticipantStatus!(false);
@@ -178,9 +182,11 @@ class SearchContainer extends StatelessWidget {
                       onTap: () {
                         if (pickerStatus!) {
                           setPickerStatus!(false);
+                          setOpacityOn!(false);
                         } else {
                           // getPositionDatePicker!();
                           setPickerStatus!(true);
+                          setOpacityOn!(true);
                           setAmenitiesStatus!(false);
                           setParticipantStatus!(false);
                           setTimeStatus!(false);
@@ -294,12 +300,16 @@ class SearchContainer extends StatelessWidget {
                     onTap: () {
                       if (timePickerStatus!) {
                         setTimeStatus!(false);
+                        setStartTimeStatus!(false);
+                        setEndTimeStatus!(false);
+                        setOpacityOn!(false);
                       } else {
                         // getPositionDatePicker!();
                         setPickerStatus!(false);
                         setAmenitiesStatus!(false);
                         setParticipantStatus!(false);
                         setTimeStatus!(true);
+                        setOpacityOn!(true);
                         setStartTimeStatus!(false);
                         setEndTimeStatus!(false);
                         setMeetingTypeStatus!(false);
@@ -406,9 +416,11 @@ class SearchContainer extends StatelessWidget {
                     onTap: () {
                       if (participantStatus!) {
                         setParticipantStatus!(false);
+                        setOpacityOn!(false);
                       } else {
                         // getPositionparticipant!();
                         setParticipantStatus!(true);
+                        setOpacityOn!(true);
                         setAmenitiesStatus!(false);
                         setPickerStatus!(false);
                         setTimeStatus!(false);
@@ -525,9 +537,11 @@ class SearchContainer extends StatelessWidget {
                       onTap: () {
                         if (amenitiesStatus!) {
                           setAmenitiesStatus!(false);
+                          setOpacityOn!(false);
                         } else {
                           // getPositionAmenities!();
                           setAmenitiesStatus!(true);
+                          setOpacityOn!(true);
                           setPickerStatus!(false);
                           setParticipantStatus!(false);
                           setTimeStatus!(false);

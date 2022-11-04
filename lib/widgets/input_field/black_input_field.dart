@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 
 class BlackInputField extends StatelessWidget {
-  const BlackInputField({
+  BlackInputField({
     required this.controller,
     this.hintText,
     this.focusNode,
-    this.obsecureText,
+    this.obsecureText = false,
     this.onSaved,
     this.suffixIcon,
     this.validator,
     required this.enabled,
     this.onTap,
+    this.maxLines,
   });
 
   final TextEditingController controller;
@@ -23,6 +24,7 @@ class BlackInputField extends StatelessWidget {
   final Widget? suffixIcon;
   final bool? enabled;
   final VoidCallback? onTap;
+  int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +51,7 @@ class BlackInputField extends StatelessWidget {
         focusNode: focusNode,
         obscureText: obsecureText!,
         cursorColor: eerieBlack,
+        maxLines: maxLines,
         onTap: onTap,
         decoration: InputDecoration(
           border: OutlineInputBorder(

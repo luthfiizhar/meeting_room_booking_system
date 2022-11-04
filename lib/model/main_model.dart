@@ -17,11 +17,18 @@ class MainModel extends ChangeNotifier {
 
   bool _shadowActive = false;
 
+  bool _isScrolling = false;
+  bool _isScrollAtEdge = false;
+  double _scrollPosition = 0;
+
   ScrollController get layoutController => _layoutController;
   bool get shadowActive => _shadowActive;
   bool get profilePopup => _profilePopup;
   bool get autoScrollSearch => _autoScrollSearch;
   bool get upBottonVisible => _upBottonVisible;
+  bool get isScrolling => _isScrolling;
+  bool get isScrollAtEdge => _isScrollAtEdge;
+  double get scrollPosition => _scrollPosition;
 
   int _testScroll = 0;
 
@@ -38,6 +45,21 @@ class MainModel extends ChangeNotifier {
 
   void setUpBotton(bool value) {
     _upBottonVisible = value;
+    notifyListeners();
+  }
+
+  void setIsScrollAtEdge(bool value) {
+    _isScrollAtEdge = value;
+    notifyListeners();
+  }
+
+  void setScrollPosition(double value) {
+    _scrollPosition = value;
+    notifyListeners();
+  }
+
+  void setIsScrolling(bool value) {
+    _isScrolling = value;
     notifyListeners();
   }
 

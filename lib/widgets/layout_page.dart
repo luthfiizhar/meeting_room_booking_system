@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
@@ -7,7 +11,9 @@ import 'package:meeting_room_booking_system/widgets/button/go_to_top_button.dart
 import 'package:meeting_room_booking_system/widgets/footer.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:meeting_room_booking_system/widgets/pop_up_profile.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'dart:html';
 
 class LayoutPageWeb extends StatefulWidget {
   LayoutPageWeb({
@@ -26,6 +32,8 @@ class LayoutPageWeb extends StatefulWidget {
 
 class _LayoutPageWebState extends State<LayoutPageWeb> {
   ScrollController? _scrollController = ScrollController();
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  final info = NetworkInfo();
   MainModel mainModel = MainModel();
   bool profileVisible = false;
   // bool upBottonVisible = false;
@@ -46,16 +54,48 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
         // Provider.of<MainModel>(context, listen: false).setUpBotton(false);
         mainModel.setShadowActive(false);
         mainModel.setUpBotton(false);
+        mainModel.setIsScrolling(false);
+        mainModel.setScrollPosition(scrollInfo.offset);
+        mainModel.setIsScrollAtEdge(false);
       } else {
         // Provider.of<MainModel>(context, listen: false)
         //     .setShadowActive(true);
         // Provider.of<MainModel>(context, listen: false).setUpBotton(true);
         mainModel.setShadowActive(true);
         mainModel.setUpBotton(true);
+        mainModel.setIsScrolling(true);
+        mainModel.setScrollPosition(scrollInfo.offset);
+        mainModel.setIsScrollAtEdge(false);
+        if (scrollInfo.offset == scrollInfo.position.maxScrollExtent) {
+          mainModel.setIsScrollAtEdge(true);
+        }
       }
     }
 
     // widget.setDatePickerStatus!(false);
+  }
+
+  Future checkDeviceInfo() async {
+    WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+    final Connectivity _connectivity = Connectivity();
+    ConnectivityResult connectivityResult =
+        await _connectivity.checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.mobile) {
+      // I am connected to a mobile network.
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      // I am connected to a wifi network.
+      print(connectivityResult);
+      _connectivity.checkConnectivity().then((value) {
+        print(value);
+      });
+    }
+    // final add =  await NetworkInterface().addresses;
+    // var info = NetworkInfo();
+    // var wifiIP = await info.getWifiIP();
+    // print('Ip address -> $wifiIP');
+    // print(info);
+    print('Running on -> ${webBrowserInfo.userAgent}');
   }
 
   Future autoScroll() async {
@@ -78,6 +118,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // checkDeviceInfo();
     // if (mounted) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       // Provider.of<MainModel>(context, listen: false)
@@ -174,39 +215,69 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                         ),
                       ),
                       Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: CustomScrollView(
-                            controller: _scrollController,
-                            // controller: model.layoutController,
-                            slivers: [
-                              SliverList(
-                                delegate: SliverChildListDelegate(
-                                  [
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    ConstrainedBox(
-                                      constraints: pageConstraints,
-                                      child: widget.child!,
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
-                                ),
+                        child: Stack(
+                          children: [
+                            SingleChildScrollView(
+                              controller: _scrollController,
+                              child: Column(
+                                children: [
+                                  ConstrainedBox(
+                                      constraints: pageConstraints.copyWith(
+                                        minHeight:
+                                            MediaQuery.of(context).size.height -
+                                                115 -
+                                                60,
+                                      ),
+                                      child: widget.child!),
+                                  FooterWeb(),
+                                ],
                               ),
-                              const SliverFillRemaining(
-                                hasScrollBody: false,
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: FooterWeb(),
-                                ),
-                              )
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
+
+                      // Expanded(
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.only(top: 5),
+                      //     child: ConstrainedBox(
+                      //       constraints: pageConstraints,
+                      //       child: CustomScrollView(
+                      //         controller: _scrollController,
+                      //         // controller: model.layoutController,
+                      //         slivers: [
+                      //           SliverList(
+                      //             delegate: SliverChildListDelegate(
+                      //               [
+                      //                 // const SizedBox(
+                      //                 //   height: 20,
+                      //                 // ),
+                      //                 // ConstrainedBox(
+                      //                 //   constraints: pageConstraints.copyWith(
+                      //                 //       minHeight: MediaQuery.of(context)
+                      //                 //           .size
+                      //                 //           .height),
+                      //                 //   child: widget.child!,
+                      //                 // ),
+                      //                 widget.child!
+                      //                 // const SizedBox(
+                      //                 //   height: 20,
+                      //                 // ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //           const SliverFillRemaining(
+                      //             hasScrollBody: false,
+                      //             child: Align(
+                      //               alignment: Alignment.bottomCenter,
+                      //               child: FooterWeb(),
+                      //             ),
+                      //           )
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                   Positioned(

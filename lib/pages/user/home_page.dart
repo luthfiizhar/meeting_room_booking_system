@@ -32,6 +32,7 @@ import 'package:meeting_room_booking_system/widgets/search_page/sorting_containe
 import 'package:meeting_room_booking_system/widgets/start_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/time_picker_container.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class HomePage extends StatefulWidget {
@@ -46,8 +47,10 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _facilityController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
   TextEditingController _participantController = TextEditingController();
+  DateRangePickerController datePickerControl = DateRangePickerController();
 
   bool showOnBoard = false;
+  bool opacityOn = false;
 
   bool profileVisible = false;
   // final loginInfo = MainModel();
@@ -335,6 +338,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _datePickerOverlay(BuildContext context) {
+    OverlayState? overlayState = Overlay.of(context);
+    OverlayEntry overlayEntry;
+    overlayEntry = OverlayEntry(builder: (context) {
+      return Positioned(
+        top: 485,
+        left: 183,
+        child: CustomDatePicker(
+          controller: datePickerControl,
+          changeDate: onDateChanged,
+          setPickerStatus: setDatePickerVisible,
+          currentDate: selectedDate,
+        ),
+      );
+    });
+
+    overlayState!.insert(overlayEntry);
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -596,6 +618,11 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  setOpacityOn(bool value) {
+    opacityOn = value;
+    setState(() {});
+  }
+
   setDatePickerVisible(bool value) {
     // RenderBox box = dateKey.currentContext!.findRenderObject() as RenderBox;
     // Offset position = box.localToGlobal(Offset.zero);
@@ -606,6 +633,7 @@ class _HomePageState extends State<HomePage> {
     // print(mouseX);
     // print(mouseY);
     datePickerVisible = value;
+    // _datePickerOverlay(context);
     setState(() {});
   }
 
@@ -627,6 +655,7 @@ class _HomePageState extends State<HomePage> {
     startTimeContainerVisible = value;
     endTimeContainerVisible = value;
     meetingTypeContainerVisible = value;
+    opacityOn = value;
     setState(() {});
   }
 
@@ -638,434 +667,447 @@ class _HomePageState extends State<HomePage> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(
           minWidth: 1100,
-          maxWidth: 1100,
+          // maxWidth: 1100,
         ),
-        child: Container(
-          // color: Colors.blue,
-          width: 1100,
-          child: Stack(
-            children: [
-              Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // const SizedBox(
-                  //   height: 20,
-                  // ),
-                  Container(
-                    // color: Colors.amber,
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          maxHeight: 475,
-                          maxWidth: 1100,
+        child: Stack(
+          children: [
+            Center(
+              child: Container(
+                // color: Colors.blue,
+                width: 1100,
+                child: Stack(
+                  children: [
+                    Column(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // const SizedBox(
+                        //   height: 20,
+                        // ),
+                        Container(
+                          // color: Colors.amber,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                maxHeight: 475,
+                                maxWidth: 1100,
+                              ),
+                              child: Container(
+                                // color: Colors.greenAccent,
+                                height: 475,
+                                width: 1100,
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      top: 0,
+                                      left: 0,
+                                      child: Container(
+                                        width: 1100,
+                                        height: 400,
+                                        decoration: BoxDecoration(
+                                          color: graySand,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          // image: DecorationImage(
+                                          //   image:
+                                          //       AssetImage('assets/social_hub.jpg'),
+                                          //   fit: BoxFit.cover,
+                                          // ),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 185,
+                                      right: 0,
+                                      child: Container(
+                                        // color: Colors.black,
+                                        decoration: BoxDecoration(
+                                          color: eerieBlack,
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(5),
+                                            bottomLeft: Radius.circular(5),
+                                          ),
+                                        ),
+                                        padding: EdgeInsets.only(
+                                          right: 15,
+                                          left: 25,
+                                          top: 10,
+                                          bottom: 10,
+                                        ),
+                                        // height: 30,
+                                        // width: 30,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              'Social Hub',
+                                              style: TextStyle(
+                                                fontFamily: 'Helvetica',
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w700,
+                                                color: culturedWhite,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              '- Head Office',
+                                              style: TextStyle(
+                                                fontFamily: 'Helvetica',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w300,
+                                                color: culturedWhite,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 50,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          resetAllVisibleStatus(false);
+                                          // setDatePickerVisible(false);
+                                          // setAmenitiesStatus(false);
+                                        },
+                                        child: SearchContainer(
+                                          key: searchContainerKey,
+                                          dateNode: dateNode,
+                                          getPositionDatePicker:
+                                              getPositionDatePicker,
+                                          getPositionAmenities:
+                                              getPositionAmenities,
+                                          getPositionparticipant:
+                                              getPositionParticipant,
+                                          setPickerStatus: setDatePickerVisible,
+                                          setAmenitiesStatus:
+                                              setAmenitiesStatus,
+                                          setParticipantStatus:
+                                              setParticipantStatus,
+                                          setTimeStatus: setTimePickerStatus,
+                                          setStartTimeStatus:
+                                              setStartTimeStatus,
+                                          setEndTimeStatus: setEndTimeStatus,
+                                          setOpacityOn: setOpacityOn,
+                                          pickerStatus: datePickerVisible,
+                                          amenitiesStatus:
+                                              amenitiesContainerVisible,
+                                          participantStatus:
+                                              participantContainerVisible,
+                                          timePickerStatus:
+                                              timePickerContainerVisible,
+                                          dateController: _dateController,
+                                          facilityController:
+                                              _facilityController,
+                                          timeController: _timeController,
+                                          participantController:
+                                              _participantController,
+                                          meetingTypeSelected:
+                                              meetingTypeSelected,
+                                          meetingTypeStatus:
+                                              meetingTypeContainerVisible,
+                                          setMeetingTypeStatus:
+                                              setMeetingTypeContainerStatus,
+                                          dateKey: dateKey,
+                                          timeKey: timeKey,
+                                          amenitiesKey: amenitiesKey,
+                                          meetingTypeKey: meetingTypeKey,
+                                          participantKey: participantKey,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                        child: Container(
-                          // color: Colors.greenAccent,
-                          height: 475,
-                          width: 1100,
+                        Container(
+                          // color: Colors.green,
                           child: Stack(
                             children: [
-                              Positioned(
-                                top: 0,
-                                left: 0,
-                                child: Container(
-                                  width: 1100,
-                                  height: 400,
-                                  decoration: BoxDecoration(
-                                    color: graySand,
-                                    borderRadius: BorderRadius.circular(10),
-                                    // image: DecorationImage(
-                                    //   image:
-                                    //       AssetImage('assets/social_hub.jpg'),
-                                    //   fit: BoxFit.cover,
-                                    // ),
+                              Center(
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    minHeight: 600,
+                                    // maxHeight: MediaQuery.of(context).size.width,
+                                    minWidth: 1000,
+                                    // maxWidth: 1000,
                                   ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 185,
-                                right: 0,
-                                child: Container(
-                                  // color: Colors.black,
-                                  decoration: BoxDecoration(
-                                    color: eerieBlack,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(5),
-                                      bottomLeft: Radius.circular(5),
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                      top: 35,
+                                    ),
+                                    width: 1000,
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(
+                                    //     color: eerieBlack,
+                                    //   ),
+                                    // ),
+                                    // height: double.infinity,
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          // mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              // color: Colors.amber,
+                                              width: 235,
+                                              // height: 1000,
+                                              // child: Text('Filter'),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  SortingContainer(
+                                                    listSorting: listSorting,
+                                                    selectedSorting:
+                                                        selectedSorting,
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  FilterContainer(
+                                                    listFilter: listFilter,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 35,
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                child: ListView.builder(
+                                                  // physics: NeverScrollableScrollPhysics,
+                                                  shrinkWrap: true,
+                                                  itemCount: 2,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return ListRoomContainer();
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+
+                                            // RegularButton(
+                                            //   text: 'Start Time',
+                                            //   disabled: false,
+                                            //   onTap: () {
+                                            //     setStartTime();
+                                            //   },
+                                            // ),
+                                            // SizedBox(
+                                            //   height: 10,
+                                            // ),
+                                            // RegularButton(
+                                            //   text: 'End Time',
+                                            //   disabled: false,
+                                            //   onTap: () {
+                                            //     setEndTime("09:45");
+                                            //   },
+                                            // ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 35,
+                                        ),
+                                        WhiteBannerLandscape(
+                                          title: 'Link your Google account',
+                                          subtitle: '& enjoy your benefits.',
+                                          imagePath:
+                                              'assets/banner_pict_google.png',
+                                        ),
+                                        const SizedBox(
+                                          height: 100,
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  padding: EdgeInsets.only(
-                                    right: 15,
-                                    left: 25,
-                                    top: 10,
-                                    bottom: 10,
-                                  ),
-                                  // height: 30,
-                                  // width: 30,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Social Hub',
-                                        style: TextStyle(
-                                          fontFamily: 'Helvetica',
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
-                                          color: culturedWhite,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text(
-                                        '- Head Office',
-                                        style: TextStyle(
-                                          fontFamily: 'Helvetica',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300,
-                                          color: culturedWhite,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                                 ),
                               ),
-                              Positioned(
-                                bottom: 0,
-                                left: 50,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    resetAllVisibleStatus(false);
-                                    // setDatePickerVisible(false);
-                                    // setAmenitiesStatus(false);
-                                  },
-                                  child: SearchContainer(
-                                    key: searchContainerKey,
-                                    dateNode: dateNode,
-                                    getPositionDatePicker:
-                                        getPositionDatePicker,
-                                    getPositionAmenities: getPositionAmenities,
-                                    getPositionparticipant:
-                                        getPositionParticipant,
-                                    setPickerStatus: setDatePickerVisible,
-                                    setAmenitiesStatus: setAmenitiesStatus,
-                                    setParticipantStatus: setParticipantStatus,
-                                    setTimeStatus: setTimePickerStatus,
-                                    setStartTimeStatus: setStartTimeStatus,
-                                    setEndTimeStatus: setEndTimeStatus,
-                                    pickerStatus: datePickerVisible,
-                                    amenitiesStatus: amenitiesContainerVisible,
-                                    participantStatus:
-                                        participantContainerVisible,
-                                    timePickerStatus:
-                                        timePickerContainerVisible,
-                                    dateController: _dateController,
-                                    facilityController: _facilityController,
-                                    timeController: _timeController,
-                                    participantController:
-                                        _participantController,
-                                    meetingTypeSelected: meetingTypeSelected,
-                                    meetingTypeStatus:
-                                        meetingTypeContainerVisible,
-                                    setMeetingTypeStatus:
-                                        setMeetingTypeContainerStatus,
-                                    dateKey: dateKey,
-                                    timeKey: timeKey,
-                                    amenitiesKey: amenitiesKey,
-                                    meetingTypeKey: meetingTypeKey,
-                                    participantKey: participantKey,
-                                  ),
-                                ),
-                              ),
+                              opacityOn
+                                  ? Center(
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          minHeight: 1000,
+                                          minWidth: 1366,
+                                          // minWidth: 1000,
+                                          // maxWidth: 1366,
+                                        ),
+                                        child: Container(
+                                          color: Colors.white.withOpacity(0.5),
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(),
                             ],
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    // color: Colors.green,
-                    child: Stack(
-                      children: [
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            minHeight: 600,
-                            // maxHeight: MediaQuery.of(context).size.width,
-                            minWidth: 1000,
-                            maxWidth: 1000,
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                              top: 35,
-                            ),
-                            width: 1000,
-                            // decoration: BoxDecoration(
-                            //   border: Border.all(
-                            //     color: eerieBlack,
-                            //   ),
-                            // ),
-                            // height: double.infinity,
-                            child: Column(
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  // mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      // color: Colors.amber,
-                                      width: 235,
-                                      // height: 1000,
-                                      // child: Text('Filter'),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          SortingContainer(
-                                            listSorting: listSorting,
-                                            selectedSorting: selectedSorting,
-                                          ),
-                                          const SizedBox(
-                                            height: 20,
-                                          ),
-                                          FilterContainer(
-                                            listFilter: listFilter,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 35,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        child: ListView.builder(
-                                          // physics: NeverScrollableScrollPhysics,
-                                          shrinkWrap: true,
-                                          itemCount: 2,
-                                          itemBuilder: (context, index) {
-                                            return ListRoomContainer();
-                                          },
-                                        ),
-                                        // height: 1000,
-                                        // color: Colors.greenAccent,
-                                        // child: Column(
-                                        //   crossAxisAlignment:
-                                        //       CrossAxisAlignment.end,
-                                        //   children: [
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //     ListRoomContainer(),
-                                        //   ],
-                                        // ),
-                                      ),
-                                    ),
 
-                                    // RegularButton(
-                                    //   text: 'Start Time',
-                                    //   disabled: false,
-                                    //   onTap: () {
-                                    //     setStartTime();
-                                    //   },
-                                    // ),
-                                    // SizedBox(
-                                    //   height: 10,
-                                    // ),
-                                    // RegularButton(
-                                    //   text: 'End Time',
-                                    //   disabled: false,
-                                    //   onTap: () {
-                                    //     setEndTime("09:45");
-                                    //   },
-                                    // ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 35,
-                                ),
-                                WhiteBannerLandscape(
-                                  title: 'Link your Google account',
-                                  subtitle: '& enjoy your benefits.',
-                                  imagePath: 'assets/banner_pict_google.png',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        // Center(
+                        //   child: Text(
+                        //     datePicked,
+                        //   ),
+                        // ),
+                        // Container(
+                        //   height: 1000,
+                        // ),
                       ],
                     ),
-                  ),
+                  ],
+                ),
+              ),
+            ),
+            Visibility(
+              visible: meetingTypeContainerVisible,
+              child: Positioned(
+                top: 360,
+                left: 330,
+                child: MeetingTypeContainer(
+                  meetingTypeStatus: meetingTypeContainerVisible,
+                  setMeetingType: onMeetingTypeSelected,
+                  selectedMeetingType: meetingTypeSelected,
+                  setMeetingTypeStatus: setMeetingTypeContainerStatus,
+                ),
+              ),
+            ),
+            Visibility(
+              visible: datePickerVisible,
+              child: Positioned(
+                // bottom: 0,
+                top: 485,
+                left: 183,
+                child: CustomDatePicker(
+                  controller: datePickerControl,
+                  changeDate: onDateChanged,
+                  setPickerStatus: setDatePickerVisible,
+                  currentDate: selectedDate,
+                ),
+              ),
+            ),
+            Visibility(
+              visible: amenitiesContainerVisible,
+              child: Positioned(
+                // bottom: 0,
+                top: 485,
+                right: 370,
+                child: AmenitiesContainer(
+                  tvOnChange: (value) {
+                    if (checkBoxTv) {
+                      checkBoxTv = false;
+                      facilitySelected
+                          .removeWhere((element) => element == 'TV');
+                    } else {
+                      checkBoxTv = true;
+                      facilitySelected.add('TV');
+                    }
+                    if (facilitySelected.isNotEmpty) {
+                      if (facilitySelected.length > 1) {
+                        _facilityController.text = "TV & Camera";
+                      } else if (facilitySelected.length == 1) {
+                        _facilityController.text =
+                            facilitySelected[0].toString();
+                      }
+                    } else {
+                      _facilityController.text = "None";
+                    }
+                    print(facilitySelected);
+                    setState(() {});
+                  },
+                  cameraOnChange: (value) {
+                    if (checkBoxCamera) {
+                      checkBoxCamera = false;
+                      facilitySelected
+                          .removeWhere((element) => element == 'Camera');
+                    } else {
+                      checkBoxCamera = true;
+                      facilitySelected.add('Camera');
+                    }
+                    if (facilitySelected.isNotEmpty) {
+                      if (facilitySelected.length > 1) {
+                        _facilityController.text = "TV & Camera";
+                      } else if (facilitySelected.length == 1) {
+                        _facilityController.text =
+                            facilitySelected[0].toString();
+                      }
+                    } else {
+                      _facilityController.text = "None";
+                    }
+                    print(facilitySelected);
 
-                  // Center(
-                  //   child: Text(
-                  //     datePicked,
-                  //   ),
-                  // ),
-                  // Container(
-                  //   height: 1000,
-                  // ),
-                ],
-              ),
-              Visibility(
-                visible: meetingTypeContainerVisible,
-                child: Positioned(
-                  top: 360,
-                  left: 330,
-                  child: MeetingTypeContainer(
-                    meetingTypeStatus: meetingTypeContainerVisible,
-                    setMeetingType: onMeetingTypeSelected,
-                    selectedMeetingType: meetingTypeSelected,
-                    setMeetingTypeStatus: setMeetingTypeContainerStatus,
-                  ),
+                    setState(() {});
+                  },
+                  cameraValue: checkBoxCamera,
+                  tvValue: checkBoxTv,
                 ),
               ),
-              Visibility(
-                visible: datePickerVisible,
-                child: Positioned(
-                  // bottom: 0,
-                  top: 485,
-                  left: 183,
-                  child: CustomDatePicker(
-                    changeDate: onDateChanged,
-                    setPickerStatus: setDatePickerVisible,
-                    currentDate: selectedDate,
-                  ),
+            ),
+            Visibility(
+              visible: participantContainerVisible,
+              child: Positioned(
+                top: 485,
+                right: 575,
+                child: ParticipantContainer(
+                  setParticipantStatus: setParticipantStatus,
+                  onChangeParticipant: onParticipanSelected,
                 ),
               ),
-              Visibility(
-                visible: amenitiesContainerVisible,
-                child: Positioned(
-                  // bottom: 0,
-                  top: 485,
-                  right: 370,
-                  child: AmenitiesContainer(
-                    tvOnChange: (value) {
-                      if (checkBoxTv) {
-                        checkBoxTv = false;
-                        facilitySelected
-                            .removeWhere((element) => element == 'TV');
-                      } else {
-                        checkBoxTv = true;
-                        facilitySelected.add('TV');
-                      }
-                      if (facilitySelected.isNotEmpty) {
-                        if (facilitySelected.length > 1) {
-                          _facilityController.text = "TV & Camera";
-                        } else if (facilitySelected.length == 1) {
-                          _facilityController.text =
-                              facilitySelected[0].toString();
-                        }
-                      } else {
-                        _facilityController.text = "None";
-                      }
-                      print(facilitySelected);
-                      setState(() {});
-                    },
-                    cameraOnChange: (value) {
-                      if (checkBoxCamera) {
-                        checkBoxCamera = false;
-                        facilitySelected
-                            .removeWhere((element) => element == 'Camera');
-                      } else {
-                        checkBoxCamera = true;
-                        facilitySelected.add('Camera');
-                      }
-                      if (facilitySelected.isNotEmpty) {
-                        if (facilitySelected.length > 1) {
-                          _facilityController.text = "TV & Camera";
-                        } else if (facilitySelected.length == 1) {
-                          _facilityController.text =
-                              facilitySelected[0].toString();
-                        }
-                      } else {
-                        _facilityController.text = "None";
-                      }
-                      print(facilitySelected);
-
-                      setState(() {});
-                    },
-                    cameraValue: checkBoxCamera,
-                    tvValue: checkBoxTv,
-                  ),
+            ),
+            Visibility(
+              visible: timePickerContainerVisible,
+              child: Positioned(
+                top: 485,
+                left: 408,
+                child: TimePickerContainer(
+                  startTimeStatus: startTimeContainerVisible,
+                  endTimeStatus: endTimeContainerVisible,
+                  setTime: setTime,
+                  startTime: startTime,
+                  endTime: endTime,
+                  setTimePickerStatus: setTimePickerStatus,
+                  setListStartTime: setStartTimeList,
+                  setEndTimeStatus: setEndTimeStatus,
+                  setListEndTime: setEndTimeList,
+                  setStartTimeStatus: setStartTimeStatus,
+                  initialEndTime: initialEndTime,
                 ),
               ),
-              Visibility(
-                visible: participantContainerVisible,
-                child: Positioned(
-                  top: 485,
-                  right: 575,
-                  child: ParticipantContainer(
-                    setParticipantStatus: setParticipantStatus,
-                    onChangeParticipant: onParticipanSelected,
-                  ),
+            ),
+            Visibility(
+              visible: startTimeContainerVisible,
+              child: Positioned(
+                top: 595,
+                left: 425,
+                child: StartTimeContainer(
+                  items: startTimeList,
+                  setStartTime: setStartTime,
+                  setStartTimeStatus: setStartTimeStatus,
+                  setInitialEndTime: setInitialEndTime,
                 ),
               ),
-              Visibility(
-                visible: timePickerContainerVisible,
-                child: Positioned(
-                  top: 485,
-                  left: 408,
-                  child: TimePickerContainer(
-                    startTimeStatus: startTimeContainerVisible,
-                    endTimeStatus: endTimeContainerVisible,
-                    setTime: setTime,
-                    startTime: startTime,
-                    endTime: endTime,
-                    setTimePickerStatus: setTimePickerStatus,
-                    setListStartTime: setStartTimeList,
-                    setEndTimeStatus: setEndTimeStatus,
-                    setListEndTime: setEndTimeList,
-                    setStartTimeStatus: setStartTimeStatus,
-                    initialEndTime: initialEndTime,
-                  ),
+            ),
+            Visibility(
+              visible: endTimeContainerVisible,
+              child: Positioned(
+                top: 595,
+                left: 545,
+                child: EndTimeContainer(
+                  items: endTimeList,
+                  setEndTime: setEndTime,
+                  setEndTimeStatus: setEndTimeStatus,
+                  startTime: startTime,
+                  setTime: setTime,
                 ),
               ),
-              Visibility(
-                visible: startTimeContainerVisible,
-                child: Positioned(
-                  top: 595,
-                  left: 425,
-                  child: StartTimeContainer(
-                    items: startTimeList,
-                    setStartTime: setStartTime,
-                    setStartTimeStatus: setStartTimeStatus,
-                    setInitialEndTime: setInitialEndTime,
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: endTimeContainerVisible,
-                child: Positioned(
-                  top: 595,
-                  left: 545,
-                  child: EndTimeContainer(
-                    items: endTimeList,
-                    setEndTime: setEndTime,
-                    setEndTimeStatus: setEndTimeStatus,
-                    startTime: startTime,
-                    setTime: setTime,
-                  ),
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );

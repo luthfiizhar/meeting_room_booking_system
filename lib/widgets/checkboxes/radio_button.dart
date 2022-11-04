@@ -125,8 +125,10 @@ class RadioModel {
   RadioModel({
     this.isSelected,
     this.text,
+    this.value,
   });
 
   bool? isSelected;
   String? text;
+  String? value;
 }

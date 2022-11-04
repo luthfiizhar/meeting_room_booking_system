@@ -56,6 +56,13 @@ dependencies:
   dropdown_button2: ^1.8.2
   syncfusion_flutter_datepicker: ^20.3.48
   material_design_icons_flutter: ^5.0.6996
+  device_info_plus: ^7.0.1
+  network_info_plus: ^3.0.1
+  network_info_plus_web: ^1.0.1
+  connectivity_plus: ^3.0.2
+  dotted_border: ^2.0.0+3
+  url_launcher: ^6.1.6
+  image_picker: ^0.8.6
 
 dev_dependencies:
   flutter_test:

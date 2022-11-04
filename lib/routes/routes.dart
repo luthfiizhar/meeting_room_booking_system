@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-const String homePageRoute = '/';
+const String homePageRoute = '/home';
 const String loginPageRoute = '/login';
 const String searchinPageRoute = '/search';
-const String myBookingPageRoute = '/my_booking';
+const String myBookingPageRoute = '/booking_list';
 const String detailBookingPageRoute = '/my_booking/detail';
 const String calendarViewPageRoute = '/calendar';
 const String profilePageRoute = '/profile';
