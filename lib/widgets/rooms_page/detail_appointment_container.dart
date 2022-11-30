@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 
 class DetailAppointmentContainer extends StatefulWidget {
@@ -12,6 +14,7 @@ class DetailAppointmentContainer extends StatefulWidget {
   });
 
   RoomEvent? event;
+  String? floor;
   Function? closeDetail;
 
   @override
@@ -21,6 +24,38 @@ class DetailAppointmentContainer extends StatefulWidget {
 
 class _DetailAppointmentContainerState
     extends State<DetailAppointmentContainer> {
+  String eventName = "";
+  String location = "";
+  String floor = "";
+  String eventTime = "";
+  String eventDate = "";
+  String duration = "";
+  String host = "";
+  String email = "";
+  String avaya = "";
+  String attendantsNumber = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // print(widget.event!.bookingID!);
+    getBookingDetail(widget.event!.bookingID!).then((value) {
+      print(value['Data']);
+      setState(() {
+        eventName = value['Data']['Summary'];
+        attendantsNumber = value['Data']['AttendantsNumber'].toString();
+        location = value['Data']['RoomName'];
+        // floor = value['Data']['Room']
+        eventTime =
+            "${value['Data']['BookingStartTime']} - ${value['Data']['BookingEndTime']}";
+        eventDate = value['Data']['BookingDate'];
+        duration = value['Data']['Duration'];
+        host = value['Data']['EmpName'];
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,7 +78,7 @@ class _DetailAppointmentContainerState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${widget.event!.eventName!} (${widget.event!.capacity} Person)',
+                    '$eventName ($attendantsNumber Person)',
                     style: const TextStyle(
                       fontFamily: 'Helvetica',
                       fontSize: 20,
@@ -56,7 +91,7 @@ class _DetailAppointmentContainerState
                   ),
                   rowDetail(
                     'Location',
-                    widget.event!.resourceIds![0].toString(),
+                    location,
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(
@@ -82,7 +117,7 @@ class _DetailAppointmentContainerState
                   ),
                   rowDetail(
                     'Event Time',
-                    '${widget.event!.from!.hour.toString().padLeft(2, '0')}:${widget.event!.from!.minute.toString().padLeft(2, '0')}',
+                    eventTime,
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(
@@ -95,7 +130,7 @@ class _DetailAppointmentContainerState
                   ),
                   rowDetail(
                     'Event Date',
-                    DateFormat('dd MMMM y').format(widget.event!.from!),
+                    eventDate,
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(
@@ -108,7 +143,7 @@ class _DetailAppointmentContainerState
                   ),
                   rowDetail(
                     'Duration',
-                    DateFormat('dd MMMM y').format(widget.event!.from!),
+                    duration,
                   ),
                   const SizedBox(
                     height: 40,
@@ -133,7 +168,7 @@ class _DetailAppointmentContainerState
                   ),
                   rowDetail(
                     'Host',
-                    'EDWARD EVANNOV SANTO WIGUNA',
+                    host,
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(
@@ -146,7 +181,7 @@ class _DetailAppointmentContainerState
                   ),
                   rowDetail(
                     'Email',
-                    'edwardwiguna@kawanlamaretail.com',
+                    email,
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(
@@ -159,7 +194,7 @@ class _DetailAppointmentContainerState
                   ),
                   rowDetail(
                     'Avaya',
-                    '000000',
+                    avaya,
                   ),
                   const SizedBox(
                     height: 40,
@@ -175,7 +210,11 @@ class _DetailAppointmentContainerState
                             color: blueAccent,
                             size: 26,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            context.goNamed('detail_event', params: {
+                              'eventId': widget.event!.bookingID!,
+                            });
+                          },
                           tooltip: 'Detail Info',
                         ),
                         IconButton(
@@ -242,6 +281,7 @@ class _DetailAppointmentContainerState
               fontSize: 16,
               fontWeight: FontWeight.w300,
               color: sonicSilver,
+              height: 1.3,
             ),
           ),
         ),
@@ -257,6 +297,7 @@ class _DetailAppointmentContainerState
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: davysGray,
+                  height: 1.3,
                 ),
                 textAlign: TextAlign.right,
                 // textDirection: TextDirection.ltr,

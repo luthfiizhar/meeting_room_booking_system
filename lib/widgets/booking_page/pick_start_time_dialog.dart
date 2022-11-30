@@ -94,8 +94,14 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
         .replacing(hour: hour, minute: minute); //TimeOfDay(hour: 9, minute: 0);
     final endTime = TimeOfDay(hour: 19, minute: 0);
     final step = Duration(minutes: 15);
-
-    timeList = getTimes(startTime, endTime, step).map((tod) => tod).toList();
+    print(widget.selectedDate);
+    if (widget.selectedDate!.day == DateTime.now().day) {
+      timeList = getTimes(startTime, endTime, step).map((tod) => tod).toList();
+    } else {
+      timeList = getTimes(TimeOfDay(hour: 7, minute: 0), endTime, step)
+          .map((tod) => tod)
+          .toList();
+    }
   }
 
   var jam = 6;

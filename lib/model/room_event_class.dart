@@ -15,6 +15,7 @@ class RoomEvent {
     this.recurrenceRule,
     this.resourceIds,
     this.isDark = true,
+    this.bookingID,
   });
 
   String? eventName;
@@ -30,6 +31,7 @@ class RoomEvent {
   String? recurrenceRule;
   List<String>? resourceIds;
   bool isDark;
+  String? bookingID;
 
   @override
   String toString() {

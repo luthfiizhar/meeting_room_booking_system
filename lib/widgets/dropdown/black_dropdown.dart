@@ -65,7 +65,11 @@ class BlackDropdown extends StatelessWidget {
             width: 1,
           ),
         ),
-        fillColor: enabled! ? culturedWhite : platinum,
+        fillColor: enabled!
+            ? focusNode!.hasFocus
+                ? culturedWhite
+                : Colors.transparent
+            : platinum,
         filled: true,
         isDense: true,
         // isCollapsed: true,

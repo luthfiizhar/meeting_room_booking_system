@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
+import 'package:meeting_room_booking_system/model/amenities_class.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 
@@ -7,27 +9,48 @@ class SelectAmenitiesDialog extends StatefulWidget {
   SelectAmenitiesDialog({
     super.key,
     this.setListAmenities,
+    required this.roomId,
+    this.listAmen,
   });
 
   Function? setListAmenities;
+  String? roomId;
+  List? listAmen;
 
   @override
   State<SelectAmenitiesDialog> createState() => _SelectAmenitiesDialogState();
 }
 
 class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
-  List listAmen = [
-    {'name': 'TV', 'qty': 0},
-    {'name': 'Camera', 'qty': 0},
-    {'name': 'Cable Roll', 'qty': 0},
-    {'name': 'Digital Flip Chart', 'qty': 0},
-    {'name': 'Flip Chart', 'qty': 0},
-    {'name': 'Laser Pointer', 'qty': 0},
-    {'name': 'Screen Projector (LCD)', 'qty': 0},
-    {'name': 'Cable Extension', 'qty': 0}
-  ];
+  List listAmen = [];
+  List<Amenities> amenities = [];
 
   List selectedAmen = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    // getAmenitiesList(widget.roomId!).then((value) {
+    //   // print(value);
+    //   setState(() {
+    //     listAmen = value['Data'];
+    print(widget.listAmen!);
+    for (var element in widget.listAmen!) {
+      amenities.add(
+        Amenities(
+            amenitiesId: element['AmenitiesID'] ?? element.amenitiesId,
+            amenitiesName: element['AmenitiesName'] ?? element.amenitiesName,
+            qty: element['Default'] ?? element.qty,
+            photo: element['ImageURL'] ?? element.photo),
+      );
+    }
+    //     print(amenities.toString());
+    //   });
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -36,7 +59,7 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(
           maxHeight: 550,
-          minHeight: 520,
+          minHeight: 200,
           minWidth: 450,
           maxWidth: 450,
         ),
@@ -54,6 +77,7 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
             // color: Colors.green,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
                   'Select Amenities',
@@ -67,14 +91,14 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
                   height: 25,
                 ),
                 ListView.builder(
-                  itemCount: listAmen.length,
+                  itemCount: amenities.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     return Column(
                       children: [
                         Container(
                           padding: EdgeInsets.only(
-                            bottom: index < listAmen.length - 1 ? 5 : 0,
+                            bottom: index < amenities.length - 1 ? 5 : 0,
                             top: index != 0 ? 5 : 0,
                           ),
                           child: Row(
@@ -82,7 +106,7 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  listAmen[index]['name'],
+                                  amenities[index].amenitiesName!,
                                   style: const TextStyle(
                                     height: 1.3,
                                     fontFamily: 'Helvetica',
@@ -101,10 +125,14 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
                                       disabled: false,
                                       text: '-',
                                       onTap: () {
-                                        if (listAmen[index]['qty'] > 0) {
-                                          listAmen[index]['qty']--;
+                                        int min = amenities[index].qty!;
+
+                                        if (min > 0) {
+                                          min--;
+                                          amenities[index].qty = min;
                                         } else {
-                                          listAmen[index]['qty'] = 0;
+                                          min = 0;
+                                          amenities[index].qty = min;
                                         }
                                         setState(() {});
                                       },
@@ -117,7 +145,7 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
                                     width: 20,
                                   ),
                                   Text(
-                                    listAmen[index]['qty'].toString(),
+                                    amenities[index].qty.toString(),
                                     style: const TextStyle(
                                       fontFamily: 'Helvetica',
                                       fontSize: 18,
@@ -135,8 +163,12 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
                                       disabled: false,
                                       text: '+',
                                       onTap: () {
-                                        listAmen[index]['qty']++;
-                                        setState(() {});
+                                        // listAmen[index]['qty']++;
+                                        setState(() {
+                                          int plus = amenities[index].qty!;
+                                          plus++;
+                                          amenities[index].qty = plus;
+                                        });
                                       },
                                       padding: ButtonSize().itemQtyButton(),
                                       fontWeight: FontWeight.w300,
@@ -148,12 +180,12 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
                             ],
                           ),
                         ),
-                        index < listAmen.length - 1
-                            ? Divider(
+                        index < amenities.length - 1
+                            ? const Divider(
                                 color: sonicSilver,
                                 thickness: 0.5,
                               )
-                            : SizedBox(),
+                            : const SizedBox(),
                       ],
                     );
                   },
@@ -168,11 +200,12 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
                       text: 'Confirm',
                       disabled: false,
                       onTap: () {
-                        selectedAmen = listAmen
-                            .where((element) => element['qty'] > 0)
+                        // Amenities amen = Amenities();
+                        selectedAmen = amenities
+                            .where((element) => element.qty! > 0)
                             .toList();
-                        print(selectedAmen);
                         widget.setListAmenities!(selectedAmen);
+                        // print(selectedAmen);
                         Navigator.of(context).pop();
                       },
                       padding: ButtonSize().mediumSize(),

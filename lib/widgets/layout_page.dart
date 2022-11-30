@@ -20,18 +20,20 @@ class LayoutPageWeb extends StatefulWidget {
     required this.child,
     this.index,
     this.setDatePickerStatus,
+    required this.scrollController,
   });
 
   Widget? child;
   int? index;
   Function? setDatePickerStatus;
+  final ScrollController? scrollController;
 
   @override
   State<LayoutPageWeb> createState() => _LayoutPageWebState();
 }
 
 class _LayoutPageWebState extends State<LayoutPageWeb> {
-  ScrollController? _scrollController = ScrollController();
+  ScrollController? _scrollController;
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   final info = NetworkInfo();
   MainModel mainModel = MainModel();
@@ -118,6 +120,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _scrollController = widget.scrollController;
     // checkDeviceInfo();
     // if (mounted) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -160,6 +163,8 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     return ChangeNotifierProvider.value(
       value: mainModel,
       child: Consumer<MainModel>(builder: (context, model, child) {
@@ -217,20 +222,22 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                       Expanded(
                         child: Stack(
                           children: [
-                            SingleChildScrollView(
+                            Scrollbar(
                               controller: _scrollController,
-                              child: Column(
-                                children: [
-                                  ConstrainedBox(
-                                      constraints: pageConstraints.copyWith(
-                                        minHeight:
-                                            MediaQuery.of(context).size.height -
-                                                115 -
-                                                60,
-                                      ),
-                                      child: widget.child!),
-                                  FooterWeb(),
-                                ],
+                              child: SingleChildScrollView(
+                                controller: _scrollController,
+                                child: Column(
+                                  children: [
+                                    ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          minHeight: screenWidth > 1000
+                                              ? screenHeight - 115 - 60
+                                              : 0,
+                                        ),
+                                        child: widget.child!),
+                                    FooterWeb(),
+                                  ],
+                                ),
                               ),
                             ),
                           ],

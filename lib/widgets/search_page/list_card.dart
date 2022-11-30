@@ -6,10 +6,45 @@ import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 
 class ListRoomContainer extends StatelessWidget {
-  const ListRoomContainer({super.key});
+  ListRoomContainer({
+    super.key,
+    this.roomName,
+    this.startTime,
+    this.amenities,
+    this.duration,
+    this.endTime,
+    this.maxCapacity,
+    this.minCapacity,
+    this.photo,
+    this.date,
+    this.roomID,
+  });
+
+  String? roomID;
+  String? roomName;
+  String? startTime;
+  String? endTime;
+  String? minCapacity;
+  String? maxCapacity;
+  String? photo;
+  List? amenities;
+  String? duration;
+  String? date;
 
   @override
   Widget build(BuildContext context) {
+    var amen = "";
+    if (amenities!.isEmpty) {
+      amen = "None";
+    } else {
+      if (amenities!.length > 1) {
+        amen =
+            "${amenities![0]['AmenitiesName']} & ${amenities![1]['AmenitiesName']}";
+      } else {
+        amen = amenities!.first['AmenitiesName'].toString();
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 20,
@@ -37,15 +72,15 @@ class ListRoomContainer extends StatelessWidget {
                   child: Container(
                     height: double.infinity,
                     width: double.infinity,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(10),
                         bottomLeft: Radius.circular(10),
                       ),
-                      // image: DecorationImage(
-                      //   image: AssetImage('assets/103.jpg'),
-                      //   fit: BoxFit.cover,
-                      // ),
+                      image: DecorationImage(
+                        image: NetworkImage(photo!),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -62,8 +97,8 @@ class ListRoomContainer extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          '103',
-                          style: TextStyle(
+                          roomName!,
+                          style: const TextStyle(
                             fontFamily: 'Helvetica',
                             fontSize: 20,
                             height: 1.3,
@@ -92,8 +127,8 @@ class ListRoomContainer extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '12:00 - 13:00',
-                                      style: TextStyle(
+                                      '$startTime - $endTime',
+                                      style: const TextStyle(
                                         fontFamily: 'Helvetica',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w300,
@@ -105,8 +140,8 @@ class ListRoomContainer extends StatelessWidget {
                                       height: 5,
                                     ),
                                     Text(
-                                      'Available for 1 hour',
-                                      style: TextStyle(
+                                      'Available for $duration',
+                                      style: const TextStyle(
                                         fontFamily: 'Helvetica',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w300,
@@ -134,8 +169,8 @@ class ListRoomContainer extends StatelessWidget {
                               width: 12,
                             ),
                             Text(
-                              '2 - 6 Person',
-                              style: TextStyle(
+                              '$minCapacity - $maxCapacity Person',
+                              style: const TextStyle(
                                 fontFamily: 'Helvetica',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w300,
@@ -180,7 +215,7 @@ class ListRoomContainer extends StatelessWidget {
                               width: 12,
                             ),
                             Text(
-                              'TV & Camera',
+                              amen,
                               style: TextStyle(
                                 fontFamily: 'Helvetica',
                                 fontSize: 16,
@@ -205,14 +240,14 @@ class ListRoomContainer extends StatelessWidget {
                 disabled: false,
                 onTap: () {
                   // context.go('/home/booking');
-                  context.goNamed('booking', params: {
-                    "roomId": '103',
-                    'date': '01/11/2022',
-                    'startTime': '10:30',
-                    'endTime': '11.30',
-                    'participant': '5',
-                    'facilities': '[tv,camera]',
-                    'roomType': 'audi'
+                  context.pushNamed('booking_search', params: {
+                    "roomId": '$roomID',
+                    'date': '$date',
+                    'startTime': '$startTime',
+                    'endTime': '$endTime',
+                    'participant': '$maxCapacity',
+                    'facilities': '$amenities',
+                    'roomType': 'meeting_room'
                   });
                 },
                 padding: ButtonSize().smallSize(),

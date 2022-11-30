@@ -13,6 +13,8 @@ class BlackInputField extends StatelessWidget {
     required this.enabled,
     this.onTap,
     this.maxLines,
+    this.prefixIcon,
+    this.onFieldSubmitted,
   });
 
   final TextEditingController controller;
@@ -24,7 +26,9 @@ class BlackInputField extends StatelessWidget {
   final Widget? suffixIcon;
   final bool? enabled;
   final VoidCallback? onTap;
+  ValueChanged<String>? onFieldSubmitted;
   int? maxLines;
+  Widget? prefixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +48,7 @@ class BlackInputField extends StatelessWidget {
             : null,
       ),
       child: TextFormField(
+        onFieldSubmitted: onFieldSubmitted,
         validator: validator,
         onSaved: onSaved,
         enabled: enabled,
@@ -57,7 +62,7 @@ class BlackInputField extends StatelessWidget {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
             borderSide: const BorderSide(
-              color: davysGray,
+              color: grayx11,
               width: 1,
             ),
           ),
@@ -94,7 +99,11 @@ class BlackInputField extends StatelessWidget {
             fontSize: 14,
             fontWeight: FontWeight.w300,
           ),
-          fillColor: enabled! ? culturedWhite : platinum,
+          fillColor: enabled!
+              ? focusNode!.hasFocus
+                  ? culturedWhite
+                  : Colors.transparent
+              : platinum,
           filled: true,
           // isDense: true,
           isCollapsed: true,
@@ -113,6 +122,7 @@ class BlackInputField extends StatelessWidget {
           ),
           suffixIcon: suffixIcon,
           suffixIconColor: eerieBlack,
+          prefixIcon: prefixIcon,
         ),
         style: const TextStyle(
           fontSize: 18,

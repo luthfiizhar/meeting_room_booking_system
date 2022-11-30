@@ -63,6 +63,8 @@ dependencies:
   dotted_border: ^2.0.0+3
   url_launcher: ^6.1.6
   image_picker: ^0.8.6
+  syncfusion_flutter_datagrid: ^20.3.57
+  animations: ^2.0.7
 
 dev_dependencies:
   flutter_test:
@@ -119,9 +121,15 @@ flutter:
     - family: Helvetica
       fonts:
         - asset: assets/fonts/Helvetica-01.ttf
+        - asset: assets/fonts/Helvetica Black.ttf
+          weight: 800
         - asset: assets/fonts/Helvetica-Bold-02.ttf
           weight: 700
         - asset: assets/fonts/Helvetica-Light-05.ttf
           weight: 300
+        
+    # - family: HelveticaBlack
+    #   fonts:
+    #     - asset: assets/fonts/Helvetica Black.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

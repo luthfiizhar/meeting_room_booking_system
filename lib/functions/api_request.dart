@@ -19,35 +19,69 @@ Future bookingRoom(Booking booking) async {
   Map<String, String> requestHeader = {
     'Authorization': 'Bearer $jwt',
     // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
-    // 'Content-Type': 'application/json',
+    'Content-Type': 'application/json',
   };
 
-  dynamic bodySend = booking.toJson();
-  // var bodySend = """
-  // {
-  //     "RoomID": "${booking.roomId}",
-  //     "Summary": "${booking.summary}",
-  //     "Description": "${booking.description}",
-  //     "StartDate": "${booking.startDate.toString().substring(0, 19)}",
-  //     "EndDate": "${booking.endDate.toString().substring(0, 19)}",
-  //     "Recursive": "NONE",
-  //     "RepeatInterval" : 1,
-  //     "Days" : ["0", "6"],
-  //     "RepeatEndDate": "2022-10-29",
-  //     "MeetingType": "Internal",
-  //     "AttendantsNumber": ${booking.attendantsNumber},
-  //     "Amenities": [],
-  //     "Attendants": []
-  // }
-  // """;
-
-  print(bodySend);
+  // dynamic bodySend = booking.toJson();
+  var bodySend = """
+  {
+      "RoomID": "${booking.roomId}",
+      "Summary": "${booking.summary}",
+      "Description": "${booking.description}",
+      "StartDate": "${booking.startDate.toString().substring(0, 19)}",
+      "EndDate": "${booking.endDate.toString().substring(0, 19)}",
+      "Recursive": "${booking.recursive}",
+      "MonthAbsolute": ${booking.monthAbs},
+      "RepeatInterval" : ${booking.repeatInterval},
+      "Days" : ${booking.daysWeek},
+      "RepeatEndDate": "${booking.repeatEndDate}",
+      "MeetingType": "Internal",
+      "AttendantsNumber": ${booking.attendantsNumber},
+      "Amenities": ${booking.amenities},
+      "Attendants": ${booking.attendants},
+      "FoodAmenities": ${booking.foodAmenities}
+  }
+  """;
 
   try {
     var response = await http.post(url, body: bodySend, headers: requestHeader);
 
-    var data = response.body;
-    // print(response.body);
+    var data = json.decode(response.body);
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future searchRoomApi(String date, String startTime, String endTime,
+    String capacity, String amenities) async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/room/search');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+
+  var bodySend = """
+    {
+      "StartTime" : "$startTime",
+      "EndTime" : "$endTime",
+      "Date" : "$date",
+      "Capacity" : $capacity,
+      "Sort" : "alphabetical",
+      "Amenities" : $amenities,
+      "Area" : ["AR-1"]
+    }
+  """;
+  print(bodySend);
+
+  try {
+    var response = await http.post(url, body: bodySend, headers: requestHeader);
+    var data = json.decode(response.body);
+    print(response.body);
     return data;
   } on Error catch (e) {
     return e;
@@ -201,23 +235,142 @@ Future loginCerberus() async {
   var url =
       Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/login-mrbs-cerberus');
   Map<String, String> requestHeader = {
-    // 'Authorization': 'Bearer $tokenDummy',
-    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
     'Content-Type': 'application/json',
   };
 
-  var bodySend =
-      '{"Username" : "KLGROUP\\\\169742.luthfi","Password" : "Greedisgood2."}';
-  print(bodySend);
+  var bodySend = """
+  {
+        "Username" : "KLGROUP\\\\169742.luthfi",
+        "Password" : "Greedisgood2."
+  }
+  """;
+  // print(bodySend);
 
   try {
+    print('try');
     var response = await http.post(url, body: bodySend, headers: requestHeader);
 
     var data = json.decode(response.body);
+    print(data);
     var box = await Hive.openBox('userLogin');
     box.put(
         'jwtToken', data['Data']['Token'] != null ? data['Data']['Token'] : "");
-    print(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future getAmenitiesList(String roomId) async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(
+      apiUrlGlobal, '/MRBS_Backend/public/api/user/rooms/amenities/$roomId');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future getRoomDetail(String roomId) async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(
+      apiUrlGlobal, '/MRBS_Backend/public/api/room/user/detail/$roomId');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future getBookingDetail(String bookingId) async {
+  print(bookingId);
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(
+      apiUrlGlobal, '/MRBS_Backend/public/api/user/booking/$bookingId');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future deleteBooking(String bookingId) async {
+  print('delete this');
+  print(bookingId);
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(
+      apiUrlGlobal, '/MRBS_Backend/public/api/user/booking/$bookingId');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.delete(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future deleteBookingRecurrent(String bookingId) async {
+  print('delete this');
+  print(bookingId);
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(apiUrlGlobal,
+      '/MRBS_Backend/public/api/user/booking/recurrents/$bookingId');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.delete(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
     return data;
   } on Error catch (e) {
     return e;

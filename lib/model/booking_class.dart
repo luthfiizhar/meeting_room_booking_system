@@ -1,20 +1,22 @@
 import 'package:meeting_room_booking_system/model/amenities_class.dart';
 
 class Booking {
-  Booking(
-      {this.roomId,
-      this.summary,
-      this.description,
-      this.startDate,
-      this.endDate,
-      this.recursive,
-      this.repeatInterval,
-      this.repeatEndDate,
-      this.meetingType,
-      this.attendantsNumber,
-      this.amenities,
-      this.attendants,
-      this.foodAmenities});
+  Booking({
+    this.roomId,
+    this.summary,
+    this.description,
+    this.startDate,
+    this.endDate,
+    this.recursive,
+    this.repeatInterval,
+    this.repeatEndDate,
+    this.meetingType,
+    this.attendantsNumber,
+    this.amenities,
+    this.attendants,
+    this.foodAmenities,
+    this.daysWeek,
+  });
 
   String? roomId;
   String? summary;
@@ -22,13 +24,15 @@ class Booking {
   DateTime? startDate;
   DateTime? endDate;
   String? recursive;
-  String? repeatInterval;
+  int? repeatInterval;
+  int? monthAbs;
   String? repeatEndDate;
   String? meetingType;
   String? attendantsNumber;
   List? amenities;
   List? attendants;
   List? foodAmenities;
+  List? daysWeek;
 
   Booking.fromJSon(Map<String, dynamic> json)
       : roomId = json['RoomID'],
@@ -45,18 +49,20 @@ class Booking {
         attendants = json['Attendants'];
 
   Map<String, dynamic> toJson() => {
-        'RoomID': roomId ?? "",
-        'Summary': summary ?? "",
-        'Description': description ?? "",
-        'StartDate': startDate.toString().substring(0, 19),
-        'EndDate': endDate.toString().substring(0, 19),
-        'Recursive': recursive ?? "NONE",
-        'RepeatInterval': repeatInterval ?? "",
-        'RepeatEndDate': repeatEndDate ?? "",
-        'MeetingType': meetingType ?? "",
-        'AttendantsNumber': attendantsNumber ?? "",
-        'Amenities': amenities ?? [].toString(),
-        'Attendants': attendants ?? [].toString(),
-        'FoodAmenities': foodAmenities ?? [].toString()
+        '"RoomID"': '"$roomId"',
+        '"Summary"': '"$summary"',
+        '"Description"': '"$description"',
+        '"StartDate"': '"${startDate.toString().substring(0, 19)}"',
+        '"EndDate"': '"${endDate.toString().substring(0, 19)}"',
+        '"Recursive"': '"$recursive"',
+        '"MonthAbsolute"': monthAbs.toString(),
+        '"Days"': daysWeek.toString(),
+        '"RepeatInterval"': '$repeatInterval',
+        '"RepeatEndDate"': '"$repeatEndDate"',
+        '"MeetingType"': '"$meetingType"',
+        '"AttendantsNumber"': attendantsNumber,
+        '"Amenities"': amenities.toString(),
+        '"Attendants"': attendants.toString(),
+        '"FoodAmenities"': foodAmenities.toString()
       };
 }

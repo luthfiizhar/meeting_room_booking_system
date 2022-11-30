@@ -26,6 +26,14 @@ import 'package:meeting_room_booking_system/pages/user/booking_page.dart'
     deferred as bookPage;
 import 'package:meeting_room_booking_system/pages/user/detail_event_page.dart'
     deferred as detailEventPage;
+import 'package:meeting_room_booking_system/pages/user/calendar_view_page.dart';
+import 'package:meeting_room_booking_system/pages/user/home_page.dart';
+import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
+import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
+import 'package:meeting_room_booking_system/pages/user/rooms_page.dart';
+import 'package:meeting_room_booking_system/pages/user/search_page.dart';
+import 'package:meeting_room_booking_system/pages/user/booking_page.dart';
+import 'package:meeting_room_booking_system/pages/user/detail_event_page.dart';
 import 'package:meeting_room_booking_system/routes/generate_route.dart';
 import 'package:meeting_room_booking_system/routes/locations/locations.dart';
 import 'package:provider/provider.dart';
@@ -66,62 +74,65 @@ class MyApp extends StatelessWidget {
           name: 'home',
           path: '/home',
           // builder: (context, state) => HomePage(),
+          // pageBuilder: (context, state) => NoTransitionPage<void>(
+          //       key: state.pageKey,
+          //       child: FutureBuilder(
+          //         future: homePage.loadLibrary(),
+          //         builder: (context, snapshot) {
+          //           return homePage.HomePage();
+          //         },
+          //       ),
+          //     ),
           pageBuilder: (context, state) => NoTransitionPage<void>(
                 key: state.pageKey,
-                child: FutureBuilder(
-                  future: homePage.loadLibrary(),
-                  builder: (context, snapshot) {
-                    return homePage.HomePage();
-                  },
-                ),
+                child: HomePage(),
               ),
           routes: [
-            GoRoute(
-              name: 'booking',
-              path:
-                  'booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType',
-              pageBuilder: (context, state) => NoTransitionPage<void>(
-                key: state.pageKey,
-                child: FutureBuilder(
-                  future: bookPage.loadLibrary(),
-                  builder: (context, snapshot) {
-                    return bookPage.BookingRoomPage(
-                      roomId: state.params['roomId'],
-                      date: state.params['date'],
-                      startTime: state.params['startTime'],
-                      endTime: state.params['endTime'],
-                      participant: state.params['participant'],
-                      facilities: state.params['facilities'],
-                      roomType: state.params['roomType'],
-                    );
-                  },
-                ),
-              ),
-            ),
+            // GoRoute(
+            //   name: 'booking',
+            //   path:
+            //       'booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType',
+            //   pageBuilder: (context, state) => NoTransitionPage<void>(
+            //     key: state.pageKey,
+            //     child: BookingRoomPage(
+            //       roomId: state.params['roomId'],
+            //       date: state.params['date'],
+            //       startTime: state.params['startTime'],
+            //       endTime: state.params['endTime'],
+            //       participant: state.params['participant'],
+            //       facilities: state.params['facilities'],
+            //       roomType: state.params['roomType'],
+            //     ),
+            //   ),
+            // ),
           ]),
-      GoRoute(
-        name: 'login',
-        path: '/login',
-        builder: (context, state) => FutureBuilder(
-          future: loginPage.loadLibrary(),
-          builder: (context, snapshot) {
-            return loginPage.LoginPage();
-          },
-        ),
-      ),
+      // GoRoute(
+      //   name: 'login',
+      //   path: '/login',
+      //   builder: (context, state) => FutureBuilder(
+      //     future: loginPage.loadLibrary(),
+      //     builder: (context, snapshot) {
+      //       return loginPage.LoginPage();
+      //     },
+      //   ),
+      // ),
       GoRoute(
         name: 'calendar',
         path: '/calendar',
         // builder: (context, state) => CalendarViewPage(),
         pageBuilder: (context, state) => NoTransitionPage<void>(
           key: state.pageKey,
-          child: FutureBuilder(
-            future: calendarViewPage.loadLibrary(),
-            builder: (context, snapshot) {
-              return calendarViewPage.CalendarViewPage();
-            },
-          ),
+          child: CalendarViewPage(),
         ),
+        // pageBuilder: (context, state) => NoTransitionPage<void>(
+        //   key: state.pageKey,
+        //   child: FutureBuilder(
+        //     future: calendarViewPage.loadLibrary(),
+        //     builder: (context, snapshot) {
+        //       return calendarViewPage.CalendarViewPage();
+        //     },
+        //   ),
+        // ),
       ),
       // GoRoute(
       //   path: '/search',
@@ -134,26 +145,74 @@ class MyApp extends StatelessWidget {
         path: '/search',
         // builder: (context, state) => CalendarViewPage(),
         pageBuilder: (context, state) => NoTransitionPage<void>(
-            key: state.pageKey,
-            child: FutureBuilder(
-              future: searchPage.loadLibrary(),
-              builder: (context, snapshot) {
-                return searchPage.SearchPage();
-              },
-            )),
+          key: state.pageKey,
+          child: SearchPage(),
+        ),
+        // pageBuilder: (context, state) => NoTransitionPage<void>(
+        //   key: state.pageKey,
+        //   child: FutureBuilder(
+        //     future: searchPage.loadLibrary(),
+        //     builder: (context, snapshot) {
+        //       return searchPage.SearchPage();
+        //     },
+        //   ),
+        // ),
+        routes: [
+          GoRoute(
+            name: 'booking_search',
+            path:
+                'booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType',
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              child: BookingRoomPage(
+                roomId: state.params['roomId'],
+                date: state.params['date'],
+                startTime: state.params['startTime'],
+                endTime: state.params['endTime'],
+                participant: state.params['participant'],
+                facilities: state.params['facilities'],
+                roomType: state.params['roomType'],
+              ),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         name: 'rooms',
         path: '/rooms',
         // builder: (context, state) => CalendarViewPage(),
         pageBuilder: (context, state) => NoTransitionPage<void>(
-            key: state.pageKey,
-            child: FutureBuilder(
-                future: roomPage.loadLibrary(),
-                builder: (context, snapshot) {
-                  return roomPage.RoomsPage();
-                })),
-        routes: [],
+          key: state.pageKey,
+          child: RoomsPage(),
+        ),
+        // pageBuilder: (context, state) => NoTransitionPage<void>(
+        //   key: state.pageKey,
+        //   child: FutureBuilder(
+        //     future: roomPage.loadLibrary(),
+        //     builder: (context, snapshot) {
+        //       return roomPage.RoomsPage();
+        //     },
+        //   ),
+        // ),
+        routes: [
+          GoRoute(
+            name: 'booking_rooms',
+            path:
+                'booking_rooms/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType',
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              child: BookingRoomPage(
+                roomId: state.params['roomId'],
+                date: state.params['date'],
+                startTime: state.params['startTime'],
+                endTime: state.params['endTime'],
+                participant: state.params['participant'],
+                facilities: state.params['facilities'],
+                roomType: state.params['roomType'],
+              ),
+            ),
+          )
+        ],
       ),
       GoRoute(
         name: 'booking_list',
@@ -161,35 +220,46 @@ class MyApp extends StatelessWidget {
         // builder: (context, state) => CalendarViewPage(),
         pageBuilder: (context, state) => NoTransitionPage<void>(
           key: state.pageKey,
-          child: FutureBuilder(
-            future: myBookPage.loadLibrary(),
-            builder: (context, snapshot) {
-              return myBookPage.MyBookingPage();
-            },
+          child: MyBookingPage(),
+        ),
+        // routes: [
+        //   GoRoute(
+        //     name: 'detail_event',
+        //     path: 'detail_event/eventID=:eventId',
+        //     pageBuilder: (context, state) => NoTransitionPage<void>(
+        //       key: state.pageKey,
+        //       child: DetailEventPage(),
+        //     ),
+        //   )
+        // ],
+      ),
+      GoRoute(
+        name: 'booking',
+        path:
+            '/booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType',
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: BookingRoomPage(
+            roomId: state.params['roomId'],
+            date: state.params['date'],
+            startTime: state.params['startTime'],
+            endTime: state.params['endTime'],
+            participant: state.params['participant'],
+            facilities: state.params['facilities'],
+            roomType: state.params['roomType'],
           ),
         ),
-        routes: [
-          GoRoute(
-            name: 'detail_event',
-            path: 'detail_event/eventID=:eventId',
-            pageBuilder: (context, state) => NoTransitionPage<void>(
-              key: state.pageKey,
-              child: FutureBuilder(
-                future: detailEventPage.loadLibrary(),
-                builder: (context, snapshot) {
-                  return detailEventPage.DetailEventPage();
-                },
-              ),
-            ),
-          )
-        ],
       ),
-      // GoRoute(
-      //   path: '/on_boarding',
-      //   // builder: (context, state) => CalendarViewPage(),
-      //   pageBuilder: (context, state) =>
-      //       NoTransitionPage<void>(key: state.pageKey, child: OnBoardPage()),
-      // )
+      GoRoute(
+        name: 'detail_event',
+        path: '/detail_event/eventID=:eventId',
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: DetailEventPage(
+            bookingId: state.params['eventId'],
+          ),
+        ),
+      ),
     ],
     // redirect: (state) {
     //   final loggingIn = state.subloc == '/login';
@@ -226,8 +296,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<MainModel>(
-      create: (context) => MainModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<MainModel>(
+          lazy: false,
+          create: (_) => MainModel(),
+        ),
+      ],
       child: MaterialApp.router(
         title: 'MRBS',
         theme: ThemeData(
@@ -270,28 +345,6 @@ class MyApp extends StatelessWidget {
         //   ],
         // ),
       ),
-      // child: MaterialApp(
-      //   title: 'Meeting Room Booking System',
-      //   theme: ThemeData(
-      //     primarySwatch: Colors.blue,
-      //   ),
-      //   builder: (context, child) => ResponsiveWrapper.builder(
-      //     child,
-      //     maxWidth: 1400,
-      //     minWidth: 480,
-      //     breakpoints: [
-      //       ResponsiveBreakpoint.autoScale(360, name: PHONE),
-      //       ResponsiveBreakpoint.autoScale(480, name: PHONE),
-      //       ResponsiveBreakpoint.autoScale(600, name: TABLET),
-      //       ResponsiveBreakpoint.autoScale(800, name: TABLET),
-      //       ResponsiveBreakpoint.autoScale(1024, name: TABLET),
-      //       // ResponsiveBreakpoint.autoScale(1200, name: DESKTOP),
-      //       ResponsiveBreakpoint.autoScale(1440, name: DESKTOP),
-      //     ],
-      //   ),
-      //   // home: LoginPage(),
-      //   onGenerateRoute: RouterGenerator.generateRoute,
-      // ),
     );
   }
 }

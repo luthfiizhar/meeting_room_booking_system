@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/model/amenities_class.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 
@@ -7,21 +8,36 @@ class SelectFoodDialog extends StatefulWidget {
   SelectFoodDialog({
     super.key,
     this.setListFood,
+    this.listFood,
   });
 
   Function? setListFood;
+  List? listFood;
 
   @override
   State<SelectFoodDialog> createState() => _SelectFoodDialogState();
 }
 
 class _SelectFoodDialogState extends State<SelectFoodDialog> {
-  List listFood = [
-    {'name': 'Water', 'qty': 0},
-    {'name': 'Tea', 'qty': 0},
-    {'name': 'Coffe', 'qty': 0},
-    {'name': 'Food', 'qty': 0},
-  ];
+  List listFood = [];
+  List<FoodAmenities> foodAmen = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    for (var element in widget.listFood!) {
+      foodAmen.add(
+        FoodAmenities(
+            amenitiesId: element['FoodAmenitiesID'].toString(),
+            amenitiesName: element['AmenitiesName'],
+            qty: element['Amount'],
+            photo: element['ImageURL']),
+      );
+    }
+    print('food Amne');
+    print(foodAmen);
+  }
 
   List selectedFood = [];
   @override
@@ -31,8 +47,8 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
       // shape: OutlinedBorder,
       child: ConstrainedBox(
         constraints: const BoxConstraints(
-          maxHeight: 345,
-          minHeight: 345,
+          maxHeight: 500,
+          minHeight: 300,
           minWidth: 370,
           maxWidth: 370,
         ),
@@ -50,6 +66,7 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
             // color: Colors.green,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
                   'Select Food & Beverages',
@@ -63,14 +80,14 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
                   height: 25,
                 ),
                 ListView.builder(
-                  itemCount: listFood.length,
+                  itemCount: foodAmen.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     return Column(
                       children: [
                         Container(
                           padding: EdgeInsets.only(
-                            bottom: index < listFood.length - 1 ? 5 : 0,
+                            bottom: index < foodAmen.length - 1 ? 5 : 0,
                             top: index != 0 ? 5 : 0,
                           ),
                           child: Row(
@@ -78,7 +95,7 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  listFood[index]['name'],
+                                  foodAmen[index].amenitiesName!,
                                   style: const TextStyle(
                                     height: 1.3,
                                     fontFamily: 'Helvetica',
@@ -97,12 +114,15 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
                                       disabled: false,
                                       text: '-',
                                       onTap: () {
-                                        if (listFood[index]['qty'] > 0) {
-                                          listFood[index]['qty']--;
-                                        } else {
-                                          listFood[index]['qty'] = 0;
-                                        }
-                                        setState(() {});
+                                        setState(() {
+                                          int min = foodAmen[index].qty!;
+                                          if (min > 0) {
+                                            min--;
+                                          } else {
+                                            min = 0;
+                                          }
+                                          foodAmen[index].qty = min;
+                                        });
                                       },
                                       padding: ButtonSize().itemQtyButton(),
                                       fontWeight: FontWeight.w300,
@@ -113,7 +133,7 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
                                     width: 20,
                                   ),
                                   Text(
-                                    listFood[index]['qty'].toString(),
+                                    foodAmen[index].qty.toString(),
                                     style: const TextStyle(
                                       fontFamily: 'Helvetica',
                                       fontSize: 18,
@@ -131,8 +151,12 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
                                       disabled: false,
                                       text: '+',
                                       onTap: () {
-                                        listFood[index]['qty']++;
-                                        setState(() {});
+                                        int plus;
+                                        setState(() {
+                                          plus = foodAmen[index].qty!;
+                                          plus++;
+                                          foodAmen[index].qty = plus;
+                                        });
                                       },
                                       padding: ButtonSize().itemQtyButton(),
                                       fontWeight: FontWeight.w300,
@@ -144,7 +168,7 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
                             ],
                           ),
                         ),
-                        index < listFood.length - 1
+                        index < foodAmen.length - 1
                             ? Divider(
                                 color: sonicSilver,
                                 thickness: 0.5,
@@ -164,8 +188,8 @@ class _SelectFoodDialogState extends State<SelectFoodDialog> {
                       text: 'Confirm',
                       disabled: false,
                       onTap: () {
-                        selectedFood = listFood
-                            .where((element) => element['qty'] > 0)
+                        selectedFood = foodAmen
+                            .where((element) => element.qty! > 0)
                             .toList();
                         print(selectedFood);
                         widget.setListFood!(selectedFood);

@@ -6,6 +6,11 @@ const BoxConstraints pageConstraints = BoxConstraints(
   minWidth: 480,
 );
 
+const TextStyle helveticaText = TextStyle(
+  fontFamily: 'Helvetica',
+  height: 1.3,
+);
+
 const TextStyle titlePage = TextStyle(
   fontFamily: 'Helvetica',
   fontSize: 24,
@@ -23,6 +28,11 @@ const TextStyle navBarText = TextStyle(
   fontSize: 16,
   fontWeight: FontWeight.w300,
   color: navBarInActiveState,
+);
+
+const TextStyle filterSearchBarText = TextStyle(
+  fontFamily: 'Helvetica',
+  fontSize: 18,
 );
 
 const TextStyle navBarTextMobile = TextStyle(

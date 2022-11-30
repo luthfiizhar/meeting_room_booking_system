@@ -1,33 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 
-class RegularButton extends StatelessWidget {
-  RegularButton({
-    required this.text,
+class TransparentBorderedBlackButton extends StatelessWidget {
+  const TransparentBorderedBlackButton({
+    super.key,
+    this.text,
     this.fontSize,
+    this.disabled = false,
     this.onTap,
-    required this.disabled,
     this.padding,
-    this.fontWeight = FontWeight.w700,
-    this.radius = 7.5,
   });
 
   final String? text;
   final double? fontSize;
   final VoidCallback? onTap;
-  bool? disabled = false;
+  final bool? disabled;
   final EdgeInsetsGeometry? padding;
-  FontWeight fontWeight;
-  double radius;
 
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
       MaterialState.pressed
     };
     if (states.any(interactiveStates.contains)) {
-      return eerieBlack;
+      return culturedWhite;
     }
-    return culturedWhite;
+    return disabled! ? platinum : eerieBlack;
   }
 
   @override
@@ -38,35 +36,38 @@ class RegularButton extends StatelessWidget {
         splashFactory: NoSplash.splashFactory,
         foregroundColor: MaterialStateProperty.resolveWith(getColor),
         backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-          return disabled! ? grayx11 : eerieBlack;
+          return disabled! ? grayx11 : const Color.fromARGB(0, 0, 0, 0);
         }),
         shape: MaterialStateProperty.resolveWith<OutlinedBorder?>(
           (Set<MaterialState> states) {
             if (states.contains(MaterialState.pressed)) {
               return RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(radius),
+                borderRadius: BorderRadius.circular(7.5),
                 side: BorderSide(color: eerieBlack, width: 1),
               );
             }
             return RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(radius),
+              borderRadius: BorderRadius.circular(7.5),
+              side: BorderSide(
+                color: eerieBlack,
+                width: 1,
+              ),
             );
           },
         ),
         overlayColor: MaterialStateProperty.resolveWith<Color?>(
           (Set<MaterialState> states) {
-            if (states.contains(MaterialState.pressed)) return culturedWhite;
-            if (states.contains(MaterialState.hovered)) return davysGray;
+            if (states.contains(MaterialState.pressed)) return eerieBlack;
+            // if (states.contains(MaterialState.hovered))
+            //   return Colors.transparent;
             return null;
           },
         ),
         textStyle: MaterialStateProperty.resolveWith<TextStyle>(
           (states) {
-            return TextStyle(
+            return const TextStyle(
               fontSize: 16,
-              fontWeight: fontWeight,
-              fontFamily: 'Helvetica',
-              height: 1.15,
+              fontWeight: FontWeight.w300,
             );
           },
         ),
@@ -75,6 +76,12 @@ class RegularButton extends StatelessWidget {
             return padding;
           },
         ),
+        elevation: MaterialStateProperty.resolveWith<double?>((states) {
+          // if (states.contains(MaterialState.hovered)) {
+          //   return 0.2;
+          // }
+          return 0;
+        }),
       ),
       child: Text(text!),
     );

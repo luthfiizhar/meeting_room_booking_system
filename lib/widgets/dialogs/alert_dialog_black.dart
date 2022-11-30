@@ -9,10 +9,12 @@ class AlertDialogBlack extends StatelessWidget {
   const AlertDialogBlack({
     required this.title,
     required this.contentText,
+    this.isSuccess = true,
   });
 
   final String? title;
   final String? contentText;
+  final bool isSuccess;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,7 @@ class AlertDialogBlack extends StatelessWidget {
                         Text(
                           title!,
                           style: titlePage.copyWith(
-                            color: greenAcent,
+                            color: isSuccess ? greenAcent : orangeAccent,
                           ),
                           textAlign: TextAlign.left,
                         ),
@@ -115,7 +117,9 @@ class AlertDialogBlack extends StatelessWidget {
 
                     WhiteRegularButton(
                       text: 'OK',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                       padding: ButtonSize().mediumSize(),
                       disabled: false,
                     ),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/model/room_event_class.dart';
+import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MainModel extends ChangeNotifier {
   bool _isAuthenticated = false;
@@ -8,6 +11,11 @@ class MainModel extends ChangeNotifier {
   double _blurRadiusNavbar = 0;
   Offset _offsetNavbar = Offset(0, 0);
   static ScrollController _layoutController = ScrollController();
+
+  String _selectedDate = "";
+  String _selectedArea = "";
+  List _dataRoom = [];
+  List _eventRoom = [];
 
   bool _autoScrollSearch = false;
 
@@ -21,6 +29,9 @@ class MainModel extends ChangeNotifier {
   bool _isScrollAtEdge = false;
   double _scrollPosition = 0;
 
+  final RoomEventDataSource _events =
+      RoomEventDataSource(<RoomEvent>[], <CalendarResource>[]);
+
   ScrollController get layoutController => _layoutController;
   bool get shadowActive => _shadowActive;
   bool get profilePopup => _profilePopup;
@@ -29,6 +40,13 @@ class MainModel extends ChangeNotifier {
   bool get isScrolling => _isScrolling;
   bool get isScrollAtEdge => _isScrollAtEdge;
   double get scrollPosition => _scrollPosition;
+
+  String get selectedDate => _selectedDate;
+  String get selectedArea => _selectedArea;
+  List get dataRoom => _dataRoom;
+  List get eventRoom => _eventRoom;
+
+  RoomEventDataSource get events => _events;
 
   int _testScroll = 0;
 
@@ -110,6 +128,64 @@ class MainModel extends ChangeNotifier {
   void login() {
     _isAuthenticated = true;
     _isFirstLogin = true;
+    notifyListeners();
+  }
+
+  void setEvents(dynamic data, List dataRoom, List eventRoom) {
+    _events.appointments!.clear();
+    dataRoom = data;
+    int length = dataRoom.length;
+    // print(dataRoom);
+    for (var i = 0; i < length; i++) {
+      eventRoom = dataRoom[i]['Bookings'];
+
+      for (var j = 0; j < eventRoom.length; j++) {
+        _events.appointments!.add(
+          RoomEvent(
+            // subject: ,
+            resourceIds: [dataRoom[i]['RoomID']],
+            from: DateTime.parse(eventRoom[j]['StartDateTime']),
+            to: DateTime.parse(eventRoom[j]['EndDateTime']),
+            background: davysGray,
+            capacity: 5,
+            contactID: "1111",
+            isAllDay: false,
+            eventName: eventRoom[j]['Description'],
+            organizer: "",
+            recurrenceRule: "NONE",
+            endTimeZone: "",
+            startTimeZone: "",
+            bookingID: eventRoom[j]['BookingID'],
+          ),
+        );
+      }
+    }
+    _events.notifyListeners(
+        CalendarDataSourceAction.reset, _events.appointments!);
+    notifyListeners();
+  }
+
+  void setSelectedDate(String value) {
+    _selectedDate = value;
+    print(_selectedDate);
+    notifyListeners();
+  }
+
+  void setSelectedArea(String value) {
+    _selectedArea = value;
+    print(_selectedArea);
+    notifyListeners();
+  }
+
+  void setDataAndEventRoom(List value) {
+    _dataRoom = value;
+    print(_dataRoom);
+    notifyListeners();
+  }
+
+  setEventRoom(List value) {
+    _eventRoom = value;
+    print(_eventRoom);
     notifyListeners();
   }
 }

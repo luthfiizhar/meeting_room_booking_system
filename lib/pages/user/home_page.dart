@@ -16,10 +16,14 @@ import 'package:meeting_room_booking_system/widgets/amenities_container.dart';
 import 'package:meeting_room_booking_system/widgets/banner/landscape_white_banner.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/button/regular_button_white.dart';
+import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
+import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
 import 'package:meeting_room_booking_system/widgets/end_time_container.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/feature_container.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/meeting_type_container.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
@@ -42,7 +46,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   TextEditingController _dateController = TextEditingController();
   TextEditingController _facilityController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
@@ -100,6 +104,62 @@ class _HomePageState extends State<HomePage> {
   GlobalKey key4 = GlobalKey();
   GlobalKey key5 = GlobalKey();
   GlobalKey key6 = GlobalKey();
+
+  GlobalKey introSectionKey = GlobalKey();
+  GlobalKey featureSectionKey = GlobalKey();
+  GlobalKey faqSectionKey = GlobalKey();
+
+  ScrollController scrollController = ScrollController();
+
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(seconds: 2),
+    vsync: this,
+  );
+  late final Animation<double> _animation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeIn,
+  );
+
+  late final Animation<Offset> _offsetAnimation = Tween<Offset>(
+    end: Offset.zero,
+    begin: const Offset(1.5, 0.0),
+  ).animate(CurvedAnimation(
+    parent: _controller,
+    curve: Curves.elasticOut,
+  ));
+
+  scrollListener(ScrollController scrollInfo) {
+    RenderBox box =
+        introSectionKey.currentContext!.findRenderObject() as RenderBox;
+    Offset position = box.localToGlobal(Offset.zero); //this is global position
+    double y = position.dy;
+    // print('Container -> $y');
+    // print('Controller -> ${scrollInfo.position.pixels.toString()}');
+    if (scrollInfo.position.pixels == 0) {
+      // setState(() {});
+      _controller.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller.forward();
+    scrollController.addListener(() {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        scrollListener(scrollController);
+        // print(Provider.of<MainModel>(context).toString());
+      });
+    });
+  }
 
   Future showTutorial() async {
     tutorialCoachMark = TutorialCoachMark(
@@ -338,772 +398,167 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _datePickerOverlay(BuildContext context) {
-    OverlayState? overlayState = Overlay.of(context);
-    OverlayEntry overlayEntry;
-    overlayEntry = OverlayEntry(builder: (context) {
-      return Positioned(
-        top: 485,
-        left: 183,
-        child: CustomDatePicker(
-          controller: datePickerControl,
-          changeDate: onDateChanged,
-          setPickerStatus: setDatePickerVisible,
-          currentDate: selectedDate,
-        ),
-      );
-    });
-
-    overlayState!.insert(overlayEntry);
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    _dateController.dispose();
-    _facilityController.dispose();
-    _timeController.dispose();
-    _participantController.dispose();
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
-    _dateController.text = formattedDate;
-    _facilityController.text = 'None';
-    _timeController.text = 'Choose Time';
-    _participantController.text = 'Total Participant';
-    participantSelected = "0";
-
-    int minute = TimeOfDay.now().minute;
-    int hour = TimeOfDay.now().hour;
-    int minuteEndInit = 0;
-    if (TimeOfDay.now().minute >= 0 && TimeOfDay.now().minute < 15) {
-      minute = TimeOfDay.now().replacing(minute: 15).minute;
-    } else if (TimeOfDay.now().minute > 15 && TimeOfDay.now().minute <= 30) {
-      minute = TimeOfDay.now().replacing(minute: 30).minute;
-    } else if (TimeOfDay.now().minute > 30 && TimeOfDay.now().minute <= 45) {
-      minute = TimeOfDay.now().replacing(minute: 45).minute;
-    } else if (TimeOfDay.now().minute > 45 && TimeOfDay.now().minute <= 60) {
-      minute = TimeOfDay.now().replacing(minute: 0).minute;
-      hour = TimeOfDay.now().hour + 1;
-    }
-    var hourString =
-        TimeOfDay(hour: hour, minute: minute).hour.toString().padLeft(2, '0');
-    var minuteString =
-        TimeOfDay(hour: hour, minute: minute).minute.toString().padLeft(2, '0');
-    minuteEndInit = minute + 15;
-    var minuteEndString =
-        TimeOfDay(hour: hour, minute: minute).minute.toString().padLeft(2, '0');
-    if (minuteEndInit == 60) {
-      minuteEndString =
-          TimeOfDay(hour: hour, minute: 0).minute.toString().padLeft(2, '0');
-    }
-    startTime = "$hourString:$minuteString";
-    initialEndTime = "$hourString:${minuteEndInit.toString()}";
-    endTime = initialEndTime;
-
-    // addTarget();
-    // Future.delayed(
-    //   Duration(milliseconds: 500),
-    //   () {
-    //     showTutorial().then((value) {
-    //       Provider.of<MainModel>(context, listen: false).onBoardDone();
-    //     });
-    //   },
-    // );
-    // showBoardingPage();
-    // checkOnBoardingPage();
-    // showBoardingPage();
-    dateNode.addListener(() {
-      setState(() {
-        // getPosition();
-      });
-    });
-  }
-
-  popUpProfile(bool value) {
-    if (profileVisible) {
-      profileVisible = value;
-    } else {
-      profileVisible = value;
-    }
-    setState(() {});
-  }
-
-  checkOnBoardingPage() async {
-    var box = await Hive.openBox('userLogin');
-
-    var firstLogin = box.get('firstLogin') != "" ? false : true;
-
-    showOnBoard = firstLogin;
-    setState(() {});
-  }
-
-  showBoardingPage() {
-    print(Provider.of<MainModel>(context, listen: false).firstLogin);
-    if (Provider.of<MainModel>(context, listen: false).firstLogin) {
-      Future.delayed(
-        Duration(milliseconds: 500),
-        () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return OnBoardPage();
-            },
-          );
-        },
-      );
-    } else {}
-  }
-
-  FocusNode dateNode = FocusNode();
-
-  String datePicked = "";
-
-  double mouseX = 0;
-  double mouseY = 0;
-
-  GlobalKey searchContainerKey = GlobalKey();
-  GlobalKey dateKey = GlobalKey();
-  GlobalKey timeKey = GlobalKey();
-  GlobalKey participantKey = GlobalKey();
-  GlobalKey amenitiesKey = GlobalKey();
-  GlobalKey meetingTypeKey = GlobalKey();
-
-  bool datePickerVisible = false;
-  bool amenitiesContainerVisible = false;
-  bool participantContainerVisible = false;
-  bool timePickerContainerVisible = false;
-  bool startTimeContainerVisible = false;
-  bool endTimeContainerVisible = false;
-  bool meetingTypeContainerVisible = false;
-
-  void _updateLocation(PointerHoverEvent event) {
-    setState(() {
-      mouseX = event.localPosition.dx;
-      mouseY = event.localPosition.dy;
-    });
-  }
-
-  void getPositionDatePicker() {
-    RenderBox box =
-        searchContainerKey.currentContext!.findRenderObject() as RenderBox;
-    Offset position = box.localToGlobal(Offset.zero);
-    double y = position.dy;
-    double x = position.dx;
-    mouseX = x;
-    mouseY = y;
-    // if (datePickerVisible) {
-    //   datePickerVisible = false;
-    // } else {
-    //   datePickerVisible = true;
-    // }
-    datePickerVisible = true;
-
-    // print(y);
-    setState(() {});
-  }
-
-  void getPositionAmenities() {
-    RenderBox box =
-        searchContainerKey.currentContext!.findRenderObject() as RenderBox;
-    Offset position = box.localToGlobal(Offset.zero);
-    double y = position.dy;
-    double x = position.dx;
-    mouseX = x;
-    mouseY = y;
-    // if (datePickerVisible) {
-    //   datePickerVisible = false;
-    // } else {
-    //   datePickerVisible = true;
-    // }
-    amenitiesContainerVisible = true;
-
-    // print(y);
-    setState(() {});
-  }
-
-  void getPositionParticipant() {
-    RenderBox box =
-        searchContainerKey.currentContext!.findRenderObject() as RenderBox;
-    Offset position = box.localToGlobal(Offset.zero);
-    double y = position.dy;
-    double x = position.dx;
-    mouseX = x;
-    mouseY = y;
-
-    // if (datePickerVisible) {
-    //   datePickerVisible = false;
-    // } else {
-    //   datePickerVisible = true;
-    // }
-    participantContainerVisible = true;
-
-    // print(y);
-    setState(() {});
-  }
-
-  setStartTimeList(List value) {
-    startTimeList = value;
-    setState(() {});
-  }
-
-  setEndTimeList(List value) {
-    endTimeList = value;
-    setState(() {});
-  }
-
-  onDateChanged(String value, DateTime date) {
-    datePicked = value;
-    selectedDate = date;
-    _dateController.text = datePicked;
-    setState(() {});
-  }
-
-  onParticipanSelected(String value) {
-    participantSelected = value;
-    _participantController.text = "$participantSelected Person";
-    setState(() {});
-  }
-
-  onMeetingTypeSelected(String value) {
-    meetingTypeSelected = value;
-    setState(() {});
-  }
-
-  setStartTime(String start) {
-    startTime = start;
-    setState(() {});
-  }
-
-  setEndTime(String end) {
-    endTime = end;
-    setState(() {});
-  }
-
-  setInitialEndTime(String value) {
-    initialEndTime = value;
-    setState(() {});
-  }
-
-  setTime(String start, String end) {
-    startTime = start;
-    endTime = end;
-    _timeController.text = "$startTime - $endTime";
-    setState(() {});
-  }
-
-  setStartTimeStatus(bool value) {
-    startTimeContainerVisible = value;
-    setState(() {});
-  }
-
-  setEndTimeStatus(bool value) {
-    endTimeContainerVisible = value;
-    setState(() {});
-  }
-
-  setMeetingTypeContainerStatus(bool value) {
-    meetingTypeContainerVisible = value;
-    setState(() {});
-  }
-
-  setAmenitiesStatus(bool value) {
-    amenitiesContainerVisible = value;
-    setState(() {});
-  }
-
-  setOpacityOn(bool value) {
-    opacityOn = value;
-    setState(() {});
-  }
-
-  setDatePickerVisible(bool value) {
-    // RenderBox box = dateKey.currentContext!.findRenderObject() as RenderBox;
-    // Offset position = box.localToGlobal(Offset.zero);
-    // double y = position.dy;
-    // double x = position.dx;
-    // mouseX = x;
-    // mouseY = y;
-    // print(mouseX);
-    // print(mouseY);
-    datePickerVisible = value;
-    // _datePickerOverlay(context);
-    setState(() {});
-  }
-
-  setParticipantStatus(bool value) {
-    participantContainerVisible = value;
-    setState(() {});
-  }
-
-  setTimePickerStatus(bool value) {
-    timePickerContainerVisible = value;
-    setState(() {});
-  }
-
   resetAllVisibleStatus(bool value) {
-    datePickerVisible = value;
-    amenitiesContainerVisible = value;
-    participantContainerVisible = value;
-    timePickerContainerVisible = value;
-    startTimeContainerVisible = value;
-    endTimeContainerVisible = value;
-    meetingTypeContainerVisible = value;
-    opacityOn = value;
-    setState(() {});
+    // datePickerVisible = value;
+    // amenitiesContainerVisible = value;
+    // participantContainerVisible = value;
+    // timePickerContainerVisible = value;
+    // startTimeContainerVisible = value;
+    // endTimeContainerVisible = value;
+    // meetingTypeContainerVisible = value;
+    // opacityOn = value;
+    // setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
+      scrollController: scrollController,
       index: 0,
       setDatePickerStatus: resetAllVisibleStatus,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          minWidth: 1100,
-          // maxWidth: 1100,
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              const SizedBox(
+                height: 80,
+              ),
+              introSection(),
+              const SizedBox(
+                height: 100,
+              ),
+              featureSection(),
+              const SizedBox(
+                height: 100,
+              ),
+              howToSection(),
+              faqSection(),
+            ],
+          ),
+          Positioned(
+            top: 160,
+            right: -75,
+            child: SlideTransition(
+              position: _offsetAnimation,
+              child: Container(
+                width: MediaQuery.of(context).size.width <= 1366 ? 827 : 1193,
+                height: MediaQuery.of(context).size.width <= 1366 ? 552 : 796,
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: Image.asset('assets/mrbs_home_page_ilus.png'),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget introSection() {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: MediaQuery.of(context).size.width,
+        maxHeight: 750,
+      ),
+      child: Container(
+        key: introSectionKey,
+        // color: Colors.blue,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 180,
+          ),
+          child: FadeTransition(
+            opacity: _animation,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'MRBS works with',
+                  style: helveticaText.copyWith(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w300,
+                    color: eerieBlack,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Image.asset('assets/mrbs_gws_logo.png'),
+                const SizedBox(
+                  height: 25,
+                ),
+                SizedBox(
+                  width: 600,
+                  child: Text(
+                    'Experience more collaboration features by linking your MRBS account to your Google Workspace.',
+                    style: helveticaText.copyWith(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                      height: 1.3,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                TransparentBorderedBlackButton(
+                  text: 'Link My Account',
+                  disabled: false,
+                  padding: ButtonSize().mediumSize(),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget featureSection() {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: MediaQuery.of(context).size.width,
+        maxHeight: 850,
+      ),
+      child: Container(
+        key: featureSectionKey,
+        // color: Colors.amber,
         child: Stack(
           children: [
             Center(
               child: Container(
-                // color: Colors.blue,
                 width: 1100,
-                child: Stack(
+                child: Column(
                   children: [
-                    Column(
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // const SizedBox(
-                        //   height: 20,
-                        // ),
-                        Container(
-                          // color: Colors.amber,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                maxHeight: 475,
-                                maxWidth: 1100,
-                              ),
-                              child: Container(
-                                // color: Colors.greenAccent,
-                                height: 475,
-                                width: 1100,
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      top: 0,
-                                      left: 0,
-                                      child: Container(
-                                        width: 1100,
-                                        height: 400,
-                                        decoration: BoxDecoration(
-                                          color: graySand,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          // image: DecorationImage(
-                                          //   image:
-                                          //       AssetImage('assets/social_hub.jpg'),
-                                          //   fit: BoxFit.cover,
-                                          // ),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      bottom: 185,
-                                      right: 0,
-                                      child: Container(
-                                        // color: Colors.black,
-                                        decoration: BoxDecoration(
-                                          color: eerieBlack,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(5),
-                                            bottomLeft: Radius.circular(5),
-                                          ),
-                                        ),
-                                        padding: EdgeInsets.only(
-                                          right: 15,
-                                          left: 25,
-                                          top: 10,
-                                          bottom: 10,
-                                        ),
-                                        // height: 30,
-                                        // width: 30,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              'Social Hub',
-                                              style: TextStyle(
-                                                fontFamily: 'Helvetica',
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w700,
-                                                color: culturedWhite,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              '- Head Office',
-                                              style: TextStyle(
-                                                fontFamily: 'Helvetica',
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w300,
-                                                color: culturedWhite,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      bottom: 0,
-                                      left: 50,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          resetAllVisibleStatus(false);
-                                          // setDatePickerVisible(false);
-                                          // setAmenitiesStatus(false);
-                                        },
-                                        child: SearchContainer(
-                                          key: searchContainerKey,
-                                          dateNode: dateNode,
-                                          getPositionDatePicker:
-                                              getPositionDatePicker,
-                                          getPositionAmenities:
-                                              getPositionAmenities,
-                                          getPositionparticipant:
-                                              getPositionParticipant,
-                                          setPickerStatus: setDatePickerVisible,
-                                          setAmenitiesStatus:
-                                              setAmenitiesStatus,
-                                          setParticipantStatus:
-                                              setParticipantStatus,
-                                          setTimeStatus: setTimePickerStatus,
-                                          setStartTimeStatus:
-                                              setStartTimeStatus,
-                                          setEndTimeStatus: setEndTimeStatus,
-                                          setOpacityOn: setOpacityOn,
-                                          pickerStatus: datePickerVisible,
-                                          amenitiesStatus:
-                                              amenitiesContainerVisible,
-                                          participantStatus:
-                                              participantContainerVisible,
-                                          timePickerStatus:
-                                              timePickerContainerVisible,
-                                          dateController: _dateController,
-                                          facilityController:
-                                              _facilityController,
-                                          timeController: _timeController,
-                                          participantController:
-                                              _participantController,
-                                          meetingTypeSelected:
-                                              meetingTypeSelected,
-                                          meetingTypeStatus:
-                                              meetingTypeContainerVisible,
-                                          setMeetingTypeStatus:
-                                              setMeetingTypeContainerStatus,
-                                          dateKey: dateKey,
-                                          timeKey: timeKey,
-                                          amenitiesKey: amenitiesKey,
-                                          meetingTypeKey: meetingTypeKey,
-                                          participantKey: participantKey,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          // color: Colors.green,
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    minHeight: 600,
-                                    // maxHeight: MediaQuery.of(context).size.width,
-                                    minWidth: 1000,
-                                    // maxWidth: 1000,
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.only(
-                                      top: 35,
-                                    ),
-                                    width: 1000,
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(
-                                    //     color: eerieBlack,
-                                    //   ),
-                                    // ),
-                                    // height: double.infinity,
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          // mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              // color: Colors.amber,
-                                              width: 235,
-                                              // height: 1000,
-                                              // child: Text('Filter'),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  SortingContainer(
-                                                    listSorting: listSorting,
-                                                    selectedSorting:
-                                                        selectedSorting,
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  FilterContainer(
-                                                    listFilter: listFilter,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 35,
-                                            ),
-                                            Expanded(
-                                              child: Container(
-                                                child: ListView.builder(
-                                                  // physics: NeverScrollableScrollPhysics,
-                                                  shrinkWrap: true,
-                                                  itemCount: 2,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return ListRoomContainer();
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-
-                                            // RegularButton(
-                                            //   text: 'Start Time',
-                                            //   disabled: false,
-                                            //   onTap: () {
-                                            //     setStartTime();
-                                            //   },
-                                            // ),
-                                            // SizedBox(
-                                            //   height: 10,
-                                            // ),
-                                            // RegularButton(
-                                            //   text: 'End Time',
-                                            //   disabled: false,
-                                            //   onTap: () {
-                                            //     setEndTime("09:45");
-                                            //   },
-                                            // ),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 35,
-                                        ),
-                                        WhiteBannerLandscape(
-                                          title: 'Link your Google account',
-                                          subtitle: '& enjoy your benefits.',
-                                          imagePath:
-                                              'assets/banner_pict_google.png',
-                                        ),
-                                        const SizedBox(
-                                          height: 100,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              opacityOn
-                                  ? Center(
-                                      child: ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          minHeight: 1000,
-                                          minWidth: 1366,
-                                          // minWidth: 1000,
-                                          // maxWidth: 1366,
-                                        ),
-                                        child: Container(
-                                          color: Colors.white.withOpacity(0.5),
-                                        ),
-                                      ),
-                                    )
-                                  : SizedBox(),
-                            ],
-                          ),
-                        ),
-
-                        // Center(
-                        //   child: Text(
-                        //     datePicked,
-                        //   ),
-                        // ),
-                        // Container(
-                        //   height: 1000,
-                        // ),
-                      ],
+                    LeftFeatureContainer(
+                      icon: Image.asset('assets/google_calendar_icon.png'),
+                      title: 'Google Calendar',
+                      content:
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac viverra nisi, et ullamcorper neque. Proin nec rutrum magna. Etiam nec consectetur leo, eu fringilla diam.',
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    RightFeatureContainer(
+                      icon: Image.asset('assets/google_meet_icon.png'),
+                      title: 'Google Meet',
+                      content:
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac viverra nisi, et ullamcorper neque. Proin nec rutrum magna. Etiam nec consectetur leo, eu fringilla diam.',
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    LeftFeatureContainer(
+                      icon: Image.asset('assets/google_contact_icon.png'),
+                      title: 'Google Contact',
+                      content:
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac viverra nisi, et ullamcorper neque. Proin nec rutrum magna. Etiam nec consectetur leo, eu fringilla diam.',
+                      backgroundColor: eerieBlack,
                     ),
                   ],
-                ),
-              ),
-            ),
-            Visibility(
-              visible: meetingTypeContainerVisible,
-              child: Positioned(
-                top: 360,
-                left: 330,
-                child: MeetingTypeContainer(
-                  meetingTypeStatus: meetingTypeContainerVisible,
-                  setMeetingType: onMeetingTypeSelected,
-                  selectedMeetingType: meetingTypeSelected,
-                  setMeetingTypeStatus: setMeetingTypeContainerStatus,
-                ),
-              ),
-            ),
-            Visibility(
-              visible: datePickerVisible,
-              child: Positioned(
-                // bottom: 0,
-                top: 485,
-                left: 183,
-                child: CustomDatePicker(
-                  controller: datePickerControl,
-                  changeDate: onDateChanged,
-                  setPickerStatus: setDatePickerVisible,
-                  currentDate: selectedDate,
-                ),
-              ),
-            ),
-            Visibility(
-              visible: amenitiesContainerVisible,
-              child: Positioned(
-                // bottom: 0,
-                top: 485,
-                right: 370,
-                child: AmenitiesContainer(
-                  tvOnChange: (value) {
-                    if (checkBoxTv) {
-                      checkBoxTv = false;
-                      facilitySelected
-                          .removeWhere((element) => element == 'TV');
-                    } else {
-                      checkBoxTv = true;
-                      facilitySelected.add('TV');
-                    }
-                    if (facilitySelected.isNotEmpty) {
-                      if (facilitySelected.length > 1) {
-                        _facilityController.text = "TV & Camera";
-                      } else if (facilitySelected.length == 1) {
-                        _facilityController.text =
-                            facilitySelected[0].toString();
-                      }
-                    } else {
-                      _facilityController.text = "None";
-                    }
-                    print(facilitySelected);
-                    setState(() {});
-                  },
-                  cameraOnChange: (value) {
-                    if (checkBoxCamera) {
-                      checkBoxCamera = false;
-                      facilitySelected
-                          .removeWhere((element) => element == 'Camera');
-                    } else {
-                      checkBoxCamera = true;
-                      facilitySelected.add('Camera');
-                    }
-                    if (facilitySelected.isNotEmpty) {
-                      if (facilitySelected.length > 1) {
-                        _facilityController.text = "TV & Camera";
-                      } else if (facilitySelected.length == 1) {
-                        _facilityController.text =
-                            facilitySelected[0].toString();
-                      }
-                    } else {
-                      _facilityController.text = "None";
-                    }
-                    print(facilitySelected);
-
-                    setState(() {});
-                  },
-                  cameraValue: checkBoxCamera,
-                  tvValue: checkBoxTv,
-                ),
-              ),
-            ),
-            Visibility(
-              visible: participantContainerVisible,
-              child: Positioned(
-                top: 485,
-                right: 575,
-                child: ParticipantContainer(
-                  setParticipantStatus: setParticipantStatus,
-                  onChangeParticipant: onParticipanSelected,
-                ),
-              ),
-            ),
-            Visibility(
-              visible: timePickerContainerVisible,
-              child: Positioned(
-                top: 485,
-                left: 408,
-                child: TimePickerContainer(
-                  startTimeStatus: startTimeContainerVisible,
-                  endTimeStatus: endTimeContainerVisible,
-                  setTime: setTime,
-                  startTime: startTime,
-                  endTime: endTime,
-                  setTimePickerStatus: setTimePickerStatus,
-                  setListStartTime: setStartTimeList,
-                  setEndTimeStatus: setEndTimeStatus,
-                  setListEndTime: setEndTimeList,
-                  setStartTimeStatus: setStartTimeStatus,
-                  initialEndTime: initialEndTime,
-                ),
-              ),
-            ),
-            Visibility(
-              visible: startTimeContainerVisible,
-              child: Positioned(
-                top: 595,
-                left: 425,
-                child: StartTimeContainer(
-                  items: startTimeList,
-                  setStartTime: setStartTime,
-                  setStartTimeStatus: setStartTimeStatus,
-                  setInitialEndTime: setInitialEndTime,
-                ),
-              ),
-            ),
-            Visibility(
-              visible: endTimeContainerVisible,
-              child: Positioned(
-                top: 595,
-                left: 545,
-                child: EndTimeContainer(
-                  items: endTimeList,
-                  setEndTime: setEndTime,
-                  setEndTimeStatus: setEndTimeStatus,
-                  startTime: startTime,
-                  setTime: setTime,
                 ),
               ),
             )
@@ -1111,182 +566,234 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-    return Consumer<MainModel>(builder: (context, model, child) {
-      return Scaffold(
-        body: Center(
-          child: ConstrainedBox(
-            constraints: pageConstraints,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            // model.navbarShadow
-                            BoxShadow(
-                              blurRadius: !model.shadowActive ? 0 : 40,
-                              offset: !model.shadowActive
-                                  ? Offset(0, 0)
-                                  : Offset(0, 0),
-                              color: Color.fromRGBO(29, 29, 29, 0.1),
-                            )
-                          ],
-                        ),
-                        child: NavigationBarWeb(
-                          index: 0,
-                          popUpProfile: popUpProfile,
-                        ),
-                      ),
-                      Expanded(
-                        child: CustomScrollView(
-                          slivers: [
-                            SliverList(
-                              delegate: SliverChildListDelegate(
-                                [
-                                  Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Container(
-                                              key: key1,
-                                              height: 100,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              key: key2,
-                                              height: 100,
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Container(
-                                              key: key3,
-                                              height: 100,
-                                              color: Colors.blue,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              key: key4,
-                                              height: 100,
-                                              color: Colors.green,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            key: key5,
-                                            child: Container(
-                                              height: 100,
-                                              color: Colors.amber,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Align(
-                                        alignment: Alignment.center,
-                                        child: Container(
-                                          key: key6,
-                                          height: 300,
-                                          width: 400,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/gapps.png'),
-                                            ),
-                                          ),
-                                          child: Stack(
-                                            children: [
-                                              Container(
-                                                height: double.infinity,
-                                                width: double.infinity,
-                                                decoration: const BoxDecoration(
-                                                  gradient: LinearGradient(
-                                                    begin: Alignment(0, 0),
-                                                    end: Alignment(0, 0.7),
-                                                    colors: [
-                                                      Color.fromARGB(
-                                                          0, 255, 255, 255),
-                                                      eerieBlack,
-                                                    ],
-                                                    // stops: [0, 200],
-                                                  ),
-                                                ),
-                                              ),
-                                              Positioned(
-                                                bottom: 0,
-                                                child: Container(
-                                                  width: 400,
-                                                  color: eerieBlack,
-                                                  child: Column(
-                                                    children: [
-                                                      Text(
-                                                        'Link your Google Account',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                      Text(
-                                                        'Link your Google Account',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                      Text(
-                                                        'Link your Google Account',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
+  }
+
+  Widget faqSection() {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxHeight: 500,
+      ),
+      child: Container(color: Colors.amber),
+    );
+  }
+
+  Widget howToSection() {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: MediaQuery.of(context).size.width,
+        maxHeight: 500,
+      ),
+      child: Container(
+        // key: faqSectionKey,
+        // color: Colors.purple,
+        child: Center(
+          child: Container(
+            // color: Colors.green,
+            width: 1210,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'How To Connect?',
+                  style: TextStyle(
+                    fontFamily: 'Helvetica',
+                    fontSize: 100,
+                    fontWeight: FontWeight.w800,
+                    foreground: Paint()
+                      ..style = PaintingStyle.stroke
+                      ..strokeWidth = 0.5
+                      ..color = davysGray,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: 363,
+                      height: 383,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 325,
+                              height: 250,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: platinumLight,
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    right: 20,
-                    top: 65,
-                    child: Visibility(
-                      visible: profileVisible,
-                      child: Container(
-                        // color: Colors.amber,
-                        child: PopUpProfile(
-                          name: 'Luthfi',
-                          email: 'luthfiizhar@gmail.com',
-                        ),
+                          ),
+                          Positioned(
+                            top: 5,
+                            right: 30,
+                            child: Column(
+                              children: [
+                                Image.asset('assets/gws_vector_1.png'),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                SizedBox(
+                                  width: 250,
+                                  child: Text(
+                                    'Enter your Google Workspace email address',
+                                    style: helveticaText.copyWith(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w300,
+                                      color: davysGray,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 30,
+                            left: 0,
+                            child: Text(
+                              '1',
+                              style: TextStyle(
+                                fontFamily: 'Helvetica',
+                                fontSize: 100,
+                                fontWeight: FontWeight.w800,
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 1
+                                  ..color = orangeAccent,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(
+                      width: 60,
+                    ),
+                    Container(
+                      width: 363,
+                      height: 383,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 325,
+                              height: 250,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: platinumLight,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 5,
+                            right: 30,
+                            child: Column(
+                              children: [
+                                Image.asset('assets/gws_vector_2.png'),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                SizedBox(
+                                  width: 250,
+                                  child: Text(
+                                    'Accept Google account permissions',
+                                    style: helveticaText.copyWith(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w300,
+                                      color: davysGray,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 30,
+                            left: 0,
+                            child: Text(
+                              '2',
+                              style: TextStyle(
+                                fontFamily: 'Helvetica',
+                                fontSize: 100,
+                                fontWeight: FontWeight.w800,
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 1
+                                  ..color = orangeAccent,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 60,
+                    ),
+                    Container(
+                      width: 363,
+                      height: 383,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 325,
+                              height: 250,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: platinumLight,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 30,
+                            child: Column(
+                              children: [
+                                Image.asset('assets/gws_vector_3.png'),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                SizedBox(
+                                  width: 250,
+                                  child: Text(
+                                    'Your account is linked!',
+                                    style: helveticaText.copyWith(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w300,
+                                      color: davysGray,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 30,
+                            left: 0,
+                            child: Text(
+                              '3',
+                              style: TextStyle(
+                                fontFamily: 'Helvetica',
+                                fontSize: 100,
+                                fontWeight: FontWeight.w800,
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 1
+                                  ..color = orangeAccent,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 }

@@ -22,8 +22,10 @@ const Color sonicSilver = Color(0xFF777777);
 const Color orangeAccent = Color(0xFFF26529);
 const Color white = Color(0xFFFFFFFF);
 const Color blueAccent = Color(0xFF0097D6);
+const Color platinumLight = Color(0xFFEBEBEB);
+const Color violetAccent = Color(0xFF585EAA);
 
 const Color navBarInActiveState =
     Color(0xFF8E8E8E); //Color.fromARGB(255, 255, 255, 255);
 const Color navBarActiveState = davysGray; //const Color(0xFF8e8e8e);
-const Color navBarBackGroundBlack = const Color(0xFF1d1d1d);
+const Color navBarBackGroundBlack = Color(0xFF1d1d1d);
