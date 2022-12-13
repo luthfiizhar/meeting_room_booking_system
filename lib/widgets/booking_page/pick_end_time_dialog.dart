@@ -59,6 +59,7 @@ class _PickEndTimeDialogState extends State<PickEndTimeDialog> {
           .minute
           .toString()
           .padLeft(2, '0');
+
       // if (TimeOfDay(hour: hour, minute: minute)
       //         .minute
       //         .toString()
@@ -69,6 +70,9 @@ class _PickEndTimeDialogState extends State<PickEndTimeDialog> {
       yield "$hourString:$minuteString";
       minute += step.inMinutes;
       while (minute >= 60) {
+        if (minuteString == 60) {
+          minute = 0;
+        }
         minute -= 60;
         hour++;
       }

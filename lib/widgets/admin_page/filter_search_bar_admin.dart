@@ -9,27 +9,27 @@ import 'package:meeting_room_booking_system/widgets/input_field/black_input_fiel
 import 'package:meeting_room_booking_system/widgets/input_field/white_input_field.dart';
 import 'package:universal_html/html.dart' as html;
 
-class FilterSearchBar extends StatefulWidget {
-  FilterSearchBar({
+class FilterSearchBarAdmin extends StatefulWidget {
+  FilterSearchBarAdmin({
     super.key,
     this.index,
     this.roomType,
-    this.getRoomType,
+    this.getRoomStatus,
     this.search,
     this.searchController,
   });
 
   int? index;
   String? roomType;
-  Function? getRoomType;
+  Function? getRoomStatus;
   Function? search;
   TextEditingController? searchController;
 
   @override
-  State<FilterSearchBar> createState() => _FilterSearchBarState();
+  State<FilterSearchBarAdmin> createState() => _FilterSearchBarAdminState();
 }
 
-class _FilterSearchBarState extends State<FilterSearchBar> {
+class _FilterSearchBarAdminState extends State<FilterSearchBarAdmin> {
   int? index;
   bool _hovering = false;
   bool onSelected = false;
@@ -55,17 +55,17 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
 
   void onHighlight(String type) {
     switch (type) {
-      case "MeetingRoom":
+      case "Request":
         changeHighlight(0);
-        widget.getRoomType!(type);
+        widget.getRoomStatus!(type);
         break;
-      case "Auditorium":
+      case "Approved":
         changeHighlight(1);
-        widget.getRoomType!(type);
+        widget.getRoomStatus!(type);
         break;
-      case "SocialHub":
+      case "Decline":
         changeHighlight(2);
-        widget.getRoomType!(type);
+        widget.getRoomStatus!(type);
         break;
     }
   }
@@ -109,9 +109,9 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
                     // width: 500,
                     child: Row(
                       children: [
-                        FilterSearchBarItem(
-                          title: 'Meeting Room',
-                          type: 'MeetingRoom',
+                        FilterSearchBarAdminItem(
+                          title: 'Request',
+                          type: 'Request',
                           onHighlight: onHighlight,
                           selected: index == 0,
                           color: selectedColor,
@@ -119,9 +119,9 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
                         const SizedBox(
                           width: 50,
                         ),
-                        FilterSearchBarItem(
-                          title: 'Auditorium',
-                          type: 'Auditorium',
+                        FilterSearchBarAdminItem(
+                          title: 'Approved',
+                          type: 'Approved',
                           onHighlight: onHighlight,
                           selected: index == 1,
                           color: selectedColor,
@@ -129,9 +129,9 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
                         const SizedBox(
                           width: 50,
                         ),
-                        FilterSearchBarItem(
-                          title: 'Social Hub',
-                          type: 'SocialHub',
+                        FilterSearchBarAdminItem(
+                          title: 'Declined',
+                          type: 'Declined',
                           onHighlight: onHighlight,
                           selected: index == 2,
                           color: selectedColor,
@@ -183,8 +183,8 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
   }
 }
 
-class FilterSearchBarItem extends StatelessWidget {
-  const FilterSearchBarItem({
+class FilterSearchBarAdminItem extends StatelessWidget {
+  const FilterSearchBarAdminItem({
     super.key,
     this.title,
     this.type,
@@ -207,7 +207,7 @@ class FilterSearchBarItem extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
-        child: FilterSearchBarInteractiveItem(
+        child: FilterSearchBarAdminInteractiveItem(
           text: title,
           selected: selected,
           type: type,
@@ -218,13 +218,13 @@ class FilterSearchBarItem extends StatelessWidget {
   }
 }
 
-class FilterSearchBarInteractiveItem extends MouseRegion {
+class FilterSearchBarAdminInteractiveItem extends MouseRegion {
   static final appContainer =
       html.window.document.querySelectorAll('flt-glass-pane')[0];
 
   // bool selected;
 
-  FilterSearchBarInteractiveItem({
+  FilterSearchBarAdminInteractiveItem({
     Widget? child,
     String? text,
     bool? selected,
@@ -237,26 +237,26 @@ class FilterSearchBarInteractiveItem extends MouseRegion {
           onExit: (PointerExitEvent evt) {
             appContainer.style.cursor = 'default';
           },
-          child: FilterSearchBarInteractiveText(
+          child: FilterSearchBarAdminInteractiveText(
               text: text!, selected: selected!, color: color),
         );
 }
 
-class FilterSearchBarInteractiveText extends StatefulWidget {
+class FilterSearchBarAdminInteractiveText extends StatefulWidget {
   final String? text;
   final bool? selected;
   final Color color;
 
-  FilterSearchBarInteractiveText(
+  FilterSearchBarAdminInteractiveText(
       {@required this.text, this.selected, this.color = blueAccent});
 
   @override
-  FilterSearchBarInteractiveTextState createState() =>
-      FilterSearchBarInteractiveTextState();
+  FilterSearchBarAdminInteractiveTextState createState() =>
+      FilterSearchBarAdminInteractiveTextState();
 }
 
-class FilterSearchBarInteractiveTextState
-    extends State<FilterSearchBarInteractiveText> {
+class FilterSearchBarAdminInteractiveTextState
+    extends State<FilterSearchBarAdminInteractiveText> {
   bool _hovering = false;
   bool onSelected = false;
 

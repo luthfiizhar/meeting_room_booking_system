@@ -8,6 +8,7 @@ class StartTimeContainer extends StatelessWidget {
     this.items,
     this.setInitialEndTime,
     this.isDark = true,
+    this.selectedDate,
   });
 
   // Function? setTime;
@@ -16,6 +17,7 @@ class StartTimeContainer extends StatelessWidget {
   Function? setStartTime;
   Function? setInitialEndTime;
   bool isDark;
+  DateTime? selectedDate;
   // String? startTime;
   // String? endTime;
 

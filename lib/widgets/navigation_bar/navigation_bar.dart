@@ -419,7 +419,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         width: 25,
                       ),
                       NavigationItem(
-                        title: 'My Bookings',
+                        title: 'My Events',
                         routeName: myBookingPageRoute,
                         selected: index == 3,
                         onHighlight: onHighlight,

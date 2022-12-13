@@ -39,6 +39,11 @@ import 'package:http/http.dart' as http;
 class BookingRoomPageDialog extends StatefulWidget {
   BookingRoomPageDialog({
     super.key,
+    this.summary = "",
+    this.description = "",
+    this.additionalNote = "",
+    this.totalParticipant = "",
+    this.invitedGuest,
     this.roomId = "",
     this.date = "",
     this.startTime = "",
@@ -48,8 +53,14 @@ class BookingRoomPageDialog extends StatefulWidget {
     this.foodAmenities,
     this.participant = "1",
     this.index = 2,
+    this.recurrent,
   });
 
+  String summary;
+  String description;
+  String additionalNote;
+  String totalParticipant;
+  List? invitedGuest;
   String? roomId;
   String? date;
   String? startTime;
@@ -59,6 +70,7 @@ class BookingRoomPageDialog extends StatefulWidget {
   dynamic foodAmenities;
   String? participant;
   int? index;
+  dynamic recurrent;
 
   @override
   State<BookingRoomPageDialog> createState() => _BookingRoomPageDialogState();
@@ -74,6 +86,8 @@ class _BookingRoomPageDialogState extends State<BookingRoomPageDialog> {
   TextEditingController _email = TextEditingController();
   TextEditingController _repeatEnd = TextEditingController();
   TextEditingController _additionalNote = TextEditingController();
+  TextEditingController _repeatOnMonthly = TextEditingController();
+  TextEditingController _repeatInterval = TextEditingController();
 
   FocusNode eventNameNode = FocusNode();
   FocusNode eventDescNode = FocusNode();
@@ -85,6 +99,8 @@ class _BookingRoomPageDialogState extends State<BookingRoomPageDialog> {
   FocusNode repeatNode = FocusNode();
   FocusNode repeatEndNode = FocusNode();
   FocusNode additionalNoteNode = FocusNode();
+  FocusNode repeatOnNode = FocusNode();
+  FocusNode repeatIntervalNode = FocusNode();
 
   String eventName = "";
   String eventDesc = "";
@@ -95,6 +111,8 @@ class _BookingRoomPageDialogState extends State<BookingRoomPageDialog> {
   String additionalNote = "";
   String repeatValue = 'NONE';
   List invitedGuest = [];
+  String monthAbsolute = "";
+  String repeatInterval = "0";
 
   String roomName = "";
   String floor = "";
@@ -133,6 +151,16 @@ class _BookingRoomPageDialogState extends State<BookingRoomPageDialog> {
   String areaRefresh = "";
   List dataRoomRefresh = [];
   List eventRoomRefresh = [];
+
+  List weeklyOptions = [
+    {'value': '0', 'name': 'Sunday', 'initial': 'S', 'isSelected': false},
+    {'value': '1', 'name': 'Monday', 'initial': 'M', 'isSelected': false},
+    {'value': '2', 'name': 'Tuesday', 'initial': 'T', 'isSelected': false},
+    {'value': '3', 'name': 'Wednesday', 'initial': 'W', 'isSelected': false},
+    {'value': '4', 'name': 'Thursday', 'initial': 'T', 'isSelected': false},
+    {'value': '5', 'name': 'Friday', 'initial': 'F', 'isSelected': false},
+    {'value': '6', 'name': 'Saturday', 'initial': 'S', 'isSelected': false},
+  ];
 
   bool pictureLoading = true;
 
@@ -334,9 +362,11 @@ class _BookingRoomPageDialogState extends State<BookingRoomPageDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print(widget.invitedGuest);
     // String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
     getRoomDetail(widget.roomId!).then((value) {
       setState(() {
+        dynamic recurrent = widget.recurrent[0];
         pictureLoading = false;
         print(value['Data']);
         // roomDetail = [value['Data']];
@@ -346,6 +376,16 @@ class _BookingRoomPageDialogState extends State<BookingRoomPageDialog> {
         resultAmenities = value['Data']['Amenities'];
         // resultAmenities.add(value['Data']['Amenities'][0]);
         // resultAmenities = amen;
+        _eventName.text = widget.summary;
+        _eventDesc.text = widget.description;
+        _additionalNote.text = widget.additionalNote;
+        _totalParticipant.text = widget.totalParticipant;
+        List tempGuest = widget.invitedGuest!;
+        for (var element in tempGuest) {
+          invitedGuest.add(element['AttendantsEmail']);
+        }
+        // invitedGuest = widget.invitedGuest!;
+        repeatValue = recurrent['repeatType'];
         resultFoodAmenities = value['Data']['FoodAmenities'];
         resultPicture = value['Data']['Photos'];
         String formattedDate =
@@ -356,7 +396,12 @@ class _BookingRoomPageDialogState extends State<BookingRoomPageDialog> {
         endTime = widget.endTime!;
         _startTime.text = widget.startTime!;
         _endTime.text = widget.endTime!;
-        _repeatEnd.text = DateFormat('d MMM yyyy').format(DateTime.now());
+        repeatEnd = recurrent['repeatEndDate'].toString().substring(0, 10);
+        repeatInterval = recurrent['interval'].toString();
+        monthAbsolute = recurrent['montAbs'].toString();
+        _repeatInterval.text = repeatInterval;
+        _repeatEnd.text =
+            DateFormat('d MMM yyyy').format(recurrent['repeatEndDate']);
         _totalParticipant.text = widget.participant!;
         if (widget.roomType != 'MeetingRoom') {
           layoutSectionVisible = true;
@@ -927,32 +972,245 @@ class _BookingRoomPageDialogState extends State<BookingRoomPageDialog> {
                                         const SizedBox(
                                           height: 20,
                                         ),
+                                        //REPEAT OPTIONS
                                         Visibility(
                                           visible: repeatValue == "NONE"
                                               ? false
                                               : true,
-                                          child: inputField(
-                                            'Repeat End:',
-                                            InkWell(
-                                              onTap: () {
-                                                if (datePickerRepeatVisible) {
-                                                  setDatePickerRepeatVisible(
-                                                      false);
-                                                } else {
-                                                  setDatePickerRepeatVisible(
-                                                      true);
-                                                  setDatePickerVisible(false);
-                                                }
-                                              },
-                                              child: SizedBox(
-                                                width: 145,
-                                                child: NoBorderInputField(
-                                                  controller: _repeatEnd,
-                                                  focusNode: repeatEndNode,
-                                                  enable: false,
+                                          child: Column(
+                                            children: [
+                                              //MONTHLY OPTIONS
+                                              Visibility(
+                                                visible:
+                                                    repeatValue == "MONTHLY"
+                                                        ? true
+                                                        : false,
+                                                child: Column(
+                                                  children: [
+                                                    inputField(
+                                                      'Repeat On:',
+                                                      SizedBox(
+                                                        width: 100,
+                                                        child: BlackInputField(
+                                                          controller:
+                                                              _repeatOnMonthly,
+                                                          enabled: true,
+                                                          focusNode:
+                                                              repeatOnNode,
+                                                          onSaved: (newValue) {
+                                                            monthAbsolute =
+                                                                newValue!;
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 20,
+                                                    )
+                                                  ],
                                                 ),
                                               ),
-                                            ),
+                                              //END MONTHLY OPTIONS
+                                              //WEEKLY OPTIONS
+                                              Visibility(
+                                                visible: repeatValue == "WEEKLY"
+                                                    ? true
+                                                    : false,
+                                                child: Column(
+                                                  children: [
+                                                    inputField(
+                                                      '',
+                                                      SizedBox(
+                                                        height: 30,
+                                                        width: 400,
+                                                        child: ListView.builder(
+                                                          shrinkWrap: true,
+                                                          scrollDirection:
+                                                              Axis.horizontal,
+                                                          itemCount:
+                                                              weeklyOptions
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            var todayDay =
+                                                                DateFormat(
+                                                                        'EEEE')
+                                                                    .format(
+                                                                        selectedDate!);
+                                                            for (var element
+                                                                in weeklyOptions) {
+                                                              if (element[
+                                                                      'name'] ==
+                                                                  todayDay) {
+                                                                element['isSelected'] =
+                                                                    true;
+                                                              }
+                                                            }
+                                                            return Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                right: 10,
+                                                              ),
+                                                              child: InkWell(
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    if (weeklyOptions[
+                                                                            index]
+                                                                        [
+                                                                        'isSelected']) {
+                                                                      weeklyOptions[index]
+                                                                              [
+                                                                              'isSelected'] =
+                                                                          false;
+                                                                    } else {
+                                                                      weeklyOptions[index]
+                                                                              [
+                                                                              'isSelected'] =
+                                                                          true;
+                                                                    }
+                                                                    if (weeklyOptions.any((element) =>
+                                                                        element[
+                                                                            'isSelected'] ==
+                                                                        false)) {
+                                                                      var todayDay = DateFormat(
+                                                                              'EEEE')
+                                                                          .format(
+                                                                              selectedDate!);
+                                                                      for (var element
+                                                                          in weeklyOptions) {
+                                                                        if (element['name'] ==
+                                                                            todayDay) {
+                                                                          element['isSelected'] =
+                                                                              true;
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  });
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  width: 30,
+                                                                  height: 30,
+                                                                  // padding:
+                                                                  //     const EdgeInsets.all(
+                                                                  //         10),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: weeklyOptions[index]
+                                                                            [
+                                                                            'isSelected']
+                                                                        ? greenAcent
+                                                                        : platinum,
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                  ),
+                                                                  child: Align(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    child: Text(
+                                                                      weeklyOptions[
+                                                                              index]
+                                                                          [
+                                                                          'initial'],
+                                                                      style: helveticaText
+                                                                          .copyWith(
+                                                                        fontSize:
+                                                                            12,
+                                                                        height:
+                                                                            1.3,
+                                                                        color: weeklyOptions[index]['isSelected']
+                                                                            ? culturedWhite
+                                                                            : davysGray,
+                                                                        fontWeight:
+                                                                            FontWeight.w300,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 20,
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              //END WEEKLY OPTIONS
+                                              inputField(
+                                                'Interval',
+                                                Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 100,
+                                                      child: BlackInputField(
+                                                        enabled: true,
+                                                        controller:
+                                                            _repeatInterval,
+                                                        focusNode:
+                                                            repeatIntervalNode,
+                                                        onSaved: (newValue) {
+                                                          repeatInterval =
+                                                              newValue!;
+                                                        },
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(
+                                                      repeatValue == "DAILY"
+                                                          ? 'Day'
+                                                          : repeatValue ==
+                                                                  "WEEKLY"
+                                                              ? 'Week'
+                                                              : repeatValue ==
+                                                                      "MONTHLY"
+                                                                  ? 'Month'
+                                                                  : '',
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Helvetica',
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w300,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              inputField(
+                                                'Repeat End:',
+                                                InkWell(
+                                                  onTap: () {
+                                                    if (datePickerRepeatVisible) {
+                                                      setDatePickerRepeatVisible(
+                                                          false);
+                                                    } else {
+                                                      setDatePickerRepeatVisible(
+                                                          true);
+                                                      setDatePickerVisible(
+                                                          false);
+                                                    }
+                                                  },
+                                                  child: SizedBox(
+                                                    width: 145,
+                                                    child: NoBorderInputField(
+                                                      controller: _repeatEnd,
+                                                      focusNode: repeatEndNode,
+                                                      enable: false,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
@@ -1015,7 +1273,7 @@ class _BookingRoomPageDialogState extends State<BookingRoomPageDialog> {
                                     height: 40,
                                   ),
                                   RegularButton(
-                                    text: 'Book This Room',
+                                    text: 'Update Detail Booking',
                                     disabled: false,
                                     padding: ButtonSize().longSize(),
                                     onTap: () {
@@ -1089,53 +1347,53 @@ class _BookingRoomPageDialogState extends State<BookingRoomPageDialog> {
                                         // print('Data Room -> $dataRoomRefresh');
                                         // print('Event Room -> $eventRoomRefresh');
                                         //Booking Function
-                                        bookingRoom(booking).then((value) {
-                                          print(value);
-                                          if (value['Status'] == "200") {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  AlertDialogBlack(
-                                                      title: value['Title'],
-                                                      contentText:
-                                                          value['Message']),
-                                            ).then((value) {
-                                              // updateEvent(model).then((value) {
-                                              //   context.go('/rooms');
-                                              // });
-                                              // context.go('/rooms');
-                                              Navigator.of(context).pop();
-                                              // Navigator.of(context).pop();
-                                            });
-                                          } else {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  AlertDialogBlack(
-                                                title: value['Title'],
-                                                contentText: value['Message'],
-                                                isSuccess: false,
-                                              ),
-                                            ).then((value) {
-                                              // context.go('/rooms');
-                                            });
-                                          }
-                                          // context.pop();
-                                        }).onError((error, stackTrace) {
-                                          print(error);
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                const AlertDialogBlack(
-                                              title: 'Failed',
-                                              contentText:
-                                                  'Failed connect to API',
-                                              isSuccess: false,
-                                            ),
-                                          ).then((value) {
-                                            // context.go('/rooms');
-                                          });
-                                        });
+                                        // bookingRoom(booking).then((value) {
+                                        //   print(value);
+                                        //   if (value['Status'] == "200") {
+                                        //     showDialog(
+                                        //       context: context,
+                                        //       builder: (context) =>
+                                        //           AlertDialogBlack(
+                                        //               title: value['Title'],
+                                        //               contentText:
+                                        //                   value['Message']),
+                                        //     ).then((value) {
+                                        //       // updateEvent(model).then((value) {
+                                        //       //   context.go('/rooms');
+                                        //       // });
+                                        //       // context.go('/rooms');
+                                        //       Navigator.of(context).pop();
+                                        //       // Navigator.of(context).pop();
+                                        //     });
+                                        //   } else {
+                                        //     showDialog(
+                                        //       context: context,
+                                        //       builder: (context) =>
+                                        //           AlertDialogBlack(
+                                        //         title: value['Title'],
+                                        //         contentText: value['Message'],
+                                        //         isSuccess: false,
+                                        //       ),
+                                        //     ).then((value) {
+                                        //       // context.go('/rooms');
+                                        //     });
+                                        //   }
+                                        //   // context.pop();
+                                        // }).onError((error, stackTrace) {
+                                        //   print(error);
+                                        //   showDialog(
+                                        //     context: context,
+                                        //     builder: (context) =>
+                                        //         const AlertDialogBlack(
+                                        //       title: 'Failed',
+                                        //       contentText:
+                                        //           'Failed connect to API',
+                                        //       isSuccess: false,
+                                        //     ),
+                                        //   ).then((value) {
+                                        //     // context.go('/rooms');
+                                        //   });
+                                        // });
                                         //END BOOOKING FUNCTION
 
                                         // debugPrint("""

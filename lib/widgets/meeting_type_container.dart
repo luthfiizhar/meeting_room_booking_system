@@ -8,6 +8,7 @@ class MeetingTypeContainer extends StatelessWidget {
     this.setMeetingType,
     this.meetingTypeStatus,
     this.setMeetingTypeStatus,
+    this.meetingType,
   });
 
   String? selectedMeetingType;
@@ -15,11 +16,12 @@ class MeetingTypeContainer extends StatelessWidget {
   Function? setMeetingType;
   bool? meetingTypeStatus;
 
-  List typeChoices = [
-    {'id': '1', 'name': 'Meeting Room'},
-    {'id': '2', 'name': 'Auditorium'},
-    {'id': '3', 'name': 'SocialHub'},
-  ];
+  // List typeChoices = [
+  //   {'id': '1', 'name': 'Meeting Room'},
+  //   {'id': '2', 'name': 'Auditorium'},
+  //   {'id': '3', 'name': 'SocialHub'},
+  // ];
+  List? meetingType;
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +40,18 @@ class MeetingTypeContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: ListView.builder(
-          itemCount: typeChoices.length,
+          itemCount: meetingType!.length,
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
-                setMeetingType!(typeChoices[index]['name']);
+                setMeetingType!(
+                    meetingType![index]['value'], meetingType![index]['Name']);
                 setMeetingTypeStatus!(false);
               },
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  index == 0 || index == typeChoices.length
+                  index == 0 || index == meetingType!.length
                       ? const SizedBox()
                       : const Padding(
                           padding: EdgeInsets.symmetric(
@@ -59,7 +62,7 @@ class MeetingTypeContainer extends StatelessWidget {
                           ),
                         ),
                   Text(
-                    typeChoices[index]['name'],
+                    meetingType![index]['Name'],
                     style: const TextStyle(
                       color: culturedWhite,
                       fontFamily: 'Helvetica',

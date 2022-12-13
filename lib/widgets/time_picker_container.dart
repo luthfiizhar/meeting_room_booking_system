@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
@@ -19,6 +20,7 @@ class TimePickerContainer extends StatefulWidget {
     this.setEndTimeStatus,
     this.initialEndTime,
     this.isDark = true,
+    this.selectedDate,
   });
 
   bool? startTimeStatus;
@@ -33,6 +35,7 @@ class TimePickerContainer extends StatefulWidget {
   Function? setListEndTime;
   Function? setEndTimeStatus;
   bool isDark;
+  DateTime? selectedDate;
 
   @override
   State<TimePickerContainer> createState() => _TimePickerContainerState();
@@ -76,7 +79,7 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
         (hour == endTime.hour && minute <= endTime.minute));
   }
 
-  setStartTime() {
+  setStartTime(DateTime selectedDate) {
     int minute = TimeOfDay.now().minute;
     int hour = TimeOfDay.now().hour;
     if (TimeOfDay.now().minute >= 0 && TimeOfDay.now().minute < 15) {
@@ -97,7 +100,14 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
     final endTime = TimeOfDay(hour: 19, minute: 0);
     final step = Duration(minutes: 15);
 
-    times = getTimes(startTime, endTime, step).map((tod) => tod).toList();
+    if (DateFormat('yyyy-MM-dd').format(selectedDate) ==
+        DateFormat('yyyy-MM-dd').format(DateTime.now())) {
+      times = getTimes(startTime, endTime, step).map((tod) => tod).toList();
+    } else {
+      times = getTimes(const TimeOfDay(hour: 7, minute: 0), endTime, step)
+          .map((tod) => tod)
+          .toList();
+    }
 
     print(times);
   }
@@ -175,7 +185,7 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
                             if (widget.startTimeStatus!) {
                               widget.setStartTimeStatus!(false);
                             } else {
-                              await setStartTime();
+                              await setStartTime(widget.selectedDate!);
 
                               widget.setListStartTime!(times);
                               widget.setStartTimeStatus!(true);

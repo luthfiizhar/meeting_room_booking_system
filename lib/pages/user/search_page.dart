@@ -307,7 +307,11 @@ class _SearchPageState extends State<SearchPage> {
   String startTime = "";
   String endTime = "";
   String initialEndTime = "";
-  String meetingTypeSelected = "Meeting Room";
+  String meetingTypeName = "Meeting Room";
+  String meetingTypeValue = "MeetingRoom";
+  dynamic roomType;
+  String sort = "alphabetical";
+  dynamic resultArea;
 
   List<RadioModel> listSorting = [
     RadioModel(isSelected: false, text: 'Lowest Floor'),
@@ -318,18 +322,8 @@ class _SearchPageState extends State<SearchPage> {
   ];
   String selectedSorting = "Lowest Floor";
 
-  List<CheckBoxModel>? listFilter = [
-    CheckBoxModel(selected: true, value: '1st Floor'),
-    CheckBoxModel(selected: true, value: '2nd Floor'),
-    CheckBoxModel(selected: true, value: '3rd Floor'),
-    CheckBoxModel(selected: true, value: '4th Floor'),
-    CheckBoxModel(selected: true, value: '5th Floor'),
-    CheckBoxModel(selected: true, value: '1st Floor'),
-    CheckBoxModel(selected: true, value: '1st Floor'),
-    CheckBoxModel(selected: true, value: '1st Floor'),
-    CheckBoxModel(selected: true, value: '1st Floor'),
-    CheckBoxModel(selected: true, value: '1st Floor'),
-  ];
+  List<CheckBoxModel>? listFilter = [];
+  List submitFilter = [];
   List selectedFilter = ['1', '2', '3', '4'];
 
   DateTime selectedDate = DateTime.now();
@@ -601,31 +595,11 @@ class _SearchPageState extends State<SearchPage> {
     overlayState!.insert(overlayEntry);
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    _dateController.dispose();
-    _facilityController.dispose();
-    _timeController.dispose();
-    _participantController.dispose();
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
-    _dateController.text = formattedDate;
-    _facilityController.text = 'None';
-    _timeController.text = 'Choose Time';
-    _participantController.text = 'Total Participant';
-    participantSelected = "0";
-
+  initTime() {
     int minute = TimeOfDay.now().minute;
     int hour = TimeOfDay.now().hour;
     int minuteEndInit = 0;
+    int hourEndInit = 0;
     if (TimeOfDay.now().minute >= 0 && TimeOfDay.now().minute < 15) {
       minute = TimeOfDay.now().replacing(minute: 15).minute;
     } else if (TimeOfDay.now().minute > 15 && TimeOfDay.now().minute <= 30) {
@@ -641,20 +615,85 @@ class _SearchPageState extends State<SearchPage> {
     var minuteString =
         TimeOfDay(hour: hour, minute: minute).minute.toString().padLeft(2, '0');
     minuteEndInit = int.parse(minuteString) + 15;
+    hourEndInit = hour;
     var minuteEndString;
-    if (minuteEndInit <= 60 && minuteEndInit > 45) {
+    print(minuteEndInit);
+    if (minuteEndInit == 60) {
+      print('masuk sini');
+
       minuteEndString =
           TimeOfDay(hour: hour, minute: 0).minute.toString().padLeft(2, '0');
-    } else {
-      minuteEndString = TimeOfDay(hour: hour, minute: minute)
-          .minute
-          .toString()
-          .padLeft(2, '0');
+      print(hour);
+      print(hourEndInit);
+      print(minuteEndString);
     }
+    minuteEndString = minuteEndInit.toString();
     startTime = "$hourString:$minuteString";
-    initialEndTime = "$hourString:${minuteEndInit.toString()}";
+    initialEndTime = "$hourEndInit:$minuteEndString";
     endTime = initialEndTime;
+  }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _dateController.dispose();
+    _facilityController.dispose();
+    _timeController.dispose();
+    _participantController.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    getAreaList().then((value) {
+      setState(() {
+        resultArea = value['Data'];
+
+        for (var element in resultArea) {
+          listFilter!.add(CheckBoxModel(
+            name: element['AreaName'],
+            value: element['AreaID'].toString(),
+            selected: true,
+          ));
+          // submitFilter.add("\"${element['AreaID']}\"");
+        }
+      });
+      print(submitFilter);
+      // print(listFilter);
+    });
+    String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
+    _dateController.text = formattedDate;
+    _facilityController.text = 'None';
+    _timeController.text = 'Choose Time';
+    _participantController.text = 'Total Participant';
+    participantSelected = "0";
+
+    initTime();
+    getRoomType().then((value) {
+      print(value);
+      if (value['Status'] == "200") {
+        roomType = value['Data'];
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+        ),
+      );
+    });
     // addTarget();
     // Future.delayed(
     //   Duration(milliseconds: 500),
@@ -806,7 +845,7 @@ class _SearchPageState extends State<SearchPage> {
 
   setEndTimeList(List value) {
     endTimeList = value;
-    setOpacityOn(false);
+    // setOpacityOn(false);
     setState(() {});
   }
 
@@ -814,6 +853,39 @@ class _SearchPageState extends State<SearchPage> {
     datePicked = value;
     selectedDate = date;
     _dateController.text = datePicked;
+    if (DateFormat('yyyy-MM-dd').format(date) !=
+        DateFormat('yyyy-MM-dd').format(DateTime.now())) {
+      startTime = '07:00';
+      endTime = '07:15';
+    } else {
+      dynamic hour = TimeOfDay.now().hour;
+      dynamic minute = TimeOfDay.now().minute;
+      dynamic endMinute = minute;
+      dynamic endHour = hour;
+      if (TimeOfDay.now().minute >= 0 && TimeOfDay.now().minute < 15) {
+        minute = TimeOfDay.now().replacing(minute: 15).minute;
+      } else if (TimeOfDay.now().minute > 15 && TimeOfDay.now().minute <= 30) {
+        minute = TimeOfDay.now().replacing(minute: 30).minute;
+      } else if (TimeOfDay.now().minute > 30 && TimeOfDay.now().minute <= 45) {
+        minute = TimeOfDay.now().replacing(minute: 45).minute;
+      } else if (TimeOfDay.now().minute > 45 && TimeOfDay.now().minute <= 60) {
+        minute = TimeOfDay.now().replacing(minute: 0).minute;
+        hour = hour + 1;
+      }
+      endMinute = minute + 15;
+      if (endMinute == 60) {
+        endHour = hour;
+        endMinute = 0;
+      }
+      hour = hour.toString().padLeft(2, '0');
+      minute = minute.toString().padLeft(2, '0');
+
+      endHour = endHour.toString().padLeft(2, '0');
+      endMinute = endMinute.toString().padLeft(2, '0');
+
+      startTime = "$hour:$minute";
+      endTime = "$hour:$endMinute";
+    }
     setOpacityOn(false);
     setState(() {});
   }
@@ -825,8 +897,9 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {});
   }
 
-  onMeetingTypeSelected(String value) {
-    meetingTypeSelected = value;
+  onMeetingTypeSelected(String value, String name) {
+    meetingTypeValue = value;
+    meetingTypeName = name;
     setOpacityOn(false);
     setState(() {});
   }
@@ -914,21 +987,30 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {});
   }
 
-  searchRoom() {
-    setState(() {
-      isSearching = true;
-    });
-    selectedDateFormatted = DateFormat('yyyy-M-dd').format(selectedDate);
-
+  onChangeFilter() {
+    print(listFilter);
+    submitFilter.clear();
+    for (var element in listFilter!) {
+      if (element.selected!) {
+        submitFilter.add("\"${element.value}\"");
+      }
+    }
     List listAmen = [];
     for (var element in facilitySelected) {
-      listAmen.add(element['id']);
+      listAmen.add('"$element"');
     }
 
     print(listAmen);
-    searchRoomApi(selectedDateFormatted, startTime, endTime,
-            participantSelected, listAmen.toString())
-        .then((value) {
+    searchRoomApi(
+      selectedDateFormatted,
+      startTime,
+      endTime,
+      participantSelected,
+      listAmen.toString(),
+      meetingTypeValue,
+      submitFilter,
+      sort,
+    ).then((value) {
       setState(() {
         isSearching = false;
         searchResult = value["Data"]["Room"];
@@ -937,7 +1019,61 @@ class _SearchPageState extends State<SearchPage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
-            title: 'Can\'t Connect to API', contentText: error.toString()),
+          title: 'Can\'t Connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      ).then((value) {
+        setState(() {
+          isSearching = false;
+        });
+      });
+    });
+  }
+
+  searchRoom() {
+    setOpacityOn(false);
+    setState(() {
+      isSearching = true;
+    });
+    selectedDateFormatted = DateFormat('yyyy-M-dd').format(selectedDate);
+
+    if (submitFilter.isEmpty) {
+      for (var element in listFilter!) {
+        element.selected = true;
+      }
+      for (var element in resultArea) {
+        submitFilter.add("\"${element['AreaID']}\"");
+      }
+    }
+    List listAmen = [];
+    for (var element in facilitySelected) {
+      listAmen.add('"$element"');
+    }
+
+    print(listAmen);
+    searchRoomApi(
+      selectedDateFormatted,
+      startTime,
+      endTime,
+      participantSelected,
+      listAmen.toString(),
+      meetingTypeValue,
+      submitFilter,
+      sort,
+    ).then((value) {
+      setState(() {
+        isSearching = false;
+        searchResult = value["Data"]["Room"];
+      });
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Can\'t Connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
       ).then((value) {
         setState(() {
           isSearching = false;
@@ -1016,14 +1152,14 @@ class _SearchPageState extends State<SearchPage> {
                                           right: 0,
                                           child: Container(
                                             // color: Colors.black,
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               color: eerieBlack,
                                               borderRadius: BorderRadius.only(
                                                 topLeft: Radius.circular(5),
                                                 bottomLeft: Radius.circular(5),
                                               ),
                                             ),
-                                            padding: EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                               right: 15,
                                               left: 25,
                                               top: 10,
@@ -1105,7 +1241,8 @@ class _SearchPageState extends State<SearchPage> {
                                               participantController:
                                                   _participantController,
                                               meetingTypeSelected:
-                                                  meetingTypeSelected,
+                                                  meetingTypeValue,
+                                              meetingTypeName: meetingTypeName,
                                               meetingTypeStatus:
                                                   meetingTypeContainerVisible,
                                               setMeetingTypeStatus:
@@ -1161,24 +1298,35 @@ class _SearchPageState extends State<SearchPage> {
                                                   width: 235,
                                                   // height: 1000,
                                                   // child: Text('Filter'),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      SortingContainer(
-                                                        listSorting:
-                                                            listSorting,
-                                                        selectedSorting:
-                                                            selectedSorting,
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      FilterContainer(
-                                                        key: dataKey,
-                                                        listFilter: listFilter,
-                                                      ),
-                                                    ],
+                                                  child: Visibility(
+                                                    visible: searchResult
+                                                                .isEmpty &&
+                                                            submitFilter.isEmpty
+                                                        ? false
+                                                        : true,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        SortingContainer(
+                                                          listSorting:
+                                                              listSorting,
+                                                          selectedSorting:
+                                                              selectedSorting,
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 20,
+                                                        ),
+                                                        FilterContainer(
+                                                          key: dataKey,
+                                                          listFilter:
+                                                              listFilter,
+                                                          onChangeFilter:
+                                                              onChangeFilter,
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -1243,6 +1391,10 @@ class _SearchPageState extends State<SearchPage> {
                                                                         'Photo'],
                                                                     date:
                                                                         selectedDateFormatted,
+                                                                    selectedStartTime:
+                                                                        startTime,
+                                                                    selectedEndTime:
+                                                                        endTime,
                                                                   );
                                                                 },
                                                               ),
@@ -1328,8 +1480,9 @@ class _SearchPageState extends State<SearchPage> {
                     child: MeetingTypeContainer(
                       meetingTypeStatus: meetingTypeContainerVisible,
                       setMeetingType: onMeetingTypeSelected,
-                      selectedMeetingType: meetingTypeSelected,
+                      selectedMeetingType: meetingTypeValue,
                       setMeetingTypeStatus: setMeetingTypeContainerStatus,
+                      meetingType: roomType,
                     ),
                   ),
                 ),
@@ -1357,18 +1510,18 @@ class _SearchPageState extends State<SearchPage> {
                       tvOnChange: (value) {
                         if (checkBoxTv) {
                           checkBoxTv = false;
-                          facilitySelected.removeWhere(
-                              (element) => element['name'] == 'TV');
+                          facilitySelected
+                              .removeWhere((element) => element == 'TV');
                         } else {
                           checkBoxTv = true;
-                          facilitySelected.add({'id': '1', 'name': 'TV'});
+                          facilitySelected.add('TV');
                         }
                         if (facilitySelected.isNotEmpty) {
                           if (facilitySelected.length > 1) {
                             _facilityController.text = "TV & Camera";
                           } else if (facilitySelected.length == 1) {
                             _facilityController.text =
-                                facilitySelected[0]['name'].toString();
+                                facilitySelected[0].toString();
                           }
                         } else {
                           _facilityController.text = "None";
@@ -1379,18 +1532,17 @@ class _SearchPageState extends State<SearchPage> {
                       cameraOnChange: (value) {
                         if (checkBoxCamera) {
                           checkBoxCamera = false;
-                          facilitySelected.removeWhere(
-                              (element) => element['name'] == 'Camera');
+                          facilitySelected
+                              .removeWhere((element) => element == 'Camera');
                         } else {
                           checkBoxCamera = true;
-                          facilitySelected.add({'id': '2', 'name': 'Camera'});
+                          facilitySelected.add('Camera');
                         }
                         if (facilitySelected.isNotEmpty) {
                           if (facilitySelected.length > 1) {
                             _facilityController.text = "TV & Camera";
                           } else if (facilitySelected.length == 1) {
-                            _facilityController.text =
-                                facilitySelected[0]['name'].toString();
+                            _facilityController.text = facilitySelected[0];
                           }
                         } else {
                           _facilityController.text = "None";
@@ -1432,6 +1584,7 @@ class _SearchPageState extends State<SearchPage> {
                       setListEndTime: setEndTimeList,
                       setStartTimeStatus: setStartTimeStatus,
                       initialEndTime: initialEndTime,
+                      selectedDate: selectedDate,
                     ),
                   ),
                 ),

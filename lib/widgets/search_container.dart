@@ -38,6 +38,7 @@ class SearchContainer extends StatelessWidget {
     this.timeKey,
     this.datakey,
     this.searchRoom,
+    this.meetingTypeName,
   });
 
   FocusNode? dateNode;
@@ -63,6 +64,7 @@ class SearchContainer extends StatelessWidget {
   bool? timePickerStatus;
   bool? meetingTypeStatus;
   String? meetingTypeSelected;
+  String? meetingTypeName;
   GlobalKey? dateKey;
   GlobalKey? timeKey;
   GlobalKey? participantKey;
@@ -144,7 +146,7 @@ class SearchContainer extends StatelessWidget {
                             width: 15,
                           ),
                           Text(
-                            meetingTypeSelected!,
+                            meetingTypeName!,
                             style: const TextStyle(
                               fontFamily: 'Helvetica',
                               fontSize: 20,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
 
-class FilterContainer extends StatelessWidget {
+class FilterContainer extends StatefulWidget {
   FilterContainer({
     super.key,
     this.listFilter,
@@ -14,6 +14,11 @@ class FilterContainer extends StatelessWidget {
   List? selectedFilter;
   Function? onChangeFilter;
 
+  @override
+  State<FilterContainer> createState() => _FilterContainerState();
+}
+
+class _FilterContainerState extends State<FilterContainer> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,9 +34,9 @@ class FilterContainer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Align(
+          const Align(
             alignment: Alignment.centerLeft,
-            child: const Text(
+            child: Text(
               'Filter Floor',
               style: TextStyle(
                 fontFamily: 'Helvetica',
@@ -41,7 +46,7 @@ class FilterContainer extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
+          const Padding(
             padding: const EdgeInsets.symmetric(vertical: 13),
             child: Divider(
               color: davysGray,
@@ -49,18 +54,23 @@ class FilterContainer extends StatelessWidget {
             ),
           ),
           ListView.builder(
-            itemCount: listFilter!.length,
+            itemCount: widget.listFilter!.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
               return Padding(
                 padding: EdgeInsets.only(
-                  bottom: index < listFilter!.length - 1 ? 15 : 0,
+                  bottom: index < widget.listFilter!.length - 1 ? 15 : 0,
                 ),
                 child: BlackCheckBox(
-                  selectedValue: false,
-                  label: listFilter![index].value,
+                  selectedValue: widget.listFilter![index].selected,
+                  label: widget.listFilter![index].name,
                   onChanged: (value) {
-                    onChangeFilter;
+                    print('click');
+                    print(value);
+                    setState(() {
+                      widget.listFilter![index].selected = value;
+                      widget.onChangeFilter!();
+                    });
                   },
                   filled: false,
                 ),

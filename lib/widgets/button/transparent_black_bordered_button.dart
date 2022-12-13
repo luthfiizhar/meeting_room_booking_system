@@ -66,6 +66,7 @@ class TransparentBorderedBlackButton extends StatelessWidget {
         textStyle: MaterialStateProperty.resolveWith<TextStyle>(
           (states) {
             return const TextStyle(
+              fontFamily: 'Helvetica',
               fontSize: 16,
               fontWeight: FontWeight.w300,
             );

@@ -95,8 +95,10 @@ class CheckBoxModel {
   CheckBoxModel({
     this.selected,
     this.value,
+    this.name,
   });
 
   bool? selected;
   String? value;
+  String? name;
 }

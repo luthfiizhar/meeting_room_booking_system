@@ -16,6 +16,11 @@ class Booking {
     this.attendants,
     this.foodAmenities,
     this.daysWeek,
+    this.additionalNote,
+    this.layoutId = "",
+    this.layoutImage = "",
+    this.layoutName = "",
+    this.monthAbs,
   });
 
   String? roomId;
@@ -29,24 +34,28 @@ class Booking {
   String? repeatEndDate;
   String? meetingType;
   String? attendantsNumber;
+  String? additionalNote;
+  String layoutId;
+  String layoutName;
+  String layoutImage;
   List? amenities;
   List? attendants;
   List? foodAmenities;
   List? daysWeek;
 
-  Booking.fromJSon(Map<String, dynamic> json)
-      : roomId = json['RoomID'],
-        summary = json['Summary'],
-        description = json['Descriptions'],
-        startDate = json['StartDate'],
-        endDate = json['EndDate'],
-        recursive = json['Recursive'],
-        repeatInterval = json['RepeatInterval'],
-        repeatEndDate = json['RepeatEndDate'],
-        meetingType = json['MeetingType'],
-        attendantsNumber = json["AttendantsNumber"],
-        amenities = json['Amenities'],
-        attendants = json['Attendants'];
+  // Booking.fromJSon(Map<String, dynamic> json)
+  //     : roomId = json['RoomID'],
+  //       summary = json['Summary'],
+  //       description = json['Descriptions'],
+  //       startDate = json['StartDate'],
+  //       endDate = json['EndDate'],
+  //       recursive = json['Recursive'],
+  //       repeatInterval = json['RepeatInterval'],
+  //       repeatEndDate = json['RepeatEndDate'],
+  //       meetingType = json['MeetingType'],
+  //       attendantsNumber = json["AttendantsNumber"],
+  //       amenities = json['Amenities'],
+  //       attendants = json['Attendants'];
 
   Map<String, dynamic> toJson() => {
         '"RoomID"': '"$roomId"',
@@ -63,6 +72,9 @@ class Booking {
         '"AttendantsNumber"': attendantsNumber,
         '"Amenities"': amenities.toString(),
         '"Attendants"': attendants.toString(),
-        '"FoodAmenities"': foodAmenities.toString()
+        '"FoodAmenities"': foodAmenities.toString(),
+        '"LayoutId"': layoutId.toString(),
+        '"LayoutName"': layoutName.toString(),
+        '"LayoutImage"': layoutImage.toString()
       };
 }

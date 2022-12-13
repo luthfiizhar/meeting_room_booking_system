@@ -1,14 +1,31 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 
 class SelectLayoutDialog extends StatefulWidget {
-  const SelectLayoutDialog({super.key});
+  SelectLayoutDialog({
+    super.key,
+    this.setLayout,
+    this.imaegUrl = "",
+    this.imageBytes,
+    this.isUpload = false,
+    this.layoutBase64 = "",
+  });
+
+  Function? setLayout;
+  String imaegUrl;
+  Uint8List? imageBytes;
+  String layoutBase64;
+  bool isUpload;
 
   @override
   State<SelectLayoutDialog> createState() => _SelectLayoutDialogState();
@@ -17,10 +34,14 @@ class SelectLayoutDialog extends StatefulWidget {
 class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
   List? availableLayout = ['1', '2', '3'];
 
+  List layoutList = [];
+
   bool upButtonVisible = false;
   bool downButtonVisible = true;
+  bool otherPict = false;
   ScrollController _scrollController = ScrollController();
 
+  String urlImage = "";
   bool emptyImage = true;
   File? pickedImage;
   var imageFile;
@@ -35,12 +56,34 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (widget.imaegUrl != "" || widget.imageBytes!.isNotEmpty) {
+      setState(() {
+        emptyImage = false;
+        if (widget.isUpload) {
+          otherPict = true;
+          // webImage = widget.imageBytes;
+          base64image = widget.layoutBase64;
+        } else {
+          otherPict = false;
+          urlImage = widget.imaegUrl;
+        }
+      });
+    }
+    getLayoutList().then((value) {
+      print(value);
+      if (value["Status"] == "200") {
+        setState(() {
+          layoutList = value["Data"];
+        });
+      } else {}
+    }).onError((error, stackTrace) {});
     _scrollController.addListener(() {
       scroll(_scrollController);
     });
   }
 
   Future getImage() async {
+    String format;
     print('getimage');
     imageCache.clear();
     final pickedFile = await picker.pickImage(
@@ -57,12 +100,14 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
       // imageUpload = NetworkImage(pickedFile.path);
       // _image = File(pickedFile.path);
       var f = await pickedFile.readAsBytes();
+      format = pickedFile.name.toString().split('.').last;
       setState(() {
         webImage = f;
         _image = File('a');
       });
     } else {
       _image = File(pickedFile.path);
+      format = pickedFile.name.toString().split('.').last;
     }
     // pr.show();
     // isLoading = true;
@@ -72,7 +117,8 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
     // imageUpload = NetworkImage(_image!.path);
     // List<int> imageBytes = _image!.readAsBytesSync();
     List<int> imageBytes = webImage!;
-    base64image = base64Encode(imageBytes);
+    // base64image = base64Encode(imageBytes);
+    base64image = "data:image/$format;base64,${base64Encode(imageBytes)}";
     // print("base64-> " + base64image.toString());
     // });
     // });
@@ -135,17 +181,31 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                     width: 500,
                     child: Center(
                       child: emptyImage
-                          ? SizedBox()
-                          : Container(
-                              height: 375,
-                              width: 500,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: MemoryImage(webImage!),
-                                  fit: BoxFit.cover,
+                          ? const SizedBox()
+                          : otherPict
+                              ? Container(
+                                  height: 375,
+                                  width: 500,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: MemoryImage(
+                                        Base64Decoder().convert(
+                                            base64image!.split(',').last),
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  height: 375,
+                                  width: 500,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: NetworkImage(urlImage),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
                     ),
                   ),
                   const SizedBox(
@@ -167,9 +227,9 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                 physics: NeverScrollableScrollPhysics(),
                                 controller: _scrollController,
                                 shrinkWrap: true,
-                                itemCount: availableLayout!.length + 1,
+                                itemCount: layoutList.length + 1,
                                 itemBuilder: (context, index) {
-                                  if (index == availableLayout!.length) {
+                                  if (index == layoutList.length) {
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 10,
@@ -178,7 +238,15 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                         onTap: () {
                                           getImage().then((value) {
                                             setState(() {
+                                              otherPict = true;
                                               emptyImage = false;
+                                              widget.setLayout!(
+                                                "OTHERS",
+                                                "",
+                                                base64image,
+                                                "",
+                                                true,
+                                              );
                                             });
                                           });
                                         },
@@ -226,10 +294,42 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                       vertical: 10,
                                     ),
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        setState(() {
+                                          // final ByteData imageData =
+                                          //     await NetworkAssetBundle(
+                                          //             Uri.parse(
+                                          //                 layoutList[index]
+                                          //                     ['LayoutImg']))
+                                          //         .load("");
+                                          // final Uint8List bytes =
+                                          //     imageData.buffer.asUint8List();
+                                          // print(bytes);
+                                          emptyImage = false;
+                                          otherPict = false;
+                                          urlImage =
+                                              layoutList[index]['LayoutImg'];
+                                          widget.setLayout!(
+                                            layoutList[index]['LayoutName'],
+                                            layoutList[index]['LayoutID']
+                                                .toString(),
+                                            "",
+                                            urlImage,
+                                            false,
+                                          );
+                                        });
+                                      },
                                       child: Container(
                                         height: 100,
-                                        color: Colors.amber,
+                                        // color: Colors.amber,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                              layoutList[index]['LayoutImg'],
+                                            ),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   );

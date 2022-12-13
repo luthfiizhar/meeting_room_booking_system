@@ -61,6 +61,7 @@ class CustomDatePicker extends StatelessWidget {
         child: SfDateRangePicker(
           controller: controller,
           initialSelectedDate: currentDate,
+          minDate: DateTime.now(),
           showNavigationArrow: true,
           view: DateRangePickerView.month,
           selectionMode: DateRangePickerSelectionMode.single,

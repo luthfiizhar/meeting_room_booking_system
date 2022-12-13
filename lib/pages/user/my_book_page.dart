@@ -3,6 +3,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/widgets/banner/black_banner.dart';
 import 'package:meeting_room_booking_system/widgets/banner/landscape_black_banner.dart';
 import 'package:meeting_room_booking_system/widgets/banner/landscape_white_banner.dart';
@@ -10,6 +11,7 @@ import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/my_book_page/filter_search_bar.dart';
+import 'package:meeting_room_booking_system/widgets/my_book_page/my_book_list.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:url_launcher/link.dart';
@@ -26,12 +28,18 @@ class MyBookingPage extends StatefulWidget {
 class _MyBookingPageState extends State<MyBookingPage> {
   setDatePickerStatus(bool value) {}
 
+  TextEditingController _search = TextEditingController();
+
   double listLengthExample = 58;
   double rowPerPage = 10;
   double firstPaginated = 0;
   int currentPaginatedPage = 1;
-  List availablePage = [];
-  List showedPage = [];
+  List availablePage = [1, 2, 3, 4, 5];
+  List showedPage = [1, 2, 3, 4, 5];
+
+  String roomType = "MeetingRoom";
+
+  MyListBody searchTerm = MyListBody();
 
   FocusNode showPerRowsNode = FocusNode();
 
@@ -44,7 +52,9 @@ class _MyBookingPageState extends State<MyBookingPage> {
   // }
   late MyBookTableSource sourceData;
 
-  List<MyBook> myBookList = <MyBook>[];
+  // List<MyBook> myBookList = <MyBook>[];
+  List myBookList = [];
+  List showPerPageList = ["5", "10", "20", "50", "100"];
 
   bool sort = true;
   List? filterData = [
@@ -62,55 +72,93 @@ class _MyBookingPageState extends State<MyBookingPage> {
     {'12', 'Event 1', 'date', 'location', 'time', 'status'},
   ];
 
-  countPagination() {
-    var totalPage = listLengthExample / rowPerPage;
-    print(totalPage.ceil());
-    for (var i = 0; i < totalPage.ceil(); i++) {
-      availablePage.add(i + 1);
-    }
-
-    // showedPage = availablePage
-    //     .getRange(firstPaginated.toInt(), firstPaginated.toInt() + 1)
-    //     .toList();
-    showedPage = availablePage.take(5).toList();
-    print(availablePage);
-    print(showedPage);
-    print(showedPage.last);
-    setState(() {});
+  countPagination(int totalRow) {
+    print('total row -> $totalRow');
+    setState(() {
+      availablePage.clear();
+      if (totalRow == 0) {
+        currentPaginatedPage = 1;
+        showedPage = [1];
+        availablePage = [1];
+      }
+      var totalPage = totalRow / int.parse(searchTerm.max);
+      for (var i = 0; i < totalPage.ceil(); i++) {
+        availablePage.add(i + 1);
+      }
+      print(availablePage);
+      // print(showedPage);
+    });
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    myBookList = getMyBookList();
+    // myBookList = getMyBookList();
 
-    countPagination();
+    getMyBookingList(searchTerm).then((value) {
+      print(value);
+      setState(() {
+        myBookList = value['Data']['List'];
+
+        countPagination(value['Data']['TotalRows']);
+        showedPage = availablePage.take(5).toList();
+      });
+    });
     // sourceData = MyBookTableSource(myBook: myBookList);
   }
 
-  getMyBookList() {
-    return [
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-      MyBook('01', 'Event 1', 'date', 'location', 'time', 'status'),
-    ];
+  roomTypeChanged(String value) {
+    setState(() {
+      currentPaginatedPage = 1;
+      searchTerm.pageNumber = currentPaginatedPage.toString();
+      searchTerm.roomType = value;
+      roomType = value;
+      getMyBookingList(searchTerm).then((value) {
+        myBookList = value['Data']['List'];
+        countPagination(value['Data']['TotalRows']);
+        showedPage = availablePage.take(5).toList();
+      });
+      print(searchTerm.roomType);
+    });
+  }
+
+  onTapHeader(String orderBy) {
+    setState(() {
+      if (searchTerm.orderBy == orderBy) {
+        switch (searchTerm.orderDir) {
+          case "ASC":
+            searchTerm.orderDir = "DESC";
+            break;
+          case "DESC":
+            searchTerm.orderDir = "ASC";
+            break;
+          default:
+        }
+      }
+      searchTerm.orderBy = orderBy;
+      getMyBookingList(searchTerm).then((value) {
+        setState(() {
+          myBookList = value['Data']['List'];
+          countPagination(value['Data']['TotalRows']);
+        });
+      });
+    });
+    print("Order By ${searchTerm.orderBy} ${searchTerm.orderDir}");
+  }
+
+  searchMyBook() {
+    setState(() {
+      currentPaginatedPage = 1;
+      searchTerm.keyWords = _search.text;
+      searchTerm.pageNumber = currentPaginatedPage.toString();
+      getMyBookingList(searchTerm).then((value) {
+        print(value);
+        myBookList = value['Data']['List'];
+        countPagination(value['Data']['TotalRows']);
+        showedPage = availablePage.take(5).toList();
+      });
+    });
   }
 
   ScrollController scrollController = ScrollController();
@@ -146,6 +194,10 @@ class _MyBookingPageState extends State<MyBookingPage> {
                 ),
                 FilterSearchBar(
                   index: 0,
+                  roomType: roomType,
+                  getRoomType: roomTypeChanged,
+                  search: searchMyBook,
+                  searchController: _search,
                 ),
                 const SizedBox(
                   height: 30,
@@ -155,52 +207,127 @@ class _MyBookingPageState extends State<MyBookingPage> {
                   children: [
                     Expanded(
                       flex: 2,
-                      child: Text(
-                        'Event',
-                        style: helveticaText.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: davysGray,
+                      child: InkWell(
+                        onTap: () {
+                          onTapHeader("Summary");
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Event',
+                                style: helveticaText.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: davysGray,
+                                ),
+                              ),
+                            ),
+                            iconSort("Summary"),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                          ],
                         ),
                       ),
                     ),
                     Expanded(
-                      child: Text(
-                        'Date',
-                        style: helveticaText.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: davysGray,
+                      child: InkWell(
+                        onTap: () {
+                          onTapHeader("BookingDate");
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Date',
+                                style: helveticaText.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: davysGray,
+                                ),
+                              ),
+                            ),
+                            iconSort("BookingDate"),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                          ],
                         ),
                       ),
                     ),
                     Expanded(
-                      child: Text(
-                        'Location',
-                        style: helveticaText.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: davysGray,
+                      child: InkWell(
+                        onTap: () {
+                          onTapHeader("RoomName");
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Location',
+                                style: helveticaText.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: davysGray,
+                                ),
+                              ),
+                            ),
+                            iconSort("RoomName"),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                          ],
                         ),
                       ),
                     ),
                     Expanded(
-                      child: Text(
-                        'Time',
-                        style: helveticaText.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: davysGray,
+                      child: InkWell(
+                        onTap: () {
+                          onTapHeader("BookingTime");
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Time',
+                                style: helveticaText.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: davysGray,
+                                ),
+                              ),
+                            ),
+                            iconSort("BookingTime"),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                          ],
                         ),
                       ),
                     ),
                     Expanded(
-                      child: Text(
-                        'Status',
-                        style: helveticaText.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: davysGray,
+                      child: InkWell(
+                        onTap: () {
+                          onTapHeader("Status");
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Status',
+                                style: helveticaText.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: davysGray,
+                                ),
+                              ),
+                            ),
+                            iconSort("Status"),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -217,102 +344,36 @@ class _MyBookingPageState extends State<MyBookingPage> {
                   thickness: 1,
                 ),
                 //Content Table
-                ListView.builder(
-                  itemCount: 2,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        index != 0
-                            ? const Divider(
-                                color: grayx11,
-                                thickness: 0.5,
-                              )
-                            : const SizedBox(),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 17,
-                            bottom: 17,
-                          ),
-                          child: Container(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    'Ruang Kerja Marketing KWI (+ Intern)',
-                                    style: helveticaText.copyWith(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: davysGray,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    '5 November 2022',
-                                    style: helveticaText.copyWith(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: davysGray,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    '103',
-                                    style: helveticaText.copyWith(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: davysGray,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    '09:00 - 10:00',
-                                    style: helveticaText.copyWith(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: davysGray,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Wrap(
-                                    children: [
-                                      const Icon(
-                                        Icons.check_circle,
-                                        size: 16,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        'Checked in',
-                                        style: helveticaText.copyWith(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color: davysGray,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                  child: Icon(
-                                    Icons.chevron_right_sharp,
-                                  ),
-                                ),
-                              ],
+                myBookList.isEmpty
+                    ? Container(
+                        height: 200,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'No Booking Available',
+                            style: helveticaText.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: davysGray,
                             ),
                           ),
                         ),
-                      ],
-                    );
-                  },
-                ),
+                      )
+                    : ListView.builder(
+                        itemCount: myBookList.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return MyBookListContainer(
+                            index: index,
+                            eventName: myBookList[index]['Summary'],
+                            date: myBookList[index]['BookingDate'],
+                            location: myBookList[index]['RoomName'],
+                            time: myBookList[index]['BookingTime'],
+                            status: myBookList[index]['Status'],
+                            bookingId: myBookList[index]['BookingID'],
+                          );
+                        },
+                      ),
                 const SizedBox(
                   height: 60,
                 ),
@@ -338,22 +399,35 @@ class _MyBookingPageState extends State<MyBookingPage> {
                             width: 120,
                             child: BlackDropdown(
                               focusNode: showPerRowsNode,
-                              onChanged: (value) {},
-                              value: 100,
-                              items: const [
-                                DropdownMenuItem(
-                                  child: Text('10'),
-                                  value: 10,
-                                ),
-                                DropdownMenuItem(
-                                  child: Text('50'),
-                                  value: 50,
-                                ),
-                                DropdownMenuItem(
-                                  child: Text('100'),
-                                  value: 100,
-                                ),
-                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  searchTerm.max = value!.toString();
+                                  getMyBookingList(searchTerm).then((value) {
+                                    myBookList = value['Data']['List'];
+                                    countPagination(value['Data']['TotalRows']);
+                                    showedPage = availablePage.take(5).toList();
+                                  });
+                                });
+                              },
+                              value: searchTerm.max,
+                              items: showPerPageList.map((e) {
+                                return DropdownMenuItem(
+                                  child: Text(e),
+                                  value: e,
+                                );
+                              }).toList(),
+                              // DropdownMenuItem(
+                              //   child: Text('10'),
+                              //   value: 10,
+                              // ),
+                              // DropdownMenuItem(
+                              //   child: Text('50'),
+                              //   value: 50,
+                              // ),
+                              // DropdownMenuItem(
+                              //   child: Text('100'),
+                              //   value: 100,
+                              // ),
                               enabled: true,
                               hintText: 'Choose',
                               suffixIcon: const Icon(
@@ -368,17 +442,44 @@ class _MyBookingPageState extends State<MyBookingPage> {
                     Container(
                       child: Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: grayx11,
-                                width: 1,
+                          InkWell(
+                            onTap: currentPaginatedPage - 1 > 0
+                                ? () {
+                                    setState(() {
+                                      currentPaginatedPage =
+                                          currentPaginatedPage - 1;
+                                      if (availablePage.length > 5 &&
+                                          currentPaginatedPage ==
+                                              showedPage[0] &&
+                                          currentPaginatedPage != 1) {
+                                        showedPage.removeLast();
+                                        showedPage.insert(
+                                            0, currentPaginatedPage - 1);
+                                      }
+                                      searchTerm.pageNumber =
+                                          currentPaginatedPage.toString();
+
+                                      getMyBookingList(searchTerm)
+                                          .then((value) {
+                                        myBookList = value['Data']['List'];
+                                        countPagination(
+                                            value['Data']['TotalRows']);
+                                      });
+                                    });
+                                  }
+                                : null,
+                            child: Container(
+                              padding: const EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                // border: Border.all(
+                                //   color: grayx11,
+                                //   width: 1,
+                                // ),
                               ),
-                            ),
-                            child: const Icon(
-                              Icons.chevron_left_sharp,
+                              child: const Icon(
+                                Icons.chevron_left_sharp,
+                              ),
                             ),
                           ),
                           // const SizedBox(
@@ -388,71 +489,181 @@ class _MyBookingPageState extends State<MyBookingPage> {
                             width: 5,
                           ),
                           SizedBox(
-                            width: 270,
+                            width: 275,
                             height: 35,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              shrinkWrap: true,
-                              itemCount: showedPage.length + 1,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 5,
-                                  ),
+                            child: Row(
+                              children: [
+                                ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  shrinkWrap: true,
+                                  itemCount: showedPage.length,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 5,
+                                      ),
+                                      child: InkWell(
+                                        onTap: currentPaginatedPage ==
+                                                showedPage[index]
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  currentPaginatedPage =
+                                                      showedPage[index];
+                                                  if (availablePage.length >
+                                                          5 &&
+                                                      index ==
+                                                          showedPage.length -
+                                                              1) {
+                                                    if (currentPaginatedPage !=
+                                                        availablePage.last) {
+                                                      showedPage.removeAt(0);
+                                                      showedPage.add(
+                                                          currentPaginatedPage +
+                                                              1);
+                                                    }
+                                                  }
+                                                  if (availablePage.length >
+                                                          5 &&
+                                                      index == 0 &&
+                                                      currentPaginatedPage !=
+                                                          1) {
+                                                    showedPage.removeLast();
+                                                    showedPage.insert(
+                                                        0,
+                                                        currentPaginatedPage -
+                                                            1);
+                                                  }
+                                                });
+                                                searchTerm.pageNumber =
+                                                    currentPaginatedPage
+                                                        .toString();
+                                                getMyBookingList(searchTerm)
+                                                    .then((value) {
+                                                  setState(() {
+                                                    myBookList =
+                                                        value['Data']['List'];
+                                                    countPagination(
+                                                        value['Data']
+                                                            ['TotalRows']);
+                                                  });
+                                                });
+                                                print(showedPage);
+                                                print(
+                                                    'current ${searchTerm.pageNumber}');
+                                              },
+                                        child: Container(
+                                          width: 35,
+                                          height: 35,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 7,
+                                            vertical: 8.5,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: showedPage[index] ==
+                                                    currentPaginatedPage
+                                                ? eerieBlack
+                                                : null,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              showedPage[index].toString(),
+                                              style: helveticaText.copyWith(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700,
+                                                height: 1.2,
+                                                color: showedPage[index] ==
+                                                        currentPaginatedPage
+                                                    ? culturedWhite
+                                                    : davysGray,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Visibility(
+                                  visible: availablePage.length < 5 ||
+                                          currentPaginatedPage ==
+                                              availablePage.last
+                                      ? false
+                                      : true,
                                   child: Container(
                                     width: 35,
                                     height: 35,
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 13,
+                                      horizontal: 7,
                                       vertical: 8.5,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: index + 1 == currentPaginatedPage
-                                          ? eerieBlack
-                                          : greenAcent,
                                       borderRadius: BorderRadius.circular(5),
                                     ),
-                                    child: index == showedPage.length
-                                        ? Text(
-                                            '...',
-                                            style: helveticaText.copyWith(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w700,
-                                              height: 1.2,
-                                              color: davysGray,
-                                            ),
-                                          )
-                                        : Text(
-                                            showedPage[index].toString(),
-                                            style: helveticaText.copyWith(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w700,
-                                              height: 1.2,
-                                              color: showedPage[index] ==
-                                                      currentPaginatedPage
-                                                  ? culturedWhite
-                                                  : davysGray,
-                                            ),
-                                          ),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        '...',
+                                        style: helveticaText.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          height: 1.2,
+                                          color: davysGray,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                );
-                              },
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(
                             width: 5,
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: grayx11,
-                                width: 1,
+                          InkWell(
+                            onTap: currentPaginatedPage != availablePage.last
+                                ? () {
+                                    setState(() {
+                                      currentPaginatedPage =
+                                          currentPaginatedPage + 1;
+                                      if (currentPaginatedPage ==
+                                              showedPage.last &&
+                                          currentPaginatedPage !=
+                                              availablePage.last) {
+                                        showedPage.removeAt(0);
+                                        showedPage
+                                            .add(currentPaginatedPage + 1);
+                                      }
+                                      searchTerm.pageNumber =
+                                          currentPaginatedPage.toString();
+
+                                      getMyBookingList(searchTerm)
+                                          .then((value) {
+                                        myBookList = value['Data']['List'];
+                                        countPagination(
+                                            value['Data']['TotalRows']);
+                                      });
+                                    });
+                                  }
+                                : null,
+                            child: Container(
+                              padding: const EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                // border: Border.all(
+                                //   color: grayx11,
+                                //   width: 1,
+                                // ),
                               ),
-                            ),
-                            child: const Icon(
-                              Icons.chevron_right_sharp,
+                              child: const Icon(
+                                Icons.chevron_right_sharp,
+                              ),
                             ),
                           ),
                         ],
@@ -581,6 +792,85 @@ class _MyBookingPageState extends State<MyBookingPage> {
     );
   }
 
+  Widget iconSort(String orderBy) {
+    return SizedBox(
+      width: 20,
+      height: 25,
+      // child: Stack(
+      //   children: [
+      //     Visibility(
+      //       visible:
+      //           searchTerm.orderBy == orderBy && searchTerm.orderDir == "DESC"
+      //               ? false
+      //               : true,
+      //       child: const Positioned(
+      //         top: 0,
+      //         left: 0,
+      //         child: Icon(
+      //           Icons.keyboard_arrow_down_sharp,
+      //           size: 16,
+      //         ),
+      //       ),
+      //     ),
+      //     Visibility(
+      //       visible:
+      //           searchTerm.orderBy == orderBy && searchTerm.orderDir == "ASC"
+      //               ? false
+      //               : true,
+      //       child: const Positioned(
+      //         bottom: 0,
+      //         left: 0,
+      //         child: Icon(
+      //           Icons.keyboard_arrow_up_sharp,
+      //           size: 16,
+      //         ),
+      //       ),
+      //     )
+      //   ],
+      // ),
+      child: orderBy != searchTerm.orderBy
+          ? Stack(
+              children: const [
+                Visibility(
+                  child: Positioned(
+                    top: 0,
+                    left: 0,
+                    child: Icon(
+                      Icons.keyboard_arrow_down_sharp,
+                      size: 16,
+                    ),
+                  ),
+                ),
+                Visibility(
+                  child: Positioned(
+                    bottom: 0,
+                    left: 0,
+                    child: Icon(
+                      Icons.keyboard_arrow_up_sharp,
+                      size: 16,
+                    ),
+                  ),
+                )
+              ],
+            )
+          : searchTerm.orderDir == "ASC"
+              ? const Align(
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.keyboard_arrow_down_sharp,
+                    size: 16,
+                  ),
+                )
+              : const Align(
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.keyboard_arrow_up_sharp,
+                    size: 16,
+                  ),
+                ),
+    );
+  }
+
   filterSearchSection() {
     return Container(
       child: Row(
@@ -588,6 +878,24 @@ class _MyBookingPageState extends State<MyBookingPage> {
       ),
     );
   }
+}
+
+class MyListBody {
+  MyListBody({
+    this.roomType = "MeetingRoom",
+    this.keyWords = "",
+    this.max = "5",
+    this.pageNumber = "1",
+    this.orderBy = "BookingDate",
+    this.orderDir = "DESC",
+  });
+
+  String roomType;
+  String keyWords;
+  String max;
+  String pageNumber;
+  String orderBy;
+  String orderDir;
 }
 
 class MyBook {

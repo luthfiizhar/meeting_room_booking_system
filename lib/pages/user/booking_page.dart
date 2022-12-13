@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -47,6 +48,13 @@ class BookingRoomPage extends StatefulWidget {
     this.facilities = "[]",
     this.participant = "1",
     this.index = 2,
+    this.isEdit = "false",
+    this.foodAmenities = "[]",
+    this.summary = "",
+    this.description = "",
+    this.recurrent,
+    this.invitedGuest,
+    this.edit,
   });
 
   String? roomId;
@@ -57,6 +65,13 @@ class BookingRoomPage extends StatefulWidget {
   String? facilities;
   String? participant;
   int? index;
+  String isEdit;
+  dynamic foodAmenities;
+  String summary;
+  String description;
+  dynamic recurrent;
+  List? invitedGuest;
+  dynamic edit;
 
   @override
   State<BookingRoomPage> createState() => _BookingRoomPageState();
@@ -103,6 +118,13 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   String roomName = "";
   String floor = "";
 
+  bool emptyLayout = true;
+  String layoutId = "";
+  String layoutName = "";
+  String layoutImageUrl = "";
+  String layoutBase64 = "";
+  Uint8List? layoutImageBytes = Uint8List(8);
+
   final formKey = GlobalKey<FormState>();
 
   ScrollController scrollController = ScrollController();
@@ -119,6 +141,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
   List<RadioModel>? listEventType = [];
   String? selectedEventType = "";
+  String? roomType = "MeetingRoom";
 
   List<Amenities> listAmenities = [];
   List<FoodAmenities> listFoods = [];
@@ -132,6 +155,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   bool datePickerRepeatVisible = false;
   bool layoutSectionVisible = false;
   bool repeatSectionVisible = true;
+  bool layoutFromupload = false;
+
+  bool isPictEmpty = true;
 
   DateTime dateRefresh = DateTime.now();
   String areaRefresh = "";
@@ -242,6 +268,23 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     });
   }
 
+  setLayout(String name, String id, String base64, String url, bool isUpload) {
+    setState(() {
+      emptyLayout = false;
+      if (isUpload) {
+        layoutName = "";
+        layoutId = "";
+        layoutBase64 = base64;
+        layoutFromupload = true;
+      } else {
+        layoutImageUrl = url;
+        layoutId = id;
+        layoutName = name;
+        layoutFromupload = false;
+      }
+    });
+  }
+
   DateTime today = DateTime.now();
 
   List<DropdownMenuItem<String>> addDividerItem(List<String> items) {
@@ -264,7 +307,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           ),
           //If it's last item, we will not add Divider after it.
           if (item != items.last)
-            DropdownMenuItem<String>(
+            const DropdownMenuItem<String>(
               enabled: false,
               child: Divider(),
             ),
@@ -350,12 +393,78 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     // TODO: implement initState
     super.initState();
     // String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
+
+    // if (widget.isEdit) {
+    //   dynamic recurrent = widget.recurrent[0];
+    //   _eventName.text = widget.summary;
+    //   _eventDesc.text = widget.description;
+    //   // _additionalNote.text = widget.additionalNote;f
+    //   _totalParticipant.text = widget.participant!;
+    //   List tempGuest = widget.invitedGuest!;
+    //   for (var element in tempGuest) {
+    //     invitedGuest.add(element['AttendantsEmail']);
+    //   }
+    //   // invitedGuest = widget.invitedGuest!;
+    //   repeatValue = recurrent['repeatType'];
+    //   String formattedDate =
+    //       DateFormat('d MMM yyyy').format(DateTime.parse(widget.date!));
+    //   _date.text = formattedDate;
+    //   // _date.text = widget.date!;
+    //   startTime = widget.startTime!;
+    //   endTime = widget.endTime!;
+    //   _startTime.text = widget.startTime!;
+    //   _endTime.text = widget.endTime!;
+    //   repeatEnd = recurrent['repeatEndDate'].toString().substring(0, 10);
+    //   repeatInterval = recurrent['interval'].toString();
+    //   monthAbsolute = recurrent['montAbs'].toString();
+    //   _repeatInterval.text = repeatInterval;
+    //   _repeatEnd.text =
+    //       DateFormat('d MMM yyyy').format(recurrent['repeatEndDate']);
+    //   _totalParticipant.text = widget.participant!;
+    //   if (widget.roomType != 'MeetingRoom') {
+    //     layoutSectionVisible = true;
+    //     repeatSectionVisible = false;
+    //   }
+    //   if (widget.facilities != "[]") {
+    //     print('widget facilities');
+    //     print(widget.facilities!);
+
+    //     for (var element in widget.facilities!) {
+    //       if (element['Amount'] > 0) {
+    //         listAmenities.add(Amenities(
+    //           amenitiesId: element['AmenitiesID'],
+    //           amenitiesName: element['AmenitiesName'],
+    //           photo: element['ImageURL'],
+    //           qty: element['Amount'],
+    //         ));
+    //       }
+    //     }
+    //     for (var element in widget.foodAmenities!) {
+    //       if (element['Amount'] > 0) {
+    //         listFoods.add(FoodAmenities(
+    //           amenitiesId: element['AmenitiesID'],
+    //           amenitiesName: element['AmenitiesName'],
+    //           photo: element['ImageURL'],
+    //           qty: element['Amount'],
+    //         ));
+    //       }
+    //     }
+    //   }
+    // }
+    if (widget.roomId!.startsWith('AU')) {
+      roomType = "Auditorium";
+    }
+    if (widget.roomId!.startsWith('SC')) {
+      roomType = "SocialHub";
+    }
+    if (widget.roomId!.startsWith('MR')) {
+      roomType = "MeetingRoom";
+    }
     getRoomDetail(widget.roomId!).then((value) {
+      print('roomDetail');
+      print(value);
       setState(() {
         pictureLoading = false;
-        print(value['Data']);
-        // roomDetail = [value['Data']];
-        // roomDetail = temp;
         roomName = value['Data']['RoomName'];
         floor = value['Data']['AreaName'];
         resultAmenities = value['Data']['Amenities'];
@@ -371,31 +480,35 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             );
           }
         }
-        // resultAmenities.add(value['Data']['Amenities'][0]);
-        // resultAmenities = amen;
         resultFoodAmenities = value['Data']['FoodAmenities'];
-        resultPicture = value['Data']['Photos'];
+        if (value['Data']['Photos'] != []) {
+          isPictEmpty = false;
+          resultPicture = value['Data']['Photos'];
+        } else {
+          isPictEmpty = true;
+          resultPicture.add({
+            'ImageType': 'NOTFOUND',
+            'ImageUrl':
+                'https://media.istockphoto.com/id/1357365823/vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo.jpg?b=1&s=170667a&w=0&k=20&c=LEhQ7Gji4-gllQqp80hLpQsLHlHLw61DoiVf7XJsSx0='
+          });
+        }
 
         String formattedDate =
             DateFormat('d MMM yyyy').format(DateTime.parse(widget.date!));
         _date.text = formattedDate;
-        // _date.text = widget.date!;
         startTime = widget.startTime!;
         endTime = widget.endTime!;
         _startTime.text = widget.startTime!;
         _endTime.text = widget.endTime!;
         _repeatEnd.text = DateFormat('d MMM yyyy').format(DateTime.now());
         _totalParticipant.text = widget.participant!;
-        if (widget.roomType != 'meeting_room') {
+        if (roomType != 'MeetingRoom') {
           layoutSectionVisible = true;
           repeatSectionVisible = false;
         }
         _repeatOnMonthly.text = selectedDate!.day.toString();
-
-        // listEventType!.add(RadioModel(isSelected: false, text: 'Internal'));
-        // listEventType!.add(RadioModel(isSelected: false, text: 'External'));
         getMeetingType().then((value) {
-          print(value['Data']);
+          // print(value['Data']);
           List result = value['Data'];
 
           for (var element in result) {
@@ -409,6 +522,27 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           }
           selectedEventType = value['Data'][0]['Value'];
         });
+        if (widget.isEdit == "true") {
+          setState(() {
+            dynamic editData = widget.edit;
+            print('bahan edit');
+            print(editData);
+            _eventName.text = editData['summary'];
+            _eventDesc.text = editData['description'];
+            _additionalNote.text = editData['additionalNote'];
+            repeatValue = editData['repeatType'];
+            if (editData['bookingType'] == "RECURRENT") {
+              _repeatEnd.text = DateFormat('d MMM yyyy')
+                  .format(DateTime.parse(editData['repeatEndDate']));
+              _repeatInterval.text = editData['interval'];
+              _repeatOnMonthly.text = editData['montAbs'];
+            }
+            layoutImageUrl = editData['layoutImage'];
+            layoutName = editData['layoutName'];
+            layoutFromupload = false;
+            emptyLayout = false;
+          });
+        }
       });
     });
 
@@ -953,6 +1087,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                 const SizedBox(
                                   height: 20,
                                 ),
+                                //REPEAT OPTIONS
                                 Visibility(
                                   visible: repeatValue == "NONE" ? false : true,
                                   child: Column(
@@ -1008,14 +1143,14 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                     var todayDay = DateFormat(
                                                             'EEEE')
                                                         .format(selectedDate!);
-                                                    weeklyOptions
-                                                        .forEach((element) {
+                                                    for (var element
+                                                        in weeklyOptions) {
                                                       if (element['name'] ==
                                                           todayDay) {
                                                         element['isSelected'] =
                                                             true;
                                                       }
-                                                    });
+                                                    }
                                                     return Padding(
                                                       padding:
                                                           const EdgeInsets.only(
@@ -1038,6 +1173,26 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                                       [
                                                                       'isSelected'] =
                                                                   true;
+                                                            }
+                                                            if (weeklyOptions
+                                                                .any((element) =>
+                                                                    element[
+                                                                        'isSelected'] ==
+                                                                    false)) {
+                                                              var todayDay =
+                                                                  DateFormat(
+                                                                          'EEEE')
+                                                                      .format(
+                                                                          selectedDate!);
+                                                              for (var element
+                                                                  in weeklyOptions) {
+                                                                if (element[
+                                                                        'name'] ==
+                                                                    todayDay) {
+                                                                  element['isSelected'] =
+                                                                      true;
+                                                                }
+                                                              }
                                                             }
                                                           });
                                                         },
@@ -1220,22 +1375,24 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                         ),
                                       )
                                     : RegularButton(
-                                        text: 'Book This Room',
+                                        text: 'Confirm',
                                         disabled: false,
                                         padding: ButtonSize().longSize(),
                                         onTap: () {
                                           if (formKey.currentState!
                                               .validate()) {
+                                            formKey.currentState!.save();
                                             setState(() {
                                               isSubmitLoading = true;
                                             });
                                             List selectedDay = [];
 
-                                            formKey.currentState!.save();
                                             Booking booking = Booking();
                                             booking.roomId = widget.roomId;
                                             booking.summary = eventName;
                                             booking.description = eventDesc;
+                                            booking.additionalNote =
+                                                additionalNote;
                                             booking.startDate = DateTime.parse(
                                                 "${widget.date} $startTime:00");
                                             booking.endDate = DateTime.parse(
@@ -1320,36 +1477,58 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             // print('Selected Date -> $dateRefresh');
                                             // print('Data Room -> $dataRoomRefresh');
                                             // print('Event Room -> $eventRoomRefresh');
-                                            //BOOKING FUNCTION
-                                            bookingRoom(booking).then((value) {
-                                              print(value);
-                                              if (value['Status'] == "200") {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      AlertDialogBlack(
-                                                          title: value['Title'],
-                                                          contentText:
-                                                              value['Message']),
-                                                ).then((value) {
-                                                  setState(() {
-                                                    isSubmitLoading = false;
+                                            if (roomType == "MeetingRoom") {
+                                              //BOOKING FUNCTION
+                                              bookingRoom(booking)
+                                                  .then((value) {
+                                                print(value);
+                                                if (value['Status'] == "200") {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialogBlack(
+                                                            title:
+                                                                value['Title'],
+                                                            contentText: value[
+                                                                'Message']),
+                                                  ).then((value) {
+                                                    setState(() {
+                                                      isSubmitLoading = false;
+                                                    });
+                                                    // updateEvent(model).then((value) {
+                                                    //   context.go('/rooms');
+                                                    // });
+                                                    context.go('/rooms');
+                                                    // context.pop();
+                                                    // Navigator.of(context).pop();
                                                   });
-                                                  // updateEvent(model).then((value) {
-                                                  //   context.go('/rooms');
-                                                  // });
-                                                  context.go('/rooms');
-                                                  // context.pop();
-                                                  // Navigator.of(context).pop();
-                                                });
-                                              } else {
+                                                } else {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialogBlack(
+                                                      title: value['Title'],
+                                                      contentText:
+                                                          value['Message'],
+                                                      isSuccess: false,
+                                                    ),
+                                                  ).then((value) {
+                                                    setState(() {
+                                                      isSubmitLoading = false;
+                                                    });
+                                                    // context.go('/rooms');
+                                                  });
+                                                }
+                                                // context.pop();
+                                              }).onError((error, stackTrace) {
+                                                print(error);
                                                 showDialog(
                                                   context: context,
                                                   builder: (context) =>
-                                                      AlertDialogBlack(
-                                                    title: value['Title'],
+                                                      const AlertDialogBlack(
+                                                    title: 'Failed',
                                                     contentText:
-                                                        value['Message'],
+                                                        'Failed connect to API',
                                                     isSuccess: false,
                                                   ),
                                                 ).then((value) {
@@ -1358,27 +1537,81 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                   });
                                                   // context.go('/rooms');
                                                 });
-                                              }
-                                              // context.pop();
-                                            }).onError((error, stackTrace) {
-                                              print(error);
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    const AlertDialogBlack(
-                                                  title: 'Failed',
-                                                  contentText:
-                                                      'Failed connect to API',
-                                                  isSuccess: false,
-                                                ),
-                                              ).then((value) {
-                                                setState(() {
-                                                  isSubmitLoading = false;
-                                                });
-                                                // context.go('/rooms');
                                               });
-                                            });
-                                            //END BOOOKING FUNCTION
+                                              //END BOOOKING FUNCTION
+                                            }
+                                            //BOOKING AUDI
+                                            if (roomType == "Auditorium") {
+                                              booking.layoutId = layoutId;
+                                              booking.layoutName = layoutName;
+                                              booking.layoutImage = "";
+                                              if (layoutFromupload) {
+                                                booking.layoutImage =
+                                                    layoutBase64;
+                                              }
+                                              print(booking.toJson());
+                                              //BOOKING AUDI FUNCTION
+                                              bookingAudi(booking)
+                                                  .then((value) {
+                                                print(value);
+                                                if (value['Status'] == "200") {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialogBlack(
+                                                            title:
+                                                                value['Title'],
+                                                            contentText: value[
+                                                                'Message']),
+                                                  ).then((value) {
+                                                    setState(() {
+                                                      isSubmitLoading = false;
+                                                    });
+                                                    // updateEvent(model).then((value) {
+                                                    //   context.go('/rooms');
+                                                    // });
+                                                    context.go('/rooms');
+                                                    // context.pop();
+                                                    // Navigator.of(context).pop();
+                                                  });
+                                                } else {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialogBlack(
+                                                      title: value['Title'],
+                                                      contentText:
+                                                          value['Message'],
+                                                      isSuccess: false,
+                                                    ),
+                                                  ).then((value) {
+                                                    setState(() {
+                                                      isSubmitLoading = false;
+                                                    });
+                                                    // context.go('/rooms');
+                                                  });
+                                                }
+                                                // context.pop();
+                                              }).onError((error, stackTrace) {
+                                                print(error);
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      const AlertDialogBlack(
+                                                    title: 'Failed',
+                                                    contentText:
+                                                        'Failed connect to API',
+                                                    isSuccess: false,
+                                                  ),
+                                                ).then((value) {
+                                                  setState(() {
+                                                    isSubmitLoading = false;
+                                                  });
+                                                  // context.go('/rooms');
+                                                });
+                                              });
+                                              //END BOOKING AUDI FUNCTION
+                                            }
 
                                             // debugPrint("""
                                             //   {
@@ -1562,6 +1795,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                   pictures: resultPicture,
                   name: roomName,
                   area: floor,
+                  pictNotFound: isPictEmpty,
                 ),
         ),
       ],
@@ -1833,6 +2067,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           focusNode: additionalNoteNode,
           maxLines: 4,
           hintText: 'Additional Notes ...',
+          onSaved: (newValue) {
+            additionalNote = newValue!;
+          },
         )
       ],
     );
@@ -1857,40 +2094,66 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           onTap: () {
             showDialog(
               context: context,
-              builder: (context) => SelectLayoutDialog(),
+              builder: (context) => SelectLayoutDialog(
+                setLayout: setLayout,
+                imaegUrl: layoutImageUrl,
+                imageBytes: layoutImageBytes,
+                isUpload: layoutFromupload,
+              ),
             );
           },
-          child: DottedBorder(
-            borderType: BorderType.RRect,
-            color: spanishGray,
-            padding: EdgeInsets.zero,
-            radius: const Radius.circular(7.5),
-            dashPattern: const [10, 4],
-            strokeWidth: 2,
-            strokeCap: StrokeCap.round,
-            child: Container(
-              height: 187,
-              width: 250,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('assets/add_circle.png'),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    'Add Layout',
-                    style: TextStyle(
-                      fontFamily: 'Helvetica',
-                      fontSize: 16,
-                      color: spanishGray,
+          child: emptyLayout
+              ? DottedBorder(
+                  borderType: BorderType.RRect,
+                  color: spanishGray,
+                  padding: EdgeInsets.zero,
+                  radius: const Radius.circular(7.5),
+                  dashPattern: const [10, 4],
+                  strokeWidth: 2,
+                  strokeCap: StrokeCap.round,
+                  child: Container(
+                    height: 187,
+                    width: 250,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/add_circle.png'),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text(
+                          'Add Layout',
+                          style: TextStyle(
+                            fontFamily: 'Helvetica',
+                            fontSize: 16,
+                            color: spanishGray,
+                          ),
+                        )
+                      ],
                     ),
-                  )
-                ],
-              ),
-            ),
-          ),
+                  ),
+                )
+              : Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: davysGray,
+                  ),
+                  height: 187,
+                  width: 250,
+                  child: layoutFromupload
+                      ? FittedBox(
+                          fit: BoxFit.contain,
+                          child: Image.memory(
+                            Base64Decoder()
+                                .convert(layoutBase64.split(',').last),
+                          ),
+                        )
+                      : FittedBox(
+                          fit: BoxFit.contain,
+                          child: Image.network(layoutImageUrl),
+                        ),
+                ),
         ),
       ],
     );

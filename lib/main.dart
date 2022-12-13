@@ -9,6 +9,8 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/custom_scroll_behavior.dart';
 import 'package:meeting_room_booking_system/model/booking_room_info.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
+import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page.dart';
+import 'package:meeting_room_booking_system/pages/admin/admin_setting_page.dart';
 import 'package:meeting_room_booking_system/pages/login_page.dart'
     deferred as loginPage;
 import 'package:meeting_room_booking_system/pages/user/calendar_view_page.dart'
@@ -196,22 +198,26 @@ class MyApp extends StatelessWidget {
         // ),
         routes: [
           GoRoute(
-            name: 'booking_rooms',
-            path:
-                'booking_rooms/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType',
-            pageBuilder: (context, state) => NoTransitionPage<void>(
-              key: state.pageKey,
-              child: BookingRoomPage(
-                roomId: state.params['roomId'],
-                date: state.params['date'],
-                startTime: state.params['startTime'],
-                endTime: state.params['endTime'],
-                participant: state.params['participant'],
-                facilities: state.params['facilities'],
-                roomType: state.params['roomType'],
-              ),
-            ),
-          )
+              name: 'booking_rooms',
+              path:
+                  'booking_rooms/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType&isEdit=:isEdit',
+              pageBuilder: (context, state) {
+                dynamic edit = state.queryParams;
+                return NoTransitionPage<void>(
+                  key: state.pageKey,
+                  child: BookingRoomPage(
+                    roomId: state.params['roomId'],
+                    date: state.params['date'],
+                    startTime: state.params['startTime'],
+                    endTime: state.params['endTime'],
+                    participant: state.params['participant'],
+                    facilities: state.params['facilities'],
+                    roomType: state.params['roomType'],
+                    isEdit: state.params['isEdit']!,
+                    edit: edit,
+                  ),
+                );
+              })
         ],
       ),
       GoRoute(
@@ -234,22 +240,26 @@ class MyApp extends StatelessWidget {
         // ],
       ),
       GoRoute(
-        name: 'booking',
-        path:
-            '/booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType',
-        pageBuilder: (context, state) => NoTransitionPage<void>(
-          key: state.pageKey,
-          child: BookingRoomPage(
-            roomId: state.params['roomId'],
-            date: state.params['date'],
-            startTime: state.params['startTime'],
-            endTime: state.params['endTime'],
-            participant: state.params['participant'],
-            facilities: state.params['facilities'],
-            roomType: state.params['roomType'],
-          ),
-        ),
-      ),
+          name: 'booking',
+          path:
+              '/booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType&isEdit=:isEdit',
+          pageBuilder: (context, state) {
+            dynamic edit = state.queryParams;
+            return NoTransitionPage<void>(
+              key: state.pageKey,
+              child: BookingRoomPage(
+                roomId: state.params['roomId'],
+                date: state.params['date'],
+                startTime: state.params['startTime'],
+                endTime: state.params['endTime'],
+                participant: state.params['participant'],
+                facilities: state.params['facilities'],
+                roomType: state.params['roomType'],
+                isEdit: state.params['isEdit']!,
+                edit: edit,
+              ),
+            );
+          }),
       GoRoute(
         name: 'detail_event',
         path: '/detail_event/eventID=:eventId',
@@ -258,6 +268,28 @@ class MyApp extends StatelessWidget {
           child: DetailEventPage(
             bookingId: state.params['eventId'],
           ),
+        ),
+        // routes: [
+        //   GoRoute(
+        //     name: 'detail_event_edit',
+        //     path: 'edit/roomId=:roomId&date=:date&',
+        //   )
+        // ],
+      ),
+      GoRoute(
+        name: 'admin_list',
+        path: '/admin/list',
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: AdminListPage(),
+        ),
+      ),
+      GoRoute(
+        name: 'setting',
+        path: '/setting',
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: AdminSettingPage(),
         ),
       ),
     ],

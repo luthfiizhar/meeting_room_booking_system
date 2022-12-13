@@ -53,6 +53,15 @@ class _DetailEventPageState extends State<DetailEventPage> {
   String eventType = "";
   String repeat = "";
   String formattedDate = "";
+  String repeatType = "";
+  String monthAbs = "";
+  String interval = "";
+  String layoutName = "";
+  String layoutImage = "";
+  dynamic days;
+  DateTime repeatEndDate = DateTime.now();
+
+  String selectedDate = "";
 
   String host = "";
   String hostEmail = "";
@@ -103,6 +112,9 @@ class _DetailEventPageState extends State<DetailEventPage> {
 
         host = value['Data']['EmpName'];
 
+        // layoutName = value['Data']['LayoutName'];
+        // layoutImage = value['Data']['LayoutImg'];
+
         amenities = value['Data']['Amenities'];
         foodAmenities = value['Data']['FoodAmenities'];
 
@@ -113,9 +125,16 @@ class _DetailEventPageState extends State<DetailEventPage> {
         additionalNotes = value['Data']['AdditionalNotes'] ?? "";
 
         bookingHistory = value['Data']['History'];
-
+        repeatType = value['Data']['RepeatType'] ?? "NONE";
+        if (bookingType == "RECURSIVE") {
+          repeatEndDate = DateTime.parse(value['Data']['RepeatEndDate']);
+          monthAbs = value['Data']['MonthAbsolute'].toString();
+          days = value['Data']['Days'];
+          interval = value['Data']['RepInterval'].toString();
+        }
         formattedDate = DateFormat('yyyy-mm-dd')
             .format(DateTime.parse(value['Data']['BookingDateOriginal']));
+        selectedDate = value['Data']['BookingDateOriginal'];
       });
     });
   }
@@ -227,7 +246,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                               constraints: const BoxConstraints(
                                 minHeight: 65,
                                 maxHeight: 65,
-                                minWidth: 600,
+                                minWidth: 400,
                                 maxWidth: 850,
                               ),
                               child: Container(
@@ -243,40 +262,90 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                 ),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    TransparentButtonBlack(
-                                      text: 'Email to User',
-                                      disabled: false,
-                                      onTap: () {},
-                                      padding: ButtonSize().mediumSize(),
-                                    ),
-                                    verticalDivider(),
-                                    TransparentButtonBlack(
-                                      text: 'Trade',
-                                      disabled: false,
-                                      onTap: () {},
-                                      padding: ButtonSize().mediumSize(),
-                                    ),
-                                    verticalDivider(),
+                                    // TransparentButtonBlack(
+                                    //   text: 'Email to User',
+                                    //   disabled: false,
+                                    //   onTap: () {},
+                                    //   padding: ButtonSize().mediumSize(),
+                                    // ),
+                                    // verticalDivider(),
+                                    // TransparentButtonBlack(
+                                    //   text: 'Trade',
+                                    //   disabled: false,
+                                    //   onTap: () {},
+                                    //   padding: ButtonSize().mediumSize(),
+                                    // ),
+                                    // verticalDivider(),
                                     TransparentButtonBlack(
                                       text: 'Edit Event',
                                       disabled: false,
                                       onTap: () {
                                         print(roomId);
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              BookingRoomPageDialog(
-                                            roomId: roomId,
-                                            date: formattedDate,
-                                            startTime: startTime,
-                                            endTime: endTime,
-                                            facilities: amenities,
-                                            foodAmenities: foodAmenities,
-                                            participant: participantTotal,
-                                            roomType: roomType,
-                                          ),
+                                        context.goNamed(
+                                          'booking',
+                                          params: {
+                                            "roomId": roomId,
+                                            'date': selectedDate.toString(),
+                                            'startTime': startTime,
+                                            'endTime': endTime,
+                                            'participant': '1',
+                                            'facilities': '[]',
+                                            'roomType': 'meeting_room',
+                                            'isEdit': 'true'
+                                          },
+                                          queryParams: {
+                                            'date': selectedDate.toString(),
+                                            'startTime': startTime,
+                                            'endTime': endTime,
+                                            'summary': summary,
+                                            'description': description,
+                                            'additionalNote': additionalNotes,
+                                            'participant': '1',
+                                            'facilities': '[]',
+                                            'bookingType': bookingType,
+                                            'guestInvited':
+                                                guestInvited.toString(),
+                                            'repeatEndDate':
+                                                repeatEndDate.toString(),
+                                            'days': days,
+                                            'montAbs': monthAbs,
+                                            'repeatType': repeatType,
+                                            'interval': interval,
+                                            'roomType': 'MeetingRoom',
+                                            'layoutName': layoutName,
+                                            'layoutImage': layoutImage,
+                                          },
                                         );
+                                        // showDialog(
+                                        //   context: context,
+                                        //   builder: (context) =>
+                                        //       BookingRoomPageDialog(
+                                        //     summary: summary,
+                                        //     description: description,
+                                        //     additionalNote: additionalNotes,
+                                        //     invitedGuest: guestInvited,
+                                        //     totalParticipant: participantTotal,
+                                        //     roomId: roomId,
+                                        //     date: formattedDate,
+                                        //     startTime: startTime,
+                                        //     endTime: endTime,
+                                        //     facilities: amenities,
+                                        //     foodAmenities: foodAmenities,
+                                        //     participant: participantTotal,
+                                        //     roomType: roomType,
+                                        //     recurrent: [
+                                        //       {
+                                        //         'repeatEndDate': repeatEndDate,
+                                        //         'days': days,
+                                        //         'montAbs': monthAbs,
+                                        //         'repeatType': repeatType,
+                                        //         'interval': interval
+                                        //       }
+                                        //     ],
+                                        //   ),
+                                        // );
                                       },
                                       padding: ButtonSize().mediumSize(),
                                     ),
@@ -318,6 +387,18 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                     context.go('/rooms');
                                                   });
                                                 }
+                                              }).onError((error, stackTrace) {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialogBlack(
+                                                    title:
+                                                        'Failed connect to API',
+                                                    contentText:
+                                                        error.toString(),
+                                                    isSuccess: false,
+                                                  ),
+                                                );
                                               });
                                             }
                                             if (bookingType == "RECURRENT") {
@@ -338,6 +419,18 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                     context.go('/rooms');
                                                   });
                                                 }
+                                              }).onError((error, stackTrace) {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialogBlack(
+                                                    title:
+                                                        'Failed connect to API',
+                                                    contentText:
+                                                        error.toString(),
+                                                    isSuccess: false,
+                                                  ),
+                                                );
                                               });
                                             }
                                           }
@@ -529,6 +622,10 @@ class _DetailEventPageState extends State<DetailEventPage> {
                     width: 1,
                   ),
                 ),
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Image.network(layoutImage),
+                ),
               ),
               const SizedBox(
                 height: 30,
@@ -552,7 +649,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
                     bottom: 10,
                   ),
                   child: bookingDetail(
-                    bookingHistory[index]['EmpName'],
+                    bookingHistory[index]['EmpName'] ??
+                        bookingHistory[index]['EmpNIP'],
                     bookingHistory[index]['Status'],
                     bookingHistory[index]['LogDate'],
                   ),

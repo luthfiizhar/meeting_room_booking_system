@@ -43,14 +43,15 @@ import 'dart:html' as html;
 
 import 'package:url_launcher/url_launcher.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class GoogleWorkspacePage extends StatefulWidget {
+  const GoogleWorkspacePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<GoogleWorkspacePage> createState() => _GoogleWorkspacePageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
+    with TickerProviderStateMixin {
   TextEditingController _dateController = TextEditingController();
   TextEditingController _facilityController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
@@ -478,15 +479,406 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       scrollController: scrollController,
       index: 0,
       setDatePickerStatus: resetAllVisibleStatus,
-      child: ConstrainedBox(
-        constraints: pageConstraints,
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 80,
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              const SizedBox(
+                height: 80,
+              ),
+              introSection(),
+              const SizedBox(
+                height: 100,
+              ),
+              featureSection(),
+              const SizedBox(
+                height: 100,
+              ),
+              howToSection(),
+              faqSection(),
+            ],
+          ),
+          Positioned(
+            top: 160,
+            right: -75,
+            child: SlideTransition(
+              position: _offsetAnimation,
+              child: Container(
+                width: MediaQuery.of(context).size.width <= 1366 ? 827 : 1193,
+                height: MediaQuery.of(context).size.width <= 1366 ? 552 : 796,
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: Image.asset('assets/mrbs_home_page_ilus.png'),
+                ),
+              ),
             ),
-            Container(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget introSection() {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: MediaQuery.of(context).size.width,
+        maxHeight: 750,
+      ),
+      child: Container(
+        key: introSectionKey,
+        // color: Colors.blue,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 180,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FadeTransition(
+                opacity: _animation1,
+                child: Text(
+                  'MRBS works with',
+                  style: helveticaText.copyWith(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w300,
+                    color: eerieBlack,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              FadeTransition(
+                  opacity: _animation2,
+                  child: Image.asset('assets/mrbs_gws_logo.png')),
+              const SizedBox(
+                height: 25,
+              ),
+              SizedBox(
+                width: 600,
+                child: FadeTransition(
+                  opacity: _animation3,
+                  child: Text(
+                    'Experience more collaboration features by linking your MRBS account to your Google Workspace.',
+                    style: helveticaText.copyWith(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                      height: 1.3,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              FadeTransition(
+                opacity: _animation4,
+                child: TransparentBorderedBlackButton(
+                  text: 'Link My Account',
+                  disabled: false,
+                  padding: ButtonSize().mediumSize(),
+                  onTap: () async {
+                    html.window.open('https://flutter.dev', 'Google SignIn',
+                        'width=600,height=600');
+                    // js.context.callMethod('open', ['https://stackoverflow.com/questions/ask']);
+                    // Uri _url = Uri.parse('https://flutter.dev');
+                    // // Uri _url = Uri(
+                    // //   host: 'https://flutter.dev',
+                    // // );
+                    // if (!await launchUrl(
+                    //   _url,
+                    //   webOnlyWindowName: '_blank',
+                    //   // webViewConfiguration:
+                    //   //     const WebViewConfiguration(headers: {'': ''}),
+                    // )) {
+                    //   throw 'Could not launch $_url';
+                    // }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget featureSection() {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: MediaQuery.of(context).size.width,
+        maxHeight: 850,
+      ),
+      child: Container(
+        key: featureSectionKey,
+        // color: Colors.amber,
+        child: Stack(
+          children: [
+            Center(
+              child: Container(
+                width: 1100,
+                child: Column(
+                  children: [
+                    LeftFeatureContainer(
+                      icon: Image.asset('assets/google_calendar_icon.png'),
+                      title: 'Google Calendar',
+                      content:
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac viverra nisi, et ullamcorper neque. Proin nec rutrum magna. Etiam nec consectetur leo, eu fringilla diam.',
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    RightFeatureContainer(
+                      icon: Image.asset('assets/google_meet_icon.png'),
+                      title: 'Google Meet',
+                      content:
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac viverra nisi, et ullamcorper neque. Proin nec rutrum magna. Etiam nec consectetur leo, eu fringilla diam.',
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    LeftFeatureContainer(
+                      icon: Image.asset('assets/google_contact_icon.png'),
+                      title: 'Google Contact',
+                      content:
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac viverra nisi, et ullamcorper neque. Proin nec rutrum magna. Etiam nec consectetur leo, eu fringilla diam.',
+                      backgroundColor: eerieBlack,
+                    ),
+                  ],
+                ),
+              ),
+            )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget faqSection() {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxHeight: 500,
+      ),
+      child: Container(color: Colors.amber),
+    );
+  }
+
+  Widget howToSection() {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: MediaQuery.of(context).size.width,
+        maxHeight: 500,
+      ),
+      child: Container(
+        // key: faqSectionKey,
+        // color: Colors.purple,
+        child: Center(
+          child: Container(
+            // color: Colors.green,
+            width: 1210,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'How To Connect?',
+                  style: TextStyle(
+                    fontFamily: 'Helvetica',
+                    fontSize: 100,
+                    fontWeight: FontWeight.w800,
+                    foreground: Paint()
+                      ..style = PaintingStyle.stroke
+                      ..strokeWidth = 0.5
+                      ..color = davysGray,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: 363,
+                      height: 383,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 325,
+                              height: 250,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: platinumLight,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 5,
+                            right: 30,
+                            child: Column(
+                              children: [
+                                Image.asset('assets/gws_vector_1.png'),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                SizedBox(
+                                  width: 250,
+                                  child: Text(
+                                    'Enter your Google Workspace email address',
+                                    style: helveticaText.copyWith(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w300,
+                                      color: davysGray,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 30,
+                            left: 0,
+                            child: Text(
+                              '1',
+                              style: TextStyle(
+                                fontFamily: 'Helvetica',
+                                fontSize: 100,
+                                fontWeight: FontWeight.w800,
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 1
+                                  ..color = orangeAccent,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 60,
+                    ),
+                    Container(
+                      width: 363,
+                      height: 383,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 325,
+                              height: 250,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: platinumLight,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 5,
+                            right: 30,
+                            child: Column(
+                              children: [
+                                Image.asset('assets/gws_vector_2.png'),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                SizedBox(
+                                  width: 250,
+                                  child: Text(
+                                    'Accept Google account permissions',
+                                    style: helveticaText.copyWith(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w300,
+                                      color: davysGray,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 30,
+                            left: 0,
+                            child: Text(
+                              '2',
+                              style: TextStyle(
+                                fontFamily: 'Helvetica',
+                                fontSize: 100,
+                                fontWeight: FontWeight.w800,
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 1
+                                  ..color = orangeAccent,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 60,
+                    ),
+                    Container(
+                      width: 363,
+                      height: 383,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 325,
+                              height: 250,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: platinumLight,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 30,
+                            child: Column(
+                              children: [
+                                Image.asset('assets/gws_vector_3.png'),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                SizedBox(
+                                  width: 250,
+                                  child: Text(
+                                    'Your account is linked!',
+                                    style: helveticaText.copyWith(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w300,
+                                      color: davysGray,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 30,
+                            left: 0,
+                            child: Text(
+                              '3',
+                              style: TextStyle(
+                                fontFamily: 'Helvetica',
+                                fontSize: 100,
+                                fontWeight: FontWeight.w800,
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 1
+                                  ..color = orangeAccent,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

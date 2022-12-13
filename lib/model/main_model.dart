@@ -12,6 +12,8 @@ class MainModel extends ChangeNotifier {
   Offset _offsetNavbar = Offset(0, 0);
   static ScrollController _layoutController = ScrollController();
 
+  Color? _settingPageActiveColor;
+
   String _selectedDate = "";
   String _selectedArea = "";
   List _dataRoom = [];
@@ -45,6 +47,7 @@ class MainModel extends ChangeNotifier {
   String get selectedArea => _selectedArea;
   List get dataRoom => _dataRoom;
   List get eventRoom => _eventRoom;
+  Color get settingPageActiveColor => _settingPageActiveColor!;
 
   RoomEventDataSource get events => _events;
 
@@ -63,6 +66,11 @@ class MainModel extends ChangeNotifier {
 
   void setUpBotton(bool value) {
     _upBottonVisible = value;
+    notifyListeners();
+  }
+
+  void setSettingPageActiveColor(Color value) {
+    _settingPageActiveColor = value;
     notifyListeners();
   }
 

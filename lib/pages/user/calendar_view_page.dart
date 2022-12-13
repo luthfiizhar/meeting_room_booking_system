@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/event_class.dart';
 import 'package:meeting_room_booking_system/model/event_data_source.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
@@ -25,6 +26,12 @@ class CalendarViewPage extends StatefulWidget {
 
 class _CalendarViewPageState extends State<CalendarViewPage> {
   CalendarController _calendar = CalendarController();
+  EventDataSource _events = EventDataSource(<Event>[]);
+
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
+
+  String selectedView = "Weekly";
 
   double startTime = 6;
   double endTime = 20;
@@ -134,16 +141,37 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
     });
   }
 
+  assignDataToCalendar(dynamic data) {
+    _events.appointments!.clear();
+    print('data');
+    print(data);
+    for (var element in data) {
+      _events.appointments!.add(
+        Event(
+          from: DateTime.parse(element['StartDateTime']),
+          to: DateTime.parse(element['EndDateTime']),
+          eventName: element['Summary'],
+          bookingId: element['BookingID'],
+        ),
+      );
+    }
+
+    _events.notifyListeners(
+        CalendarDataSourceAction.reset, _events.appointments!);
+  }
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<MainModel>(context, listen: false).setShadowActive(false);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   Provider.of<MainModel>(context, listen: false).setShadowActive(false);
+    // });
 
     // TODO: implement initState
     super.initState();
+
     startTime = 7;
     endTime = 19;
+    // getUserCalendar("", "");
     // _scrollController!.addListener(() {
     //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
     //     _scrollListener(_scrollController!);
@@ -174,96 +202,10 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
       child: ConstrainedBox(
         constraints: pageConstraints,
         child: Container(
-          height: MediaQuery.of(context).size.height * 2.5,
+          height: MediaQuery.of(context).size.height - 115 - 60,
           child: calendarUserPage(),
         ),
       ),
-    );
-    return Scaffold(
-      body: Consumer<MainModel>(builder: (context, model, child) {
-        return Center(
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    // model.navbarShadow
-                    BoxShadow(
-                      blurRadius: !model.shadowActive ? 0 : 40,
-                      offset: !model.shadowActive ? Offset(0, 0) : Offset(0, 0),
-                      color: Color.fromRGBO(29, 29, 29, 0.1),
-                      blurStyle: BlurStyle.normal,
-                    )
-                  ],
-                ),
-                child: NavigationBarWeb(
-                  index: 4,
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 10,
-                  ),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: CustomScrollView(
-                      // controller: _scrollController,
-                      slivers: [
-                        SliverList(
-                          delegate: SliverChildListDelegate(
-                            [
-                              // Container(
-                              //   // width: 100,
-                              //   child: Row(
-                              //     mainAxisAlignment: MainAxisAlignment.center,
-                              //     children: [
-                              //       CalendarMenu(
-                              //         menuName: 'My Events',
-                              //         selected: selectedMenu == 1,
-                              //         onHighlight: onHighlight,
-                              //         index: 1,
-                              //       ),
-                              //       CalendarMenu(
-                              //         menuName: 'Meeting Rooms',
-                              //         selected: selectedMenu == 2,
-                              //         onHighlight: onHighlight,
-                              //         index: 2,
-                              //       ),
-                              //       // Chip(
-
-                              //       //   label: Text('My Calendar'),
-                              //       // ),
-                              //       // Chip(label: Text('Meeting Rooms'))
-                              //     ],
-                              //   ),
-                              // ),
-                              Container(
-                                height: MediaQuery.of(context).size.height,
-                                child: calendarUserPage(),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                            ],
-                          ),
-                        ),
-                        SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: FooterWeb(),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }),
     );
   }
 
@@ -273,7 +215,21 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
         controller: _calendar,
         showDatePickerButton: true,
         allowViewNavigation: true,
-        onViewChanged: (viewChangedDetails) {},
+        onViewChanged: (viewChangedDetails) {
+          // print(viewChangedDetails.visibleDates.first);
+          startDate = viewChangedDetails.visibleDates.first;
+          endDate = viewChangedDetails.visibleDates.last;
+
+          print("Start ${startDate.toString()}");
+          print("End ${endDate.toString()}");
+          // print(_calendar.view.toString());
+
+          getUserCalendar(startDate.toString(), endDate.toString())
+              .then((value) {
+            print(value);
+            assignDataToCalendar(value['Data']);
+          });
+        },
         headerDateFormat: 'MMMM y',
         initialDisplayDate: DateTime.now(),
         onTap: (calendarTapDetails) {
@@ -294,7 +250,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
           //   print("kosong");
           // }
         },
-        dataSource: _getCalendarDataSource(),
+        dataSource: _events,
         // showDatePickerButton: true,
         // headerDateFormat: 'MMM,yyy',
         showNavigationArrow: true,
@@ -311,7 +267,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
         todayHighlightColor: Colors.black,
         timeSlotViewSettings: TimeSlotViewSettings(
           // timelineAppointmentHeight: -1,
-          timeIntervalHeight: -1,
+          timeIntervalHeight: 50,
           timeFormat: 'H:mm ',
           // timeIntervalWidth: -1,
           timeInterval: const Duration(

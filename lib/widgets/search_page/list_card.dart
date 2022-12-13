@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 
@@ -10,26 +11,32 @@ class ListRoomContainer extends StatelessWidget {
     super.key,
     this.roomName,
     this.startTime,
+    this.selectedStartTime,
     this.amenities,
     this.duration,
     this.endTime,
+    this.selectedEndTime,
     this.maxCapacity,
     this.minCapacity,
     this.photo,
     this.date,
     this.roomID,
+    this.roomType,
   });
 
   String? roomID;
   String? roomName;
   String? startTime;
+  String? selectedStartTime;
   String? endTime;
+  String? selectedEndTime;
   String? minCapacity;
   String? maxCapacity;
   String? photo;
   List? amenities;
   String? duration;
   String? date;
+  String? roomType;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +91,7 @@ class ListRoomContainer extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 30,
                 ),
                 Expanded(
@@ -109,51 +116,49 @@ class ListRoomContainer extends StatelessWidget {
                         const SizedBox(
                           height: 15,
                         ),
-                        Container(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const Icon(
-                                MdiIcons.alarm,
-                                size: 18,
-                                color: davysGray,
-                              ),
-                              const SizedBox(
-                                width: 12,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '$startTime - $endTime',
-                                      style: const TextStyle(
-                                        fontFamily: 'Helvetica',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w300,
-                                        height: 1.3,
-                                        color: davysGray,
-                                      ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              MdiIcons.alarm,
+                              size: 18,
+                              color: davysGray,
+                            ),
+                            const SizedBox(
+                              width: 12,
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '$startTime - $endTime',
+                                    style: const TextStyle(
+                                      fontFamily: 'Helvetica',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w300,
+                                      height: 1.3,
+                                      color: davysGray,
                                     ),
-                                    const SizedBox(
-                                      height: 5,
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    'Available for $duration',
+                                    style: const TextStyle(
+                                      fontFamily: 'Helvetica',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w300,
+                                      height: 1.3,
+                                      color: spanishGray,
                                     ),
-                                    Text(
-                                      'Available for $duration',
-                                      style: const TextStyle(
-                                        fontFamily: 'Helvetica',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w300,
-                                        height: 1.3,
-                                        color: spanishGray,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           height: 15,
@@ -195,8 +200,7 @@ class ListRoomContainer extends StatelessWidget {
                             ),
                             Text(
                               '1st Floor',
-                              style: TextStyle(
-                                fontFamily: 'Helvetica',
+                              style: helveticaText.copyWith(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w300,
                                 height: 1.3,
@@ -216,8 +220,7 @@ class ListRoomContainer extends StatelessWidget {
                             ),
                             Text(
                               amen,
-                              style: TextStyle(
-                                fontFamily: 'Helvetica',
+                              style: helveticaText.copyWith(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w300,
                                 height: 1.3,
@@ -240,15 +243,19 @@ class ListRoomContainer extends StatelessWidget {
                 disabled: false,
                 onTap: () {
                   // context.go('/home/booking');
-                  context.pushNamed('booking_search', params: {
-                    "roomId": '$roomID',
-                    'date': '$date',
-                    'startTime': '$startTime',
-                    'endTime': '$endTime',
-                    'participant': '$maxCapacity',
-                    'facilities': '$amenities',
-                    'roomType': 'meeting_room'
-                  });
+                  context.pushNamed(
+                    'booking',
+                    params: {
+                      "roomId": '$roomID',
+                      'date': '$date',
+                      'startTime': '$selectedStartTime',
+                      'endTime': '$selectedEndTime',
+                      'participant': '$maxCapacity',
+                      'facilities': '$amenities',
+                      'roomType': '$roomType',
+                      'isEdit': 'false'
+                    },
+                  );
                 },
                 padding: ButtonSize().smallSize(),
               ),

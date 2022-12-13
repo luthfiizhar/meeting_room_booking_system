@@ -4,14 +4,16 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 class BookingRoomPicture extends StatefulWidget {
   BookingRoomPicture({
     super.key,
-    required this.pictures,
+    this.pictures,
     this.name,
     this.area,
+    this.pictNotFound = true,
   });
 
   List? pictures;
   String? name;
   String? area;
+  bool pictNotFound = false;
 
   @override
   State<BookingRoomPicture> createState() => _BookingRoomPictureState();
@@ -22,13 +24,13 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(widget.pictures);
+    // print(widget.pictures);
   }
 
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
         minHeight: 450,
         minWidth: 500,
         maxWidth: 500,
@@ -53,13 +55,15 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                     Container(
                       height: 270,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(10),
                           topRight: Radius.circular(10),
                         ),
                         image: DecorationImage(
-                          image:
-                              NetworkImage(widget.pictures!.first['ImageURL']),
+                          image: widget.pictNotFound
+                              ? Image.asset('asset/image_not_found.jpg').image
+                              : NetworkImage(
+                                  widget.pictures!.first['ImageURL']),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -93,8 +97,11 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                             decoration: BoxDecoration(
                               borderRadius: borderRadius,
                               image: DecorationImage(
-                                image: NetworkImage(
-                                    widget.pictures!.first['ImageURL']),
+                                image: widget.pictNotFound
+                                    ? Image.asset('asset/image_not_found.jpg')
+                                        .image
+                                    : NetworkImage(
+                                        widget.pictures!.first['ImageURL']),
                                 fit: BoxFit.cover,
                               ),
                             ),

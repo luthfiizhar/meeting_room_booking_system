@@ -275,6 +275,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.1.1"
+  go_router_flow:
+    dependency: "direct main"
+    description:
+      name: go_router_flow
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.2.0+1"
   hive:
     dependency: "direct main"
     description:
