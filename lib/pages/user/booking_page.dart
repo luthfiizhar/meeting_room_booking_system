@@ -1780,14 +1780,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             );
           }),
         ),
-        ConstrainedBox(
-          constraints: pageConstraints,
-          child: Positioned(
-            // top:  model.isScrollAtEdge ? null : model.scrollPosition + 20,
-            // bottom: model.isScrollAtEdge ? 0 : null,
-            top: 85,
-            // left: MediaQuery.of(context).size.width <= 1366 ? 120 : 320,
-            left: 120,
+        Positioned(
+          top: 85,
+          left: 120,
+          child: ConstrainedBox(
+            constraints: pageConstraints,
             child: pictureLoading
                 ? const SizedBox(
                     width: 100,

@@ -10,11 +10,13 @@ import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
+import 'package:meeting_room_booking_system/pages/user/rooms_page.dart';
 import 'package:meeting_room_booking_system/widgets/calendar_view_page/calendar_menu_item.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/dialog_detail_event.dart';
 import 'package:meeting_room_booking_system/widgets/footer.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
+import 'package:meeting_room_booking_system/widgets/rooms_page/detail_appointment_container.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -28,9 +30,14 @@ class CalendarViewPage extends StatefulWidget {
 class _CalendarViewPageState extends State<CalendarViewPage> {
   CalendarController _calendar = CalendarController();
   EventDataSource _events = EventDataSource(<Event>[]);
+  Event? selectedEvent;
 
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
+
+  bool isShowDetail = false;
+  bool isLoadingGetDetail = false;
+  BookingDetail detailEvent = BookingDetail();
 
   String selectedView = "Weekly";
 
@@ -161,6 +168,12 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
         CalendarDataSourceAction.reset, _events.appointments!);
   }
 
+  closeDetail() {
+    setState(() {
+      isShowDetail = false;
+    });
+  }
+
   @override
   void initState() {
     // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -204,7 +217,27 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
         constraints: BoxConstraints(),
         child: Container(
           height: MediaQuery.of(context).size.height - 70 - 60,
-          child: calendarUserPage(),
+          child: Row(
+            children: [
+              Expanded(child: calendarUserPage()),
+              AnimatedSwitcher(
+                duration: Duration(milliseconds: 750),
+                switchInCurve: Curves.easeIn,
+                switchOutCurve: Curves.easeOut,
+                child: isShowDetail
+                    ? isLoadingGetDetail
+                        ? const CircularProgressIndicator(
+                            color: eerieBlack,
+                          )
+                        : DetailAppointmentContainer(
+                            // event: selectedEvent,
+                            closeDetail: closeDetail,
+                            bookingDetail: detailEvent,
+                          )
+                    : SizedBox(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -249,13 +282,47 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
           if (calendarTapDetails.targetElement ==
               CalendarElement.calendarCell) {}
           if (calendarTapDetails.targetElement == CalendarElement.appointment) {
-            Event list = calendarTapDetails.appointments![0];
-            print(list.capacity);
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return DetailEventDialog();
+            setState(() {
+              Event list = calendarTapDetails.appointments![0];
+              selectedEvent = list;
+              if (isShowDetail) {
+                isShowDetail = false;
+                isLoadingGetDetail = false;
+              }
+              isLoadingGetDetail = true;
+
+              getBookingDetail(selectedEvent!.bookingId!).then((value) {
+                setState(() {
+                  isLoadingGetDetail = false;
+                  print(value);
+                  detailEvent.bookingId = value['Data']['BookingID'];
+                  detailEvent.location = value['Data']['RoomName'];
+                  detailEvent.summary = value['Data']['Summary'];
+                  detailEvent.description = value['Data']['Description'];
+                  detailEvent.eventDate = value['Data']['BookingDate'];
+                  detailEvent.eventTime = value['Data']['BookingStartTime'] +
+                      " - " +
+                      value['Data']['BookingEndTime'];
+                  detailEvent.duration = value['Data']['Duration'];
+                  detailEvent.floor = value['Data']['AreaName'];
+                  detailEvent.email = value['Data']['Email'];
+                  detailEvent.avaya = value['Data']['AvayaNumber'];
+                  detailEvent.host = value['Data']['EmpName'];
+                  detailEvent.attendatsNumber =
+                      value['Data']['AttendantsNumber'].toString();
+                  if (!isShowDetail) {
+                    isShowDetail = true;
+                  }
                 });
+              });
+            });
+
+            // print(list.capacity);
+            // showDialog(
+            //     context: context,
+            //     builder: (BuildContext context) {
+            //       return DetailEventDialog();
+            //     });
           }
           // if (calendarTapDetails.appointments![0] != null) {
           // } else {
