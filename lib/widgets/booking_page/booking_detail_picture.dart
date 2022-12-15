@@ -55,9 +55,15 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                     Container(
                       height: widget.pictures!.length == 1 ? 350 : 270,
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(10),
+                          topRight: const Radius.circular(10),
+                          bottomLeft: widget.pictures!.length == 1
+                              ? const Radius.circular(10)
+                              : Radius.zero,
+                          bottomRight: widget.pictures!.length == 1
+                              ? const Radius.circular(10)
+                              : Radius.zero,
                         ),
                         image: DecorationImage(
                           image: widget.pictNotFound

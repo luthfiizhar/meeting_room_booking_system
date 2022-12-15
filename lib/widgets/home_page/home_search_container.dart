@@ -90,12 +90,21 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                     color: eerieBlack,
                   ),
                 ),
-                Container(
-                  width: 175,
-                  height: 112,
-                  decoration: BoxDecoration(
-                    color: davysGray,
-                    borderRadius: BorderRadius.circular(10),
+                InkWell(
+                  onTap: () {
+                    if (widget.meetingTypeStatus!) {
+                      widget.setMeetingTypeStatus!(false);
+                    } else {
+                      widget.setMeetingTypeStatus!(true);
+                    }
+                  },
+                  child: Container(
+                    width: 175,
+                    height: 112,
+                    decoration: BoxDecoration(
+                      color: davysGray,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ],

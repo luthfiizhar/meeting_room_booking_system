@@ -447,7 +447,9 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                                 // jwtToken = "login";
                                 // Scaffold.of(context).openEndDrawer();
                                 // loginDummy().then((value) {});
-                                loginCerberus().then((value) {});
+                                loginCerberus().then((value) {
+                                  setState(() {});
+                                });
                                 // showDialog(
                                 //   context: context,
                                 //   barrierDismissible: false,

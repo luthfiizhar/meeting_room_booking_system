@@ -38,11 +38,14 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   final info = NetworkInfo();
   MainModel mainModel = MainModel();
   bool profileVisible = false;
+  bool opacityOn = false;
   // bool upBottonVisible = false;
   popUpProfile(bool value) {
     if (profileVisible) {
       profileVisible = value;
+      opacityOn = value;
     } else {
+      opacityOn = value;
       profileVisible = value;
     }
     setState(() {});
@@ -287,6 +290,22 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                       // ),
                     ],
                   ),
+                  opacityOn
+                      ? Positioned(
+                          top: 60,
+                          child: Opacity(
+                            opacity: opacityOn ? 0.5 : 0,
+                            child: ConstrainedBox(
+                              constraints: pageConstraints,
+                              child: Container(
+                                color: eerieBlack.withOpacity(0.5),
+                                height: MediaQuery.of(context).size.height - 60,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox(),
                   Positioned(
                     right: 20,
                     top: 45,

@@ -49,8 +49,9 @@ bool firstLogIn = true;
 
 loginCheck() async {
   var box = await Hive.openBox('userLogin');
-  jwtToken =
-      box.get('jwt') != "" || box.get('jwt') != null ? box.get('jwt') : "";
+  jwtToken = box.get('jwtToken') != "" || box.get('jwtToken') != null
+      ? box.get('jwtToken')
+      : "";
 
   print("jwt: " + jwtToken.toString());
 }
@@ -59,9 +60,11 @@ void main() async {
   await Hive.initFlutter();
   // final ipv4 = await Ipify.ipv4();
   // print(ipv4);
-  loginCheck().then((_) {
-    runApp(MyApp());
-  });
+  await loginCheck();
+  runApp(MyApp());
+  // loginCheck().then((_) {
+  //   runApp(MyApp());
+  // });
 }
 
 class MyApp extends StatelessWidget {

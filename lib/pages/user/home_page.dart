@@ -27,6 +27,7 @@ import 'package:meeting_room_booking_system/widgets/end_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/feature_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/greeting_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/home_search_container.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/room_type_home_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/upcoming_event_container.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/meeting_type_container.dart';
@@ -304,6 +305,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     setState(() {});
   }
 
+  setMeetingTypeContainerStatus(bool value) {
+    meetingTypeContainerVisible = value;
+    opacityOn = value;
+    setState(() {});
+  }
+
   search() {
     String selectedDateFormatted = DateFormat('yyyy-M-dd').format(selectedDate);
 
@@ -513,6 +520,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+              Visibility(
+                visible: meetingTypeContainerVisible,
+                child: Positioned(
+                  left: 30,
+                  top: 420,
+                  child: RoomTypeContainerHomePage(),
+                ),
+              ),
             ],
           ),
         ),
@@ -541,6 +556,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           participantStatus: participantContainerVisible,
           setAmenitiesStatus: setAmenitiesStatus,
           amenitiesStatus: amenitiesContainerVisible,
+          setMeetingTypeStatus: setMeetingTypeContainerStatus,
+          meetingTypeStatus: meetingTypeContainerVisible,
           searchRoom: search,
         ),
         const SizedBox(

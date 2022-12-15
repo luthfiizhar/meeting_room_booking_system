@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:hive/hive.dart';
+import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/model/booking_class.dart';
 import 'package:http/http.dart' as http;
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
@@ -313,6 +314,7 @@ Future loginCerberus() async {
     var box = await Hive.openBox('userLogin');
     box.put(
         'jwtToken', data['Data']['Token'] != null ? data['Data']['Token'] : "");
+    jwtToken = data['Data']['Token'];
 
     return data;
   } on Error catch (e) {
