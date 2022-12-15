@@ -1780,25 +1780,29 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             );
           }),
         ),
-        Positioned(
-          // top:  model.isScrollAtEdge ? null : model.scrollPosition + 20,
-          // bottom: model.isScrollAtEdge ? 0 : null,
-          top: 85,
-          left: MediaQuery.of(context).size.width <= 1366 ? 120 : 320,
-          child: pictureLoading
-              ? const SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: CircularProgressIndicator(
-                    color: eerieBlack,
+        ConstrainedBox(
+          constraints: pageConstraints,
+          child: Positioned(
+            // top:  model.isScrollAtEdge ? null : model.scrollPosition + 20,
+            // bottom: model.isScrollAtEdge ? 0 : null,
+            top: 85,
+            // left: MediaQuery.of(context).size.width <= 1366 ? 120 : 320,
+            left: 120,
+            child: pictureLoading
+                ? const SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: CircularProgressIndicator(
+                      color: eerieBlack,
+                    ),
+                  )
+                : BookingRoomPicture(
+                    pictures: resultPicture,
+                    name: roomName,
+                    area: floor,
+                    pictNotFound: isPictEmpty,
                   ),
-                )
-              : BookingRoomPicture(
-                  pictures: resultPicture,
-                  name: roomName,
-                  area: floor,
-                  pictNotFound: isPictEmpty,
-                ),
+          ),
         ),
       ],
     );
