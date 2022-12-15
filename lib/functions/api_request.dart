@@ -140,7 +140,6 @@ Future searchRoomApi(
   try {
     var response = await http.post(url, body: bodySend, headers: requestHeader);
     var data = json.decode(response.body);
-    print(response.body);
     return data;
   } on Error catch (e) {
     return e;

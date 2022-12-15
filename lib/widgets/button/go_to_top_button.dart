@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 
 class GoToTopButton extends StatelessWidget {
   GoToTopButton({
@@ -68,19 +69,18 @@ class GoToTopButton extends StatelessWidget {
         ),
       ),
       child: Row(
-        children: const [
+        children: [
           Text(
             'Top',
-            style: TextStyle(
+            style: helveticaText.copyWith(
               fontSize: 16,
               fontWeight: FontWeight.w300,
-              fontFamily: 'Helvetica',
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 5,
           ),
-          Expanded(
+          const Expanded(
             child: Icon(
               MdiIcons.chevronUp,
               size: 18,

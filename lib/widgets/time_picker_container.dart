@@ -126,10 +126,21 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
     // else if (TimeOfDay.now().minute > 52) {
     //   minute = TimeOfDay.now().replacing(minute: 0).minute;
     // }
-    final startTime = TimeOfDay(
+    TimeOfDay startTime = TimeOfDay(
         hour: int.parse(start.split(":")[0]),
         minute:
             int.parse(start.split(":")[1])); //TimeOfDay(hour: 9, minute: 0);
+    var minute = startTime.minute;
+    var hour = startTime.hour;
+    var minuteEnd = startTime.minute + 15;
+    if (minuteEnd == 60) {
+      // startTime
+      hour = hour + 1;
+      minuteEnd = 0;
+    }
+
+    startTime = TimeOfDay(hour: hour, minute: minute);
+    print(startTime);
     final endTime = TimeOfDay(hour: 19, minute: 0);
     final step = Duration(minutes: 15);
 

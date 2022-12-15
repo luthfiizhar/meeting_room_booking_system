@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -50,13 +52,18 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
+  SearchPage({
+    Key? key,
+    this.queryParam = "",
+  }) : super(key: key);
 
+  dynamic queryParam;
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
+  ScrollController scrollController = ScrollController();
   // TextEditingController? _bookDate = TextEditingController();
   // TextEditingController? _startTime = TextEditingController();
   // TextEditingController? _endTime = TextEditingController();
@@ -339,6 +346,15 @@ class _SearchPageState extends State<SearchPage> {
   GlobalKey key5 = GlobalKey();
   GlobalKey key6 = GlobalKey();
 
+  Future autoScroll(BuildContext context) async {
+    Provider.of<MainModel>(context, listen: false).setAutoScrollSearch(true);
+    // Scrollable.ensureVisible(
+    //   datakey!.currentContext!,
+    //   duration: Duration(seconds: 1),
+    //   curve: Curves.easeInOut,
+    // );
+  }
+
   Future showTutorial() async {
     tutorialCoachMark = TutorialCoachMark(
       targets: targets, // List<TargetFocus>
@@ -616,7 +632,7 @@ class _SearchPageState extends State<SearchPage> {
         TimeOfDay(hour: hour, minute: minute).minute.toString().padLeft(2, '0');
     minuteEndInit = int.parse(minuteString) + 15;
     hourEndInit = hour;
-    var minuteEndString;
+    var minuteEndString = minuteEndInit.toString();
     print(minuteEndInit);
     if (minuteEndInit == 60) {
       print('masuk sini');
@@ -627,9 +643,10 @@ class _SearchPageState extends State<SearchPage> {
       print(hourEndInit);
       print(minuteEndString);
     }
-    minuteEndString = minuteEndInit.toString();
+    // minuteEndString = minuteEndInit.toString();
     startTime = "$hourString:$minuteString";
-    initialEndTime = "$hourEndInit:$minuteEndString";
+    initialEndTime =
+        "${hourEndInit.toString().padLeft(2, '0')}:${minuteEndString.toString().padLeft(2, '0')}";
     endTime = initialEndTime;
   }
 
@@ -645,9 +662,8 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
+    initTime();
     getAreaList().then((value) {
       setState(() {
         resultArea = value['Data'];
@@ -663,15 +679,21 @@ class _SearchPageState extends State<SearchPage> {
       });
       print(submitFilter);
       // print(listFilter);
+    }).then((value) {
+      print(widget.queryParam);
+      if (widget.queryParam.isNotEmpty) {
+        print('dr Home');
+        searchRoomFromHome();
+      } else {
+        print('bukan dari home');
+        String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
+        _dateController.text = formattedDate;
+        _facilityController.text = 'None';
+        _timeController.text = 'Choose Time';
+        _participantController.text = 'Total Participant';
+        participantSelected = "0";
+      }
     });
-    String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
-    _dateController.text = formattedDate;
-    _facilityController.text = 'None';
-    _timeController.text = 'Choose Time';
-    _participantController.text = 'Total Participant';
-    participantSelected = "0";
-
-    initTime();
     getRoomType().then((value) {
       print(value);
       if (value['Status'] == "200") {
@@ -694,23 +716,8 @@ class _SearchPageState extends State<SearchPage> {
         ),
       );
     });
-    // addTarget();
-    // Future.delayed(
-    //   Duration(milliseconds: 500),
-    //   () {
-    //     showTutorial().then((value) {
-    //       Provider.of<MainModel>(context, listen: false).onBoardDone();
-    //     });
-    //   },
-    // );
-    // showBoardingPage();
-    // checkOnBoardingPage();
-    // showBoardingPage();
-    dateNode.addListener(() {
-      setState(() {
-        // getPosition();
-      });
-    });
+
+    scrollController.addListener(() {});
   }
 
   popUpProfile(bool value) {
@@ -1031,6 +1038,72 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  searchRoomFromHome() {
+    dynamic date = DateTime.parse(widget.queryParam['date']);
+    List listAmen = [];
+    print('facility-> ${widget.queryParam['facility']}');
+    setState(() {
+      if (submitFilter.isEmpty) {
+        print('masuk sini');
+        for (var element in listFilter!) {
+          element.selected = true;
+        }
+        for (var element in listFilter!) {
+          submitFilter.add("\"${element.value}\"");
+        }
+      }
+
+      if (widget.queryParam['facility'] == "[]") {
+        _facilityController.text = 'None';
+      } else {
+        List listFacility = json.decode(widget.queryParam['facility']);
+        if (listFacility.length > 1) {
+          _facilityController.text = listFacility[0] + " & " + listFacility[1];
+        } else {
+          _facilityController.text = listFacility.first;
+          facilitySelected = listFacility;
+
+          for (var element in listFacility) {
+            listAmen.add('"$element"');
+          }
+        }
+      }
+
+      selectedDateFormatted = DateFormat('yyyy-M-dd').format(selectedDate);
+      _dateController.text = selectedDateFormatted;
+      // _facilityController.text = widget.queryParam['facility'];
+      _timeController.text =
+          widget.queryParam['startTime'] + ' - ' + widget.queryParam['endTime'];
+      _participantController.text =
+          widget.queryParam['participant'] + " Person";
+      selectedDate = date;
+      startTime = widget.queryParam['startTime'];
+      endTime = widget.queryParam['endTime'];
+      participantSelected = widget.queryParam['participant'];
+
+      meetingTypeValue = "MeetingRoom";
+
+      searchRoomApi(
+        selectedDateFormatted,
+        startTime,
+        endTime,
+        participantSelected,
+        listAmen.toString(),
+        meetingTypeValue,
+        submitFilter,
+        sort,
+      ).then((value) {
+        print(value);
+        if (value['Status'] == "200") {
+          setState(() {
+            isSearching = false;
+            searchResult = value["Data"]["Room"];
+          });
+        } else {}
+      }).onError((error, stackTrace) {});
+    });
+  }
+
   searchRoom() {
     setOpacityOn(false);
     setState(() {
@@ -1081,8 +1154,6 @@ class _SearchPageState extends State<SearchPage> {
       });
     });
   }
-
-  ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {

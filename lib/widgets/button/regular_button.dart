@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 
 class RegularButton extends StatelessWidget {
   RegularButton({
@@ -62,11 +63,9 @@ class RegularButton extends StatelessWidget {
         ),
         textStyle: MaterialStateProperty.resolveWith<TextStyle>(
           (states) {
-            return TextStyle(
+            return helveticaText.copyWith(
               fontSize: 16,
               fontWeight: fontWeight,
-              fontFamily: 'Helvetica',
-              height: 1.15,
             );
           },
         ),

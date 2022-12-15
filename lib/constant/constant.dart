@@ -8,7 +8,7 @@ const BoxConstraints pageConstraints = BoxConstraints(
 
 const TextStyle helveticaText = TextStyle(
   fontFamily: 'Helvetica',
-  height: 1.3,
+  height: 1.15,
 );
 
 const TextStyle titlePage = TextStyle(

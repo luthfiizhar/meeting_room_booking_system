@@ -101,4 +101,10 @@ class CheckBoxModel {
   bool? selected;
   String? value;
   String? name;
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "{$value}";
+  }
 }

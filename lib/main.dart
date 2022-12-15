@@ -15,6 +15,7 @@ import 'package:meeting_room_booking_system/pages/login_page.dart'
     deferred as loginPage;
 import 'package:meeting_room_booking_system/pages/user/calendar_view_page.dart'
     deferred as calendarViewPage;
+import 'package:meeting_room_booking_system/pages/user/google_workspace_page.dart';
 import 'package:meeting_room_booking_system/pages/user/home_page.dart'
     deferred as homePage;
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart'
@@ -145,37 +146,36 @@ class MyApp extends StatelessWidget {
       GoRoute(
         name: 'search',
         path: '/search',
-        // builder: (context, state) => CalendarViewPage(),
-        pageBuilder: (context, state) => NoTransitionPage<void>(
-          key: state.pageKey,
-          child: SearchPage(),
-        ),
-        // pageBuilder: (context, state) => NoTransitionPage<void>(
-        //   key: state.pageKey,
-        //   child: FutureBuilder(
-        //     future: searchPage.loadLibrary(),
-        //     builder: (context, snapshot) {
-        //       return searchPage.SearchPage();
-        //     },
-        //   ),
-        // ),
+        pageBuilder: (context, state) {
+          return NoTransitionPage<void>(
+            key: state.pageKey,
+            child: SearchPage(
+              queryParam: state.queryParams,
+            ),
+          );
+        },
         routes: [
           GoRoute(
             name: 'booking_search',
             path:
-                'booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType',
-            pageBuilder: (context, state) => NoTransitionPage<void>(
-              key: state.pageKey,
-              child: BookingRoomPage(
-                roomId: state.params['roomId'],
-                date: state.params['date'],
-                startTime: state.params['startTime'],
-                endTime: state.params['endTime'],
-                participant: state.params['participant'],
-                facilities: state.params['facilities'],
-                roomType: state.params['roomType'],
-              ),
-            ),
+                'booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType&isEdit=:isEdit',
+            // 'booking/isEdit=:isEdit',
+            pageBuilder: (context, state) {
+              return NoTransitionPage<void>(
+                  key: state.pageKey,
+                  child: BookingRoomPage(
+                    index: 1,
+                    roomId: state.params['roomId'],
+                    date: state.params['date'],
+                    startTime: state.params['startTime'],
+                    endTime: state.params['endTime'],
+                    participant: state.params['participant'],
+                    facilities: state.params['facilities'],
+                    roomType: state.params['roomType'],
+                    isEdit: state.params['isEdit']!,
+                    queryParameter: state.queryParams,
+                  ));
+            },
           ),
         ],
       ),
@@ -290,6 +290,14 @@ class MyApp extends StatelessWidget {
         pageBuilder: (context, state) => NoTransitionPage<void>(
           key: state.pageKey,
           child: AdminSettingPage(),
+        ),
+      ),
+      GoRoute(
+        name: 'gws',
+        path: '/gws',
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: GoogleWorkspacePage(),
         ),
       ),
     ],

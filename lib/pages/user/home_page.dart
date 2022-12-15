@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -24,6 +25,9 @@ import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
 import 'package:meeting_room_booking_system/widgets/end_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/feature_container.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/greeting_container.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/home_search_container.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/upcoming_event_container.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/meeting_type_container.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
@@ -72,404 +76,260 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   String startTime = "";
   String endTime = "";
   String initialEndTime = "";
+  String datePicked = "";
   String meetingTypeSelected = "Meeting Room";
-
-  List<RadioModel> listSorting = [
-    RadioModel(isSelected: false, text: 'Lowest Floor'),
-    RadioModel(isSelected: false, text: 'Highest Floor'),
-    RadioModel(isSelected: false, text: 'Lowest Capacity'),
-    RadioModel(isSelected: false, text: 'Highest Capacity'),
-    RadioModel(isSelected: false, text: 'Alphabetical'),
-  ];
-  String selectedSorting = "Lowest Floor";
-
-  List<CheckBoxModel>? listFilter = [
-    CheckBoxModel(selected: true, value: '1st Floor'),
-    CheckBoxModel(selected: true, value: '2nd Floor'),
-    CheckBoxModel(selected: true, value: '3rd Floor'),
-    CheckBoxModel(selected: true, value: '4th Floor'),
-    CheckBoxModel(selected: true, value: '5th Floor'),
-    CheckBoxModel(selected: true, value: '1st Floor'),
-    CheckBoxModel(selected: true, value: '1st Floor'),
-    CheckBoxModel(selected: true, value: '1st Floor'),
-    CheckBoxModel(selected: true, value: '1st Floor'),
-    CheckBoxModel(selected: true, value: '1st Floor'),
-  ];
-  List selectedFilter = ['1', '2', '3', '4'];
 
   DateTime selectedDate = DateTime.now();
 
-  List<TargetFocus> targets = [];
-  late TutorialCoachMark tutorialCoachMark;
-
-  GlobalKey key1 = GlobalKey();
-  GlobalKey key2 = GlobalKey();
-  GlobalKey key3 = GlobalKey();
-  GlobalKey key4 = GlobalKey();
-  GlobalKey key5 = GlobalKey();
-  GlobalKey key6 = GlobalKey();
-
-  GlobalKey introSectionKey = GlobalKey();
-  GlobalKey featureSectionKey = GlobalKey();
-  GlobalKey faqSectionKey = GlobalKey();
+  bool datePickerVisible = false;
+  bool amenitiesContainerVisible = false;
+  bool participantContainerVisible = false;
+  bool timePickerContainerVisible = false;
+  bool startTimeContainerVisible = false;
+  bool endTimeContainerVisible = false;
+  bool meetingTypeContainerVisible = false;
 
   ScrollController scrollController = ScrollController();
 
-  late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 2),
-    vsync: this,
-  );
-  late final AnimationController _controller2 = AnimationController(
-    duration: const Duration(seconds: 2),
-    vsync: this,
-  );
-  late final AnimationController _controller3 = AnimationController(
-    duration: const Duration(seconds: 2),
-    vsync: this,
-  );
-  late final AnimationController _controller4 = AnimationController(
-    duration: const Duration(seconds: 2),
-    vsync: this,
-  );
-  late final Animation<double> _animation1 = CurvedAnimation(
-    parent: _controller,
-    curve: Curves.easeIn,
-  );
-
-  late final Animation<double> _animation2 = CurvedAnimation(
-    parent: _controller2,
-    curve: Curves.easeIn,
-  );
-
-  late final Animation<double> _animation3 = CurvedAnimation(
-    parent: _controller3,
-    curve: Curves.easeIn,
-  );
-
-  late final Animation<double> _animation4 = CurvedAnimation(
-    parent: _controller4,
-    curve: Curves.easeIn,
-  );
-
-  late final Animation<Offset> _offsetAnimation = Tween<Offset>(
-    end: Offset.zero,
-    begin: const Offset(1.5, 0.0),
-  ).animate(
-    CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    ),
-  );
-
-  scrollListener(ScrollController scrollInfo) {
-    RenderBox box =
-        introSectionKey.currentContext!.findRenderObject() as RenderBox;
-    Offset position = box.localToGlobal(Offset.zero); //this is global position
-    double y = position.dy;
-    // print('Container -> $y');
-    // print('Controller -> ${scrollInfo.position.pixels.toString()}');
-    if (scrollInfo.position.pixels == 0) {
-      // setState(() {});
-      // _controller.forward(from: 0);
-      animateIntroSection();
+  scrollListener(ScrollController scrollInfo) {}
+  initTime() {
+    int minute = TimeOfDay.now().minute;
+    int hour = TimeOfDay.now().hour;
+    int minuteEndInit = 0;
+    int hourEndInit = 0;
+    if (TimeOfDay.now().minute >= 0 && TimeOfDay.now().minute < 15) {
+      minute = TimeOfDay.now().replacing(minute: 15).minute;
+    } else if (TimeOfDay.now().minute > 15 && TimeOfDay.now().minute <= 30) {
+      minute = TimeOfDay.now().replacing(minute: 30).minute;
+    } else if (TimeOfDay.now().minute > 30 && TimeOfDay.now().minute <= 45) {
+      minute = TimeOfDay.now().replacing(minute: 45).minute;
+    } else if (TimeOfDay.now().minute > 45 && TimeOfDay.now().minute <= 60) {
+      minute = TimeOfDay.now().replacing(minute: 0).minute;
+      hour = TimeOfDay.now().hour + 1;
     }
+    var hourString =
+        TimeOfDay(hour: hour, minute: minute).hour.toString().padLeft(2, '0');
+    var minuteString =
+        TimeOfDay(hour: hour, minute: minute).minute.toString().padLeft(2, '0');
+    minuteEndInit = int.parse(minuteString) + 15;
+    hourEndInit = hour;
+    var minuteEndString = minuteEndInit.toString();
+    print(minuteEndInit);
+    if (minuteEndInit == 60) {
+      print('masuk sini');
+
+      minuteEndString =
+          TimeOfDay(hour: hour, minute: 0).minute.toString().padLeft(2, '0');
+      // print(hour);
+      // print(hourEndInit);
+      print(minuteEndString);
+    }
+    // minuteEndString = minuteEndInit.toString();
+    startTime = "$hourString:$minuteString";
+    initialEndTime =
+        "${hourEndInit.toString().padLeft(2, '0')}:${minuteEndString.toString().padLeft(2, '0')}";
+    endTime = initialEndTime;
+    print('endTime -> $endTime');
   }
 
   @override
   void dispose() {
-    _controller.dispose();
-    scrollController.dispose();
+    // _controller.dispose();
+    _dateController.dispose();
+    _participantController.dispose();
+    _timeController.dispose();
+    _facilityController.dispose();
+    // scrollController.dispose();
     super.dispose();
-  }
-
-  Future animateIntroSection() async {
-    _controller.forward(from: 0);
-    Future.delayed(
-      const Duration(
-        milliseconds: 250,
-      ),
-      () {
-        _controller2.forward(from: 0);
-      },
-    );
-    Future.delayed(
-      const Duration(
-        milliseconds: 750,
-      ),
-      () {
-        _controller3.forward(from: 0);
-      },
-    );
-    Future.delayed(
-      const Duration(
-        milliseconds: 1000,
-      ),
-      () {
-        _controller4.forward(from: 0);
-      },
-    );
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    animateIntroSection();
-    scrollController.addListener(() {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        scrollListener(scrollController);
-        // print(Provider.of<MainModel>(context).toString());
-      });
-    });
-  }
 
-  Future showTutorial() async {
-    tutorialCoachMark = TutorialCoachMark(
-      targets: targets, // List<TargetFocus>
-      // colorShadow: Colors.red, // DEFAULT Colors.black
-      // alignSkip: Alignment.bottomRight,
-      // textSkip: "SKIP",
-      // paddingFocus: 10,
-      // opacityShadow: 0.8,
-      onClickTarget: (target) {
-        print(target);
-      },
-      onClickTargetWithTapPosition: (target, tapDetails) {
-        print("target: $target");
-        print(
-            "clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
-      },
-      onClickOverlay: (target) {
-        print(target);
-      },
-      onSkip: () {
-        Provider.of<MainModel>(context, listen: false).onBoardDone();
-        print("skip");
-      },
-      onFinish: () {
-        print("finish");
-      },
-    );
-    // TutorialCoachMark().show(context: context);
-    if (Provider.of<MainModel>(context, listen: false).firstLogin) {
-      tutorialCoachMark.show(context: context);
-    }
-    // return "";
-  }
+    String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
+    _dateController.text = formattedDate;
+    _facilityController.text = 'None';
+    _timeController.text = 'Choose Time';
+    _participantController.text = '1';
+    participantSelected = "1";
 
-  addTarget() {
-    targets.add(
-      TargetFocus(
-        identify: "Target 1",
-        keyTarget: key1,
-        shape: ShapeLightFocus.RRect,
-        radius: 7,
-        contents: [
-          TargetContent(
-              align: ContentAlign.bottom,
-              // customPosition: CustomTargetContentPosition(top: 100, right: 200),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Home",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20.0),
-                  ),
-                  const Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      "Halaman utama user.",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: ElevatedButton(
-                          onPressed: () {
-                            tutorialCoachMark.next();
-                          },
-                          child: Text('Next')))
-                ],
-              ))
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "Target 2",
-        keyTarget: key2,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Search Room",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Untuk mencari ruang meeting yang tersedia.",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "Target 3",
-        keyTarget: key3,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "My Bookings",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "List booking user.",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "Target 4",
-        keyTarget: key4,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Calendar",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Calendar user (sync with Google Calendar).",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "Target 5",
-        keyTarget: key5,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Logout",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Logout mengakhiri sesi user.",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "Target 6",
-        keyTarget: key6,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.left,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                Text(
-                  "Konten",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Konten.",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+    initTime();
   }
 
   resetAllVisibleStatus(bool value) {
-    // datePickerVisible = value;
-    // amenitiesContainerVisible = value;
-    // participantContainerVisible = value;
-    // timePickerContainerVisible = value;
-    // startTimeContainerVisible = value;
-    // endTimeContainerVisible = value;
-    // meetingTypeContainerVisible = value;
-    // opacityOn = value;
-    // setState(() {});
+    datePickerVisible = value;
+    amenitiesContainerVisible = value;
+    participantContainerVisible = value;
+    timePickerContainerVisible = value;
+    startTimeContainerVisible = value;
+    endTimeContainerVisible = value;
+    meetingTypeContainerVisible = value;
+    opacityOn = value;
+    setState(() {});
+  }
+
+  setOpacityOn(bool value) {
+    opacityOn = value;
+    setState(() {});
+  }
+
+  setDatePickerVisible(bool value) {
+    // RenderBox box = dateKey.currentContext!.findRenderObject() as RenderBox;
+    // Offset position = box.localToGlobal(Offset.zero);
+    // double y = position.dy;
+    // double x = position.dx;
+    // mouseX = x;
+    // mouseY = y;
+    // print(mouseX);
+    // print(mouseY);
+    if (value) {
+      setOpacityOn(true);
+    } else {
+      setOpacityOn(false);
+    }
+    datePickerVisible = value;
+    // _datePickerOverlay(context);
+    setState(() {});
+  }
+
+  onDateChanged(String value, DateTime date) {
+    datePicked = value;
+    selectedDate = date;
+    _dateController.text = datePicked;
+    if (DateFormat('yyyy-MM-dd').format(date) !=
+        DateFormat('yyyy-MM-dd').format(DateTime.now())) {
+      startTime = '07:00';
+      endTime = '07:15';
+    } else {
+      dynamic hour = TimeOfDay.now().hour;
+      dynamic minute = TimeOfDay.now().minute;
+      dynamic endMinute = minute;
+      dynamic endHour = hour;
+      if (TimeOfDay.now().minute >= 0 && TimeOfDay.now().minute < 15) {
+        minute = TimeOfDay.now().replacing(minute: 15).minute;
+      } else if (TimeOfDay.now().minute > 15 && TimeOfDay.now().minute <= 30) {
+        minute = TimeOfDay.now().replacing(minute: 30).minute;
+      } else if (TimeOfDay.now().minute > 30 && TimeOfDay.now().minute <= 45) {
+        minute = TimeOfDay.now().replacing(minute: 45).minute;
+      } else if (TimeOfDay.now().minute > 45 && TimeOfDay.now().minute <= 60) {
+        minute = TimeOfDay.now().replacing(minute: 0).minute;
+        hour = hour + 1;
+      }
+      endMinute = minute + 15;
+      if (endMinute == 60) {
+        endHour = hour;
+        endMinute = 0;
+      }
+      hour = hour.toString().padLeft(2, '0');
+      minute = minute.toString().padLeft(2, '0');
+
+      endHour = endHour.toString().padLeft(2, '0');
+      endMinute = endMinute.toString().padLeft(2, '0');
+
+      startTime = "$hour:$minute";
+      endTime = "$hour:$endMinute";
+    }
+    setOpacityOn(false);
+    setState(() {});
+  }
+
+  setTimePickerStatus(bool value) {
+    timePickerContainerVisible = value;
+    opacityOn = value;
+    setState(() {});
+  }
+
+  setListStartTime(List value) {
+    startTimeList = value;
+    // setOpacityOn(false);
+    setState(() {});
+  }
+
+  setListEndTime(List value) {
+    endTimeList = value;
+    // setOpacityOn(false);
+    setState(() {});
+  }
+
+  setStartTimeStatus(bool value) {
+    startTimeContainerVisible = value;
+    setState(() {});
+  }
+
+  setEndTimeStatus(bool value) {
+    endTimeContainerVisible = value;
+    setState(() {});
+  }
+
+  setTime(String start, String end) {
+    startTime = start;
+    endTime = end;
+    _timeController.text = "$startTime - $endTime";
+    setState(() {});
+  }
+
+  setStartTime(String start) {
+    startTime = start;
+    setState(() {});
+  }
+
+  setEndTime(String end) {
+    endTime = end;
+    setState(() {});
+  }
+
+  setInitialEndTime(String value) {
+    initialEndTime = value;
+    setState(() {});
+  }
+
+  setParticipantStatus(bool value) {
+    participantContainerVisible = value;
+    opacityOn = value;
+    setState(() {});
+  }
+
+  onParticipanSelected(String value) {
+    participantSelected = value;
+    _participantController.text = participantSelected;
+    setOpacityOn(false);
+    setState(() {});
+  }
+
+  setAmenitiesStatus(bool value) {
+    amenitiesContainerVisible = value;
+    opacityOn = value;
+    setState(() {});
+  }
+
+  search() {
+    String selectedDateFormatted = DateFormat('yyyy-M-dd').format(selectedDate);
+
+    List listAmen = [];
+    for (var element in facilitySelected) {
+      listAmen.add('"$element"');
+    }
+
+    context.goNamed(
+      'search',
+      queryParams: {
+        'date': selectedDate.toString(),
+        'startTime': startTime,
+        'endTime': endTime,
+        'participant': participantSelected,
+        'facility': listAmen.toString(),
+      },
+    );
+
+    // print("""
+    //   $selectedDateFormatted,
+    //   $startTime,
+    //   $endTime,
+    //   $participantSelected,
+    //   ${listAmen.toString()},
+    // """);
   }
 
   @override
@@ -480,15 +340,274 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       setDatePickerStatus: resetAllVisibleStatus,
       child: ConstrainedBox(
         constraints: pageConstraints,
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 80,
-            ),
-            Container(),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 100,
+            vertical: 40,
+          ),
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        row1(),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        Expanded(
+                          child: row2(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              opacityOn
+                  ? Center(
+                      child: ConstrainedBox(
+                        constraints: pageConstraints.copyWith(
+                          minHeight: MediaQuery.of(context).size.width,
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            resetAllVisibleStatus(false);
+                          },
+                          child: Container(
+                            color: Colors.white.withOpacity(0.5),
+                          ),
+                        ),
+                      ),
+                    )
+                  : SizedBox(),
+              Visibility(
+                visible: datePickerVisible,
+                child: Positioned(
+                  left: 265,
+                  top: 285,
+                  child: CustomDatePicker(
+                    controller: datePickerControl,
+                    isDark: true,
+                    changeDate: onDateChanged,
+                    currentDate: selectedDate,
+                    setPickerStatus: setDatePickerVisible,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: timePickerContainerVisible,
+                child: Positioned(
+                  left: 465,
+                  top: 285,
+                  child: TimePickerContainer(
+                    // controller: datePickerControl,
+                    endTime: endTime,
+                    startTime: startTime,
+                    initialEndTime: initialEndTime,
+                    endTimeStatus: endTimeContainerVisible,
+                    startTimeStatus: startTimeContainerVisible,
+                    isDark: true,
+                    selectedDate: selectedDate,
+                    setEndTimeStatus: setEndTimeStatus,
+                    setStartTimeStatus: setStartTimeStatus,
+                    setListEndTime: setListEndTime,
+                    setListStartTime: setListStartTime,
+                    setTime: setTime,
+                    setTimePickerStatus: setTimePickerStatus,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: startTimeContainerVisible,
+                child: Positioned(
+                  top: 395,
+                  left: 475,
+                  child: StartTimeContainer(
+                    items: startTimeList,
+                    setStartTime: setStartTime,
+                    setStartTimeStatus: setStartTimeStatus,
+                    setInitialEndTime: setInitialEndTime,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: endTimeContainerVisible,
+                child: Positioned(
+                  top: 395,
+                  left: 595,
+                  child: EndTimeContainer(
+                    items: endTimeList,
+                    setEndTime: setEndTime,
+                    setEndTimeStatus: setEndTimeStatus,
+                    startTime: startTime,
+                    setTime: setTime,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: participantContainerVisible,
+                child: Positioned(
+                  left: 265,
+                  top: 365,
+                  child: ParticipantContainer(
+                    setParticipantStatus: setParticipantStatus,
+                    onChangeParticipant: onParticipanSelected,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: amenitiesContainerVisible,
+                child: Positioned(
+                  left: 465,
+                  top: 365,
+                  child: AmenitiesContainer(
+                    tvOnChange: (value) {
+                      if (checkBoxTv) {
+                        checkBoxTv = false;
+                        facilitySelected
+                            .removeWhere((element) => element == 'TV');
+                      } else {
+                        checkBoxTv = true;
+                        facilitySelected.add('TV');
+                      }
+                      if (facilitySelected.isNotEmpty) {
+                        if (facilitySelected.length > 1) {
+                          _facilityController.text = "TV & Camera";
+                        } else if (facilitySelected.length == 1) {
+                          _facilityController.text =
+                              facilitySelected[0].toString();
+                        }
+                      } else {
+                        _facilityController.text = "None";
+                      }
+                      print(facilitySelected);
+                      setState(() {});
+                    },
+                    cameraOnChange: (value) {
+                      if (checkBoxCamera) {
+                        checkBoxCamera = false;
+                        facilitySelected
+                            .removeWhere((element) => element == 'Camera');
+                      } else {
+                        checkBoxCamera = true;
+                        facilitySelected.add('Camera');
+                      }
+                      if (facilitySelected.isNotEmpty) {
+                        if (facilitySelected.length > 1) {
+                          _facilityController.text = "TV & Camera";
+                        } else if (facilitySelected.length == 1) {
+                          _facilityController.text = facilitySelected[0];
+                        }
+                      } else {
+                        _facilityController.text = "None";
+                      }
+                      print(facilitySelected);
+
+                      setState(() {});
+                    },
+                    cameraValue: checkBoxCamera,
+                    tvValue: checkBoxTv,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget row1() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        const GreetingContainer(),
+        const SizedBox(
+          height: 30,
+        ),
+        HomeRoomSearchContainer(
+          dateController: _dateController,
+          participantController: _participantController,
+          timeController: _timeController,
+          facilityController: _facilityController,
+          setDatePickerStatus: setDatePickerVisible,
+          datePickerStatus: datePickerVisible,
+          setTimeContainerStatus: setTimePickerStatus,
+          timePickerStatus: timePickerContainerVisible,
+          setParticipantStatus: setParticipantStatus,
+          participantStatus: participantContainerVisible,
+          setAmenitiesStatus: setAmenitiesStatus,
+          amenitiesStatus: amenitiesContainerVisible,
+          searchRoom: search,
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        UpcomingEventContainer(),
+        const SizedBox(
+          height: 30,
+        ),
+        InkWell(
+          onTap: () {
+            context.go('/gws');
+          },
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 780,
+              minWidth: 780,
+            ),
+            child: const WhiteBannerLandscape(
+              title: 'Link your Google account',
+              subtitle: '& enjoy your benefits.',
+              imagePath: 'assets/banner_pict_google.png',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget row2() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(
+            minHeight: 690,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: davysGray,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: platinum,
+                width: 1,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        ConstrainedBox(
+          constraints: const BoxConstraints(
+            minHeight: 375,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: davysGray,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: platinum,
+                width: 1,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

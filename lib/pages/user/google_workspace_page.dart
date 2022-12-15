@@ -179,7 +179,10 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
   @override
   void dispose() {
     _controller.dispose();
-    scrollController.dispose();
+    _controller2.dispose();
+    _controller3.dispose();
+    _controller4.dispose();
+    // scrollController.dispose();
     super.dispose();
   }
 

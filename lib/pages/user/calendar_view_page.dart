@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/event_class.dart';
@@ -200,9 +201,9 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
       scrollController: scrollController,
       setDatePickerStatus: setDatePickerStatus,
       child: ConstrainedBox(
-        constraints: pageConstraints,
+        constraints: BoxConstraints(),
         child: Container(
-          height: MediaQuery.of(context).size.height - 115 - 60,
+          height: MediaQuery.of(context).size.height - 70 - 60,
           child: calendarUserPage(),
         ),
       ),
@@ -215,6 +216,17 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
         controller: _calendar,
         showDatePickerButton: true,
         allowViewNavigation: true,
+        viewHeaderStyle: ViewHeaderStyle(
+            dateTextStyle: helveticaText.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w300,
+              color: eerieBlack,
+            ),
+            dayTextStyle: helveticaText.copyWith(
+              fontSize: 14,
+              fontWeight: FontWeight.w300,
+              color: eerieBlack,
+            )),
         onViewChanged: (viewChangedDetails) {
           // print(viewChangedDetails.visibleDates.first);
           startDate = viewChangedDetails.visibleDates.first;

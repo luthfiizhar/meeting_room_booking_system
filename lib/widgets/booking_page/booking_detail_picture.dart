@@ -24,7 +24,7 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // print(widget.pictures);
+    print(widget.pictures);
   }
 
   @override
@@ -53,7 +53,7 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                 child: Column(
                   children: [
                     Container(
-                      height: 270,
+                      height: widget.pictures!.length == 1 ? 350 : 270,
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(10),
@@ -68,47 +68,50 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                         ),
                       ),
                     ),
-                    Container(
-                      height: 80,
-                      width: 500,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10),
-                        ),
-                      ),
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        itemCount: 5,
-                        itemBuilder: (context, index) {
-                          var borderRadius = index == 0
-                              ? BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                )
-                              : index == 4
-                                  ? BorderRadius.only(
-                                      bottomRight: Radius.circular(10),
-                                    )
-                                  : null;
-                          return Container(
-                            width: 100,
+                    widget.pictures!.length == 1
+                        ? const SizedBox()
+                        : Container(
                             height: 80,
-                            decoration: BoxDecoration(
-                              borderRadius: borderRadius,
-                              image: DecorationImage(
-                                image: widget.pictNotFound
-                                    ? Image.asset('asset/image_not_found.jpg')
-                                        .image
-                                    : NetworkImage(
-                                        widget.pictures!.first['ImageURL']),
-                                fit: BoxFit.cover,
+                            width: 500,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    )
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              itemCount: 5,
+                              itemBuilder: (context, index) {
+                                var borderRadius = index == 0
+                                    ? BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                      )
+                                    : index == 4
+                                        ? BorderRadius.only(
+                                            bottomRight: Radius.circular(10),
+                                          )
+                                        : null;
+                                return Container(
+                                  width: 100,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    borderRadius: borderRadius,
+                                    image: DecorationImage(
+                                      image: widget.pictNotFound
+                                          ? Image.asset(
+                                                  'asset/image_not_found.jpg')
+                                              .image
+                                          : NetworkImage(widget
+                                              .pictures!.first['ImageURL']),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
                   ],
                 ),
               ),

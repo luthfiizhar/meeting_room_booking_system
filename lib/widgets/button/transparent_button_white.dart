@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 
 class TransparentButtonWhite extends StatelessWidget {
   const TransparentButtonWhite({
@@ -61,7 +62,7 @@ class TransparentButtonWhite extends StatelessWidget {
         ),
         textStyle: MaterialStateProperty.resolveWith<TextStyle>(
           (states) {
-            return const TextStyle(
+            return helveticaText.copyWith(
               fontSize: 16,
               fontWeight: FontWeight.w700,
             );

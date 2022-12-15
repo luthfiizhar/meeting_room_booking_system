@@ -5,6 +5,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
+import 'package:meeting_room_booking_system/pages/user/rooms_page.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
 
@@ -13,11 +14,13 @@ class DetailAppointmentContainer extends StatefulWidget {
     super.key,
     this.event,
     this.closeDetail,
+    this.bookingDetail,
   });
 
   RoomEvent? event;
   String? floor;
   Function? closeDetail;
+  BookingDetail? bookingDetail;
 
   @override
   State<DetailAppointmentContainer> createState() =>
@@ -43,20 +46,30 @@ class _DetailAppointmentContainerState
     // TODO: implement initState
     super.initState();
     // print(widget.event!.bookingID!);
-    getBookingDetail(widget.event!.bookingID!).then((value) {
-      print(value['Data']);
-      setState(() {
-        eventName = value['Data']['Summary'];
-        attendantsNumber = value['Data']['AttendantsNumber'].toString();
-        location = value['Data']['RoomName'];
-        // floor = value['Data']['Room']
-        eventTime =
-            "${value['Data']['BookingStartTime']} - ${value['Data']['BookingEndTime']}";
-        eventDate = value['Data']['BookingDate'];
-        duration = value['Data']['Duration'];
-        host = value['Data']['EmpName'];
-      });
-    });
+    // getBookingDetail(widget.event!.bookingID!).then((value) {
+    //   print(value['Data']);
+    //   setState(() {
+    //     eventName = value['Data']['Summary'];
+    //     attendantsNumber = value['Data']['AttendantsNumber'].toString();
+    //     location = value['Data']['RoomName'];
+    //     // floor = value['Data']['Room']
+    //     eventTime =
+    //         "${value['Data']['BookingStartTime']} - ${value['Data']['BookingEndTime']}";
+    //     eventDate = value['Data']['BookingDate'];
+    //     duration = value['Data']['Duration'];
+    //     host = value['Data']['EmpName'];
+    //   });
+    // });
+    eventName = widget.bookingDetail!.summary;
+    attendantsNumber = widget.bookingDetail!.attendatsNumber;
+    location = widget.bookingDetail!.location;
+    // floor = value['Data']['Room']
+    eventTime = widget.bookingDetail!.eventTime;
+    eventDate = widget.bookingDetail!.eventDate;
+    duration = widget.bookingDetail!.duration;
+    host = widget.bookingDetail!.host;
+    email = widget.bookingDetail!.email;
+    avaya = widget.bookingDetail!.avaya;
   }
 
   @override

@@ -244,7 +244,7 @@ class ListRoomContainer extends StatelessWidget {
                 onTap: () {
                   // context.go('/home/booking');
                   context.pushNamed(
-                    'booking',
+                    'booking_search',
                     params: {
                       "roomId": '$roomID',
                       'date': '$date',
@@ -254,6 +254,12 @@ class ListRoomContainer extends StatelessWidget {
                       'facilities': '$amenities',
                       'roomType': '$roomType',
                       'isEdit': 'false'
+                    },
+                    queryParams: {
+                      // "roomId": roomID,
+                      // "date":date,
+                      // "startTime": startTime,
+                      // "endTime": endTime,
                     },
                   );
                 },

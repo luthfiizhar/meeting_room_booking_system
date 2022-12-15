@@ -55,6 +55,7 @@ class BookingRoomPage extends StatefulWidget {
     this.recurrent,
     this.invitedGuest,
     this.edit,
+    this.queryParameter,
   });
 
   String? roomId;
@@ -72,6 +73,7 @@ class BookingRoomPage extends StatefulWidget {
   dynamic recurrent;
   List? invitedGuest;
   dynamic edit;
+  dynamic queryParameter;
 
   @override
   State<BookingRoomPage> createState() => _BookingRoomPageState();

@@ -55,6 +55,8 @@ class _RoomsPageState extends State<RoomsPage> {
     platinum
   ];
 
+  BookingDetail detailEvent = BookingDetail();
+
   RoomEvent? selectedEvent;
 
   bool isShowDetail = false;
@@ -586,15 +588,13 @@ class _RoomsPageState extends State<RoomsPage> {
                       switchOutCurve: Curves.easeOut,
                       child: isShowDetail
                           ? DetailAppointmentContainer(
-                              event: selectedEvent,
+                              // event: selectedEvent,
                               closeDetail: closeDetail,
+                              bookingDetail: detailEvent,
                             )
                           : SizedBox(),
                     ),
                   ],
-                ),
-                SizedBox(
-                  height: 20,
                 ),
               ],
             ),
@@ -743,6 +743,7 @@ class _RoomsPageState extends State<RoomsPage> {
         ),
         initialDisplayDate: selectedDate,
         onTap: (calendarTapDetails) {
+          // await closeDetail();
           if (calendarTapDetails.targetElement == CalendarElement.appointment) {
             // print('Kosong gan');
 
@@ -751,10 +752,33 @@ class _RoomsPageState extends State<RoomsPage> {
             setState(() {
               RoomEvent list = calendarTapDetails.appointments![0];
               selectedEvent = list;
-              print(selectedEvent!.eventName);
-              if (!isShowDetail) {
-                isShowDetail = true;
+              if (isShowDetail) {
+                isShowDetail = false;
               }
+
+              getBookingDetail(selectedEvent!.bookingID!).then((value) {
+                setState(() {
+                  print(value);
+                  detailEvent.bookingId = value['Data']['BookingID'];
+                  detailEvent.location = value['Data']['RoomName'];
+                  detailEvent.summary = value['Data']['Summary'];
+                  detailEvent.description = value['Data']['Description'];
+                  detailEvent.eventDate = value['Data']['BookingDate'];
+                  detailEvent.eventTime = value['Data']['BookingStartTime'] +
+                      " - " +
+                      value['Data']['BookingEndTime'];
+                  detailEvent.duration = value['Data']['Duration'];
+                  detailEvent.floor = value['Data']['AreaName'];
+                  detailEvent.email = value['Data']['Email'];
+                  detailEvent.avaya = value['Data']['AvayaNumber'];
+                  detailEvent.host = value['Data']['EmpName'];
+                  detailEvent.attendatsNumber =
+                      value['Data']['AttendantsNumber'].toString();
+                  if (!isShowDetail) {
+                    isShowDetail = true;
+                  }
+                });
+              });
             });
           }
           if (calendarTapDetails.targetElement ==
@@ -1052,4 +1076,34 @@ class Area {
   //   // TODO: implement toString
   //   return 'Room : $rooms';
   // }
+}
+
+class BookingDetail {
+  BookingDetail({
+    this.bookingId = "",
+    this.location = "",
+    this.floor = "",
+    this.eventTime = "",
+    this.eventDate = "",
+    this.duration = "",
+    this.host = "",
+    this.email = "",
+    this.avaya = "",
+    this.summary = "",
+    this.description = "",
+    this.attendatsNumber = "",
+  });
+  String bookingId;
+  String location;
+  String floor;
+  String eventTime;
+  String eventDate;
+  String duration;
+  String summary;
+  String description;
+  String attendatsNumber;
+
+  String host;
+  String email;
+  String avaya;
 }
