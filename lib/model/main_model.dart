@@ -12,6 +12,8 @@ class MainModel extends ChangeNotifier {
   Offset _offsetNavbar = Offset(0, 0);
   static ScrollController _layoutController = ScrollController();
 
+  String _jwtToken = "";
+
   Color? _settingPageActiveColor;
 
   String _selectedDate = "";
@@ -34,6 +36,7 @@ class MainModel extends ChangeNotifier {
   final RoomEventDataSource _events =
       RoomEventDataSource(<RoomEvent>[], <CalendarResource>[]);
 
+  String get jwtToken => _jwtToken;
   ScrollController get layoutController => _layoutController;
   bool get shadowActive => _shadowActive;
   bool get profilePopup => _profilePopup;
@@ -63,6 +66,11 @@ class MainModel extends ChangeNotifier {
   Offset get offsetNavbar => _offsetNavbar;
 
   int get testScroll => _testScroll;
+
+  void setJwtToken(String value) {
+    _jwtToken = value;
+    notifyListeners();
+  }
 
   void setUpBotton(bool value) {
     _upBottonVisible = value;

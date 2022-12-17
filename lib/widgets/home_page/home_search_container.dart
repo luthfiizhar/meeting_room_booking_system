@@ -22,6 +22,7 @@ class HomeRoomSearchContainer extends StatefulWidget {
     this.roomTypeName,
     this.roomTypeSelected,
     this.setMeetingTypeStatus,
+    this.roomTypeUrl,
     this.searchRoom,
   });
 
@@ -45,6 +46,7 @@ class HomeRoomSearchContainer extends StatefulWidget {
   bool? meetingTypeStatus;
   String? roomTypeSelected;
   String? roomTypeName;
+  String? roomTypeUrl;
 
   @override
   State<HomeRoomSearchContainer> createState() =>
@@ -55,12 +57,13 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxWidth: 780,
-        minWidth: 780,
-        maxHeight: 200,
-        minHeight: 200,
-      ),
+      // constraints: const BoxConstraints(
+      //   maxWidth: 780,
+      //   minWidth: 780,
+      //   maxHeight: 200,
+      //   minHeight: 200,
+      // ),
+      constraints: homeLeftSideConstrains,
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: 30,

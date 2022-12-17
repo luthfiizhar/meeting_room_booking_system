@@ -64,6 +64,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   ScrollController scrollController = ScrollController();
+  MainModel mainModel = MainModel();
   // TextEditingController? _bookDate = TextEditingController();
   // TextEditingController? _startTime = TextEditingController();
   // TextEditingController? _endTime = TextEditingController();
@@ -346,8 +347,10 @@ class _SearchPageState extends State<SearchPage> {
   GlobalKey key5 = GlobalKey();
   GlobalKey key6 = GlobalKey();
 
-  Future autoScroll(BuildContext context) async {
-    Provider.of<MainModel>(context, listen: false).setAutoScrollSearch(true);
+  Future autoScroll(BuildContext context, MainModel model) async {
+    print('autoScroll');
+    model.setAutoScrollSearch(true);
+    print(Provider.of<MainModel>(context, listen: false).autoScrollSearch);
     // Scrollable.ensureVisible(
     //   datakey!.currentContext!,
     //   duration: Duration(seconds: 1),
@@ -648,6 +651,9 @@ class _SearchPageState extends State<SearchPage> {
     initialEndTime =
         "${hourEndInit.toString().padLeft(2, '0')}:${minuteEndString.toString().padLeft(2, '0')}";
     endTime = initialEndTime;
+
+    _timeController.text = "$startTime - $endTime";
+    setState(() {});
   }
 
   @override
@@ -663,7 +669,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    initTime();
+
     getAreaList().then((value) {
       setState(() {
         resultArea = value['Data'];
@@ -683,15 +689,14 @@ class _SearchPageState extends State<SearchPage> {
       print(widget.queryParam);
       if (widget.queryParam.isNotEmpty) {
         print('dr Home');
-        searchRoomFromHome();
+
+        searchRoomFromHome(mainModel);
       } else {
         print('bukan dari home');
         String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
         _dateController.text = formattedDate;
         _facilityController.text = 'None';
-        _timeController.text = 'Choose Time';
         _participantController.text = 'Total Participant';
-        participantSelected = "0";
       }
     });
     getRoomType().then((value) {
@@ -716,6 +721,7 @@ class _SearchPageState extends State<SearchPage> {
         ),
       );
     });
+    initTime();
 
     scrollController.addListener(() {});
   }
@@ -893,6 +899,8 @@ class _SearchPageState extends State<SearchPage> {
       startTime = "$hour:$minute";
       endTime = "$hour:$endMinute";
     }
+
+    _timeController.text = "$startTime - $endTime";
     setOpacityOn(false);
     setState(() {});
   }
@@ -913,11 +921,28 @@ class _SearchPageState extends State<SearchPage> {
 
   setStartTime(String start) {
     startTime = start;
+
+    var hour = int.parse(start.split(':').first);
+    var minute = int.parse(start.split(':').last);
+    var minuteEnd = minute + 15;
+    var hourEnd = hour;
+    if (minuteEnd == 60) {
+      hourEnd = hourEnd + 1;
+      minuteEnd = 0;
+    }
+
+    endTime =
+        "${hourEnd.toString().padLeft(2, '0')}:${minuteEnd.toString().padLeft(2, '0')}";
+    _timeController.text = "$startTime - $endTime";
     setState(() {});
   }
 
   setEndTime(String end) {
     endTime = end;
+
+    setOpacityOn(false);
+    setTimePickerStatus(false);
+    setEndTimeStatus(false);
     setState(() {});
   }
 
@@ -1038,7 +1063,8 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  searchRoomFromHome() {
+  searchRoomFromHome(MainModel model) {
+    autoScroll(context, model);
     dynamic date = DateTime.parse(widget.queryParam['date']);
     List listAmen = [];
     print('facility-> ${widget.queryParam['facility']}');
@@ -1081,7 +1107,8 @@ class _SearchPageState extends State<SearchPage> {
       endTime = widget.queryParam['endTime'];
       participantSelected = widget.queryParam['participant'];
 
-      meetingTypeValue = "MeetingRoom";
+      meetingTypeValue = widget.queryParam['roomTypeValue'];
+      meetingTypeName = widget.queryParam['roomTypeName'];
 
       searchRoomApi(
         selectedDateFormatted,
@@ -1104,593 +1131,614 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  searchRoom() {
+  searchRoom(MainModel model) {
+    autoScroll(context, model);
     setOpacityOn(false);
-    setState(() {
-      isSearching = true;
-    });
-    selectedDateFormatted = DateFormat('yyyy-M-dd').format(selectedDate);
-
-    if (submitFilter.isEmpty) {
-      for (var element in listFilter!) {
-        element.selected = true;
-      }
-      for (var element in resultArea) {
-        submitFilter.add("\"${element['AreaID']}\"");
-      }
-    }
-    List listAmen = [];
-    for (var element in facilitySelected) {
-      listAmen.add('"$element"');
-    }
-
-    print(listAmen);
-    searchRoomApi(
-      selectedDateFormatted,
-      startTime,
-      endTime,
-      participantSelected,
-      listAmen.toString(),
-      meetingTypeValue,
-      submitFilter,
-      sort,
-    ).then((value) {
-      setState(() {
-        isSearching = false;
-        searchResult = value["Data"]["Room"];
-      });
-    }).onError((error, stackTrace) {
+    if (participantSelected == "") {
       showDialog(
         context: context,
-        builder: (context) => AlertDialogBlack(
-          title: 'Can\'t Connect to API',
-          contentText: error.toString(),
+        builder: (context) => const AlertDialogBlack(
+          title: 'Failed',
+          contentText: 'Please choose total Participants',
           isSuccess: false,
         ),
+      );
+    } else {
+      setState(() {
+        isSearching = true;
+      });
+      selectedDateFormatted = DateFormat('yyyy-M-dd').format(selectedDate);
+
+      if (submitFilter.isEmpty) {
+        for (var element in listFilter!) {
+          element.selected = true;
+        }
+        for (var element in resultArea) {
+          submitFilter.add("\"${element['AreaID']}\"");
+        }
+      }
+      List listAmen = [];
+      for (var element in facilitySelected) {
+        listAmen.add('"$element"');
+      }
+
+      print(listAmen);
+      searchRoomApi(
+        selectedDateFormatted,
+        startTime,
+        endTime,
+        participantSelected,
+        listAmen.toString(),
+        meetingTypeValue,
+        submitFilter,
+        sort,
       ).then((value) {
         setState(() {
           isSearching = false;
+          searchResult = value["Data"]["Room"];
+        });
+      }).onError((error, stackTrace) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: 'Can\'t Connect to API',
+            contentText: error.toString(),
+            isSuccess: false,
+          ),
+        ).then((value) {
+          setState(() {
+            isSearching = false;
+          });
         });
       });
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       index: 1,
+      model: mainModel,
       scrollController: scrollController,
       setDatePickerStatus: resetAllVisibleStatus,
-      child: ConstrainedBox(
-        constraints: pageConstraints,
-        child: Form(
-          // key: _formKey,
-          // child: searchRoom(),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              minWidth: 1100,
-              // maxWidth: 1100,
-            ),
-            child: Stack(
-              children: [
-                Center(
-                  child: Container(
-                    // color: Colors.blue,
-                    width: 1100,
-                    child: Stack(
-                      children: [
-                        Column(
-                          // mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // const SizedBox(
-                            //   height: 20,
-                            // ),
-                            Container(
-                              // color: Colors.amber,
-                              child: Align(
-                                alignment: Alignment.topCenter,
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    maxHeight: 475,
-                                    maxWidth: 1100,
-                                  ),
-                                  child: Container(
-                                    // color: Colors.greenAccent,
-                                    height: 475,
-                                    width: 1100,
-                                    child: Stack(
-                                      children: [
-                                        Positioned(
-                                          top: 0,
-                                          left: 0,
-                                          child: Container(
-                                            width: 1100,
-                                            height: 400,
-                                            decoration: BoxDecoration(
-                                              color: graySand,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              // image: DecorationImage(
-                                              //   image:
-                                              //       AssetImage('assets/social_hub.jpg'),
-                                              //   fit: BoxFit.cover,
-                                              // ),
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          bottom: 185,
-                                          right: 0,
-                                          child: Container(
-                                            // color: Colors.black,
-                                            decoration: const BoxDecoration(
-                                              color: eerieBlack,
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(5),
-                                                bottomLeft: Radius.circular(5),
+      child: Consumer<MainModel>(builder: (context, model, child) {
+        return ConstrainedBox(
+          constraints: pageConstraints,
+          child: Form(
+            // key: _formKey,
+            // child: searchRoom(),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: 1100,
+                // maxWidth: 1100,
+              ),
+              child: Stack(
+                children: [
+                  Center(
+                    child: Container(
+                      // color: Colors.blue,
+                      width: 1100,
+                      child: Stack(
+                        children: [
+                          Column(
+                            // mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // const SizedBox(
+                              //   height: 20,
+                              // ),
+                              Container(
+                                // color: Colors.amber,
+                                child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxHeight: 475,
+                                      maxWidth: 1100,
+                                    ),
+                                    child: Container(
+                                      // color: Colors.greenAccent,
+                                      height: 475,
+                                      width: 1100,
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                            top: 0,
+                                            left: 0,
+                                            child: Container(
+                                              width: 1100,
+                                              height: 400,
+                                              decoration: BoxDecoration(
+                                                color: graySand,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                // image: DecorationImage(
+                                                //   image:
+                                                //       AssetImage('assets/social_hub.jpg'),
+                                                //   fit: BoxFit.cover,
+                                                // ),
                                               ),
                                             ),
-                                            padding: const EdgeInsets.only(
-                                              right: 15,
-                                              left: 25,
-                                              top: 10,
-                                              bottom: 10,
-                                            ),
-                                            // height: 30,
-                                            // width: 30,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  'Social Hub',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Helvetica',
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: culturedWhite,
+                                          ),
+                                          Positioned(
+                                            bottom: 185,
+                                            right: 0,
+                                            child: Container(
+                                              // color: Colors.black,
+                                              decoration: const BoxDecoration(
+                                                color: eerieBlack,
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(5),
+                                                  bottomLeft:
+                                                      Radius.circular(5),
+                                                ),
+                                              ),
+                                              padding: const EdgeInsets.only(
+                                                right: 15,
+                                                left: 25,
+                                                top: 10,
+                                                bottom: 10,
+                                              ),
+                                              // height: 30,
+                                              // width: 30,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    'Social Hub',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Helvetica',
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: culturedWhite,
+                                                    ),
                                                   ),
-                                                ),
-                                                const SizedBox(
-                                                  height: 5,
-                                                ),
-                                                Text(
-                                                  '- Head Office',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Helvetica',
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w300,
-                                                    color: culturedWhite,
+                                                  const SizedBox(
+                                                    height: 5,
                                                   ),
-                                                ),
-                                              ],
+                                                  Text(
+                                                    '- Head Office',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Helvetica',
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                      color: culturedWhite,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Positioned(
-                                          bottom: 0,
-                                          left: 50,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              resetAllVisibleStatus(false);
-                                              // setDatePickerVisible(false);
-                                              // setAmenitiesStatus(false);
-                                            },
-                                            child: SearchContainer(
-                                              key: searchContainerKey,
-                                              dateNode: dateNode,
-                                              getPositionDatePicker:
-                                                  getPositionDatePicker,
-                                              getPositionAmenities:
-                                                  getPositionAmenities,
-                                              getPositionparticipant:
-                                                  getPositionParticipant,
-                                              setPickerStatus:
-                                                  setDatePickerVisible,
-                                              setAmenitiesStatus:
-                                                  setAmenitiesStatus,
-                                              setParticipantStatus:
-                                                  setParticipantStatus,
-                                              setTimeStatus:
-                                                  setTimePickerStatus,
-                                              setStartTimeStatus:
-                                                  setStartTimeStatus,
-                                              setEndTimeStatus:
-                                                  setEndTimeStatus,
-                                              setOpacityOn: setOpacityOn,
-                                              pickerStatus: datePickerVisible,
-                                              amenitiesStatus:
-                                                  amenitiesContainerVisible,
-                                              participantStatus:
-                                                  participantContainerVisible,
-                                              timePickerStatus:
-                                                  timePickerContainerVisible,
-                                              dateController: _dateController,
-                                              facilityController:
-                                                  _facilityController,
-                                              timeController: _timeController,
-                                              participantController:
-                                                  _participantController,
-                                              meetingTypeSelected:
-                                                  meetingTypeValue,
-                                              meetingTypeName: meetingTypeName,
-                                              meetingTypeStatus:
-                                                  meetingTypeContainerVisible,
-                                              setMeetingTypeStatus:
-                                                  setMeetingTypeContainerStatus,
-                                              dateKey: dateKey,
-                                              timeKey: timeKey,
-                                              amenitiesKey: amenitiesKey,
-                                              meetingTypeKey: meetingTypeKey,
-                                              participantKey: participantKey,
-                                              datakey: dataKey,
-                                              searchRoom: searchRoom,
+                                          Positioned(
+                                            bottom: 0,
+                                            left: 50,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                resetAllVisibleStatus(false);
+                                                // setDatePickerVisible(false);
+                                                // setAmenitiesStatus(false);
+                                              },
+                                              child: SearchContainer(
+                                                key: searchContainerKey,
+                                                dateNode: dateNode,
+                                                getPositionDatePicker:
+                                                    getPositionDatePicker,
+                                                getPositionAmenities:
+                                                    getPositionAmenities,
+                                                getPositionparticipant:
+                                                    getPositionParticipant,
+                                                setPickerStatus:
+                                                    setDatePickerVisible,
+                                                setAmenitiesStatus:
+                                                    setAmenitiesStatus,
+                                                setParticipantStatus:
+                                                    setParticipantStatus,
+                                                setTimeStatus:
+                                                    setTimePickerStatus,
+                                                setStartTimeStatus:
+                                                    setStartTimeStatus,
+                                                setEndTimeStatus:
+                                                    setEndTimeStatus,
+                                                setOpacityOn: setOpacityOn,
+                                                pickerStatus: datePickerVisible,
+                                                amenitiesStatus:
+                                                    amenitiesContainerVisible,
+                                                participantStatus:
+                                                    participantContainerVisible,
+                                                timePickerStatus:
+                                                    timePickerContainerVisible,
+                                                dateController: _dateController,
+                                                facilityController:
+                                                    _facilityController,
+                                                timeController: _timeController,
+                                                participantController:
+                                                    _participantController,
+                                                meetingTypeSelected:
+                                                    meetingTypeValue,
+                                                meetingTypeName:
+                                                    meetingTypeName,
+                                                meetingTypeStatus:
+                                                    meetingTypeContainerVisible,
+                                                setMeetingTypeStatus:
+                                                    setMeetingTypeContainerStatus,
+                                                dateKey: dateKey,
+                                                timeKey: timeKey,
+                                                amenitiesKey: amenitiesKey,
+                                                meetingTypeKey: meetingTypeKey,
+                                                participantKey: participantKey,
+                                                datakey: dataKey,
+                                                searchRoom: searchRoom,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              // color: Colors.green,
-                              child: Stack(
-                                children: [
-                                  Center(
-                                    child: ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                        minHeight: 600,
-                                        // maxHeight: MediaQuery.of(context).size.width,
-                                        minWidth: 1000,
-                                        // maxWidth: 1000,
-                                      ),
-                                      child: Container(
-                                        padding: const EdgeInsets.only(
-                                          top: 35,
+                              Container(
+                                // color: Colors.green,
+                                child: Stack(
+                                  children: [
+                                    Center(
+                                      child: ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                          minHeight: 600,
+                                          // maxHeight: MediaQuery.of(context).size.width,
+                                          minWidth: 1000,
+                                          // maxWidth: 1000,
                                         ),
-                                        width: 1000,
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(
-                                        //     color: eerieBlack,
-                                        //   ),
-                                        // ),
-                                        // height: double.infinity,
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              // mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                  // color: Colors.amber,
-                                                  width: 235,
-                                                  // height: 1000,
-                                                  // child: Text('Filter'),
-                                                  child: Visibility(
-                                                    visible: searchResult
-                                                                .isEmpty &&
-                                                            submitFilter.isEmpty
-                                                        ? false
-                                                        : true,
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        SortingContainer(
-                                                          listSorting:
-                                                              listSorting,
-                                                          selectedSorting:
-                                                              selectedSorting,
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 20,
-                                                        ),
-                                                        FilterContainer(
-                                                          key: dataKey,
-                                                          listFilter:
-                                                              listFilter,
-                                                          onChangeFilter:
-                                                              onChangeFilter,
-                                                        ),
-                                                      ],
+                                        child: Container(
+                                          padding: const EdgeInsets.only(
+                                            top: 35,
+                                          ),
+                                          width: 1000,
+                                          // decoration: BoxDecoration(
+                                          //   border: Border.all(
+                                          //     color: eerieBlack,
+                                          //   ),
+                                          // ),
+                                          // height: double.infinity,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                // mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    // color: Colors.amber,
+                                                    width: 235,
+                                                    // height: 1000,
+                                                    // child: Text('Filter'),
+                                                    child: Visibility(
+                                                      visible: searchResult
+                                                                  .isEmpty &&
+                                                              submitFilter
+                                                                  .isEmpty
+                                                          ? false
+                                                          : true,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          SortingContainer(
+                                                            listSorting:
+                                                                listSorting,
+                                                            selectedSorting:
+                                                                selectedSorting,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          FilterContainer(
+                                                            key: dataKey,
+                                                            listFilter:
+                                                                listFilter,
+                                                            onChangeFilter:
+                                                                onChangeFilter,
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 35,
-                                                ),
-                                                Expanded(
-                                                  child: isSearching
-                                                      ? const Center(
-                                                          child:
-                                                              CircularProgressIndicator(
-                                                            color: eerieBlack,
-                                                          ),
-                                                        )
-                                                      : searchResult.isEmpty
-                                                          ? SizedBox()
-                                                          : Container(
-                                                              child: ListView
-                                                                  .builder(
-                                                                // physics: NeverScrollableScrollPhysics,
-                                                                shrinkWrap:
-                                                                    true,
-                                                                itemCount:
-                                                                    searchResult
-                                                                        .length,
-                                                                itemBuilder:
-                                                                    (context,
-                                                                        index) {
-                                                                  return ListRoomContainer(
-                                                                    roomID: searchResult[
-                                                                            index]
-                                                                        [
-                                                                        'RoomID'],
-                                                                    roomName: searchResult[
-                                                                            index]
-                                                                        [
-                                                                        'RoomName'],
-                                                                    duration: searchResult[
-                                                                            index]
-                                                                        [
-                                                                        'Duration'],
-                                                                    amenities: searchResult[
-                                                                            index]
-                                                                        [
-                                                                        'Amenities'],
-                                                                    endTime: searchResult[
-                                                                            index]
-                                                                        [
-                                                                        'EndTime'],
-                                                                    startTime: searchResult[
-                                                                            index]
-                                                                        [
-                                                                        'StartTime'],
-                                                                    minCapacity:
-                                                                        searchResult[index]['MinCapacity']
-                                                                            .toString(),
-                                                                    maxCapacity:
-                                                                        searchResult[index]['MaxCapacity']
-                                                                            .toString(),
-                                                                    photo: searchResult[
-                                                                            index]
-                                                                        [
-                                                                        'Photo'],
-                                                                    date:
-                                                                        selectedDateFormatted,
-                                                                    selectedStartTime:
-                                                                        startTime,
-                                                                    selectedEndTime:
-                                                                        endTime,
-                                                                  );
-                                                                },
-                                                              ),
+                                                  const SizedBox(
+                                                    width: 35,
+                                                  ),
+                                                  Expanded(
+                                                    child: isSearching
+                                                        ? const Center(
+                                                            child:
+                                                                CircularProgressIndicator(
+                                                              color: eerieBlack,
                                                             ),
-                                                ),
+                                                          )
+                                                        : searchResult.isEmpty
+                                                            ? SizedBox()
+                                                            : Container(
+                                                                child: ListView
+                                                                    .builder(
+                                                                  // physics: NeverScrollableScrollPhysics,
+                                                                  shrinkWrap:
+                                                                      true,
+                                                                  itemCount:
+                                                                      searchResult
+                                                                          .length,
+                                                                  itemBuilder:
+                                                                      (context,
+                                                                          index) {
+                                                                    return ListRoomContainer(
+                                                                      roomID: searchResult[
+                                                                              index]
+                                                                          [
+                                                                          'RoomID'],
+                                                                      roomName:
+                                                                          searchResult[index]
+                                                                              [
+                                                                              'RoomName'],
+                                                                      duration:
+                                                                          searchResult[index]
+                                                                              [
+                                                                              'Duration'],
+                                                                      amenities:
+                                                                          searchResult[index]
+                                                                              [
+                                                                              'Amenities'],
+                                                                      endTime: searchResult[
+                                                                              index]
+                                                                          [
+                                                                          'EndTime'],
+                                                                      startTime:
+                                                                          searchResult[index]
+                                                                              [
+                                                                              'StartTime'],
+                                                                      minCapacity:
+                                                                          searchResult[index]['MinCapacity']
+                                                                              .toString(),
+                                                                      maxCapacity:
+                                                                          searchResult[index]['MaxCapacity']
+                                                                              .toString(),
+                                                                      photo: searchResult[
+                                                                              index]
+                                                                          [
+                                                                          'Photo'],
+                                                                      date:
+                                                                          selectedDateFormatted,
+                                                                      selectedStartTime:
+                                                                          startTime,
+                                                                      selectedEndTime:
+                                                                          endTime,
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              ),
+                                                  ),
 
-                                                // RegularButton(
-                                                //   text: 'Start Time',
-                                                //   disabled: false,
-                                                //   onTap: () {
-                                                //     setStartTime();
-                                                //   },
-                                                // ),
-                                                // SizedBox(
-                                                //   height: 10,
-                                                // ),
-                                                // RegularButton(
-                                                //   text: 'End Time',
-                                                //   disabled: false,
-                                                //   onTap: () {
-                                                //     setEndTime("09:45");
-                                                //   },
-                                                // ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 35,
-                                            ),
-                                            WhiteBannerLandscape(
-                                              title: 'Link your Google account',
-                                              subtitle:
-                                                  '& enjoy your benefits.',
-                                              imagePath:
-                                                  'assets/banner_pict_google.png',
-                                            ),
-                                            const SizedBox(
-                                              height: 100,
-                                            ),
-                                          ],
+                                                  // RegularButton(
+                                                  //   text: 'Start Time',
+                                                  //   disabled: false,
+                                                  //   onTap: () {
+                                                  //     setStartTime();
+                                                  //   },
+                                                  // ),
+                                                  // SizedBox(
+                                                  //   height: 10,
+                                                  // ),
+                                                  // RegularButton(
+                                                  //   text: 'End Time',
+                                                  //   disabled: false,
+                                                  //   onTap: () {
+                                                  //     setEndTime("09:45");
+                                                  //   },
+                                                  // ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 35,
+                                              ),
+                                              WhiteBannerLandscape(
+                                                title:
+                                                    'Link your Google account',
+                                                subtitle:
+                                                    '& enjoy your benefits.',
+                                                imagePath:
+                                                    'assets/banner_pict_google.png',
+                                              ),
+                                              const SizedBox(
+                                                height: 100,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  opacityOn
-                                      ? Center(
-                                          child: ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              minHeight: 1000,
-                                              minWidth: 1366,
-                                              // minWidth: 1000,
-                                              // maxWidth: 1366,
+                                    opacityOn
+                                        ? Center(
+                                            child: ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                minHeight: 1000,
+                                                minWidth: 1366,
+                                                // minWidth: 1000,
+                                                // maxWidth: 1366,
+                                              ),
+                                              child: Container(
+                                                color: Colors.white
+                                                    .withOpacity(0.5),
+                                              ),
                                             ),
-                                            child: Container(
-                                              color:
-                                                  Colors.white.withOpacity(0.5),
-                                            ),
-                                          ),
-                                        )
-                                      : SizedBox(),
-                                ],
+                                          )
+                                        : SizedBox(),
+                                  ],
+                                ),
                               ),
-                            ),
 
-                            // Center(
-                            //   child: Text(
-                            //     datePicked,
-                            //   ),
-                            // ),
-                            // Container(
-                            //   height: 1000,
-                            // ),
-                          ],
-                        ),
-                      ],
+                              // Center(
+                              //   child: Text(
+                              //     datePicked,
+                              //   ),
+                              // ),
+                              // Container(
+                              //   height: 1000,
+                              // ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Visibility(
-                  visible: meetingTypeContainerVisible,
-                  child: Positioned(
-                    top: 360,
-                    left: 330,
-                    child: MeetingTypeContainer(
-                      meetingTypeStatus: meetingTypeContainerVisible,
-                      setMeetingType: onMeetingTypeSelected,
-                      selectedMeetingType: meetingTypeValue,
-                      setMeetingTypeStatus: setMeetingTypeContainerStatus,
-                      meetingType: roomType,
+                  Visibility(
+                    visible: meetingTypeContainerVisible,
+                    child: Positioned(
+                      top: 360,
+                      left: 330,
+                      child: MeetingTypeContainer(
+                        meetingTypeStatus: meetingTypeContainerVisible,
+                        setMeetingType: onMeetingTypeSelected,
+                        selectedMeetingType: meetingTypeValue,
+                        setMeetingTypeStatus: setMeetingTypeContainerStatus,
+                        meetingType: roomType,
+                      ),
                     ),
                   ),
-                ),
-                Visibility(
-                  visible: datePickerVisible,
-                  child: Positioned(
-                    // bottom: 0,
-                    top: 485,
-                    left: 183,
-                    child: CustomDatePicker(
-                      controller: datePickerControl,
-                      changeDate: onDateChanged,
-                      setPickerStatus: setDatePickerVisible,
-                      currentDate: selectedDate,
+                  Visibility(
+                    visible: datePickerVisible,
+                    child: Positioned(
+                      // bottom: 0,
+                      top: 485,
+                      left: 183,
+                      child: CustomDatePicker(
+                        controller: datePickerControl,
+                        changeDate: onDateChanged,
+                        setPickerStatus: setDatePickerVisible,
+                        currentDate: selectedDate,
+                      ),
                     ),
                   ),
-                ),
-                Visibility(
-                  visible: amenitiesContainerVisible,
-                  child: Positioned(
-                    // bottom: 0,
-                    top: 485,
-                    right: 370,
-                    child: AmenitiesContainer(
-                      tvOnChange: (value) {
-                        if (checkBoxTv) {
-                          checkBoxTv = false;
-                          facilitySelected
-                              .removeWhere((element) => element == 'TV');
-                        } else {
-                          checkBoxTv = true;
-                          facilitySelected.add('TV');
-                        }
-                        if (facilitySelected.isNotEmpty) {
-                          if (facilitySelected.length > 1) {
-                            _facilityController.text = "TV & Camera";
-                          } else if (facilitySelected.length == 1) {
-                            _facilityController.text =
-                                facilitySelected[0].toString();
+                  Visibility(
+                    visible: amenitiesContainerVisible,
+                    child: Positioned(
+                      // bottom: 0,
+                      top: 485,
+                      right: 370,
+                      child: AmenitiesContainer(
+                        tvOnChange: (value) {
+                          if (checkBoxTv) {
+                            checkBoxTv = false;
+                            facilitySelected
+                                .removeWhere((element) => element == 'TV');
+                          } else {
+                            checkBoxTv = true;
+                            facilitySelected.add('TV');
                           }
-                        } else {
-                          _facilityController.text = "None";
-                        }
-                        print(facilitySelected);
-                        setState(() {});
-                      },
-                      cameraOnChange: (value) {
-                        if (checkBoxCamera) {
-                          checkBoxCamera = false;
-                          facilitySelected
-                              .removeWhere((element) => element == 'Camera');
-                        } else {
-                          checkBoxCamera = true;
-                          facilitySelected.add('Camera');
-                        }
-                        if (facilitySelected.isNotEmpty) {
-                          if (facilitySelected.length > 1) {
-                            _facilityController.text = "TV & Camera";
-                          } else if (facilitySelected.length == 1) {
-                            _facilityController.text = facilitySelected[0];
+                          if (facilitySelected.isNotEmpty) {
+                            if (facilitySelected.length > 1) {
+                              _facilityController.text = "TV & Camera";
+                            } else if (facilitySelected.length == 1) {
+                              _facilityController.text =
+                                  facilitySelected[0].toString();
+                            }
+                          } else {
+                            _facilityController.text = "None";
                           }
-                        } else {
-                          _facilityController.text = "None";
-                        }
-                        print(facilitySelected);
+                          print(facilitySelected);
+                          setState(() {});
+                        },
+                        cameraOnChange: (value) {
+                          if (checkBoxCamera) {
+                            checkBoxCamera = false;
+                            facilitySelected
+                                .removeWhere((element) => element == 'Camera');
+                          } else {
+                            checkBoxCamera = true;
+                            facilitySelected.add('Camera');
+                          }
+                          if (facilitySelected.isNotEmpty) {
+                            if (facilitySelected.length > 1) {
+                              _facilityController.text = "TV & Camera";
+                            } else if (facilitySelected.length == 1) {
+                              _facilityController.text = facilitySelected[0];
+                            }
+                          } else {
+                            _facilityController.text = "None";
+                          }
+                          print(facilitySelected);
 
-                        setState(() {});
-                      },
-                      cameraValue: checkBoxCamera,
-                      tvValue: checkBoxTv,
+                          setState(() {});
+                        },
+                        cameraValue: checkBoxCamera,
+                        tvValue: checkBoxTv,
+                      ),
                     ),
                   ),
-                ),
-                Visibility(
-                  visible: participantContainerVisible,
-                  child: Positioned(
-                    top: 485,
-                    right: 575,
-                    child: ParticipantContainer(
-                      setParticipantStatus: setParticipantStatus,
-                      onChangeParticipant: onParticipanSelected,
+                  Visibility(
+                    visible: participantContainerVisible,
+                    child: Positioned(
+                      top: 485,
+                      right: 575,
+                      child: ParticipantContainer(
+                        setParticipantStatus: setParticipantStatus,
+                        onChangeParticipant: onParticipanSelected,
+                      ),
                     ),
                   ),
-                ),
-                Visibility(
-                  visible: timePickerContainerVisible,
-                  child: Positioned(
-                    top: 485,
-                    left: 408,
-                    child: TimePickerContainer(
-                      startTimeStatus: startTimeContainerVisible,
-                      endTimeStatus: endTimeContainerVisible,
-                      setTime: setTime,
-                      startTime: startTime,
-                      endTime: endTime,
-                      setTimePickerStatus: setTimePickerStatus,
-                      setListStartTime: setStartTimeList,
-                      setEndTimeStatus: setEndTimeStatus,
-                      setListEndTime: setEndTimeList,
-                      setStartTimeStatus: setStartTimeStatus,
-                      initialEndTime: initialEndTime,
-                      selectedDate: selectedDate,
+                  Visibility(
+                    visible: timePickerContainerVisible,
+                    child: Positioned(
+                      top: 485,
+                      left: 408,
+                      child: TimePickerContainer(
+                        startTimeStatus: startTimeContainerVisible,
+                        endTimeStatus: endTimeContainerVisible,
+                        setTime: setTime,
+                        startTime: startTime,
+                        endTime: endTime,
+                        setTimePickerStatus: setTimePickerStatus,
+                        setListStartTime: setStartTimeList,
+                        setEndTimeStatus: setEndTimeStatus,
+                        setListEndTime: setEndTimeList,
+                        setStartTimeStatus: setStartTimeStatus,
+                        initialEndTime: initialEndTime,
+                        selectedDate: selectedDate,
+                      ),
                     ),
                   ),
-                ),
-                Visibility(
-                  visible: startTimeContainerVisible,
-                  child: Positioned(
-                    top: 595,
-                    left: 425,
-                    child: StartTimeContainer(
-                      items: startTimeList,
-                      setStartTime: setStartTime,
-                      setStartTimeStatus: setStartTimeStatus,
-                      setInitialEndTime: setInitialEndTime,
+                  Visibility(
+                    visible: startTimeContainerVisible,
+                    child: Positioned(
+                      top: 595,
+                      left: 425,
+                      child: StartTimeContainer(
+                        items: startTimeList,
+                        setStartTime: setStartTime,
+                        setStartTimeStatus: setStartTimeStatus,
+                        setInitialEndTime: setInitialEndTime,
+                      ),
                     ),
                   ),
-                ),
-                Visibility(
-                  visible: endTimeContainerVisible,
-                  child: Positioned(
-                    top: 595,
-                    left: 545,
-                    child: EndTimeContainer(
-                      items: endTimeList,
-                      setEndTime: setEndTime,
-                      setEndTimeStatus: setEndTimeStatus,
-                      startTime: startTime,
-                      setTime: setTime,
+                  Visibility(
+                    visible: endTimeContainerVisible,
+                    child: Positioned(
+                      top: 595,
+                      left: 545,
+                      child: EndTimeContainer(
+                        items: endTimeList,
+                        setEndTime: setEndTime,
+                        setEndTimeStatus: setEndTimeStatus,
+                        startTime: startTime,
+                        setTime: setTime,
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
     // return Consumer<MainModel>(builder: (context, model, child) {
     //   return Scaffold(

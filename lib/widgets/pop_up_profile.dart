@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
 
 class PopUpProfile extends StatelessWidget {
@@ -124,8 +125,11 @@ class PopUpProfile extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   popUpProfile!(false);
-                  jwtToken = "";
-                  resetState;
+                  logout().then((value) {
+                    if (value['Status'] == "200") {
+                      resetState!();
+                    }
+                  });
                 },
                 child: const Text(
                   'Logout',

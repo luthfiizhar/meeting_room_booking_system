@@ -3,7 +3,14 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 
 class RoomTypeContainerHomePage extends StatelessWidget {
-  RoomTypeContainerHomePage({super.key});
+  RoomTypeContainerHomePage({
+    super.key,
+    this.setContainerStatus,
+    this.changeRoomType,
+  });
+
+  Function? setContainerStatus;
+  Function? changeRoomType;
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +31,33 @@ class RoomTypeContainerHomePage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          choices('Meeting Room', ''),
+          InkWell(
+            onTap: () {
+              changeRoomType!('MeetingRoom', 'Meeting Room', '');
+              setContainerStatus!(false);
+            },
+            child: choices('Meeting Room', ''),
+          ),
           const SizedBox(
             width: 20,
           ),
-          choices('Auditorium', ''),
+          InkWell(
+            onTap: () {
+              changeRoomType!('Auditorium', 'Auditorium', '');
+              setContainerStatus!(false);
+            },
+            child: choices('Auditorium', ''),
+          ),
           const SizedBox(
             width: 20,
           ),
-          choices('Social Hub', ''),
+          InkWell(
+            onTap: () {
+              changeRoomType!('SocialHub', 'Social Hub', '');
+              setContainerStatus!(false);
+            },
+            child: choices('Social Hub', ''),
+          ),
         ],
       ),
     );

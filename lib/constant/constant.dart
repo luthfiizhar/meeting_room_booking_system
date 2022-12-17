@@ -6,6 +6,11 @@ const BoxConstraints pageConstraints = BoxConstraints(
   minWidth: 480,
 );
 
+const BoxConstraints homeLeftSideConstrains = BoxConstraints(
+  minHeight: 200,
+  minWidth: 786,
+);
+
 const TextStyle helveticaText = TextStyle(
   fontFamily: 'Helvetica',
   height: 1.15,

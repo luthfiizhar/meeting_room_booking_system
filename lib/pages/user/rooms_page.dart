@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
+import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/model/booking_class.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
@@ -15,6 +16,7 @@ import 'package:meeting_room_booking_system/pages/user/booking_page.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/booking_page_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/room_booking_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
@@ -466,135 +468,145 @@ class _RoomsPageState extends State<RoomsPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Container(
-                      width: 280,
-                      child: CustomDatePicker(
-                        controller: datePickerControl,
-                        isDark: true,
-                        setPickerStatus: setVisible,
-                        changeDate: setDate,
-                        currentDate: selectedDate,
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        width: 20,
                       ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              RegularButton(
-                                text: 'Today',
-                                disabled: false,
-                                padding: ButtonSize().smallSize(),
-                                onTap: () {
-                                  setState(() {
-                                    selectedDate = DateTime.now();
-                                  });
-                                  datePickerControl.selectedDate = selectedDate;
-                                  calendarControl!.displayDate = selectedDate;
-                                },
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    selectedDate = calendarControl!.displayDate!
-                                        .subtract(const Duration(days: 1));
-                                  });
-                                  datePickerControl.selectedDate = selectedDate;
-                                  calendarControl!.displayDate = selectedDate;
-                                },
-                                splashRadius: 20,
-                                icon: const Icon(
-                                  Icons.chevron_left_sharp,
-                                  size: 28,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    selectedDate = calendarControl!.displayDate!
-                                        .add(const Duration(days: 1));
-                                  });
-                                  // getBookingListRoom(
-                                  //     selectedArea!, selectedDate!.toString());
-                                  datePickerControl.selectedDate = selectedDate;
-                                  calendarControl!.displayDate = selectedDate;
-                                },
-                                splashRadius: 20,
-                                icon: const Icon(
-                                  Icons.chevron_right_sharp,
-                                  size: 28,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              Text(
-                                DateFormat('d MMMM y').format(selectedDate!),
-                                style: const TextStyle(
-                                  fontFamily: 'Helvetica',
-                                  color: eerieBlack,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w300,
-                                  height: 1.3,
-                                ),
-                              ),
-                              const Expanded(
-                                child: SizedBox(),
-                              ),
-                              SizedBox(
-                                width: 170,
-                                child: WhiteDropdown(
-                                  focusNode: areaNode,
-                                  customHeights:
-                                      _getCustomItemsHeights(areaList),
-                                  items: addDividerItem(areaList),
-                                  enabled: true,
-                                  hintText: '',
-                                  onChanged: (value) {
-                                    print(value);
-                                    selectedArea = value;
-                                    onChangedArea(selectedArea!);
+                      Container(
+                        width: 280,
+                        child: CustomDatePicker(
+                          controller: datePickerControl,
+                          isDark: true,
+                          setPickerStatus: setVisible,
+                          changeDate: setDate,
+                          currentDate: selectedDate,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                RegularButton(
+                                  text: 'Today',
+                                  disabled: false,
+                                  padding: ButtonSize().smallSize(),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedDate = DateTime.now();
+                                    });
+                                    datePickerControl.selectedDate =
+                                        selectedDate;
+                                    calendarControl!.displayDate = selectedDate;
                                   },
-                                  value: selectedArea,
                                 ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          calendarRoomPage(model),
-                        ],
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedDate = calendarControl!
+                                          .displayDate!
+                                          .subtract(const Duration(days: 1));
+                                    });
+                                    datePickerControl.selectedDate =
+                                        selectedDate;
+                                    calendarControl!.displayDate = selectedDate;
+                                  },
+                                  splashRadius: 20,
+                                  icon: const Icon(
+                                    Icons.chevron_left_sharp,
+                                    size: 28,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedDate = calendarControl!
+                                          .displayDate!
+                                          .add(const Duration(days: 1));
+                                    });
+                                    // getBookingListRoom(
+                                    //     selectedArea!, selectedDate!.toString());
+                                    datePickerControl.selectedDate =
+                                        selectedDate;
+                                    calendarControl!.displayDate = selectedDate;
+                                  },
+                                  splashRadius: 20,
+                                  icon: const Icon(
+                                    Icons.chevron_right_sharp,
+                                    size: 28,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Text(
+                                  DateFormat('d MMMM y').format(selectedDate!),
+                                  style: const TextStyle(
+                                    fontFamily: 'Helvetica',
+                                    color: eerieBlack,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w300,
+                                    height: 1.3,
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: SizedBox(),
+                                ),
+                                SizedBox(
+                                  width: 170,
+                                  child: WhiteDropdown(
+                                    focusNode: areaNode,
+                                    customHeights:
+                                        _getCustomItemsHeights(areaList),
+                                    items: addDividerItem(areaList),
+                                    enabled: true,
+                                    hintText: '',
+                                    onChanged: (value) {
+                                      print(value);
+                                      selectedArea = value;
+                                      onChangedArea(selectedArea!);
+                                    },
+                                    value: selectedArea,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            calendarRoomPage(model),
+                          ],
+                        ),
                       ),
-                    ),
-                    AnimatedSwitcher(
-                      duration: Duration(milliseconds: 750),
-                      switchInCurve: Curves.easeIn,
-                      switchOutCurve: Curves.easeOut,
-                      child: isShowDetail
-                          ? DetailAppointmentContainer(
-                              // event: selectedEvent,
-                              closeDetail: closeDetail,
-                              bookingDetail: detailEvent,
-                            )
-                          : SizedBox(),
-                    ),
-                  ],
+                      AnimatedSwitcher(
+                        duration: Duration(milliseconds: 750),
+                        switchInCurve: Curves.easeIn,
+                        switchOutCurve: Curves.easeOut,
+                        child: isShowDetail
+                            ? SizedBox(
+                                // height: (100 * dataRoom.length) + 165,
+                                child: DetailAppointmentContainer(
+                                  // event: selectedEvent,
+                                  closeDetail: closeDetail,
+                                  bookingDetail: detailEvent,
+                                ),
+                              )
+                            : SizedBox(),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -743,224 +755,243 @@ class _RoomsPageState extends State<RoomsPage> {
         ),
         initialDisplayDate: selectedDate,
         onTap: (calendarTapDetails) {
-          // await closeDetail();
           if (calendarTapDetails.targetElement == CalendarElement.appointment) {
-            // print('Kosong gan');
+            if ((jwtToken != null || jwtToken != "") && isTokenValid) {
+              setState(() {
+                RoomEvent list = calendarTapDetails.appointments![0];
+                selectedEvent = list;
+                if (isShowDetail) {
+                  isShowDetail = false;
+                }
 
-            // print(list);
-
-            setState(() {
-              RoomEvent list = calendarTapDetails.appointments![0];
-              selectedEvent = list;
-              if (isShowDetail) {
-                isShowDetail = false;
-              }
-
-              getBookingDetail(selectedEvent!.bookingID!).then((value) {
-                setState(() {
-                  print(value);
-                  detailEvent.bookingId = value['Data']['BookingID'];
-                  detailEvent.location = value['Data']['RoomName'];
-                  detailEvent.summary = value['Data']['Summary'];
-                  detailEvent.description = value['Data']['Description'];
-                  detailEvent.eventDate = value['Data']['BookingDate'];
-                  detailEvent.eventTime = value['Data']['BookingStartTime'] +
-                      " - " +
-                      value['Data']['BookingEndTime'];
-                  detailEvent.duration = value['Data']['Duration'];
-                  detailEvent.floor = value['Data']['AreaName'];
-                  detailEvent.email = value['Data']['Email'];
-                  detailEvent.avaya = value['Data']['AvayaNumber'];
-                  detailEvent.host = value['Data']['EmpName'];
-                  detailEvent.attendatsNumber =
-                      value['Data']['AttendantsNumber'].toString();
-                  if (!isShowDetail) {
-                    isShowDetail = true;
-                  }
+                getBookingDetail(selectedEvent!.bookingID!).then((value) {
+                  setState(() {
+                    print(value);
+                    detailEvent.bookingId = value['Data']['BookingID'];
+                    detailEvent.location = value['Data']['RoomName'];
+                    detailEvent.summary = value['Data']['Summary'];
+                    detailEvent.description = value['Data']['Description'];
+                    detailEvent.eventDate = value['Data']['BookingDate'];
+                    detailEvent.eventTime = value['Data']['BookingStartTime'] +
+                        " - " +
+                        value['Data']['BookingEndTime'];
+                    detailEvent.duration = value['Data']['Duration'];
+                    detailEvent.floor = value['Data']['AreaName'];
+                    detailEvent.email = value['Data']['Email'];
+                    detailEvent.avaya = value['Data']['AvayaNumber'];
+                    detailEvent.host = value['Data']['EmpName'];
+                    detailEvent.attendatsNumber =
+                        value['Data']['AttendantsNumber'].toString();
+                    if (!isShowDetail) {
+                      isShowDetail = true;
+                    }
+                  });
                 });
               });
-            });
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) => const AlertDialogBlack(
+                  title: 'Access denied',
+                  contentText: 'Login first!',
+                  isSuccess: false,
+                ),
+              );
+            }
           }
           if (calendarTapDetails.targetElement ==
               CalendarElement.calendarCell) {
-            if (calendarTapDetails.date!.compareTo(DateTime.now()) > 0) {
-              bookingDetail.startDate = calendarTapDetails.date;
-              bookingDetail.roomId = calendarTapDetails.resource!.id.toString();
-              bookingDetail.endDate =
-                  calendarTapDetails.date!.add(Duration(hours: 2));
-              bookingDetail.attendantsNumber = '3';
-              bookingDetail.recursive = '';
-              bookingDetail.description = 'Test Book !!!!!!!!!!';
-              bookingDetail.summary = 'Masih Tes';
-              bookingDetail.meetingType = 'Internal';
-              bookingDetail.recursive = 'NONE';
-              bookingDetail.attendants = [];
-              bookingDetail.amenities = [];
-              bookingDetail.foodAmenities = [];
-              // print('data Room ' + dataRoom.toString());
-              // print('selected area ' + selectedArea!);
-              // print('event room ' + eventRoom.toString());
-              // print('Selected Date -> ${selectedDate.toString()}');
-              // forRefreshCalendar();
-              // Provider.of<MainModel>(context, listen: false)
-              //     .setSelectedDate(selectedDate!.toString());
-              // Provider.of<MainModel>(context, listen: false)
-              //     .setSelectedArea(selectedArea!);
-              // Provider.of<MainModel>(context, listen: false)
-              //     .setDataAndEventRoom(dataRoom);
-              // Provider.of<MainModel>(context, listen: false)
-              //     .setEventRoom(eventRoom);
-              setState(() {
-                model.setSelectedDate(selectedDate!.toString());
-                model.setSelectedArea(selectedArea!);
-                model.setDataAndEventRoom(dataRoom);
-                model.setEventRoom(eventRoom);
-              });
+            print('isTokenValid -> $isTokenValid');
+            if ((jwtToken != null || jwtToken != "") && isTokenValid) {
+              if (calendarTapDetails.date!.compareTo(DateTime.now()) > 0) {
+                bookingDetail.startDate = calendarTapDetails.date;
+                bookingDetail.roomId =
+                    calendarTapDetails.resource!.id.toString();
+                bookingDetail.endDate =
+                    calendarTapDetails.date!.add(Duration(hours: 2));
+                bookingDetail.attendantsNumber = '3';
+                bookingDetail.recursive = '';
+                bookingDetail.description = 'Test Book !!!!!!!!!!';
+                bookingDetail.summary = 'Masih Tes';
+                bookingDetail.meetingType = 'Internal';
+                bookingDetail.recursive = 'NONE';
+                bookingDetail.attendants = [];
+                bookingDetail.amenities = [];
+                bookingDetail.foodAmenities = [];
+                // print('data Room ' + dataRoom.toString());
+                // print('selected area ' + selectedArea!);
+                // print('event room ' + eventRoom.toString());
+                // print('Selected Date -> ${selectedDate.toString()}');
+                // forRefreshCalendar();
+                // Provider.of<MainModel>(context, listen: false)
+                //     .setSelectedDate(selectedDate!.toString());
+                // Provider.of<MainModel>(context, listen: false)
+                //     .setSelectedArea(selectedArea!);
+                // Provider.of<MainModel>(context, listen: false)
+                //     .setDataAndEventRoom(dataRoom);
+                // Provider.of<MainModel>(context, listen: false)
+                //     .setEventRoom(eventRoom);
+                setState(() {
+                  model.setSelectedDate(selectedDate!.toString());
+                  model.setSelectedArea(selectedArea!);
+                  model.setDataAndEventRoom(dataRoom);
+                  model.setEventRoom(eventRoom);
+                });
 
-              // mainModel.setSelectedDate(selectedDate!.toString());
-              // mainModel.setSelectedArea(selectedArea!);
-              // mainModel.setDataAndEventRoom(dataRoom);
-              // mainModel.setEventRoom(eventRoom);
-              // context.pushNamed(
-              //   'booking',
-              //   params: {
-              //     "roomId": calendarTapDetails.resource!.id.toString(),
-              //     'date': calendarTapDetails.date.toString().substring(0, 10),
-              //     'startTime':
-              //         calendarTapDetails.date.toString().substring(11, 16),
-              //     'endTime': calendarTapDetails.date!
-              //         .add(const Duration(hours: 1))
-              //         .toString()
-              //         .substring(11, 16),
-              //     'participant': '1',
-              //     'facilities': '[]',
-              //     'roomType': 'meeting_room',
-              //   },
-              // );
-              //BOOK WITH DIALOG
-              // showDialog(
-              //   context: context,
-              //   builder: (context) => BookingRoomPageDialog(
-              //     roomId: calendarTapDetails.resource!.id.toString(),
-              //     date: calendarTapDetails.date.toString().substring(0, 10),
-              //     startTime: calendarTapDetails.date.toString().substring(11, 16),
-              //     endTime: calendarTapDetails.date!
-              //         .add(const Duration(hours: 1))
-              //         .toString()
-              //         .substring(11, 16),
-              //     participant: '1',
-              //     facilities: '[]',
-              //     roomType: 'MeetingRoom',
-              //   ),
-              // ).then((value) {
-              //   getBookingListRoom(selectedArea!, selectedDate.toString())
-              //       .then((value) {
-              //     assignDataToCalendar(value['Data']);
-              //   });
-              // });
-              //END BOOK WITH DIALOG
-              // _events!.appointments!.clear();
-              context.goNamed(
-                'booking',
-                params: {
-                  "roomId": calendarTapDetails.resource!.id.toString(),
-                  'date': calendarTapDetails.date.toString().substring(0, 10),
-                  'startTime':
-                      calendarTapDetails.date.toString().substring(11, 16),
-                  'endTime': calendarTapDetails.date!
-                      .add(const Duration(hours: 1))
-                      .toString()
-                      .substring(11, 16),
-                  'participant': '1',
-                  'facilities': '[]',
-                  'roomType': 'MeetingRoom',
-                  'isEdit': 'false'
-                },
-                // queryParams: {
-                //   "roomId": calendarTapDetails.resource!.id.toString(),
-                //   'date': calendarTapDetails.date.toString().substring(0, 10),
-                //   'startTime':
-                //       calendarTapDetails.date.toString().substring(11, 16),
-                //   'endTime': calendarTapDetails.date!
-                //       .add(const Duration(hours: 1))
-                //       .toString()
-                //       .substring(11, 16),
-                //   'participant': '1',
-                //   'facilities': '[]',
-                //   'roomType': 'MeetingRoom',
-                //   'isEdit': 'false',
-                // },
+                // mainModel.setSelectedDate(selectedDate!.toString());
+                // mainModel.setSelectedArea(selectedArea!);
+                // mainModel.setDataAndEventRoom(dataRoom);
+                // mainModel.setEventRoom(eventRoom);
+                // context.pushNamed(
+                //   'booking',
+                //   params: {
+                //     "roomId": calendarTapDetails.resource!.id.toString(),
+                //     'date': calendarTapDetails.date.toString().substring(0, 10),
+                //     'startTime':
+                //         calendarTapDetails.date.toString().substring(11, 16),
+                //     'endTime': calendarTapDetails.date!
+                //         .add(const Duration(hours: 1))
+                //         .toString()
+                //         .substring(11, 16),
+                //     'participant': '1',
+                //     'facilities': '[]',
+                //     'roomType': 'meeting_room',
+                //   },
+                // );
+                //BOOK WITH DIALOG
+                // showDialog(
+                //   context: context,
+                //   builder: (context) => BookingRoomPageDialog(
+                //     roomId: calendarTapDetails.resource!.id.toString(),
+                //     date: calendarTapDetails.date.toString().substring(0, 10),
+                //     startTime: calendarTapDetails.date.toString().substring(11, 16),
+                //     endTime: calendarTapDetails.date!
+                //         .add(const Duration(hours: 1))
+                //         .toString()
+                //         .substring(11, 16),
+                //     participant: '1',
+                //     facilities: '[]',
+                //     roomType: 'MeetingRoom',
+                //   ),
+                // ).then((value) {
+                //   getBookingListRoom(selectedArea!, selectedDate.toString())
+                //       .then((value) {
+                //     assignDataToCalendar(value['Data']);
+                //   });
+                // });
+                //END BOOK WITH DIALOG
+                // _events!.appointments!.clear();
+                context.goNamed(
+                  'booking',
+                  params: {
+                    "roomId": calendarTapDetails.resource!.id.toString(),
+                    'date': calendarTapDetails.date.toString().substring(0, 10),
+                    'startTime':
+                        calendarTapDetails.date.toString().substring(11, 16),
+                    'endTime': calendarTapDetails.date!
+                        .add(const Duration(hours: 1))
+                        .toString()
+                        .substring(11, 16),
+                    'participant': '1',
+                    'facilities': '[]',
+                    'roomType': 'MeetingRoom',
+                    'isEdit': 'false'
+                  },
+                  // queryParams: {
+                  //   "roomId": calendarTapDetails.resource!.id.toString(),
+                  //   'date': calendarTapDetails.date.toString().substring(0, 10),
+                  //   'startTime':
+                  //       calendarTapDetails.date.toString().substring(11, 16),
+                  //   'endTime': calendarTapDetails.date!
+                  //       .add(const Duration(hours: 1))
+                  //       .toString()
+                  //       .substring(11, 16),
+                  //   'participant': '1',
+                  //   'facilities': '[]',
+                  //   'roomType': 'MeetingRoom',
+                  //   'isEdit': 'false',
+                  // },
+                );
+                // Navigator.of(context)
+                //     .push(
+                //   MaterialPageRoute(
+                //     builder: (context) => BookingRoomPage(
+                //       roomId: calendarTapDetails.resource!.id.toString(),
+                //       participant: '1',
+                //       facilities: '[]',
+                //       roomType: 'meeting_room',
+                //       date: calendarTapDetails.date.toString().substring(0, 10),
+                //       startTime:
+                //           calendarTapDetails.date.toString().substring(11, 16),
+                //       endTime: calendarTapDetails.date!
+                //           .add(const Duration(hours: 1))
+                //           .toString()
+                //           .substring(11, 16),
+                //     ),
+                //   ),
+                // )
+                //     .then((value) {
+                //   getBookingListRoom(selectedArea!, selectedDate.toString())
+                //       .then((value) {
+                //     assignDataToCalendar(value['Data']);
+                //   });
+                //   setState(() {});
+                // });
+
+                // showDialog(
+                //   context: context,
+                //   builder: (context) => BookingRoomDialog(
+                //     roomId: calendarTapDetails.resource!.id.toString(),
+                //     startDate: calendarTapDetails.date,
+                //     nip: 'HAHAHA',
+                //     bookingDetail: bookingDetail,
+                //   ),
+                // ).then((value) {
+                //   _events!.appointments!.clear();
+                //   getBookingListRoom('AR-1', DateTime.now().toString())
+                //       .then((value) {
+                //     assignDataToCalendar(value['Data']);
+                //     // dataRoom = value['Data'];
+                //     // int length = dataRoom.length;
+                //     // // print(dataRoom);
+                //     // for (var i = 0; i < length; i++) {
+                //     //   eventRoom = dataRoom[i]['Bookings'];
+
+                //     //   for (var j = 0; j < eventRoom.length; j++) {
+                //     //     _events!.appointments!.add(
+                //     //       RoomEvent(
+                //     //         // subject: ,
+                //     //         resourceIds: [dataRoom[i]['RoomID']],
+                //     //         from: DateTime.parse(eventRoom[j]['StartDateTime']),
+                //     //         to: DateTime.parse(eventRoom[j]['EndDateTime']),
+                //     //         background: davysGray,
+                //     //         capacity: 5,
+                //     //         contactID: "1111",
+                //     //         isAllDay: false,
+                //     //         eventName: eventRoom[j]['Description'],
+                //     //         organizer: "",
+                //     //         recurrenceRule: "NONE",
+                //     //         endTimeZone: "",
+                //     //         startTimeZone: "",
+                //     //       ),
+                //     //     );
+                //     //   }
+                //     // }
+                //     // _events!.notifyListeners(
+                //     //     CalendarDataSourceAction.reset, _events!.appointments!);
+                //     // setState(() {});
+                //   });
+                // });
+              }
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) => const AlertDialogBlack(
+                  title: 'Access denied',
+                  contentText: 'Login first!',
+                  isSuccess: false,
+                ),
               );
-              // Navigator.of(context)
-              //     .push(
-              //   MaterialPageRoute(
-              //     builder: (context) => BookingRoomPage(
-              //       roomId: calendarTapDetails.resource!.id.toString(),
-              //       participant: '1',
-              //       facilities: '[]',
-              //       roomType: 'meeting_room',
-              //       date: calendarTapDetails.date.toString().substring(0, 10),
-              //       startTime:
-              //           calendarTapDetails.date.toString().substring(11, 16),
-              //       endTime: calendarTapDetails.date!
-              //           .add(const Duration(hours: 1))
-              //           .toString()
-              //           .substring(11, 16),
-              //     ),
-              //   ),
-              // )
-              //     .then((value) {
-              //   getBookingListRoom(selectedArea!, selectedDate.toString())
-              //       .then((value) {
-              //     assignDataToCalendar(value['Data']);
-              //   });
-              //   setState(() {});
-              // });
-
-              // showDialog(
-              //   context: context,
-              //   builder: (context) => BookingRoomDialog(
-              //     roomId: calendarTapDetails.resource!.id.toString(),
-              //     startDate: calendarTapDetails.date,
-              //     nip: 'HAHAHA',
-              //     bookingDetail: bookingDetail,
-              //   ),
-              // ).then((value) {
-              //   _events!.appointments!.clear();
-              //   getBookingListRoom('AR-1', DateTime.now().toString())
-              //       .then((value) {
-              //     assignDataToCalendar(value['Data']);
-              //     // dataRoom = value['Data'];
-              //     // int length = dataRoom.length;
-              //     // // print(dataRoom);
-              //     // for (var i = 0; i < length; i++) {
-              //     //   eventRoom = dataRoom[i]['Bookings'];
-
-              //     //   for (var j = 0; j < eventRoom.length; j++) {
-              //     //     _events!.appointments!.add(
-              //     //       RoomEvent(
-              //     //         // subject: ,
-              //     //         resourceIds: [dataRoom[i]['RoomID']],
-              //     //         from: DateTime.parse(eventRoom[j]['StartDateTime']),
-              //     //         to: DateTime.parse(eventRoom[j]['EndDateTime']),
-              //     //         background: davysGray,
-              //     //         capacity: 5,
-              //     //         contactID: "1111",
-              //     //         isAllDay: false,
-              //     //         eventName: eventRoom[j]['Description'],
-              //     //         organizer: "",
-              //     //         recurrenceRule: "NONE",
-              //     //         endTimeZone: "",
-              //     //         startTimeZone: "",
-              //     //       ),
-              //     //     );
-              //     //   }
-              //     // }
-              //     // _events!.notifyListeners(
-              //     //     CalendarDataSourceAction.reset, _events!.appointments!);
-              //     // setState(() {});
-              //   });
-              // });
             }
           }
         },

@@ -74,281 +74,287 @@ class _DetailAppointmentContainerState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 350,
-      height: MediaQuery.of(context).size.height - 80,
-      decoration: BoxDecoration(
-        color: culturedWhite,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: 500,
       ),
-      child: SingleChildScrollView(
-        primary: false,
-        // physics: const PageScrollPhysics(),
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 30,
-                vertical: 30,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$eventName ($attendantsNumber Person)',
-                    style: const TextStyle(
-                      fontFamily: 'Helvetica',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: eerieBlack,
+      child: Container(
+        width: 350,
+        decoration: const BoxDecoration(
+          color: culturedWhite,
+        ),
+        child: SingleChildScrollView(
+          primary: false,
+          // physics: const PageScrollPhysics(),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 30,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$eventName ($attendantsNumber Person)',
+                      style: const TextStyle(
+                        fontFamily: 'Helvetica',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: eerieBlack,
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  rowDetail(
-                    'Location',
-                    location,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 7,
+                    const SizedBox(
+                      height: 40,
                     ),
-                    child: Divider(
-                      color: lightGray,
-                      thickness: 0.5,
+                    rowDetail(
+                      'Location',
+                      location,
                     ),
-                  ),
-                  rowDetail(
-                    'Floor',
-                    '2nd Floor',
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 7,
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 7,
+                      ),
+                      child: Divider(
+                        color: lightGray,
+                        thickness: 0.5,
+                      ),
                     ),
-                    child: Divider(
-                      color: lightGray,
-                      thickness: 0.5,
+                    rowDetail(
+                      'Floor',
+                      '2nd Floor',
                     ),
-                  ),
-                  rowDetail(
-                    'Event Time',
-                    eventTime,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 7,
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 7,
+                      ),
+                      child: Divider(
+                        color: lightGray,
+                        thickness: 0.5,
+                      ),
                     ),
-                    child: Divider(
-                      color: lightGray,
-                      thickness: 0.5,
+                    rowDetail(
+                      'Event Time',
+                      eventTime,
                     ),
-                  ),
-                  rowDetail(
-                    'Event Date',
-                    eventDate,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 7,
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 7,
+                      ),
+                      child: Divider(
+                        color: lightGray,
+                        thickness: 0.5,
+                      ),
                     ),
-                    child: Divider(
-                      color: lightGray,
-                      thickness: 0.5,
+                    rowDetail(
+                      'Event Date',
+                      eventDate,
                     ),
-                  ),
-                  rowDetail(
-                    'Duration',
-                    duration,
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  const Text(
-                    'User Info',
-                    style: TextStyle(
-                      fontFamily: 'Helvetica',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: blueAccent,
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 7,
+                      ),
+                      child: Divider(
+                        color: lightGray,
+                        thickness: 0.5,
+                      ),
                     ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 5,
+                    rowDetail(
+                      'Duration',
+                      duration,
                     ),
-                    child: Divider(
-                      color: blueAccent,
-                      thickness: 0.5,
+                    const SizedBox(
+                      height: 40,
                     ),
-                  ),
-                  rowDetail(
-                    'Host',
-                    host,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 7,
+                    const Text(
+                      'User Info',
+                      style: TextStyle(
+                        fontFamily: 'Helvetica',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: blueAccent,
+                      ),
                     ),
-                    child: Divider(
-                      color: lightGray,
-                      thickness: 0.5,
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 5,
+                      ),
+                      child: Divider(
+                        color: blueAccent,
+                        thickness: 0.5,
+                      ),
                     ),
-                  ),
-                  rowDetail(
-                    'Email',
-                    email,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 7,
+                    rowDetail(
+                      'Host',
+                      host,
                     ),
-                    child: Divider(
-                      color: lightGray,
-                      thickness: 0.5,
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 7,
+                      ),
+                      child: Divider(
+                        color: lightGray,
+                        thickness: 0.5,
+                      ),
                     ),
-                  ),
-                  rowDetail(
-                    'Avaya',
-                    avaya,
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        IconButton(
-                          icon: const Icon(
-                            MdiIcons.informationOutline,
-                            color: blueAccent,
-                            size: 26,
-                          ),
-                          onPressed: () {
-                            context.goNamed('detail_event', params: {
-                              'eventId': widget.event!.bookingID!,
-                            });
-                          },
-                          tooltip: 'Detail Info',
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            MdiIcons.emailOutline,
-                            color: blueAccent,
-                            size: 26,
-                          ),
-                          onPressed: () {},
-                          tooltip: 'Email',
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.sync_alt,
-                            color: blueAccent,
-                            size: 26,
-                          ),
-                          onPressed: () {},
-                          tooltip: 'Trade',
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            MdiIcons.closeCircleOutline,
-                            color: blueAccent,
-                            size: 26,
-                          ),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => const ConfirmDialogBlack(
-                                title: 'Cancel Booking',
-                                contentText:
-                                    'Are you sure want cancel this booking?',
-                              ),
-                            ).then((value) {
-                              setState(() {
-                                // isCancelLoading = true;
+                    rowDetail(
+                      'Email',
+                      email,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 7,
+                      ),
+                      child: Divider(
+                        color: lightGray,
+                        thickness: 0.5,
+                      ),
+                    ),
+                    rowDetail(
+                      'Avaya',
+                      avaya,
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              MdiIcons.informationOutline,
+                              color: blueAccent,
+                              size: 26,
+                            ),
+                            onPressed: () {
+                              context.goNamed('detail_event', params: {
+                                'eventId': widget.event!.bookingID!,
                               });
-                              if (value) {
-                                if (bookingType == "SINGLE") {
-                                  deleteBooking(widget.event!.bookingID!)
-                                      .then((value) {
-                                    print(value);
-                                    setState(() {
-                                      // isCancelLoading = false;
+                            },
+                            tooltip: 'Detail Info',
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              MdiIcons.emailOutline,
+                              color: blueAccent,
+                              size: 26,
+                            ),
+                            onPressed: () {},
+                            tooltip: 'Email',
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.sync_alt,
+                              color: blueAccent,
+                              size: 26,
+                            ),
+                            onPressed: () {},
+                            tooltip: 'Trade',
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              MdiIcons.closeCircleOutline,
+                              color: blueAccent,
+                              size: 26,
+                            ),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => const ConfirmDialogBlack(
+                                  title: 'Cancel Booking',
+                                  contentText:
+                                      'Are you sure want cancel this booking?',
+                                ),
+                              ).then((value) {
+                                setState(() {
+                                  // isCancelLoading = true;
+                                });
+                                if (value) {
+                                  if (bookingType == "SINGLE") {
+                                    deleteBooking(widget.event!.bookingID!)
+                                        .then((value) {
+                                      print(value);
+                                      setState(() {
+                                        // isCancelLoading = false;
+                                      });
+                                      if (value['Status'] == "200") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        ).then((value) {
+                                          context.go('/rooms');
+                                        });
+                                      }
+                                    }).onError((error, stackTrace) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: 'Failed connect to API',
+                                          contentText: error.toString(),
+                                          isSuccess: false,
+                                        ),
+                                      );
                                     });
-                                    if (value['Status'] == "200") {
+                                  }
+                                  if (bookingType == "RECURRENT") {
+                                    deleteBookingRecurrent(
+                                            widget.event!.bookingID!)
+                                        .then((value) {
+                                      print(value);
+                                      if (value['Status'] == "200") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        ).then((value) {
+                                          context.go('/rooms');
+                                        });
+                                      }
+                                    }).onError((error, stackTrace) {
                                       showDialog(
                                         context: context,
                                         builder: (context) => AlertDialogBlack(
-                                          title: value['Title'],
-                                          contentText: value['Message'],
+                                          title: 'Failed connect to API',
+                                          contentText: error.toString(),
+                                          isSuccess: false,
                                         ),
-                                      ).then((value) {
-                                        context.go('/rooms');
-                                      });
-                                    }
-                                  }).onError((error, stackTrace) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialogBlack(
-                                        title: 'Failed connect to API',
-                                        contentText: error.toString(),
-                                        isSuccess: false,
-                                      ),
-                                    );
-                                  });
+                                      );
+                                    });
+                                  }
                                 }
-                                if (bookingType == "RECURRENT") {
-                                  deleteBookingRecurrent(
-                                          widget.event!.bookingID!)
-                                      .then((value) {
-                                    print(value);
-                                    if (value['Status'] == "200") {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialogBlack(
-                                          title: value['Title'],
-                                          contentText: value['Message'],
-                                        ),
-                                      ).then((value) {
-                                        context.go('/rooms');
-                                      });
-                                    }
-                                  }).onError((error, stackTrace) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialogBlack(
-                                        title: 'Failed connect to API',
-                                        contentText: error.toString(),
-                                        isSuccess: false,
-                                      ),
-                                    );
-                                  });
-                                }
-                              }
-                            });
-                          },
-                          tooltip: 'Cancel',
-                        ),
-                      ],
-                    ),
-                  )
-                  // Text(widget.event!.resourceIds![0].toString()),
-                ],
+                              });
+                            },
+                            tooltip: 'Cancel',
+                          ),
+                        ],
+                      ),
+                    )
+                    // Text(widget.event!.resourceIds![0].toString()),
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-              top: 5,
-              right: 5,
-              child: IconButton(
-                onPressed: () {
-                  widget.closeDetail!();
-                },
-                icon: Icon(Icons.close_sharp),
+              Positioned(
+                top: 5,
+                right: 5,
+                child: IconButton(
+                  onPressed: () {
+                    widget.closeDetail!();
+                  },
+                  icon: Icon(Icons.close_sharp),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

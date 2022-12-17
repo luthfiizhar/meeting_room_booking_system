@@ -25,7 +25,7 @@ class ParticipantContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        minWidth: 70,
+        minWidth: 80,
         maxWidth: 150,
         maxHeight: 300,
       ),

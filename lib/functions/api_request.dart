@@ -315,6 +315,51 @@ Future loginCerberus() async {
     box.put(
         'jwtToken', data['Data']['Token'] != null ? data['Data']['Token'] : "");
     jwtToken = data['Data']['Token'];
+    isTokenValid = true;
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future logout() async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/logout-cerberus');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.post(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+    if (data['Status'] == "200") {
+      jwtToken = "";
+      box.put('jwtToken', "");
+    }
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future checkToken() async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/user/token');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
 
     return data;
   } on Error catch (e) {

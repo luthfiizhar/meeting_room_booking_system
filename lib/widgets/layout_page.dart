@@ -21,12 +21,16 @@ class LayoutPageWeb extends StatefulWidget {
     this.index,
     this.setDatePickerStatus,
     required this.scrollController,
+    this.resetState,
+    this.model,
   });
 
   Widget? child;
   int? index;
   Function? setDatePickerStatus;
   final ScrollController? scrollController;
+  Function? resetState;
+  MainModel? model;
 
   @override
   State<LayoutPageWeb> createState() => _LayoutPageWebState();
@@ -124,6 +128,9 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
     // TODO: implement initState
     super.initState();
     _scrollController = widget.scrollController;
+    if (widget.model != null) {
+      mainModel = widget.model!;
+    }
     // checkDeviceInfo();
     // if (mounted) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -161,7 +168,10 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   }
 
   resetState() {
-    setState(() {});
+    widget.resetState!();
+    setState(() {
+      print(jwtToken);
+    });
   }
 
   @override
@@ -220,6 +230,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                           popUpProfile: popUpProfile,
                           popUpStatus: profileVisible,
                           getProfile: _getEntry(context),
+                          resetState: widget.resetState,
                         ),
                       ),
                       Expanded(

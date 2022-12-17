@@ -10,12 +10,13 @@ class UpcomingEventContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxWidth: 780,
-        minWidth: 780,
-        maxHeight: 200,
-        minHeight: 200,
-      ),
+      // constraints: const BoxConstraints(
+      //   maxWidth: 780,
+      //   minWidth: 780,
+      //   maxHeight: 200,
+      //   minHeight: 200,
+      // ),
+      constraints: homeLeftSideConstrains,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 22.5, horizontal: 35),
         decoration: BoxDecoration(

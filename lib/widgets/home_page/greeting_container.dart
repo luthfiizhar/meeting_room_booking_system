@@ -30,12 +30,13 @@ class _GreetingContainerState extends State<GreetingContainer> {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxWidth: 780,
-        minWidth: 780,
-        maxHeight: 200,
-        minHeight: 200,
-      ),
+      // constraints: const BoxConstraints(
+      //   maxWidth: 780,
+      //   minWidth: 780,
+      //   maxHeight: 200,
+      //   minHeight: 200,
+      // ),
+      constraints: homeLeftSideConstrains,
       child: Container(
         decoration: BoxDecoration(
           color: white,
@@ -58,13 +59,17 @@ class _GreetingContainerState extends State<GreetingContainer> {
             const SizedBox(
               height: 10,
             ),
-            Text(
-              'Good Morning,',
-              style: helveticaText.copyWith(
-                fontSize: 18,
-                fontWeight: FontWeight.w300,
-                color: davysGray,
-              ),
+            Row(
+              children: [
+                Text(
+                  'Good Morning,',
+                  style: helveticaText.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w300,
+                    color: davysGray,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               height: 10,

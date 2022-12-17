@@ -7,6 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meeting_room_booking_system/app_view.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/custom_scroll_behavior.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/booking_room_info.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page.dart';
@@ -45,6 +46,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 bool isLoggedIn = false;
 String? jwtToken = "";
 String? token = "";
+bool isTokenValid = false;
 bool firstLogIn = true;
 
 loginCheck() async {
@@ -61,7 +63,16 @@ void main() async {
   // final ipv4 = await Ipify.ipv4();
   // print(ipv4);
   await loginCheck();
-  runApp(MyApp());
+  // runApp(MyApp());
+  checkToken().then((value) {
+    if (value['Status'] == "200") {
+      isTokenValid = true;
+    } else {
+      isTokenValid = false;
+    }
+    runApp(MyApp());
+  });
+
   // loginCheck().then((_) {
   //   runApp(MyApp());
   // });
@@ -91,7 +102,9 @@ class MyApp extends StatelessWidget {
           //     ),
           pageBuilder: (context, state) => NoTransitionPage<void>(
                 key: state.pageKey,
-                child: HomePage(),
+                child: HomePage(
+                  index: 0,
+                ),
               ),
           routes: [
             // GoRoute(
@@ -304,16 +317,23 @@ class MyApp extends StatelessWidget {
         ),
       ),
     ],
-    // redirect: (state) {
-    //   final loggingIn = state.subloc == '/login';
+    redirect: (context, state) {
+      final goHome = state.subloc == '/home';
+      final roomPage = state.location == '/rooms';
+      final search = state.name == '/search';
 
-    //   if (jwtToken == null || jwtToken == "")
-    //     return loggingIn ? null : '/login';
+      // if (!roomPage) {
+      //   if (jwtToken == null || jwtToken == "") {
+      //     return goHome ? null : '/home';
+      //   }
+      //   if (!isTokenValid) {
+      //     return goHome ? null : '/home';
+      //   }
+      // }
+      // if (loggingIn) return '/home';
 
-    //   if (loggingIn) return '/';
-
-    //   return null;
-    // },
+      return null;
+    },
     initialLocation: '/home',
   );
 
