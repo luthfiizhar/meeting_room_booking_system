@@ -1,12 +1,18 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/constant/custom_scroll_behavior.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/area_menu_page.dart/new_area_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 
 class AreaMenuPage extends StatefulWidget {
-  const AreaMenuPage({super.key});
+  AreaMenuPage({
+    super.key,
+  });
 
   @override
   State<AreaMenuPage> createState() => _AreaMenuPageState();
@@ -21,10 +27,8 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
 
   int selectedIndexArea = 0;
 
-  List areaList = [
-    {'isCollapsed': false},
-    {'isCollapsed': false}
-  ];
+  List areaList = [];
+  List<Room> room = [];
 
   List showPerPageList = ["5", "10", "20", "50", "100"];
 
@@ -47,6 +51,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
       }
       print(availablePage);
       // print(showedPage);
+      showedPage = availablePage.take(5).toList();
     });
   }
 
@@ -54,22 +59,51 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
 
   closeDetail(index) {
     setState(() {
-      areaList[index]['isCollapsed'] = false;
+      room[index].isCollapsed = false;
     });
   }
 
   onTapListArea(int index) {
     setState(() {
       // closeDetail();
+      for (var element in room) {
+        element.isCollapsed = false;
+      }
+      if (!room[index].isCollapsed) {
+        print('if false');
+        room[index].isCollapsed = true;
+      } else if (room[index].isCollapsed) {
+        print('if true');
+        room[index].isCollapsed = false;
+      }
+
+      print(room[index].isCollapsed);
+    });
+  }
+
+  updateList() {
+    areaList.clear();
+    room.clear();
+    getRoomList(searchTerm).then((value) {
+      areaList = value['Data']['List'];
       for (var element in areaList) {
-        element['isCollapsed'] = false;
+        room.add(Room(
+          idRoom: element['RoomID'],
+          roomName: element['RoomName'],
+          roomType: element['RoomType'],
+          building: element['SiteLocation'],
+          floor: element['AreaName'],
+          minCapacity: element['MinCapacity'].toString(),
+          maxCapacity: element['MaxCapacity'].toString(),
+          coverPhoto: element['CoverPhoto'],
+          maxDuration: element['Duration'].toString(),
+          facility: element['AvailableAmenities'],
+          prohibitedFacilities: element['ForbiddenAmenities'],
+          photoList: element['RoomPhotos'],
+          isCollapsed: false,
+        ));
       }
-      if (areaList[index]['isCollapsed'] == true) {
-        areaList[index]['isCollapsed'] = false;
-      }
-      if (areaList[index]['isCollapsed'] == false) {
-        areaList[index]['isCollapsed'] = true;
-      }
+      countPagination(value['Data']['TotalRows']);
     });
   }
 
@@ -77,6 +111,32 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    getRoomList(searchTerm).then((value) {
+      // print(value);
+      areaList = value['Data']['List'];
+      // for (var element in areaList) {
+      //   areaList.add({'isCollapsed': false});
+      // }
+      for (var element in areaList) {
+        room.add(Room(
+          idRoom: element['RoomID'],
+          roomName: element['RoomName'],
+          roomType: element['RoomType'],
+          building: element['SiteLocation'],
+          floor: element['AreaName'],
+          minCapacity: element['MinCapacity'].toString(),
+          maxCapacity: element['MaxCapacity'].toString(),
+          coverPhoto: element['CoverPhoto'],
+          maxDuration: element['Duration'].toString(),
+          facility: element['AvailableAmenities'],
+          prohibitedFacilities: element['ForbiddenAmenities'],
+          photoList: element['RoomPhotos'],
+          isCollapsed: false,
+        ));
+      }
+      countPagination(value['Data']['TotalRows']);
+    });
   }
 
   @override
@@ -97,10 +157,10 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
           ),
           InkWell(
             onTap: () {
-              // showDialog(
-              //   context: context,
-              //   builder: (context) => AddNewFloorDialog(),
-              // );
+              showDialog(
+                context: context,
+                builder: (context) => NewAreaDialog(),
+              );
             },
             child: SizedBox(
               child: Row(
@@ -147,20 +207,33 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
         height: 20,
       ),
       ListView.builder(
-        itemCount: areaList.length,
+        itemCount: room.length,
         shrinkWrap: true,
         itemBuilder: (context, index) {
           return AreaListContainer(
             index: index,
-            isCollapse: areaList[index]['isCollapsed'],
+            isCollapse: room[index].isCollapsed,
             onTap: onTapListArea,
             close: closeDetail,
+            idRoom: room[index].idRoom,
+            roomName: room[index].roomName,
+            roomType: room[index].roomType,
+            maxCapacity: room[index].maxCapacity,
+            minCapacity: room[index].minCapacity,
+            floor: room[index].floor,
+            building: room[index].building,
+            maxDuration: room[index].maxDuration,
+            coverPhoto: room[index].coverPhoto,
+            facility: room[index].facility,
+            prohibitedFacility: room[index].prohibitedFacilities,
+            photoList: room[index].photoList,
           );
         },
       ),
       const SizedBox(
         height: 60,
       ),
+      //FOOTER PAGINATION
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -186,6 +259,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                     onChanged: (value) {
                       setState(() {
                         searchTerm.max = value!.toString();
+                        updateList();
                         // getMyBookingList(searchTerm).then((value) {
                         //   myBookList = value['Data']['List'];
                         //   countPagination(value['Data']['TotalRows']);
@@ -239,7 +313,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                             }
                             searchTerm.pageNumber =
                                 currentPaginatedPage.toString();
-
+                            updateList();
                             // getMyBookingList(searchTerm)
                             //     .then((value) {
                             //   myBookList = value['Data']['List'];
@@ -309,6 +383,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                                       });
                                       searchTerm.pageNumber =
                                           currentPaginatedPage.toString();
+                                      updateList();
                                       // getMyBookingList(searchTerm)
                                       //     .then((value) {
                                       //   setState(() {
@@ -406,7 +481,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                             }
                             searchTerm.pageNumber =
                                 currentPaginatedPage.toString();
-
+                            updateList();
                             // getMyBookingList(searchTerm)
                             //     .then((value) {
                             //   myBookList = value['Data']['List'];
@@ -435,6 +510,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
           ),
         ],
       ),
+      //END FOOTER PAGINATION
     ]);
   }
 }
@@ -442,32 +518,68 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
 class AreaListContainer extends StatefulWidget {
   AreaListContainer({
     super.key,
+    this.idRoom = "",
     this.roomName = "",
     this.roomType = "",
     this.building = "",
     this.floor = "",
-    this.capacity = "",
+    this.minCapacity = "",
+    this.maxCapacity = "",
+    this.maxDuration = "",
+    this.facility,
+    this.prohibitedFacility,
+    this.coverPhoto = "",
+    this.photoList,
     this.onTap,
     this.isCollapse = false,
     this.index,
     this.close,
   });
 
+  String idRoom;
   String roomName;
   String roomType;
   String floor;
   String building;
-  String capacity;
-  Function? onTap;
-  Function? close;
+  String minCapacity;
+  String maxCapacity;
+  String maxDuration;
+  String coverPhoto;
+
+  List? facility;
+  List? prohibitedFacility;
+  List? photoList;
+
   bool isCollapse;
   int? index;
+
+  Function? onTap;
+  Function? close;
 
   @override
   State<AreaListContainer> createState() => _AreaListContainerState();
 }
 
 class _AreaListContainerState extends State<AreaListContainer> {
+  ScrollController facilityScrollController = ScrollController();
+  ScrollController prohibitedScrollController = ScrollController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    facilityScrollController.addListener(() {});
+    prohibitedScrollController.addListener(() {});
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    facilityScrollController.dispose();
+    prohibitedScrollController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -518,6 +630,7 @@ class _AreaListContainerState extends State<AreaListContainer> {
               CircleAvatar(
                 backgroundColor: blueAccent,
                 radius: 35,
+                backgroundImage: NetworkImage(widget.coverPhoto),
               ),
               const SizedBox(
                 width: 30,
@@ -526,7 +639,7 @@ class _AreaListContainerState extends State<AreaListContainer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '401',
+                    widget.roomName,
                     style: helveticaText.copyWith(
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
@@ -534,7 +647,7 @@ class _AreaListContainerState extends State<AreaListContainer> {
                     ),
                   ),
                   Text(
-                    'Meeting Room',
+                    widget.roomType,
                     style: helveticaText.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w300,
@@ -555,7 +668,7 @@ class _AreaListContainerState extends State<AreaListContainer> {
                 width: 10,
               ),
               Text(
-                '4th Floor, Head Office',
+                '${widget.floor}, ${widget.building}',
                 style: helveticaText.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w300,
@@ -574,7 +687,7 @@ class _AreaListContainerState extends State<AreaListContainer> {
                 width: 10,
               ),
               Text(
-                '2-6',
+                '${widget.minCapacity}-${widget.maxCapacity}',
                 style: helveticaText.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w300,
@@ -594,7 +707,9 @@ class _AreaListContainerState extends State<AreaListContainer> {
   }
 
   Widget detail() {
+    var duration = int.parse(widget.maxDuration) / 3600;
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           height: 190,
@@ -602,56 +717,168 @@ class _AreaListContainerState extends State<AreaListContainer> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: davysGray,
+            image: DecorationImage(
+              image: Image.network(widget.coverPhoto).image,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         const SizedBox(
           width: 40,
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    detailInfo('Room Name: ', '401'),
-                    detailInfo('Building: ', 'Head Office'),
-                    detailInfo('Floor: ', '2nd'),
-                    detailInfo('Type: ', 'Meeting Room'),
-                  ],
-                ),
-                const SizedBox(
-                  width: 100,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    detailInfo('Min Capacity: ', '2'),
-                    detailInfo('Max Capacity: ', '6'),
-                    detailInfo('Max Book Duration: ', '5 Hour'),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              'Facilities',
-              style: helveticaText.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: davysGray,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      detailInfo('Room Name: ', widget.roomName),
+                      detailInfo('Building: ', widget.building),
+                      detailInfo('Floor: ', widget.floor),
+                      detailInfo('Type: ', widget.roomType),
+                    ],
+                  ),
+                  const SizedBox(
+                    width: 100,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      detailInfo('Min Capacity: ', widget.minCapacity),
+                      detailInfo('Max Capacity: ', widget.maxCapacity),
+                      detailInfo('Max Book Duration: ', '$duration Hours'),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-          ],
+              const SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Facilities',
+                style: helveticaText.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
+                  color: davysGray,
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                height: 50,
+                width: 400,
+                child: ScrollConfiguration(
+                  behavior: MyCustomScrollBehavior(),
+                  child: Scrollbar(
+                    controller: facilityScrollController,
+                    child: ListView.builder(
+                      controller: facilityScrollController,
+                      itemCount: widget.facility!.length,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.only(
+                          right: 25,
+                        ),
+                        child: facilities(
+                          widget.facility![index]['ImageURL'],
+                          widget.facility![index]['AmenitiesName'],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Prohibited',
+                        style: helveticaText.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w300,
+                          color: davysGray,
+                          height: 1.6,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        height: 50,
+                        width: 400,
+                        child: ScrollConfiguration(
+                          behavior: MyCustomScrollBehavior(),
+                          child: Scrollbar(
+                            controller: prohibitedScrollController,
+                            child: ListView.builder(
+                              itemCount: widget.prohibitedFacility!.length,
+                              controller: prohibitedScrollController,
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 25,
+                                ),
+                                child: facilities(
+                                  widget.prohibitedFacility![index]['ImageURL'],
+                                  widget.prohibitedFacility![index]
+                                      ['AmenitiesName'],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 85,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Row(
+                        children: [
+                          InkWell(
+                            onTap: () {},
+                            child: const Icon(
+                              Icons.edit,
+                              color: orangeAccent,
+                              size: 25,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          InkWell(
+                            onTap: () {},
+                            child: const Icon(
+                              Icons.delete_outline_sharp,
+                              color: orangeAccent,
+                              size: 25,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -662,13 +889,13 @@ class _AreaListContainerState extends State<AreaListContainer> {
       fontSize: 16,
       fontWeight: FontWeight.w300,
       color: davysGray,
-      height: 1.3,
+      height: 1.6,
     );
     final TextStyle contentText = helveticaText.copyWith(
       fontSize: 16,
       fontWeight: FontWeight.w400,
       color: davysGray,
-      height: 1.3,
+      height: 1.6,
     );
     return RichText(
       text: TextSpan(
@@ -679,5 +906,79 @@ class _AreaListContainerState extends State<AreaListContainer> {
         ],
       ),
     );
+  }
+
+  Widget facilities(String photo, String name) {
+    return Container(
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: lightGray,
+                width: 0.5,
+              ),
+              image: DecorationImage(
+                image: NetworkImage(photo),
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 15,
+          ),
+          Text(
+            name,
+            style: helveticaText.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: davysGray,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class Room {
+  Room({
+    this.idRoom = "",
+    this.roomName = "",
+    this.floor = "",
+    this.building = "",
+    this.maxCapacity = "",
+    this.minCapacity = "",
+    this.roomType = "",
+    this.facility,
+    this.coverPhoto = "",
+    this.maxDuration = "",
+    this.photoList,
+    this.prohibitedFacilities,
+    this.isCollapsed = false,
+  });
+  String idRoom;
+  String roomName;
+  String floor;
+  String building;
+  String minCapacity;
+  String maxCapacity;
+  String maxDuration;
+  String roomType;
+  String coverPhoto;
+  List? photoList;
+  List? facility;
+  List? prohibitedFacilities;
+  bool isCollapsed;
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "{idRoom : $idRoom, roomName : $idRoom, facility : $facility,}";
   }
 }
