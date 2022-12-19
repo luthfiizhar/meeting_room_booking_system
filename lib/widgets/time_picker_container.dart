@@ -132,12 +132,6 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
             int.parse(start.split(":")[1])); //TimeOfDay(hour: 9, minute: 0);
     var minute = startTime.minute;
     var hour = startTime.hour;
-    var minuteEnd = startTime.minute + 15;
-    if (minuteEnd == 60) {
-      // startTime
-      hour = hour + 1;
-      minuteEnd = 0;
-    }
 
     startTime = TimeOfDay(hour: hour, minute: minute);
     print(startTime);
@@ -298,11 +292,11 @@ class _TimePickerContainerState extends State<TimePickerContainer> {
                             // selectEndTime().then((value) {
                             //   widget.setTime!(widget.startTime, widget.endTime);
                             // });
-                            print(widget.initialEndTime);
 
                             if (widget.endTimeStatus!) {
                               widget.setEndTimeStatus!(false);
                             } else {
+                              // print(widget.initialEndTime!);
                               await setEndTime(widget.initialEndTime!);
                               widget.setStartTimeStatus!(false);
                               widget.setListEndTime!(endTimes);

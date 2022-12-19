@@ -33,6 +33,7 @@ const TextStyle navBarText = TextStyle(
   fontSize: 16,
   fontWeight: FontWeight.w300,
   color: navBarInActiveState,
+  height: 1.15,
 );
 
 const TextStyle filterSearchBarText = TextStyle(

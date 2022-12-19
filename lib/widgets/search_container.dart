@@ -39,6 +39,7 @@ class SearchContainer extends StatelessWidget {
     this.datakey,
     this.searchRoom,
     this.meetingTypeName,
+    this.roomTypeCover,
   });
 
   FocusNode? dateNode;
@@ -65,6 +66,7 @@ class SearchContainer extends StatelessWidget {
   bool? meetingTypeStatus;
   String? meetingTypeSelected;
   String? meetingTypeName;
+  String? roomTypeCover;
   GlobalKey? dateKey;
   GlobalKey? timeKey;
   GlobalKey? participantKey;

@@ -55,9 +55,9 @@ class _BookingRoomDialogState extends State<BookingRoomDialog> {
               onTap: () {
                 // widget.bookingDetail!.endDate! = widget.bookingDetail!.startDate!.add(Duration(hours: 2));
                 // print(widget.bookingDetail!.toJson());
-                bookingRoom(widget.bookingDetail!).then((value) {
-                  print(value);
-                });
+                // bookingRoom(widget.bookingDetail!).then((value) {
+                //   print(value);
+                // });
               },
             )
           ],

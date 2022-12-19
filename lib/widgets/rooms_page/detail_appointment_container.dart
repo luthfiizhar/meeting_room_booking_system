@@ -231,29 +231,29 @@ class _DetailAppointmentContainerState
                             ),
                             onPressed: () {
                               context.goNamed('detail_event', params: {
-                                'eventId': widget.event!.bookingID!,
+                                'eventId': widget.bookingDetail!.bookingId,
                               });
                             },
                             tooltip: 'Detail Info',
                           ),
-                          IconButton(
-                            icon: const Icon(
-                              MdiIcons.emailOutline,
-                              color: blueAccent,
-                              size: 26,
-                            ),
-                            onPressed: () {},
-                            tooltip: 'Email',
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.sync_alt,
-                              color: blueAccent,
-                              size: 26,
-                            ),
-                            onPressed: () {},
-                            tooltip: 'Trade',
-                          ),
+                          // IconButton(
+                          //   icon: const Icon(
+                          //     MdiIcons.emailOutline,
+                          //     color: blueAccent,
+                          //     size: 26,
+                          //   ),
+                          //   onPressed: () {},
+                          //   tooltip: 'Email',
+                          // ),
+                          // IconButton(
+                          //   icon: const Icon(
+                          //     Icons.sync_alt,
+                          //     color: blueAccent,
+                          //     size: 26,
+                          //   ),
+                          //   onPressed: () {},
+                          //   tooltip: 'Trade',
+                          // ),
                           IconButton(
                             icon: const Icon(
                               MdiIcons.closeCircleOutline,

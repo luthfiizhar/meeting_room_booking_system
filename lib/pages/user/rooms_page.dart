@@ -468,145 +468,138 @@ class _RoomsPageState extends State<RoomsPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        width: 20,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Container(
+                      width: 280,
+                      child: CustomDatePicker(
+                        controller: datePickerControl,
+                        isDark: true,
+                        setPickerStatus: setVisible,
+                        changeDate: setDate,
+                        currentDate: selectedDate,
                       ),
-                      Container(
-                        width: 280,
-                        child: CustomDatePicker(
-                          controller: datePickerControl,
-                          isDark: true,
-                          setPickerStatus: setVisible,
-                          changeDate: setDate,
-                          currentDate: selectedDate,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                RegularButton(
-                                  text: 'Today',
-                                  disabled: false,
-                                  padding: ButtonSize().smallSize(),
-                                  onTap: () {
-                                    setState(() {
-                                      selectedDate = DateTime.now();
-                                    });
-                                    datePickerControl.selectedDate =
-                                        selectedDate;
-                                    calendarControl!.displayDate = selectedDate;
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              RegularButton(
+                                text: 'Today',
+                                disabled: false,
+                                padding: ButtonSize().smallSize(),
+                                onTap: () {
+                                  setState(() {
+                                    selectedDate = DateTime.now();
+                                  });
+                                  datePickerControl.selectedDate = selectedDate;
+                                  calendarControl!.displayDate = selectedDate;
+                                },
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    selectedDate = calendarControl!.displayDate!
+                                        .subtract(const Duration(days: 1));
+                                  });
+                                  datePickerControl.selectedDate = selectedDate;
+                                  calendarControl!.displayDate = selectedDate;
+                                },
+                                splashRadius: 20,
+                                icon: const Icon(
+                                  Icons.chevron_left_sharp,
+                                  size: 28,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    selectedDate = calendarControl!.displayDate!
+                                        .add(const Duration(days: 1));
+                                  });
+                                  // getBookingListRoom(
+                                  //     selectedArea!, selectedDate!.toString());
+                                  datePickerControl.selectedDate = selectedDate;
+                                  calendarControl!.displayDate = selectedDate;
+                                },
+                                splashRadius: 20,
+                                icon: const Icon(
+                                  Icons.chevron_right_sharp,
+                                  size: 28,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              Text(
+                                DateFormat('d MMMM y').format(selectedDate!),
+                                style: const TextStyle(
+                                  fontFamily: 'Helvetica',
+                                  color: eerieBlack,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w300,
+                                  height: 1.3,
+                                ),
+                              ),
+                              const Expanded(
+                                child: SizedBox(),
+                              ),
+                              SizedBox(
+                                width: 170,
+                                child: WhiteDropdown(
+                                  focusNode: areaNode,
+                                  customHeights:
+                                      _getCustomItemsHeights(areaList),
+                                  items: addDividerItem(areaList),
+                                  enabled: true,
+                                  hintText: '',
+                                  onChanged: (value) {
+                                    print(value);
+                                    selectedArea = value;
+                                    onChangedArea(selectedArea!);
                                   },
+                                  value: selectedArea,
                                 ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      selectedDate = calendarControl!
-                                          .displayDate!
-                                          .subtract(const Duration(days: 1));
-                                    });
-                                    datePickerControl.selectedDate =
-                                        selectedDate;
-                                    calendarControl!.displayDate = selectedDate;
-                                  },
-                                  splashRadius: 20,
-                                  icon: const Icon(
-                                    Icons.chevron_left_sharp,
-                                    size: 28,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      selectedDate = calendarControl!
-                                          .displayDate!
-                                          .add(const Duration(days: 1));
-                                    });
-                                    // getBookingListRoom(
-                                    //     selectedArea!, selectedDate!.toString());
-                                    datePickerControl.selectedDate =
-                                        selectedDate;
-                                    calendarControl!.displayDate = selectedDate;
-                                  },
-                                  splashRadius: 20,
-                                  icon: const Icon(
-                                    Icons.chevron_right_sharp,
-                                    size: 28,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Text(
-                                  DateFormat('d MMMM y').format(selectedDate!),
-                                  style: const TextStyle(
-                                    fontFamily: 'Helvetica',
-                                    color: eerieBlack,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w300,
-                                    height: 1.3,
-                                  ),
-                                ),
-                                const Expanded(
-                                  child: SizedBox(),
-                                ),
-                                SizedBox(
-                                  width: 170,
-                                  child: WhiteDropdown(
-                                    focusNode: areaNode,
-                                    customHeights:
-                                        _getCustomItemsHeights(areaList),
-                                    items: addDividerItem(areaList),
-                                    enabled: true,
-                                    hintText: '',
-                                    onChanged: (value) {
-                                      print(value);
-                                      selectedArea = value;
-                                      onChangedArea(selectedArea!);
-                                    },
-                                    value: selectedArea,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            calendarRoomPage(model),
-                          ],
-                        ),
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          calendarRoomPage(model),
+                        ],
                       ),
-                      AnimatedSwitcher(
-                        duration: Duration(milliseconds: 750),
-                        switchInCurve: Curves.easeIn,
-                        switchOutCurve: Curves.easeOut,
-                        child: isShowDetail
-                            ? SizedBox(
-                                // height: (100 * dataRoom.length) + 165,
-                                child: DetailAppointmentContainer(
-                                  // event: selectedEvent,
-                                  closeDetail: closeDetail,
-                                  bookingDetail: detailEvent,
-                                ),
-                              )
-                            : SizedBox(),
-                      ),
-                    ],
-                  ),
+                    ),
+                    AnimatedSwitcher(
+                      duration: Duration(milliseconds: 750),
+                      switchInCurve: Curves.easeIn,
+                      switchOutCurve: Curves.easeOut,
+                      child: isShowDetail
+                          ? SizedBox(
+                              // height: (100 * dataRoom.length) + 165,
+                              child: DetailAppointmentContainer(
+                                // event: selectedEvent,
+                                closeDetail: closeDetail,
+                                bookingDetail: detailEvent,
+                              ),
+                            )
+                          : SizedBox(),
+                    ),
+                  ],
                 ),
               ],
             ),

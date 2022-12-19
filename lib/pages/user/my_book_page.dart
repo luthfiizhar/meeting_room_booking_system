@@ -34,8 +34,8 @@ class _MyBookingPageState extends State<MyBookingPage> {
   double rowPerPage = 10;
   double firstPaginated = 0;
   int currentPaginatedPage = 1;
-  List availablePage = [1, 2, 3, 4, 5];
-  List showedPage = [1, 2, 3, 4, 5];
+  List availablePage = [1];
+  List showedPage = [1];
 
   String roomType = "MeetingRoom";
 
@@ -164,6 +164,9 @@ class _MyBookingPageState extends State<MyBookingPage> {
   ScrollController scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
+    double paginationWidth = availablePage.length > 5
+        ? (45 * (showedPage.length.toDouble() + 1))
+        : (45 * (showedPage.length.toDouble())) + 5;
     return LayoutPageWeb(
       index: 3,
       scrollController: scrollController,
@@ -489,7 +492,7 @@ class _MyBookingPageState extends State<MyBookingPage> {
                             width: 5,
                           ),
                           SizedBox(
-                            width: 275,
+                            width: paginationWidth, //275,
                             height: 35,
                             child: Row(
                               children: [

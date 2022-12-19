@@ -47,7 +47,7 @@ class _ScheduleContainerState extends State<ScheduleContainer> {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        minHeight: 690,
+        minHeight: 200,
         minWidth: 350,
       ),
       child: Container(

@@ -107,6 +107,10 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                     decoration: BoxDecoration(
                       color: davysGray,
                       borderRadius: BorderRadius.circular(10),
+                      image: DecorationImage(
+                        image: NetworkImage(widget.roomTypeUrl!, scale: 0.1),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),

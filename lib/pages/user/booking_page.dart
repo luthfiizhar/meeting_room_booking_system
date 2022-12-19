@@ -1481,8 +1481,12 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             // print('Event Room -> $eventRoomRefresh');
                                             if (roomType == "MeetingRoom") {
                                               //BOOKING FUNCTION
-                                              bookingRoom(booking)
-                                                  .then((value) {
+                                              bookingRoom(
+                                                booking,
+                                                widget.isEdit == "true"
+                                                    ? true
+                                                    : false,
+                                              ).then((value) {
                                                 print(value);
                                                 if (value['Status'] == "200") {
                                                   showDialog(

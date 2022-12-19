@@ -85,7 +85,7 @@ class ListRoomContainer extends StatelessWidget {
                         bottomLeft: Radius.circular(10),
                       ),
                       image: DecorationImage(
-                        image: NetworkImage(photo!),
+                        image: NetworkImage(photo!, scale: 0.5),
                         fit: BoxFit.cover,
                       ),
                     ),

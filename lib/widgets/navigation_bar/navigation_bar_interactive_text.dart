@@ -33,22 +33,26 @@ class InteractiveTextState extends State<InteractiveText> {
             //         : (widget.selected!)
             //             ? eerieBlack
             //             : Colors.transparent),
-            child: Text(widget.text!,
-                style: _hovering
-                    ? MediaQuery.of(context).size.width <= 600
-                        ? navBarTextMobile.copyWith(
-                            color: navBarActiveState, height: 1.3)
-                        : navBarText.copyWith(
-                            color: navBarActiveState, height: 1.3)
-                    : (widget.selected!)
-                        ? MediaQuery.of(context).size.width < 600
-                            ? navBarTextMobile.copyWith(
-                                color: navBarActiveState, height: 1.3)
-                            : navBarText.copyWith(
-                                color: navBarActiveState, height: 1.3)
-                        : MediaQuery.of(context).size.width < 600
-                            ? navBarTextMobile.copyWith(height: 1.3)
-                            : navBarText.copyWith(height: 1.3)),
+            child: Text(
+              widget.text!,
+              style: _hovering
+                  ? MediaQuery.of(context).size.width <= 600
+                      ? navBarTextMobile.copyWith(
+                          color: navBarActiveState, fontWeight: FontWeight.w400)
+                      : navBarText.copyWith(
+                          color: navBarActiveState, fontWeight: FontWeight.w400)
+                  : (widget.selected!)
+                      ? MediaQuery.of(context).size.width < 600
+                          ? navBarTextMobile.copyWith(
+                              color: navBarActiveState,
+                              fontWeight: FontWeight.w400)
+                          : navBarText.copyWith(
+                              color: navBarActiveState,
+                              fontWeight: FontWeight.w400)
+                      : MediaQuery.of(context).size.width < 600
+                          ? navBarTextMobile.copyWith()
+                          : navBarText.copyWith(),
+            ),
           ),
         ),
       ),

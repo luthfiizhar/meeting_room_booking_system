@@ -306,13 +306,10 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                           top: 60,
                           child: Opacity(
                             opacity: opacityOn ? 0.5 : 0,
-                            child: ConstrainedBox(
-                              constraints: pageConstraints,
-                              child: Container(
-                                color: eerieBlack.withOpacity(0.5),
-                                height: MediaQuery.of(context).size.height - 60,
-                                width: MediaQuery.of(context).size.width,
-                              ),
+                            child: Container(
+                              color: eerieBlack.withOpacity(0.5),
+                              height: MediaQuery.of(context).size.height - 60,
+                              width: MediaQuery.of(context).size.width,
                             ),
                           ),
                         )

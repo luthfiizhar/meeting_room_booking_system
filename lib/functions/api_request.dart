@@ -13,12 +13,14 @@ String apiUrlGlobal = 'fmklg.klgsys.com';
 const String tokenDummy =
     'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJmbWtsZy5rbGdzeXMuY29tIiwiYXVkIjoiZm1rbGcua2xnc3lzLmNvbSIsImlhdCI6MTY2Njc1MzA2MywibmJmIjoxNjY2NzUzMDYzLCJleHAiOjE2NjY3NTY2NjMsImRhdGEiOnsiTklQIjoiMTY0MzY5IiwiTmFtZSI6Ik5JQ08ifX0.e-1g1-DeCEaIO5tro5KaLOfsD8BPgFmrPDVmN_lIa9o';
 
-Future bookingRoom(Booking booking) async {
+Future bookingRoom(Booking booking, bool isUpdate) async {
   // booking.toJson();
   var box = await Hive.openBox('userLogin');
   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
   var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/user/booking');
+  var url2 =
+      Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/user/booking/edit');
   Map<String, String> requestHeader = {
     'Authorization': 'Bearer $jwt',
     // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
@@ -48,10 +50,20 @@ Future bookingRoom(Booking booking) async {
   """;
 
   try {
-    var response = await http.post(url, body: bodySend, headers: requestHeader);
+    if (!isUpdate) {
+      print('booking');
+      var response =
+          await http.post(url, body: bodySend, headers: requestHeader);
 
-    var data = json.decode(response.body);
-    return data;
+      var data = json.decode(response.body);
+      return data;
+    } else {
+      var response =
+          await http.put(url2, body: bodySend, headers: requestHeader);
+
+      var data = json.decode(response.body);
+      return data;
+    }
   } on Error catch (e) {
     return e;
   }
@@ -110,7 +122,7 @@ Future searchRoomApi(
     String startTime,
     String endTime,
     String capacity,
-    String amenities,
+    List amenities,
     String roomType,
     List floor,
     String sort) async {

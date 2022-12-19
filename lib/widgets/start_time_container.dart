@@ -143,8 +143,8 @@ class StartTimeContainer extends StatelessWidget {
                     // setParticipantStatus!(false);
                     setStartTimeStatus!(false);
                     setStartTime!(items![index]);
-                    setInitialEndTime!(items![index + 1]);
-                    print(items![index + 1]);
+                    setInitialEndTime!(items![index + 4]);
+                    print(items![index + 4]);
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

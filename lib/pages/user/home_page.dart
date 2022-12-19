@@ -11,6 +11,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/constant/key.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
@@ -77,15 +78,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List facilitySelected = [];
   List startTimeList = [];
   List endTimeList = [];
+  List roomTypeList = [];
   String participantSelected = "";
   String startTime = "";
   String endTime = "";
   String initialEndTime = "";
   String datePicked = "";
   String meetingTypeSelected = "Meeting Room";
-  String meetingTypeName = "Meeting Room";
-  String meetingTypeValue = "MetingRoom";
-  String meetingTypeUrl = "";
+  String roomTypeName = "Meeting Room";
+  String roomTypeValue = "MeetingRoom";
+  String roomTypeImage = "";
 
   DateTime selectedDate = DateTime.now();
 
@@ -101,10 +103,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   scrollListener(ScrollController scrollInfo) {}
   initTime() {
-    int minute = TimeOfDay.now().minute;
-    int hour = TimeOfDay.now().hour;
-    int minuteEndInit = 0;
-    int hourEndInit = 0;
+    dynamic hour = TimeOfDay.now().hour;
+    dynamic minute = TimeOfDay.now().minute;
+    dynamic endMinute;
+    dynamic endHour;
     if (TimeOfDay.now().minute >= 0 && TimeOfDay.now().minute < 15) {
       minute = TimeOfDay.now().replacing(minute: 15).minute;
     } else if (TimeOfDay.now().minute > 15 && TimeOfDay.now().minute <= 30) {
@@ -113,33 +115,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       minute = TimeOfDay.now().replacing(minute: 45).minute;
     } else if (TimeOfDay.now().minute > 45 && TimeOfDay.now().minute <= 60) {
       minute = TimeOfDay.now().replacing(minute: 0).minute;
-      hour = TimeOfDay.now().hour + 1;
+      hour = hour + 1;
     }
-    var hourString =
-        TimeOfDay(hour: hour, minute: minute).hour.toString().padLeft(2, '0');
-    var minuteString =
-        TimeOfDay(hour: hour, minute: minute).minute.toString().padLeft(2, '0');
-    minuteEndInit = int.parse(minuteString) + 15;
-    hourEndInit = hour;
-    var minuteEndString = minuteEndInit.toString();
-    print(minuteEndInit);
-    if (minuteEndInit == 60) {
-      print('masuk sini');
-
-      minuteEndString =
-          TimeOfDay(hour: hour, minute: 0).minute.toString().padLeft(2, '0');
-      // print(hour);
-      // print(hourEndInit);
-      print(minuteEndString);
+    endMinute = minute;
+    endHour = hour + 1;
+    if (endMinute == 60) {
+      endHour = hour;
+      endMinute = 0;
     }
-    // minuteEndString = minuteEndInit.toString();
+    hour = hour.toString().padLeft(2, '0');
+    minute = minute.toString().padLeft(2, '0');
 
+    endHour = endHour.toString().padLeft(2, '0');
+    endMinute = endMinute.toString().padLeft(2, '0');
     setState(() {
-      startTime = "$hourString:$minuteString";
-      initialEndTime =
-          "${hourEndInit.toString().padLeft(2, '0')}:${minuteEndString.toString().padLeft(2, '0')}";
-      endTime = initialEndTime;
-
+      startTime = "$hour:$minute";
+      endTime = "$endHour:$endMinute";
       _timeController.text = "$startTime - $endTime";
     });
   }
@@ -168,6 +159,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     participantSelected = "1";
 
     initTime();
+    getRoomType().then((value) {
+      if (value["Status"] == "200") {
+        roomTypeList = value['Data'];
+        for (var element in roomTypeList) {
+          if (element['Value'] == roomTypeValue) {
+            setState(() {
+              roomTypeImage = element['Image'];
+            });
+          }
+        }
+      } else {}
+    }).onError((error, stackTrace) {});
   }
 
   resetAllVisibleStatus(bool value) {
@@ -218,7 +221,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       dynamic hour = TimeOfDay.now().hour;
       dynamic minute = TimeOfDay.now().minute;
       dynamic endMinute = minute;
-      dynamic endHour = hour;
+      dynamic endHour = hour + 1;
       if (TimeOfDay.now().minute >= 0 && TimeOfDay.now().minute < 15) {
         minute = TimeOfDay.now().replacing(minute: 15).minute;
       } else if (TimeOfDay.now().minute > 15 && TimeOfDay.now().minute <= 30) {
@@ -229,7 +232,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         minute = TimeOfDay.now().replacing(minute: 0).minute;
         hour = hour + 1;
       }
-      endMinute = minute + 15;
+      // endMinute = minute + 15;
+      // endHour = endHour + 1;
       if (endMinute == 60) {
         endHour = hour;
         endMinute = 0;
@@ -241,7 +245,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       endMinute = endMinute.toString().padLeft(2, '0');
 
       startTime = "$hour:$minute";
-      endTime = "$hour:$endMinute";
+      endTime = "$endHour:$endMinute";
     }
     _timeController.text = "$startTime - $endTime";
     setOpacityOn(false);
@@ -287,8 +291,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     startTime = start;
     var hour = int.parse(start.split(':').first);
     var minute = int.parse(start.split(':').last);
-    var minuteEnd = minute + 15;
-    var hourEnd = hour;
+    var minuteEnd = minute;
+    var hourEnd = hour + 1;
     if (minuteEnd == 60) {
       hourEnd = hourEnd + 1;
       minuteEnd = 0;
@@ -339,9 +343,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   changeRoomType(String value, String name, String url) {
-    meetingTypeValue = value;
-    meetingTypeName = name;
-    meetingTypeUrl = url;
+    roomTypeValue = value;
+    roomTypeName = name;
+    roomTypeImage = url;
     setOpacityOn(false);
     setState(() {});
   }
@@ -362,8 +366,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         'endTime': endTime,
         'participant': participantSelected,
         'facility': listAmen.toString(),
-        'roomTypeValue': meetingTypeValue,
-        'roomTypeName': meetingTypeName,
+        'roomTypeValue': roomTypeValue,
+        'roomTypeName': roomTypeName,
       },
     );
 
@@ -472,7 +476,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: datePickerVisible,
                           child: Positioned(
                             left: 265,
-                            top: 285,
+                            top: 695,
                             child: CustomDatePicker(
                               controller: datePickerControl,
                               isDark: true,
@@ -486,12 +490,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: timePickerContainerVisible,
                           child: Positioned(
                             left: 465,
-                            top: 285,
+                            top: 695,
                             child: TimePickerContainer(
                               // controller: datePickerControl,
                               endTime: endTime,
                               startTime: startTime,
-                              initialEndTime: initialEndTime,
+                              initialEndTime: endTime,
                               endTimeStatus: endTimeContainerVisible,
                               startTimeStatus: startTimeContainerVisible,
                               isDark: true,
@@ -508,7 +512,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Visibility(
                           visible: startTimeContainerVisible,
                           child: Positioned(
-                            top: 395,
+                            top: 825,
                             left: 475,
                             child: StartTimeContainer(
                               items: startTimeList,
@@ -521,7 +525,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Visibility(
                           visible: endTimeContainerVisible,
                           child: Positioned(
-                            top: 395,
+                            top: 825,
                             left: 595,
                             child: EndTimeContainer(
                               items: endTimeList,
@@ -536,7 +540,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: participantContainerVisible,
                           child: Positioned(
                             left: 265,
-                            top: 365,
+                            top: 775,
                             child: ParticipantContainer(
                               setParticipantStatus: setParticipantStatus,
                               onChangeParticipant: onParticipanSelected,
@@ -547,7 +551,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: amenitiesContainerVisible,
                           child: Positioned(
                             left: 465,
-                            top: 365,
+                            top: 775,
                             child: AmenitiesContainer(
                               tvOnChange: (value) {
                                 if (checkBoxTv) {
@@ -603,10 +607,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: meetingTypeContainerVisible,
                           child: Positioned(
                             left: 30,
-                            top: 420,
+                            top: 830,
                             child: RoomTypeContainerHomePage(
                               changeRoomType: changeRoomType,
                               setContainerStatus: setMeetingTypeContainerStatus,
+                              roomTypeList: roomTypeList,
+                              roomTypeName: roomTypeName,
+                              roomTypeValue: roomTypeValue,
                             ),
                           ),
                         ),
@@ -644,9 +651,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           amenitiesStatus: amenitiesContainerVisible,
           setMeetingTypeStatus: setMeetingTypeContainerStatus,
           meetingTypeStatus: meetingTypeContainerVisible,
-          roomTypeName: meetingTypeName,
-          roomTypeSelected: meetingTypeName,
-          roomTypeUrl: "",
+          roomTypeName: roomTypeName,
+          roomTypeSelected: roomTypeValue,
+          roomTypeUrl: roomTypeImage,
           searchRoom: search,
         ),
         const SizedBox(

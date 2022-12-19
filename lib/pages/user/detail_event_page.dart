@@ -489,62 +489,77 @@ class _DetailEventPageState extends State<DetailEventPage> {
         ),
         detailTitle('Guest Info'),
         divider(),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: guestInvited.length,
-          itemBuilder: (context, index) {
-            return Container(
-              // color: Colors.amber,
-              padding: const EdgeInsets.only(
-                bottom: 10,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const CircleAvatar(
-                    radius: 15,
-                    backgroundColor: Colors.blue,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Text(
-                      guestInvited[index]['AttendantsEmail'],
-                      style: helveticaText.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
-                        height: 1.3,
-                        color: davysGray,
-                      ),
+        guestInvited.isEmpty
+            ? SizedBox(
+                width: double.infinity,
+                height: 100,
+                child: Center(
+                  child: Text(
+                    'No guest invited',
+                    style: helveticaText.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
                     ),
                   ),
-                  const Icon(
-                    Icons.check_circle_sharp,
-                    color: greenAcent,
-                    size: 18,
-                  )
-                ],
+                ),
+              )
+            : ListView.builder(
+                shrinkWrap: true,
+                itemCount: guestInvited.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    // color: Colors.amber,
+                    padding: const EdgeInsets.only(
+                      bottom: 10,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const CircleAvatar(
+                          radius: 15,
+                          backgroundColor: Colors.blue,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: Text(
+                            guestInvited[index]['AttendantsEmail'],
+                            style: helveticaText.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              height: 1.3,
+                              color: davysGray,
+                            ),
+                          ),
+                        ),
+                        const Icon(
+                          Icons.check_circle_sharp,
+                          color: greenAcent,
+                          size: 18,
+                        )
+                      ],
+                    ),
+                    // child: ListTile(
+                    //   leading: CircleAvatar(
+                    //     radius: 15,
+                    //     backgroundColor: Colors.blue,
+                    //   ),
+                    //   title: Text(
+                    //     guestInvited[index]['AttendantsEmail'],
+                    //     style: helveticaText.copyWith(
+                    //       fontSize: 16,
+                    //       fontWeight: FontWeight.w300,
+                    //       height: 1.3,
+                    //       color: davysGray,
+                    //     ),
+                    //   ),
+                    //   trailing: Icon(Icons.check_circle_sharp),
+                    // ),
+                  );
+                },
               ),
-              // child: ListTile(
-              //   leading: CircleAvatar(
-              //     radius: 15,
-              //     backgroundColor: Colors.blue,
-              //   ),
-              //   title: Text(
-              //     guestInvited[index]['AttendantsEmail'],
-              //     style: helveticaText.copyWith(
-              //       fontSize: 16,
-              //       fontWeight: FontWeight.w300,
-              //       height: 1.3,
-              //       color: davysGray,
-              //     ),
-              //   ),
-              //   trailing: Icon(Icons.check_circle_sharp),
-              // ),
-            );
-          },
-        ),
         const SizedBox(
           height: 30,
         ),
@@ -570,37 +585,67 @@ class _DetailEventPageState extends State<DetailEventPage> {
       children: [
         detailTitle('Room Facility'),
         divider(),
-        GridView.builder(
-          shrinkWrap: true,
-          itemCount: amenities.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            childAspectRatio: 125 / 165,
-            crossAxisCount: 3,
-          ),
-          itemBuilder: (context, index) {
-            return RoomFacilityItemDetail(
-              result: amenities[index],
-            );
-          },
-        ),
+        amenities.isEmpty
+            ? SizedBox(
+                width: double.infinity,
+                height: 100,
+                child: Center(
+                  child: Text(
+                    'No facilities requested',
+                    style: helveticaText.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                    ),
+                  ),
+                ),
+              )
+            : GridView.builder(
+                shrinkWrap: true,
+                itemCount: amenities.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 125 / 165,
+                  crossAxisCount: 3,
+                ),
+                itemBuilder: (context, index) {
+                  return RoomFacilityItemDetail(
+                    result: amenities[index],
+                  );
+                },
+              ),
         const SizedBox(
           height: 30,
         ),
         detailTitle('Food & Beverages'),
         divider(),
-        GridView.builder(
-          shrinkWrap: true,
-          itemCount: foodAmenities.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            childAspectRatio: 125 / 145,
-            crossAxisCount: 3,
-          ),
-          itemBuilder: (context, index) {
-            return FoodAmenitiesItemDetail(
-              result: foodAmenities[index],
-            );
-          },
-        ),
+        foodAmenities.isEmpty
+            ? SizedBox(
+                width: double.infinity,
+                height: 100,
+                child: Center(
+                  child: Text(
+                    'No F&B requested',
+                    style: helveticaText.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                    ),
+                  ),
+                ),
+              )
+            : GridView.builder(
+                shrinkWrap: true,
+                itemCount: foodAmenities.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 125 / 145,
+                  crossAxisCount: 3,
+                ),
+                itemBuilder: (context, index) {
+                  return FoodAmenitiesItemDetail(
+                    result: foodAmenities[index],
+                  );
+                },
+              ),
 
         const SizedBox(
           height: 30,
@@ -637,34 +682,49 @@ class _DetailEventPageState extends State<DetailEventPage> {
         detailTitle('Booking Detail'),
         divider(),
         // bookingDetailSection(),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: bookingHistory.length,
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: index == 0 ? 0 : 10,
-                    bottom: 10,
-                  ),
-                  child: bookingDetail(
-                    bookingHistory[index]['EmpName'] ??
-                        bookingHistory[index]['EmpNIP'],
-                    bookingHistory[index]['Status'],
-                    bookingHistory[index]['LogDate'],
+        bookingHistory.isEmpty
+            ? SizedBox(
+                width: double.infinity,
+                height: 100,
+                child: Center(
+                  child: Text(
+                    'No status',
+                    style: helveticaText.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                    ),
                   ),
                 ),
-                index == bookingHistory.length - 1
-                    ? const SizedBox()
-                    : const Divider(
-                        color: lightGray,
-                        thickness: 0.5,
-                      )
-              ],
-            );
-          },
-        ),
+              )
+            : ListView.builder(
+                shrinkWrap: true,
+                itemCount: bookingHistory.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: index == 0 ? 0 : 10,
+                          bottom: 10,
+                        ),
+                        child: bookingDetail(
+                          bookingHistory[index]['EmpName'] ??
+                              bookingHistory[index]['EmpNIP'],
+                          bookingHistory[index]['Status'],
+                          bookingHistory[index]['LogDate'],
+                        ),
+                      ),
+                      index == bookingHistory.length - 1
+                          ? const SizedBox()
+                          : const Divider(
+                              color: lightGray,
+                              thickness: 0.5,
+                            )
+                    ],
+                  );
+                },
+              ),
       ],
     );
   }
