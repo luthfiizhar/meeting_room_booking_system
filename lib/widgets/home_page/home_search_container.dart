@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/widgets/button/search_page_button.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomeRoomSearchContainer extends StatefulWidget {
   HomeRoomSearchContainer({
@@ -24,6 +25,7 @@ class HomeRoomSearchContainer extends StatefulWidget {
     this.setMeetingTypeStatus,
     this.roomTypeUrl,
     this.searchRoom,
+    this.initLoading = true,
   });
 
   TextEditingController? dateController;
@@ -47,6 +49,7 @@ class HomeRoomSearchContainer extends StatefulWidget {
   String? roomTypeSelected;
   String? roomTypeName;
   String? roomTypeUrl;
+  bool initLoading;
 
   @override
   State<HomeRoomSearchContainer> createState() =>
@@ -101,18 +104,51 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                       widget.setMeetingTypeStatus!(true);
                     }
                   },
-                  child: Container(
-                    width: 175,
-                    height: 112,
-                    decoration: BoxDecoration(
-                      color: davysGray,
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                        image: NetworkImage(widget.roomTypeUrl!, scale: 0.1),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+                  child: widget.initLoading
+                      ? Shimmer(
+                          gradient: const LinearGradient(
+                            colors: [platinum, grayx11, davysGray],
+                          ),
+                          direction: ShimmerDirection.rtl,
+                          child: Container(
+                            width: 175,
+                            height: 112,
+                            decoration: BoxDecoration(
+                              color: davysGray,
+                              borderRadius: BorderRadius.circular(10),
+                              // image: DecorationImage(
+                              //   image: NetworkImage(widget.roomTypeUrl!, scale: 0.1),
+                              //   fit: BoxFit.cover,
+                              // ),
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.cover,
+                              child: widget.roomTypeUrl == ""
+                                  ? const SizedBox()
+                                  : SizedBox(
+                                      width: 175,
+                                      height: 112,
+                                      child: Image.network(
+                                        widget.roomTypeUrl!,
+                                        scale: 0.1,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          width: 175,
+                          height: 112,
+                          decoration: BoxDecoration(
+                            color: davysGray,
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image:
+                                  NetworkImage(widget.roomTypeUrl!, scale: 0.1),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                 ),
               ],
             ),

@@ -45,6 +45,7 @@ import 'package:meeting_room_booking_system/widgets/search_page/sorting_containe
 import 'package:meeting_room_booking_system/widgets/start_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/time_picker_container.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'dart:js' as js;
@@ -98,6 +99,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool startTimeContainerVisible = false;
   bool endTimeContainerVisible = false;
   bool meetingTypeContainerVisible = false;
+  bool initLoading = true;
 
   ScrollController scrollController = ScrollController();
 
@@ -160,6 +162,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     initTime();
     getRoomType().then((value) {
+      setState(() {
+        initLoading = false;
+      });
       if (value["Status"] == "200") {
         roomTypeList = value['Data'];
         for (var element in roomTypeList) {
@@ -655,6 +660,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           roomTypeSelected: roomTypeValue,
           roomTypeUrl: roomTypeImage,
           searchRoom: search,
+          initLoading: initLoading,
         ),
         const SizedBox(
           height: 30,
