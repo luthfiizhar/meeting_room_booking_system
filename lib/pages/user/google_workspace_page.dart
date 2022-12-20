@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -11,6 +13,7 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/constant/key.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
+import 'package:meeting_room_booking_system/model/local_storage.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
 import 'package:meeting_room_booking_system/widgets/amenities_container.dart';
@@ -45,7 +48,9 @@ import 'dart:html' as html;
 import 'package:url_launcher/url_launcher.dart';
 
 class GoogleWorkspacePage extends StatefulWidget {
-  const GoogleWorkspacePage({Key? key}) : super(key: key);
+  GoogleWorkspacePage({Key? key, this.param = ""}) : super(key: key);
+
+  dynamic param;
 
   @override
   State<GoogleWorkspacePage> createState() => _GoogleWorkspacePageState();
@@ -272,6 +277,7 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
   void initState() {
     // TODO: implement initState
     super.initState();
+    print("param-> ${widget.param}");
     animateIntroSection();
     scrollController.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -530,6 +536,15 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
     // setState(() {});
   }
 
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.platformDefault,
+    )) {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
@@ -638,8 +653,19 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                   padding: ButtonSize().mediumSize(),
                   onTap: () async {
                     getLinkGoogleAuth().then((value) async {
-                      await html.window.open(value['Data']['Link'],
-                          'GoogleAuth', 'width=600,height=600');
+                      // html.window.open(
+                      //   "get_data.html?link=${value['Data']['Link']}",
+                      //   'GoogleAuth',
+                      // );
+                      // html.window.onMessage.listen((event) async {
+                      //   print(event.data.toString());
+                      // });
+                      var rep = LocalStorage();
+                      await _launchInBrowser(Uri(
+                        path: "get_data.html",
+                        queryParameters: {'link': value['Data']['Link']},
+                      ));
+                      print(await rep.getUrl());
                     });
                     // js.context.callMethod('open', ['https://stackoverflow.com/questions/ask']);
                     // Uri _url = Uri.parse('https://flutter.dev');

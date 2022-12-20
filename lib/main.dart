@@ -311,13 +311,17 @@ class MyApp extends StatelessWidget {
         ),
       ),
       GoRoute(
-        name: 'gws',
-        path: '/gws',
-        pageBuilder: (context, state) => NoTransitionPage<void>(
-          key: state.pageKey,
-          child: GoogleWorkspacePage(),
-        ),
-      ),
+          name: 'gws',
+          path: '/gws',
+          pageBuilder: (context, state) {
+            var param = state.queryParams;
+            return NoTransitionPage<void>(
+              key: state.pageKey,
+              child: GoogleWorkspacePage(
+                param: param,
+              ),
+            );
+          }),
     ],
     redirect: (context, state) {
       final goHome = state.subloc == '/home';

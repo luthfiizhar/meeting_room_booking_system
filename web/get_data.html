@@ -1,0 +1,10 @@
+<script>
+    // var data = window.open("http://dart.dev");
+    var link = new URLSearchParams(window.location.search);
+    
+    var data = window.open(link.get('link'));
+    console.log(link.get('link'));
+    // alert(link.get('link'));
+    // localStorage.setItem("url", window.location.href);
+    // console.log(localStorage.getItem("url"));
+</script>
