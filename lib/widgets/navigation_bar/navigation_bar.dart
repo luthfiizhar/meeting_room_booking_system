@@ -440,7 +440,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                       const SizedBox(
                         width: 25,
                       ),
-                      jwtToken == null || jwtToken == ""
+                      jwtToken == null || jwtToken == "" || !isTokenValid
                           ? RegularButton(
                               text: 'Login',
                               disabled: false,

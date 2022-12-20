@@ -76,8 +76,6 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
         print('if true');
         room[index].isCollapsed = false;
       }
-
-      print(room[index].isCollapsed);
     });
   }
 
@@ -159,7 +157,9 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
             onTap: () {
               showDialog(
                 context: context,
-                builder: (context) => NewAreaDialog(),
+                builder: (context) => NewAreaDialog(
+                  isEdit: false,
+                ),
               );
             },
             child: SizedBox(
@@ -630,7 +630,7 @@ class _AreaListContainerState extends State<AreaListContainer> {
               CircleAvatar(
                 backgroundColor: blueAccent,
                 radius: 35,
-                backgroundImage: NetworkImage(widget.coverPhoto),
+                // backgroundImage: NetworkImage(widget.coverPhoto),
               ),
               const SizedBox(
                 width: 30,
@@ -717,10 +717,10 @@ class _AreaListContainerState extends State<AreaListContainer> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: davysGray,
-            image: DecorationImage(
-              image: Image.network(widget.coverPhoto).image,
-              fit: BoxFit.cover,
-            ),
+            // image: DecorationImage(
+            //   image: Image.network(widget.coverPhoto).image,
+            //   fit: BoxFit.cover,
+            // ),
           ),
         ),
         const SizedBox(

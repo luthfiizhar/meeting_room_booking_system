@@ -316,6 +316,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                             'roomType': 'MeetingRoom',
                                             'layoutName': layoutName,
                                             'layoutImage': layoutImage,
+                                            'bookingId': widget.bookingId,
                                           },
                                         );
                                         // showDialog(

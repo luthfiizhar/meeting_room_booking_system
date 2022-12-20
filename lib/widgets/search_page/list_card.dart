@@ -5,6 +5,7 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ListRoomContainer extends StatelessWidget {
   ListRoomContainer({
@@ -84,10 +85,42 @@ class ListRoomContainer extends StatelessWidget {
                         topLeft: Radius.circular(10),
                         bottomLeft: Radius.circular(10),
                       ),
-                      image: DecorationImage(
-                        image: NetworkImage(photo!, scale: 0.5),
-                        fit: BoxFit.cover,
-                      ),
+                      // image: DecorationImage(
+                      //   // image: NetworkImage(photo!,
+                      //   //     headers: {'Content-Type': 'image/jpg'}),
+                      //   image:
+                      //       Image(image: CachedNetworkImage(imageUrl: photo!))
+                      //           .image,
+                      //   fit: BoxFit.cover,
+                      // ),
+                    ),
+                    child: CachedNetworkImage(
+                      width: 225,
+                      filterQuality: FilterQuality.none,
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      maxHeightDiskCache: 210,
+                      maxWidthDiskCache: 225,
+                      imageUrl: photo!,
+                      imageBuilder: (context, imageProvider) {
+                        return Container(
+                          height: 210,
+                          width: 225,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              bottomLeft: Radius.circular(10),
+                            ),
+                            image: DecorationImage(
+                              image: Image(
+                                image: imageProvider,
+                              ).image,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      },
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),

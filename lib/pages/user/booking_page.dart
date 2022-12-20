@@ -158,6 +158,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   bool layoutSectionVisible = false;
   bool repeatSectionVisible = true;
   bool layoutFromupload = false;
+  late bool isEdit;
 
   bool isPictEmpty = true;
 
@@ -526,6 +527,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         });
         if (widget.isEdit == "true") {
           setState(() {
+            isEdit = true;
             dynamic editData = widget.edit;
             print('bahan edit');
             print(editData);
@@ -544,6 +546,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             layoutFromupload = false;
             emptyLayout = false;
           });
+        } else {
+          isEdit = false;
         }
       });
     });
@@ -1390,6 +1394,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             List selectedDay = [];
 
                                             Booking booking = Booking();
+                                            if (widget.isEdit == "true") {
+                                              booking.bookingId =
+                                                  widget.edit['bookingId'];
+                                            }
                                             booking.roomId = widget.roomId;
                                             booking.summary = eventName;
                                             booking.description = eventDesc;
@@ -1480,42 +1488,59 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             // print('Data Room -> $dataRoomRefresh');
                                             // print('Event Room -> $eventRoomRefresh');
                                             if (roomType == "MeetingRoom") {
-                                              //BOOKING FUNCTION
-                                              bookingRoom(
-                                                booking,
-                                                widget.isEdit == "true"
-                                                    ? true
-                                                    : false,
-                                              ).then((value) {
-                                                print(value);
-                                                if (value['Status'] == "200") {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        AlertDialogBlack(
-                                                            title:
-                                                                value['Title'],
-                                                            contentText: value[
-                                                                'Message']),
-                                                  ).then((value) {
-                                                    setState(() {
-                                                      isSubmitLoading = false;
+                                              if (!isEdit) {
+                                                //BOOKING FUNCTION
+                                                bookingRoom(booking)
+                                                    .then((value) {
+                                                  print(value);
+                                                  if (value['Status'] ==
+                                                      "200") {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                              title: value[
+                                                                  'Title'],
+                                                              contentText: value[
+                                                                  'Message']),
+                                                    ).then((value) {
+                                                      setState(() {
+                                                        isSubmitLoading = false;
+                                                      });
+                                                      // updateEvent(model).then((value) {
+                                                      //   context.go('/rooms');
+                                                      // });
+                                                      context.go('/rooms');
+                                                      // context.pop();
+                                                      // Navigator.of(context).pop();
                                                     });
-                                                    // updateEvent(model).then((value) {
-                                                    //   context.go('/rooms');
-                                                    // });
-                                                    context.go('/rooms');
-                                                    // context.pop();
-                                                    // Navigator.of(context).pop();
-                                                  });
-                                                } else {
+                                                  } else {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                        title: value['Title'],
+                                                        contentText:
+                                                            value['Message'],
+                                                        isSuccess: false,
+                                                      ),
+                                                    ).then((value) {
+                                                      setState(() {
+                                                        isSubmitLoading = false;
+                                                      });
+                                                      // context.go('/rooms');
+                                                    });
+                                                  }
+                                                  // context.pop();
+                                                }).onError((error, stackTrace) {
+                                                  print(error);
                                                   showDialog(
                                                     context: context,
                                                     builder: (context) =>
-                                                        AlertDialogBlack(
-                                                      title: value['Title'],
+                                                        const AlertDialogBlack(
+                                                      title: 'Failed',
                                                       contentText:
-                                                          value['Message'],
+                                                          'Failed connect to API',
                                                       isSuccess: false,
                                                     ),
                                                   ).then((value) {
@@ -1524,27 +1549,73 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                     });
                                                     // context.go('/rooms');
                                                   });
-                                                }
-                                                // context.pop();
-                                              }).onError((error, stackTrace) {
-                                                print(error);
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      const AlertDialogBlack(
-                                                    title: 'Failed',
-                                                    contentText:
-                                                        'Failed connect to API',
-                                                    isSuccess: false,
-                                                  ),
-                                                ).then((value) {
-                                                  setState(() {
-                                                    isSubmitLoading = false;
-                                                  });
-                                                  // context.go('/rooms');
                                                 });
-                                              });
-                                              //END BOOOKING FUNCTION
+                                                //END BOOOKING FUNCTION
+                                              } else {
+                                                print('UPDATE');
+                                                //UPDATE BOOKING FUNCTION
+                                                updateBooking(booking)
+                                                    .then((value) {
+                                                  print(value);
+                                                  if (value['Status'] ==
+                                                      "200") {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                              title: value[
+                                                                  'Title'],
+                                                              contentText: value[
+                                                                  'Message']),
+                                                    ).then((value) {
+                                                      setState(() {
+                                                        isSubmitLoading = false;
+                                                      });
+                                                      // updateEvent(model).then((value) {
+                                                      //   context.go('/rooms');
+                                                      // });
+                                                      context.go('/rooms');
+                                                      // context.pop();
+                                                      // Navigator.of(context).pop();
+                                                    });
+                                                  } else {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                        title: value['Title'],
+                                                        contentText:
+                                                            value['Message'],
+                                                        isSuccess: false,
+                                                      ),
+                                                    ).then((value) {
+                                                      setState(() {
+                                                        isSubmitLoading = false;
+                                                      });
+                                                      // context.go('/rooms');
+                                                    });
+                                                  }
+                                                  // context.pop();
+                                                }).onError((error, stackTrace) {
+                                                  print(error);
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        const AlertDialogBlack(
+                                                      title: 'Failed',
+                                                      contentText:
+                                                          'Failed connect to API',
+                                                      isSuccess: false,
+                                                    ),
+                                                  ).then((value) {
+                                                    setState(() {
+                                                      isSubmitLoading = false;
+                                                    });
+                                                    // context.go('/rooms');
+                                                  });
+                                                });
+                                                //END UPDATE BOOOKING FUNCTION
+                                              }
                                             }
                                             //BOOKING AUDI
                                             if (roomType == "Auditorium") {

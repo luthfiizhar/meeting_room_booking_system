@@ -10,6 +10,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/constant/key.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
 import 'package:meeting_room_booking_system/widgets/amenities_container.dart';
@@ -74,6 +75,37 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
   String endTime = "";
   String initialEndTime = "";
   String meetingTypeSelected = "Meeting Room";
+
+  List faqList = [
+    {
+      'Question':
+          'Can I connect my personal Google or Google Workspace account?',
+      'Answer':
+          'Yes, you can still use MRBS as a standalone application. Link to Google Workspace is an additional features to help you get into Google Workspace ecosystem easily. It is your choice to link it or not.',
+      'isCollapse': false,
+    },
+    {
+      'Question':
+          'Can I connect my personal Google or Google Workspace account?',
+      'Answer':
+          'Yes, you can still use MRBS as a standalone application. Link to Google Workspace is an additional features to help you get into Google Workspace ecosystem easily. It is your choice to link it or not.',
+      'isCollapse': false,
+    },
+    {
+      'Question':
+          'Can I connect my personal Google or Google Workspace account?',
+      'Answer':
+          'Yes, you can still use MRBS as a standalone application. Link to Google Workspace is an additional features to help you get into Google Workspace ecosystem easily. It is your choice to link it or not.',
+      'isCollapse': false,
+    },
+    {
+      'Question':
+          'Can I connect my personal Google or Google Workspace account?',
+      'Answer':
+          'Yes, you can still use MRBS as a standalone application. Link to Google Workspace is an additional features to help you get into Google Workspace ecosystem easily. It is your choice to link it or not.',
+      'isCollapse': false,
+    }
+  ];
 
   List<RadioModel> listSorting = [
     RadioModel(isSelected: false, text: 'Lowest Floor'),
@@ -174,6 +206,28 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
       // _controller.forward(from: 0);
       animateIntroSection();
     }
+  }
+
+  closeFaq(int index) {
+    setState(() {
+      faqList[index]['isCollapse'] = false;
+    });
+  }
+
+  onTapFaq(int index) {
+    setState(() {
+      // closeDetail();
+      for (var element in faqList) {
+        element['isCollapse'] = false;
+      }
+      if (!faqList[index]['isCollapse']) {
+        print('if false');
+        faqList[index]['isCollapse'] = true;
+      } else if (faqList[index]['isCollapse']) {
+        print('if true');
+        faqList[index]['isCollapse'] = false;
+      }
+    });
   }
 
   @override
@@ -499,6 +553,7 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
               ),
               howToSection(),
               faqSection(),
+              endSection(),
             ],
           ),
           Positioned(
@@ -582,8 +637,10 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                   disabled: false,
                   padding: ButtonSize().mediumSize(),
                   onTap: () async {
-                    html.window.open('https://flutter.dev', 'Google SignIn',
-                        'width=600,height=600');
+                    getLinkGoogleAuth().then((value) async {
+                      await html.window.open(value['Data']['Link'],
+                          'GoogleAuth', 'width=600,height=600');
+                    });
                     // js.context.callMethod('open', ['https://stackoverflow.com/questions/ask']);
                     // Uri _url = Uri.parse('https://flutter.dev');
                     // // Uri _url = Uri(
@@ -660,10 +717,71 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
 
   Widget faqSection() {
     return ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxHeight: 500,
+      constraints: BoxConstraints(
+        minWidth: 1100,
+        maxWidth: 1100,
+        minHeight: 500,
       ),
-      child: Container(color: Colors.amber),
+      child: Container(
+        width: 1100,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Frequently Asked Question',
+                style: helveticaText.copyWith(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w700,
+                  color: eerieBlack,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Have question? We\'re here to help.',
+                style: helveticaText.copyWith(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w300,
+                  color: davysGray,
+                ),
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              ListView.builder(
+                itemCount: faqList.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      FaqContainer(
+                        index: index,
+                        answer: faqList[index]['Answer'],
+                        question: faqList[index]['Question'],
+                        isCollapse: faqList[index]['isCollapse'],
+                        changeCollapse: closeFaq,
+                        tap: onTapFaq,
+                      ),
+                      index == faqList.length - 1
+                          ? const SizedBox()
+                          : const Divider(
+                              color: davysGray,
+                              thickness: 0.5,
+                            )
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(
+                height: 100,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -886,4 +1004,186 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
       ),
     );
   }
+
+  Widget endSection() {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: MediaQuery.of(context).size.width,
+        maxWidth: MediaQuery.of(context).size.width,
+        minHeight: 400,
+        maxHeight: 400,
+      ),
+      child: Container(
+        color: davysGray,
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Link your Google Workspace account now & start collaborate!',
+                    style: helveticaText.copyWith(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w300,
+                      color: culturedWhite,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 60,
+                  ),
+                  TransparentBorderedWhiteButton(
+                    text: 'Link My Account',
+                    disabled: false,
+                    padding: ButtonSize().mediumSize(),
+                    onTap: () async {
+                      getLinkGoogleAuth().then((value) {
+                        html.window.open(value['Data']['Link'], 'GoogleAuth',
+                            'width=600,height=600');
+                      });
+                      // html.window.open('https://flutter.dev', 'Google SignIn',
+                      //     'width=600,height=600');
+                      // js.context.callMethod('open', ['https://stackoverflow.com/questions/ask']);
+                      // Uri _url = Uri.parse('https://flutter.dev');
+                      // // Uri _url = Uri(
+                      // //   host: 'https://flutter.dev',
+                      // // );
+                      // if (!await launchUrl(
+                      //   _url,
+                      //   webOnlyWindowName: '_blank',
+                      //   // webViewConfiguration:
+                      //   //     const WebViewConfiguration(headers: {'': ''}),
+                      // )) {
+                      //   throw 'Could not launch $_url';
+                      // }
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FaqContainer extends StatefulWidget {
+  FaqContainer({
+    super.key,
+    this.index,
+    this.question = "",
+    this.answer = "",
+    this.isCollapse = false,
+    this.tap,
+    this.changeCollapse,
+  });
+
+  int? index;
+  String question;
+  String answer;
+  bool isCollapse;
+  Function? tap;
+  Function? changeCollapse;
+  @override
+  State<FaqContainer> createState() => _FaqContainerState();
+}
+
+class _FaqContainerState extends State<FaqContainer> {
+  String question = "";
+  String answer = "";
+  bool isCollapse = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    question = widget.question;
+    answer = widget.answer;
+    isCollapse = widget.isCollapse;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        if (widget.isCollapse) {
+          widget.changeCollapse!(widget.index);
+        } else {
+          widget.tap!(widget.index!);
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                right: 15,
+                left: 15,
+                top: 25,
+                bottom: isCollapse ? 0 : 25,
+              ),
+              child: questionContainer(),
+            ),
+            Visibility(
+              visible: widget.isCollapse,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 50,
+                  right: 150,
+                  top: 20,
+                  bottom: 20,
+                ),
+                child: answerContainer(),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget questionContainer() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          question,
+          style: helveticaText.copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
+            color: eerieBlack,
+          ),
+        ),
+        widget.isCollapse
+            ? const Icon(Icons.keyboard_arrow_down_sharp)
+            : const Icon(Icons.keyboard_arrow_right_sharp)
+      ],
+    );
+  }
+
+  Widget answerContainer() {
+    return Text(
+      answer,
+      style: helveticaText.copyWith(
+        fontSize: 18,
+        fontWeight: FontWeight.w300,
+        color: davysGray,
+      ),
+    );
+  }
+}
+
+class Faq {
+  Faq({
+    this.question = "",
+    this.answer = "",
+    this.isCollapse = false,
+  });
+  String question;
+  String answer;
+  bool isCollapse;
 }

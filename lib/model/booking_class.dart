@@ -2,6 +2,7 @@ import 'package:meeting_room_booking_system/model/amenities_class.dart';
 
 class Booking {
   Booking({
+    this.bookingId = "",
     this.roomId,
     this.summary,
     this.description,
@@ -23,6 +24,7 @@ class Booking {
     this.monthAbs,
   });
 
+  String? bookingId;
   String? roomId;
   String? summary;
   String? description;

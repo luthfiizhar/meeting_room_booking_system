@@ -461,7 +461,9 @@ class _RoomsPageState extends State<RoomsPage> {
         value: mainModel,
         child: Consumer<MainModel>(builder: (context, model, child) {
           return ConstrainedBox(
-            constraints: BoxConstraints(),
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height - 180,
+            ),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -590,7 +592,9 @@ class _RoomsPageState extends State<RoomsPage> {
                       switchOutCurve: Curves.easeOut,
                       child: isShowDetail
                           ? SizedBox(
-                              // height: (100 * dataRoom.length) + 165,
+                              height: MediaQuery.of(context).size.width > 1366
+                                  ? MediaQuery.of(context).size.height - 180
+                                  : null,
                               child: DetailAppointmentContainer(
                                 // event: selectedEvent,
                                 closeDetail: closeDetail,

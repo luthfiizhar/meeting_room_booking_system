@@ -65,11 +65,13 @@ void main() async {
   await loginCheck();
   // runApp(MyApp());
   checkToken().then((value) {
-    if (value['Status'] == "200") {
+    print(value);
+    if (value["Status"] == "200") {
       isTokenValid = true;
     } else {
       isTokenValid = false;
     }
+    print('token valid? $isTokenValid');
     runApp(MyApp());
   });
 

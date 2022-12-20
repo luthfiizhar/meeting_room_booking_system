@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -1025,14 +1026,45 @@ class _SearchPageState extends State<SearchPage> {
                                                 color: graySand,
                                                 borderRadius:
                                                     BorderRadius.circular(10),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    coverPhotoRoomType,
-                                                    scale: 0.5,
-                                                  ),
-                                                  fit: BoxFit.cover,
-                                                ),
+                                                // image: DecorationImage(
+                                                //   image: NetworkImage(
+                                                //     coverPhotoRoomType,
+                                                //     scale: 0.5,
+                                                //   ),
+                                                //   fit: BoxFit.cover,
+                                                // ),
                                               ),
+                                              child: coverPhotoRoomType == ""
+                                                  ? SizedBox()
+                                                  : CachedNetworkImage(
+                                                      filterQuality:
+                                                          FilterQuality.none,
+                                                      imageUrl:
+                                                          coverPhotoRoomType,
+                                                      imageBuilder: (context,
+                                                          imageProvider) {
+                                                        return Container(
+                                                          width: 1100,
+                                                          height: 400,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: graySand,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            image:
+                                                                DecorationImage(
+                                                              image: Image(
+                                                                image:
+                                                                    imageProvider,
+                                                              ).image,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
                                             ),
                                           ),
                                           Positioned(
