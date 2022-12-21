@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 
@@ -100,11 +101,70 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.check_circle,
-                        size: 16,
-                        color: greenAcent,
-                      ),
+                      Builder(builder: (context) {
+                        switch (widget.status) {
+                          case 'Checked In':
+                            return const Icon(
+                              Icons.check_circle,
+                              size: 16,
+                              color: greenAcent,
+                            );
+                          case 'Checked Out':
+                            return const Icon(
+                              Icons.check_circle,
+                              size: 16,
+                              color: greenAcent,
+                            );
+                          case 'Approved':
+                            return const Icon(
+                              Icons.check_circle,
+                              size: 16,
+                              color: greenAcent,
+                            );
+                          case 'Impromptu':
+                            return const Icon(
+                              Icons.check_circle,
+                              size: 16,
+                              color: greenAcent,
+                            );
+                          case 'Canceled':
+                            return const Icon(
+                              Icons.remove_circle_sharp,
+                              size: 16,
+                              color: orangeAccent,
+                            );
+                          case 'Auto Released':
+                            return const Icon(
+                              Icons.remove_circle_sharp,
+                              size: 16,
+                              color: orangeAccent,
+                            );
+                          case 'Declined':
+                            return const Icon(
+                              Icons.remove_circle_sharp,
+                              size: 16,
+                              color: orangeAccent,
+                            );
+                          case 'Waiting Check In':
+                            return const Icon(
+                              MdiIcons.alertCircleOutline,
+                              size: 16,
+                              color: orangeAccent,
+                            );
+                          case 'Waiting Approval':
+                            return const Icon(
+                              MdiIcons.alertCircleOutline,
+                              size: 16,
+                              color: orangeAccent,
+                            );
+                          default:
+                            return const Icon(
+                              Icons.check_circle,
+                              size: 16,
+                              color: greenAcent,
+                            );
+                        }
+                      }),
                       const SizedBox(
                         width: 10,
                       ),

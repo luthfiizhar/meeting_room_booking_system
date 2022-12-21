@@ -7,12 +7,12 @@ class FoodItem extends StatefulWidget {
   FoodItem({
     super.key,
     this.displayOnly = false,
-    this.listFOod,
+    this.listFood,
     this.onDelete,
   });
 
   bool displayOnly;
-  FoodAmenities? listFOod;
+  FoodAmenities? listFood;
   VoidCallback? onDelete;
 
   @override
@@ -61,7 +61,7 @@ class _FoodItemState extends State<FoodItem> {
                       height: 80,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: Image.network(widget.listFOod!.photo!).image,
+                          image: Image.network(widget.listFood!.photo!).image,
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -79,7 +79,7 @@ class _FoodItemState extends State<FoodItem> {
                           Align(
                             alignment: Alignment.center,
                             child: Text(
-                              widget.listFOod!.amenitiesName!,
+                              widget.listFood!.amenitiesName!,
                               style: helveticaText.copyWith(
                                 fontSize: 14,
                                 color: eerieBlack,
@@ -89,7 +89,7 @@ class _FoodItemState extends State<FoodItem> {
                             ),
                           ),
                           Text(
-                            widget.listFOod!.qty!.toString(),
+                            "${widget.listFood!.qty!.toString()} Unit",
                             style: helveticaText.copyWith(
                               fontSize: 14,
                               color: davysGray,

@@ -26,6 +26,7 @@ import 'package:meeting_room_booking_system/widgets/button/transparent_button_bl
 import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/end_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/feature_container.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
@@ -58,6 +59,7 @@ class GoogleWorkspacePage extends StatefulWidget {
 
 class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
     with TickerProviderStateMixin {
+  bool isLoadingSync = false;
   TextEditingController _dateController = TextEditingController();
   TextEditingController _facilityController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
@@ -237,10 +239,10 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
 
   @override
   void dispose() {
-    _controller.dispose();
-    _controller2.dispose();
-    _controller3.dispose();
-    _controller4.dispose();
+    // _controller.dispose();
+    // _controller2.dispose();
+    // _controller3.dispose();
+    // _controller4.dispose();
     // scrollController.dispose();
     super.dispose();
   }
@@ -271,6 +273,13 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
         _controller4.forward(from: 0);
       },
     );
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 
   @override
@@ -545,6 +554,13 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
     }
   }
 
+  Future testGoogle(String link) async {
+    html.window.open(
+      link,
+      'GoogleAuth',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
@@ -647,41 +663,80 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
               ),
               FadeTransition(
                 opacity: _animation4,
-                child: TransparentBorderedBlackButton(
-                  text: 'Link My Account',
-                  disabled: false,
-                  padding: ButtonSize().mediumSize(),
-                  onTap: () async {
-                    getLinkGoogleAuth().then((value) async {
-                      // html.window.open(
-                      //   "get_data.html?link=${value['Data']['Link']}",
-                      //   'GoogleAuth',
-                      // );
-                      // html.window.onMessage.listen((event) async {
-                      //   print(event.data.toString());
-                      // });
-                      var rep = LocalStorage();
-                      await _launchInBrowser(Uri(
-                        path: "get_data.html",
-                        queryParameters: {'link': value['Data']['Link']},
-                      ));
-                      print(await rep.getUrl());
-                    });
-                    // js.context.callMethod('open', ['https://stackoverflow.com/questions/ask']);
-                    // Uri _url = Uri.parse('https://flutter.dev');
-                    // // Uri _url = Uri(
-                    // //   host: 'https://flutter.dev',
-                    // // );
-                    // if (!await launchUrl(
-                    //   _url,
-                    //   webOnlyWindowName: '_blank',
-                    //   // webViewConfiguration:
-                    //   //     const WebViewConfiguration(headers: {'': ''}),
-                    // )) {
-                    //   throw 'Could not launch $_url';
-                    // }
-                  },
-                ),
+                child: isLoadingSync
+                    ? const CircularProgressIndicator(
+                        color: eerieBlack,
+                      )
+                    : TransparentBorderedBlackButton(
+                        text: 'Link My Account',
+                        disabled: false,
+                        padding: ButtonSize().mediumSize(),
+                        onTap: () async {
+                          setState(() {
+                            isLoadingSync = true;
+                          });
+                          getLinkGoogleAuth().then((value) async {
+                            // html.window.open(
+                            //   "get_data.html?link=${value['Data']['Link']}",
+                            //   'GoogleAuth',
+                            // );
+                            html.WindowBase popUpWindow;
+
+                            popUpWindow = html.window.open(
+                              value['Data']['Link'],
+                              'GWS',
+                              'width=400, height=500, scrollbars=yes',
+                            );
+                            String code = "";
+                            html.window.onMessage.listen((event) async {
+                              if (event.data.toString().contains('token=')) {
+                                code = event.data.toString().split('token=')[1];
+                                print(code);
+                                await Future.delayed(const Duration(seconds: 2),
+                                    () async {
+                                  popUpWindow.close();
+                                  setState(() {
+                                    isLoadingSync = false;
+                                  });
+                                  saveTokenGoogle(code).then((value) {
+                                    print(value);
+
+                                    if (value['Status'] == "200") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: value['Title'],
+                                          contentText: value['Message'],
+                                          isSuccess: true,
+                                        ),
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: value['Title'],
+                                          contentText: value['Message'],
+                                          isSuccess: false,
+                                        ),
+                                      );
+                                    }
+                                  }).onError((error, stackTrace) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogBlack(
+                                        title: 'Failed',
+                                        contentText: error.toString(),
+                                        isSuccess: false,
+                                      ),
+                                    );
+                                  });
+                                });
+                              }
+                            });
+                            if (code != "") {}
+                          });
+                        },
+                      ),
               ),
             ],
           ),
@@ -1066,7 +1121,7 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                     onTap: () async {
                       getLinkGoogleAuth().then((value) {
                         html.window.open(value['Data']['Link'], 'GoogleAuth',
-                            'width=600,height=600');
+                            'width=600,height=600, top=300, left=600');
                       });
                       // html.window.open('https://flutter.dev', 'Google SignIn',
                       //     'width=600,height=600');

@@ -4,7 +4,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/white_input_field.dart';
 import 'package:universal_html/html.dart' as html;
@@ -35,6 +37,9 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
   bool onSelected = false;
   FocusNode searchNode = FocusNode();
   String? roomType;
+  String? bookingCount;
+
+  List? typeList = [];
 
   TextEditingController? _search = TextEditingController();
 
@@ -51,28 +56,52 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
     roomType = widget.roomType;
     indexColor = _random.nextInt(color.length);
     selectedColor = color[indexColor];
+    myBookBookingCount().then((value) {
+      if (value['Status'] == "200") {
+        typeList = value['Data'];
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
   }
 
   void onHighlight(String type) {
     switch (type) {
       case "MeetingRoom":
-        changeHighlight(0);
+        changeHighlight("MeetingRoom");
         widget.getRoomType!(type);
         break;
       case "Auditorium":
-        changeHighlight(1);
+        changeHighlight("Auditorium");
         widget.getRoomType!(type);
         break;
       case "SocialHub":
-        changeHighlight(2);
+        changeHighlight("SocialHub");
         widget.getRoomType!(type);
         break;
     }
   }
 
-  void changeHighlight(int newIndex) {
+  void changeHighlight(String type) {
     setState(() {
-      index = newIndex;
+      // index = newIndex;
+      roomType = type;
     });
   }
 
@@ -108,35 +137,50 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
                   Container(
                     // width: 500,
                     child: Row(
-                      children: [
-                        FilterSearchBarItem(
-                          title: 'Meeting Room',
-                          type: 'MeetingRoom',
-                          onHighlight: onHighlight,
-                          selected: index == 0,
-                          color: selectedColor,
-                        ),
-                        const SizedBox(
-                          width: 50,
-                        ),
-                        FilterSearchBarItem(
-                          title: 'Auditorium',
-                          type: 'Auditorium',
-                          onHighlight: onHighlight,
-                          selected: index == 1,
-                          color: selectedColor,
-                        ),
-                        const SizedBox(
-                          width: 50,
-                        ),
-                        FilterSearchBarItem(
-                          title: 'Social Hub',
-                          type: 'SocialHub',
-                          onHighlight: onHighlight,
-                          selected: index == 2,
-                          color: selectedColor,
-                        ),
-                      ],
+                      children: typeList!.map((e) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            right: 50,
+                          ),
+                          child: FilterSearchBarItem(
+                            title: e['Name'],
+                            type: e['Value'],
+                            bookingCount: e['BookingCount'].toString(),
+                            onHighlight: onHighlight,
+                            color: selectedColor,
+                            selected: roomType == e['Value'],
+                          ),
+                        );
+                      }).toList(),
+                      // children: [
+                      //   FilterSearchBarItem(
+                      //     title: 'Meeting Room',
+                      //     type: 'MeetingRoom',
+                      //     onHighlight: onHighlight,
+                      //     selected: index == 0,
+                      //     color: selectedColor,
+                      //   ),
+                      //   const SizedBox(
+                      //     width: 50,
+                      //   ),
+                      //   FilterSearchBarItem(
+                      //     title: 'Auditorium',
+                      //     type: 'Auditorium',
+                      //     onHighlight: onHighlight,
+                      //     selected: index == 1,
+                      //     color: selectedColor,
+                      //   ),
+                      //   const SizedBox(
+                      //     width: 50,
+                      //   ),
+                      //   FilterSearchBarItem(
+                      //     title: 'Social Hub',
+                      //     type: 'SocialHub',
+                      //     onHighlight: onHighlight,
+                      //     selected: index == 2,
+                      //     color: selectedColor,
+                      //   ),
+                      // ],
                     ),
                   ),
                   Container(
@@ -191,6 +235,7 @@ class FilterSearchBarItem extends StatelessWidget {
     this.selected,
     this.onHighlight,
     this.color,
+    this.bookingCount,
   });
 
   final String? title;
@@ -198,6 +243,7 @@ class FilterSearchBarItem extends StatelessWidget {
   final bool? selected;
   final Function? onHighlight;
   final Color? color;
+  final String? bookingCount;
 
   @override
   Widget build(BuildContext context) {
@@ -212,6 +258,7 @@ class FilterSearchBarItem extends StatelessWidget {
           selected: selected,
           type: type,
           color: color!,
+          bookingCount: bookingCount!,
         ),
       ),
     );
@@ -230,6 +277,7 @@ class FilterSearchBarInteractiveItem extends MouseRegion {
     bool? selected,
     String? type,
     Color color = blueAccent,
+    String? bookingCount,
   }) : super(
           onHover: (PointerHoverEvent evt) {
             appContainer.style.cursor = 'pointer';
@@ -238,7 +286,10 @@ class FilterSearchBarInteractiveItem extends MouseRegion {
             appContainer.style.cursor = 'default';
           },
           child: FilterSearchBarInteractiveText(
-              text: text!, selected: selected!, color: color),
+              text: text!,
+              selected: selected!,
+              color: color,
+              bookingCount: bookingCount),
         );
 }
 
@@ -246,9 +297,13 @@ class FilterSearchBarInteractiveText extends StatefulWidget {
   final String? text;
   final bool? selected;
   final Color color;
+  final String? bookingCount;
 
   FilterSearchBarInteractiveText(
-      {@required this.text, this.selected, this.color = blueAccent});
+      {@required this.text,
+      this.selected,
+      this.color = blueAccent,
+      this.bookingCount});
 
   @override
   FilterSearchBarInteractiveTextState createState() =>
@@ -333,7 +388,7 @@ class FilterSearchBarInteractiveTextState
                     color: sonicSilver,
                   ),
                   child: Text(
-                    '10',
+                    widget.bookingCount!,
                     style: helveticaText.copyWith(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,

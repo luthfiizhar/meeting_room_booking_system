@@ -101,7 +101,7 @@ class _RoomFacilityItemState extends State<RoomFacilityItem> {
                             ),
                           ),
                           Text(
-                            widget.result!.qty!.toString(),
+                            "${widget.result!.qty!.toString()} Unit",
                             style: helveticaText.copyWith(
                               fontSize: 14,
                               color: davysGray,

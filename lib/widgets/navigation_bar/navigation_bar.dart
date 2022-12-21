@@ -3,6 +3,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/constant/key.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
@@ -351,30 +352,44 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                // color: Colors.amber,
-                width: 175,
-                height: 60,
-                // child: SvgPicture.asset(
-                //   'assets/klg_logo_tagline_black.svg',
-                //   fit: BoxFit.cover,
-                // ),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(
+                height: 70,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: 20,
                     // vertical: 16,
                   ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'MRBS',
-                      style: TextStyle(
-                        fontFamily: 'Helvetica',
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: davysGray,
-                        height: 1.3,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: Image.asset('assets/navbarlogo.png').image,
+                            fit: BoxFit.fitWidth,
+                          ),
+                        ),
+                        height: 70,
+                        width: 155,
                       ),
-                    ),
+                      const SizedBox(
+                        height: 32,
+                        child: VerticalDivider(
+                          color: davysGray,
+                          thickness: 1,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 13,
+                      ),
+                      Text(
+                        'Meeting Room Booking System',
+                        style: helveticaText.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: davysGray,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

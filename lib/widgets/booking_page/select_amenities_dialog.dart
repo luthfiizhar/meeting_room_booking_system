@@ -9,7 +9,7 @@ class SelectAmenitiesDialog extends StatefulWidget {
   SelectAmenitiesDialog({
     super.key,
     this.setListAmenities,
-    required this.roomId,
+    this.roomId,
     this.listAmen,
   });
 

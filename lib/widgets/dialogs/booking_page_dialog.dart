@@ -1809,7 +1809,7 @@ class _BookingRoomPageDialogState extends State<BookingRoomPageDialog> {
               );
             }
             return FoodItem(
-              listFOod: listFoods[index],
+              listFood: listFoods[index],
               onDelete: () {
                 setState(() {
                   for (var i = 0; i < resultFoodAmenities.length; i++) {

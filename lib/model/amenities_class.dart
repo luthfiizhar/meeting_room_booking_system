@@ -4,12 +4,14 @@ class Amenities {
     this.amenitiesName,
     this.qty = 0,
     this.photo = "",
+    this.isProhibited = false,
   });
 
   String? amenitiesId;
   String? amenitiesName;
   String? photo;
   int? qty;
+  bool? isProhibited;
 
   Amenities.fromJSon(Map<String, dynamic> json)
       : amenitiesName = json['AmenitiesName'],
@@ -24,7 +26,7 @@ class Amenities {
   @override
   String toString() {
     // TODO: implement toString
-    return "{AmenitiesID : $amenitiesId, AmenitiesName : $amenitiesName, Default : $qty, ImageURL : $photo}";
+    return "{AmenitiesID : $amenitiesId, AmenitiesName : $amenitiesName, Qty : $qty, ImageURL : $photo, isProhibited: $isProhibited}";
   }
 }
 

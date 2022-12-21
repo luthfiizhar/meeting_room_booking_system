@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/amenities_class.dart';
+import 'package:meeting_room_booking_system/widgets/booking_page/select_amenities_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
@@ -49,6 +51,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   List areaPhoto = [
     {'url': "", 'isLast': true}
   ];
+
+  List<Amenities> allAmenities = [];
+  List<Amenities> allProhibitedAmenities = [];
   List<Amenities> defaultFacility = [
     Amenities(amenitiesId: '0', amenitiesName: 'Kosong'),
   ];
@@ -162,12 +167,10 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
 
   initRoomType() async {
     getRoomType().then((value) {
-      print(value);
       if (value['Status'] == "200") {
         setState(() {
           roomType = value['Data'];
         });
-        print('roomType-> $roomType');
       } else {}
     }).onError((error, stackTrace) {});
   }
@@ -192,6 +195,58 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
     }).onError((error, stackTrace) {});
   }
 
+  initAmenitiesList() async {
+    getAmenitiesListAdmin().then((value) {
+      if (value['Status'] == "200") {
+        List result = value['Data'];
+        for (var element in result) {
+          allAmenities.add(Amenities(
+            amenitiesId: element['AmenitiesID'].toString(),
+            amenitiesName: element['AmenitiesName'].toString(),
+            photo: element['ImageURL'].toString(),
+          ));
+          allProhibitedAmenities.add(Amenities(
+            amenitiesId: element['AmenitiesID'].toString(),
+            amenitiesName: element['AmenitiesName'].toString(),
+            photo: element['ImageURL'].toString(),
+          ));
+        }
+      } else {}
+    }).then((value) {});
+  }
+
+  setListAmenities(List<Amenities> list) {
+    defaultFacility.removeWhere((element) => element.amenitiesId != "0");
+    setState(() {
+      print('list ----> $list');
+      for (var i = 0; i < allAmenities.length; i++) {
+        for (var element in list) {
+          if (allAmenities[i].amenitiesId == element.amenitiesId) {
+            allAmenities[i].qty = element.qty;
+            defaultFacility.insert(defaultFacility.length - 1, element);
+          }
+        }
+      }
+      print('default ----> $defaultFacility');
+      // defaultFacility = list;
+    });
+  }
+
+  setProhibitedList(List<Amenities> list) {
+    prohibitedFacility.removeWhere((element) => element.amenitiesId != "0");
+    setState(() {
+      for (var i = 0; i < allAmenities.length; i++) {
+        for (var element in list) {
+          if (allProhibitedAmenities[i].amenitiesId == element.amenitiesId) {
+            allAmenities[i].isProhibited = element.isProhibited;
+            prohibitedFacility.insert(defaultFacility.length - 1, element);
+          }
+        }
+      }
+      // defaultFacility = list;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -199,6 +254,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
     initRoomType();
     initFloorList();
     initBuildingList();
+    initAmenitiesList();
     areaNameNode.addListener(() {
       setState(() {});
     });
@@ -589,25 +645,52 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                 if (e.amenitiesId == '0') {
                                   return InkWell(
                                     onTap: () {
-                                      defaultFacility.insert(
-                                        defaultFacility.length - 2,
-                                        Amenities(
-                                            amenitiesId: '1',
-                                            amenitiesName: '1'),
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            SelectFacilityDialogAdmin(
+                                          listAmen: allAmenities,
+                                          setListAmenities: setListAmenities,
+                                        ),
                                       );
-                                      setState(() {});
                                     },
-                                    child: Container(
-                                      height: 165,
-                                      width: 125,
-                                      color: blueAccent,
+                                    child: DottedBorder(
+                                      borderType: BorderType.Rect,
+                                      radius: const Radius.circular(5),
+                                      dashPattern: const [10, 4, 10, 4],
+                                      child: SizedBox(
+                                        height: 165,
+                                        width: 125,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              MdiIcons.plusCircleOutline,
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              'Add Facility',
+                                              style: helveticaText.copyWith(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w300,
+                                                color: davysGray,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   );
                                 } else {
-                                  return Container(
-                                    height: 165,
-                                    width: 125,
-                                    color: platinum,
+                                  return FacilityItemContainer(
+                                    image: e.photo!,
+                                    name: e.amenitiesName!,
+                                    qty: e.qty!.toString(),
                                   );
                                 }
                               }).toList(),
@@ -647,18 +730,45 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                 if (e.amenitiesId == '0') {
                                   return InkWell(
                                     onTap: () {
-                                      prohibitedFacility.insert(
-                                        prohibitedFacility.length - 2,
-                                        Amenities(
-                                            amenitiesId: '1',
-                                            amenitiesName: 'Test'),
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            SelectProhibitedFacilityDialog(
+                                          listAmen: allProhibitedAmenities,
+                                          setListAmenities: setProhibitedList,
+                                        ),
                                       );
-                                      setState(() {});
                                     },
-                                    child: Container(
-                                      height: 165,
-                                      width: 125,
-                                      color: blueAccent,
+                                    child: DottedBorder(
+                                      borderType: BorderType.Rect,
+                                      radius: const Radius.circular(5),
+                                      dashPattern: const [10, 4, 10, 4],
+                                      child: SizedBox(
+                                        height: 165,
+                                        width: 125,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              MdiIcons.plusCircleOutline,
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              'Add Facility',
+                                              style: helveticaText.copyWith(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w300,
+                                                color: davysGray,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   );
                                 } else {
@@ -752,6 +862,459 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
         ),
         widget,
       ],
+    );
+  }
+}
+
+class SelectFacilityDialogAdmin extends StatefulWidget {
+  SelectFacilityDialogAdmin({
+    super.key,
+    this.setListAmenities,
+    this.roomId,
+    this.listAmen,
+  });
+
+  Function? setListAmenities;
+  String? roomId;
+  List<Amenities>? listAmen;
+
+  @override
+  State<SelectFacilityDialogAdmin> createState() =>
+      _SelectFacilityDialogAdminState();
+}
+
+class _SelectFacilityDialogAdminState extends State<SelectFacilityDialogAdmin> {
+  List listAmen = [];
+  List<Amenities> amenities = [];
+
+  List<Amenities> selectedAmen = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    // getAmenitiesList(widget.roomId!).then((value) {
+    //   // print(value);
+    //   setState(() {
+    //     listAmen = value['Data'];
+    print(widget.listAmen!);
+    for (var element in widget.listAmen!) {
+      amenities.add(
+        Amenities(
+          amenitiesId: element.amenitiesId,
+          amenitiesName: element.amenitiesName,
+          qty: element.qty,
+          photo: element.photo,
+        ),
+      );
+    }
+    //     print(amenities.toString());
+    //   });
+    // });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 0,
+      // shape: OutlinedBorder,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxHeight: 550,
+          minHeight: 200,
+          minWidth: 450,
+          maxWidth: 450,
+        ),
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 30,
+              vertical: 25,
+            ),
+            decoration: BoxDecoration(
+              color: culturedWhite,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Select Amenities',
+                    style: TextStyle(
+                      fontFamily: 'Helvetica',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 24,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  ListView.builder(
+                    itemCount: amenities.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(
+                              bottom: index < amenities.length - 1 ? 5 : 0,
+                              top: index != 0 ? 5 : 0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    amenities[index].amenitiesName!,
+                                    style: const TextStyle(
+                                      height: 1.3,
+                                      fontFamily: 'Helvetica',
+                                      fontSize: 18,
+                                      color: eerieBlack,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 25,
+                                      height: 25,
+                                      child: RegularButton(
+                                        disabled: false,
+                                        text: '-',
+                                        onTap: () {
+                                          int min = amenities[index].qty!;
+
+                                          if (min > 0) {
+                                            min--;
+                                            amenities[index].qty = min;
+                                          } else {
+                                            min = 0;
+                                            amenities[index].qty = min;
+                                          }
+                                          setState(() {});
+                                        },
+                                        padding: ButtonSize().itemQtyButton(),
+                                        fontWeight: FontWeight.w300,
+                                        radius: 5,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text(
+                                      amenities[index].qty.toString(),
+                                      style: const TextStyle(
+                                        fontFamily: 'Helvetica',
+                                        fontSize: 18,
+                                        color: eerieBlack,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    SizedBox(
+                                      width: 25,
+                                      height: 25,
+                                      child: RegularButton(
+                                        disabled: false,
+                                        text: '+',
+                                        onTap: () {
+                                          // listAmen[index]['qty']++;
+                                          setState(() {
+                                            int plus = amenities[index].qty!;
+                                            plus++;
+                                            amenities[index].qty = plus;
+                                          });
+                                        },
+                                        padding: ButtonSize().itemQtyButton(),
+                                        fontWeight: FontWeight.w300,
+                                        radius: 5,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          index < amenities.length - 1
+                              ? const Divider(
+                                  color: sonicSilver,
+                                  thickness: 0.5,
+                                )
+                              : const SizedBox(),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      RegularButton(
+                        text: 'Confirm',
+                        disabled: false,
+                        onTap: () {
+                          // Amenities amen = Amenities();
+                          selectedAmen = amenities
+                              .where((element) => element.qty! > 0)
+                              .toList();
+                          widget.setListAmenities!(selectedAmen);
+                          // print(selectedAmen);
+                          Navigator.of(context).pop();
+                        },
+                        padding: ButtonSize().mediumSize(),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SelectProhibitedFacilityDialog extends StatefulWidget {
+  SelectProhibitedFacilityDialog(
+      {super.key, this.setListAmenities, this.listAmen, this.roomId});
+
+  Function? setListAmenities;
+  String? roomId;
+  List<Amenities>? listAmen;
+
+  @override
+  State<SelectProhibitedFacilityDialog> createState() =>
+      _SelectProhibitedFacilityDialogState();
+}
+
+class _SelectProhibitedFacilityDialogState
+    extends State<SelectProhibitedFacilityDialog> {
+  List listAmen = [];
+  List<Amenities> amenities = [];
+
+  List<Amenities> selectedAmen = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    // getAmenitiesList(widget.roomId!).then((value) {
+    //   // print(value);
+    //   setState(() {
+    //     listAmen = value['Data'];
+    print(widget.listAmen!);
+    for (var element in widget.listAmen!) {
+      amenities.add(
+        Amenities(
+          amenitiesId: element.amenitiesId,
+          amenitiesName: element.amenitiesName,
+          qty: element.qty,
+          photo: element.photo,
+        ),
+      );
+    }
+    //     print(amenities.toString());
+    //   });
+    // });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 0,
+      // shape: OutlinedBorder,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxHeight: 550,
+          minHeight: 200,
+          minWidth: 450,
+          maxWidth: 450,
+        ),
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 30,
+              vertical: 25,
+            ),
+            decoration: BoxDecoration(
+              color: culturedWhite,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Select Amenities',
+                    style: TextStyle(
+                      fontFamily: 'Helvetica',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 24,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  ListView.builder(
+                    itemCount: amenities.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(
+                              bottom: index < amenities.length - 1 ? 5 : 0,
+                              top: index != 0 ? 5 : 0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    amenities[index].amenitiesName!,
+                                    style: const TextStyle(
+                                      height: 1.3,
+                                      fontFamily: 'Helvetica',
+                                      fontSize: 18,
+                                      color: eerieBlack,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ),
+                                Checkbox(
+                                  value: amenities[index].isProhibited,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (amenities[index].isProhibited!) {
+                                        amenities[index].isProhibited = false;
+                                      } else {
+                                        amenities[index].isProhibited = true;
+                                      }
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                          index < amenities.length - 1
+                              ? const Divider(
+                                  color: sonicSilver,
+                                  thickness: 0.5,
+                                )
+                              : const SizedBox(),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      RegularButton(
+                        text: 'Confirm',
+                        disabled: false,
+                        onTap: () {
+                          // Amenities amen = Amenities();
+                          selectedAmen = amenities
+                              .where((element) => element.qty! > 0)
+                              .toList();
+                          widget.setListAmenities!(selectedAmen);
+                          // print(selectedAmen);
+                          Navigator.of(context).pop();
+                        },
+                        padding: ButtonSize().mediumSize(),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FacilityItemContainer extends StatelessWidget {
+  FacilityItemContainer({
+    super.key,
+    this.name = "",
+    this.qty = "",
+    this.image = "",
+  });
+
+  String name;
+  String qty;
+  String image;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(7),
+      height: 165,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            height: 80,
+            child: CachedNetworkImage(
+              imageUrl: image,
+              imageBuilder: (context, imageProvider) {
+                return Container(
+                  width: 100,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: Image(
+                        image: imageProvider,
+                      ).image,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Text(
+            name,
+            style: helveticaText.copyWith(
+              fontSize: 14,
+              color: eerieBlack,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+          const SizedBox(
+            height: 3,
+          ),
+          Text(
+            "$qty Unit",
+            style: helveticaText.copyWith(
+              fontSize: 14,
+              color: davysGray,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
