@@ -18,6 +18,7 @@ import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_ba
 import 'package:provider/provider.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'dart:html' as html;
 
 class NavigationBarWeb extends StatefulWidget {
   NavigationBarWeb({
@@ -463,6 +464,12 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                               disabled: false,
                               padding: ButtonSize().loginButotn(),
                               onTap: () {
+                                // html.WindowBase popUpWindow;
+
+                                // popUpWindow = html.window.open(
+                                //   'http://portal-sandbox-cerberus.klgsys.com/',
+                                //   'Cerberus',
+                                // );
                                 // jwtToken = "login";
                                 // Scaffold.of(context).openEndDrawer();
                                 // loginDummy().then((value) {});

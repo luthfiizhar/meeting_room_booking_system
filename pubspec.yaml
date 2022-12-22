@@ -125,7 +125,7 @@ flutter:
       fonts:
         - asset: assets/fonts/Helvetica-01.ttf
           weight: 400
-        - asset: assets/fonts/Helvetica Black.ttf
+        - asset: assets/fonts/Helvetica-Black.ttf
           weight: 800
         - asset: assets/fonts/Helvetica-Bold-02.ttf
           weight: 700

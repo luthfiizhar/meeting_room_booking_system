@@ -375,28 +375,32 @@ class FilterSearchBarInteractiveTextState
                               height: 1.3,
                             ),
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: sonicSilver,
-                  ),
-                  child: Text(
-                    widget.bookingCount!,
-                    style: helveticaText.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: culturedWhite,
-                      height: 1.3,
-                    ),
-                  ),
-                ),
+                widget.bookingCount == "0"
+                    ? SizedBox()
+                    : Padding(
+                        padding: const EdgeInsets.only(
+                          left: 10,
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: sonicSilver,
+                          ),
+                          child: Text(
+                            widget.bookingCount!,
+                            style: helveticaText.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: culturedWhite,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+                      ),
               ],
             ),
           ),
