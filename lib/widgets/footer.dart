@@ -27,14 +27,14 @@ class FooterWeb extends StatelessWidget {
         children: [
           Positioned(
             top: 20,
-            left: 0,
+            left: 40,
             child: Container(
               // color: Colors.red,
               width: 230,
-              height: 80,
-              child: SvgPicture.asset(
-                'assets/klg_logo_tagline_black.svg',
-                fit: BoxFit.cover,
+              height: 75,
+              child: Image.asset(
+                'assets/navbarlogo.png',
+                fit: BoxFit.contain,
               ),
             ),
           ),

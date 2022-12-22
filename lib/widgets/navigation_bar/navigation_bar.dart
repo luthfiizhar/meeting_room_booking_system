@@ -339,9 +339,11 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: 20,
+        horizontal: 16,
+        vertical: 10,
       ),
       // color: scaffoldBg,
+      height: 70,
       decoration: const BoxDecoration(
         color: white,
         // color: Colors.purple,
@@ -352,7 +354,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                height: 70,
+                // height: 70,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20,
@@ -365,10 +367,10 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: Image.asset('assets/navbarlogo.png').image,
-                            fit: BoxFit.fitWidth,
+                            fit: BoxFit.fill,
                           ),
                         ),
-                        height: 70,
+                        height: 50,
                         width: 155,
                       ),
                       const SizedBox(
