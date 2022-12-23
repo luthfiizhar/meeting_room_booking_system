@@ -453,10 +453,15 @@ class _RoomsPageState extends State<RoomsPage> {
     //     assignDataToCalendar(value['Data']);
     //   });
     // });
+    resetState() {
+      setState(() {});
+    }
+
     return LayoutPageWeb(
       scrollController: scrollController,
       index: 2,
       setDatePickerStatus: setDatePickerStatus,
+      resetState: resetState,
       child: ChangeNotifierProvider.value(
         value: mainModel,
         child: Consumer<MainModel>(builder: (context, model, child) {

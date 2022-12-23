@@ -51,6 +51,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:go_router/go_router.dart';
 
 class SearchPage extends StatefulWidget {
   SearchPage({
@@ -969,12 +970,17 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
+  resetState() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       index: 1,
       model: mainModel,
       scrollController: scrollController,
+      resetState: resetState,
       setDatePickerStatus: resetAllVisibleStatus,
       child: Consumer<MainModel>(builder: (context, model, child) {
         return ConstrainedBox(
@@ -1350,13 +1356,18 @@ class _SearchPageState extends State<SearchPage> {
                                               const SizedBox(
                                                 height: 35,
                                               ),
-                                              WhiteBannerLandscape(
-                                                title:
-                                                    'Link your Google account',
-                                                subtitle:
-                                                    '& enjoy your benefits.',
-                                                imagePath:
-                                                    'assets/banner_pict_google.png',
+                                              InkWell(
+                                                onTap: () {
+                                                  context.go('/gws');
+                                                },
+                                                child: WhiteBannerLandscape(
+                                                  title:
+                                                      'Link your Google account',
+                                                  subtitle:
+                                                      '& enjoy your benefits.',
+                                                  imagePath:
+                                                      'assets/banner_pict_google.png',
+                                                ),
                                               ),
                                               const SizedBox(
                                                 height: 100,

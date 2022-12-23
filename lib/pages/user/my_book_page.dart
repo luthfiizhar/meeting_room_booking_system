@@ -162,6 +162,11 @@ class _MyBookingPageState extends State<MyBookingPage> {
   }
 
   ScrollController scrollController = ScrollController();
+
+  resetState() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     double paginationWidth = availablePage.length > 5
@@ -171,6 +176,7 @@ class _MyBookingPageState extends State<MyBookingPage> {
       index: 3,
       scrollController: scrollController,
       setDatePickerStatus: setDatePickerStatus,
+      resetState: resetState,
       child: ConstrainedBox(
         constraints: pageConstraints,
         child: Container(
@@ -183,13 +189,13 @@ class _MyBookingPageState extends State<MyBookingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(
-                  height: 20,
+                  height: 35,
                 ),
                 Text(
-                  'My Booking List',
+                  'My Event List',
                   style: helveticaText.copyWith(
                     fontSize: 32,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(

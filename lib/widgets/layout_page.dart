@@ -5,6 +5,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/widgets/button/go_to_top_button.dart';
@@ -31,6 +32,7 @@ class LayoutPageWeb extends StatefulWidget {
   final ScrollController? scrollController;
   Function? resetState;
   MainModel? model;
+  // bool isAdmin;
 
   @override
   State<LayoutPageWeb> createState() => _LayoutPageWebState();
@@ -44,6 +46,11 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   bool profileVisible = false;
   bool opacityOn = false;
   // bool upBottonVisible = false;
+  String employeeName = "";
+  String employeeEmail = "";
+
+  bool isAdmin = false;
+
   popUpProfile(bool value) {
     if (profileVisible) {
       profileVisible = value;
@@ -52,6 +59,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
       opacityOn = value;
       profileVisible = value;
     }
+    widget.setDatePickerStatus!(false);
     setState(() {});
   }
 
@@ -131,6 +139,15 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
     if (widget.model != null) {
       mainModel = widget.model!;
     }
+    getUserProfile().then((value) {
+      setState(() {
+        employeeName = value['Data']['EmpName'];
+        employeeEmail = value['Data']['Email'];
+        if (value['Data']['Admin'] == 1) {
+          isAdmin = true;
+        }
+      });
+    });
     // checkDeviceInfo();
     // if (mounted) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -204,7 +221,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
           body: GestureDetector(
             onTap: () {
               popUpProfile(false);
-              widget.setDatePickerStatus!(false);
+              // widget.setDatePickerStatus!(false);
             },
             child: Align(
               alignment: Alignment.topCenter,
@@ -323,10 +340,11 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                         child: Container(
                           // color: Colors.amber,
                           child: PopUpProfile(
-                            name: 'Luthfi',
-                            email: 'luthfiizhar@gmail.com',
+                            name: employeeName,
+                            email: employeeEmail,
                             popUpProfile: popUpProfile,
                             resetState: resetState,
+                            isAdmin: isAdmin,
                           ),
                         ),
                       ),

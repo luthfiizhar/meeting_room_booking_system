@@ -26,6 +26,7 @@ import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.da
 import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
 import 'package:meeting_room_booking_system/widgets/end_time_container.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/available_room_offer_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/feature_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/greeting_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/home_search_container.dart';
@@ -697,21 +698,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         const SizedBox(
           height: 30,
         ),
-        ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: 375,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: davysGray,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: platinum,
-                width: 1,
-              ),
-            ),
-          ),
-        ),
+        AvailableRoomContainer(),
       ],
     );
   }

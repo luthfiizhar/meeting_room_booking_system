@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
 
@@ -9,12 +11,14 @@ class PopUpProfile extends StatelessWidget {
     this.email,
     this.popUpProfile,
     this.resetState,
+    this.isAdmin = false,
   });
 
   String? name;
   String? email;
   Function? popUpProfile;
   Function? resetState;
+  bool isAdmin;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +35,7 @@ class PopUpProfile extends StatelessWidget {
         ),
         child: Container(
           padding: const EdgeInsets.symmetric(
+            vertical: 20,
             horizontal: 25,
           ),
           width: 350,
@@ -50,50 +55,26 @@ class PopUpProfile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage('assets/avatar_profile.png'),
-                        fit: BoxFit.fill,
-                      ),
+                  Text(
+                    name!,
+                    style: helveticaText.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: davysGray,
                     ),
-                    // child: Icon(Icons.person),
                   ),
                   const SizedBox(
-                    width: 25,
+                    height: 7,
                   ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          name!,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: davysGray,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 7,
-                        ),
-                        Text(
-                          email!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w300,
-                            color: sonicSilver,
-                          ),
-                        ),
-                      ],
+                  Text(
+                    email!,
+                    style: helveticaText.copyWith(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w300,
+                      color: sonicSilver,
                     ),
                   ),
                 ],
@@ -108,11 +89,36 @@ class PopUpProfile extends StatelessWidget {
               const SizedBox(
                 height: 13,
               ),
+              !isAdmin
+                  ? const SizedBox()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            context.goNamed('admin_list');
+                          },
+                          child: Text(
+                            'Approval',
+                            style: helveticaText.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: davysGray,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                      ],
+                    ),
               TextButton(
-                onPressed: () {},
-                child: const Text(
+                onPressed: () {
+                  context.goNamed('setting');
+                },
+                child: Text(
                   'My Profile',
-                  style: TextStyle(
+                  style: helveticaText.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w300,
                     color: davysGray,
@@ -120,7 +126,7 @@ class PopUpProfile extends StatelessWidget {
                 ),
               ),
               const SizedBox(
-                height: 10,
+                height: 15,
               ),
               TextButton(
                 onPressed: () {
@@ -131,17 +137,14 @@ class PopUpProfile extends StatelessWidget {
                     }
                   });
                 },
-                child: const Text(
+                child: Text(
                   'Logout',
-                  style: TextStyle(
+                  style: helveticaText.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w300,
                     color: davysGray,
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 35,
               ),
             ],
           ),

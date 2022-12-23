@@ -638,12 +638,17 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     additionalNoteNode.dispose();
   }
 
+  resetState() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
     return Stack(
       children: [
         LayoutPageWeb(
+          resetState: resetState,
           index: widget.index,
           scrollController: scrollController,
           setDatePickerStatus: setDatePickerStatus,

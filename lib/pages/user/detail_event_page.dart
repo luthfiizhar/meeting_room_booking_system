@@ -140,12 +140,19 @@ class _DetailEventPageState extends State<DetailEventPage> {
   }
 
   ScrollController scrollController = ScrollController();
+  resetState() {
+    setState(() {});
+  }
+
+  setDatePickerStatus(bool value) {}
+
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       index: 3,
       scrollController: scrollController,
-      setDatePickerStatus: resetStatus,
+      setDatePickerStatus: setDatePickerStatus,
+      resetState: resetState,
       child: isCancelLoading || isInitLoading
           ? const Align(
               alignment: Alignment.center,

@@ -301,6 +301,7 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
     // TODO: implement initState
     super.initState();
     index = widget.index;
+
     // print(Provider.of<MainModel>(context, listen: false).firstLogin);
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   ShowCaseWidget.of(context).startShowCase([keyButton]);

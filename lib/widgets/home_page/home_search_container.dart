@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
@@ -96,6 +97,9 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                     color: eerieBlack,
                   ),
                 ),
+                const SizedBox(
+                  height: 17,
+                ),
                 InkWell(
                   onTap: () {
                     if (widget.meetingTypeStatus!) {
@@ -114,39 +118,72 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                             width: 175,
                             height: 112,
                             decoration: BoxDecoration(
-                              color: davysGray,
+                              color: Colors.black,
                               borderRadius: BorderRadius.circular(10),
-                              // image: DecorationImage(
-                              //   image: NetworkImage(widget.roomTypeUrl!, scale: 0.1),
-                              //   fit: BoxFit.cover,
-                              // ),
                             ),
-                            child: FittedBox(
-                              fit: BoxFit.cover,
-                              child: widget.roomTypeUrl == ""
-                                  ? const SizedBox()
-                                  : SizedBox(
-                                      width: 175,
-                                      height: 112,
-                                      child: Image.network(
-                                        widget.roomTypeUrl!,
-                                        scale: 0.1,
-                                      ),
-                                    ),
-                            ),
+                            child: widget.roomTypeUrl == ""
+                                ? const SizedBox()
+                                : CachedNetworkImage(
+                                    imageUrl: widget.roomTypeUrl!,
+                                    placeholder: (context, url) {
+                                      return const SizedBox(
+                                        height: 50,
+                                        width: 50,
+                                        child: CircularProgressIndicator(
+                                          color: eerieBlack,
+                                        ),
+                                      );
+                                    },
+                                    imageBuilder: (context, imageProvider) {
+                                      return Container(
+                                        width: 175,
+                                        height: 112,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover,
+                                            opacity: 0.4,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                           ),
                         )
                       : Container(
                           width: 175,
                           height: 112,
                           decoration: BoxDecoration(
-                            color: davysGray,
+                            color: eerieBlack,
                             borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                              image:
-                                  NetworkImage(widget.roomTypeUrl!, scale: 0.1),
-                              fit: BoxFit.cover,
-                            ),
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl: widget.roomTypeUrl!,
+                            placeholder: (context, url) {
+                              return const SizedBox(
+                                height: 50,
+                                width: 50,
+                                child: CircularProgressIndicator(
+                                  color: eerieBlack,
+                                ),
+                              );
+                            },
+                            imageBuilder: (context, imageProvider) {
+                              return Container(
+                                width: 175,
+                                height: 112,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.black,
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                    opacity: 0.6,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                 ),

@@ -36,11 +36,16 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
     super.initState();
   }
 
+  resetState() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       index: 0,
       scrollController: scrollController,
+      resetState: resetState,
       child: ConstrainedBox(
         constraints: pageConstraints,
         child: Padding(

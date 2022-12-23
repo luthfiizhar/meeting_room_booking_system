@@ -45,6 +45,10 @@ class _GreetingContainerState extends State<GreetingContainer> {
             color: platinum,
             width: 1,
           ),
+          image: DecorationImage(
+            image: AssetImage('assets/greeting_bg.png'),
+            fit: BoxFit.cover,
+          ),
         ),
         // height: 200,
         padding: const EdgeInsets.symmetric(

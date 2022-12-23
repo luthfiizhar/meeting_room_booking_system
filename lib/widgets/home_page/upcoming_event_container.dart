@@ -20,9 +20,14 @@ class UpcomingEventContainer extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 22.5, horizontal: 35),
         decoration: BoxDecoration(
-          color: davysGray,
+          image: DecorationImage(
+            image: AssetImage('assets/social_hub.jpg'),
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.none,
+            opacity: 0.3,
+          ),
+          color: eerieBlack,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: platinum),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

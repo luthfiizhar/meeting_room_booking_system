@@ -27,7 +27,7 @@ class WhiteBannerLandscape extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: lightGray,
+            color: Colors.transparent,
             width: 1,
           ),
         ),

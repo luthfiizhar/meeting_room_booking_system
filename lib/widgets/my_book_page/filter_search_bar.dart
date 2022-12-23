@@ -58,7 +58,9 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
     selectedColor = color[indexColor];
     myBookBookingCount().then((value) {
       if (value['Status'] == "200") {
-        typeList = value['Data'];
+        setState(() {
+          typeList = value['Data'];
+        });
       } else {
         showDialog(
           context: context,

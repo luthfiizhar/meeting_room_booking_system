@@ -561,12 +561,17 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
     );
   }
 
+  resetState() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       scrollController: scrollController,
       index: 0,
       setDatePickerStatus: resetAllVisibleStatus,
+      resetState: resetState,
       child: Stack(
         children: [
           Column(

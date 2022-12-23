@@ -234,6 +234,10 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
   // }
   ScrollController scrollController = ScrollController();
   setDatePickerStatus(bool value) {}
+  resetState() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     // double cellWidth = isShowDetail
@@ -243,6 +247,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
       index: 4,
       scrollController: scrollController,
       setDatePickerStatus: setDatePickerStatus,
+      resetState: resetState,
       child: Padding(
         padding: const EdgeInsets.only(
           top: 10,
@@ -268,10 +273,15 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                             ? const CircularProgressIndicator(
                                 color: eerieBlack,
                               )
-                            : DetailAppointmentContainer(
-                                // event: selectedEvent,
-                                closeDetail: closeDetail,
-                                bookingDetail: detailEvent,
+                            : SizedBox(
+                                height: MediaQuery.of(context).size.width > 1366
+                                    ? MediaQuery.of(context).size.height - 180
+                                    : null,
+                                child: DetailAppointmentContainer(
+                                  // event: selectedEvent,
+                                  closeDetail: closeDetail,
+                                  bookingDetail: detailEvent,
+                                ),
                               )
                         : SizedBox(),
                   ),

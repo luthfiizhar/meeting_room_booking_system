@@ -216,9 +216,32 @@ class _StatisticContainerState extends State<StatisticContainer> {
         Container(
           height: 80,
           width: 250,
+          padding: const EdgeInsets.only(
+            left: 15,
+            bottom: 10,
+            top: 10,
+            right: 15,
+          ),
           decoration: BoxDecoration(
-            color: davysGray,
+            image: DecorationImage(
+              image: AssetImage('assets/persistance_1.png'),
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.none,
+              opacity: 0.3,
+            ),
+            color: eerieBlack,
             borderRadius: BorderRadius.circular(5),
+          ),
+          child: Align(
+            alignment: Alignment.bottomLeft,
+            child: Text(
+              'Room 103',
+              style: helveticaText.copyWith(
+                fontSize: 14,
+                fontWeight: FontWeight.w300,
+                color: white,
+              ),
+            ),
           ),
         )
       ],

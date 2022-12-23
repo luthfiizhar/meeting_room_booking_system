@@ -97,12 +97,18 @@ class _AdminListPageState extends State<AdminListPage> {
     print("Order By ${searchTerm.orderBy} ${searchTerm.orderDir}");
   }
 
-  resetState() {}
+  resetState() {
+    setState(() {});
+  }
+
+  setDatePickerStatus(bool value) {}
+
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       index: 0,
-      setDatePickerStatus: resetState,
+      setDatePickerStatus: setDatePickerStatus,
+      resetState: resetState,
       scrollController: scrollController,
       child: ConstrainedBox(
         constraints: pageConstraints,
