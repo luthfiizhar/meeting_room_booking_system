@@ -89,11 +89,15 @@ class BlackDropdown extends StatelessWidget {
         // suffixIcon: suffixIcon,
         suffixIconColor: eerieBlack,
       ),
+      itemPadding: const EdgeInsets.only(
+        left: 20,
+        right: 20,
+      ),
       icon: suffixIcon,
       hint: Text(
         hintText!,
         style: const TextStyle(
-          fontSize: 18,
+          fontSize: 16,
           fontWeight: FontWeight.w300,
           color: sonicSilver,
         ),
@@ -105,7 +109,7 @@ class BlackDropdown extends StatelessWidget {
       //   bottom: 0,
       // ),
       style: const TextStyle(
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: FontWeight.w300,
         fontFamily: 'Helvetica',
       ),

@@ -25,11 +25,13 @@ class NewAreaDialog extends StatefulWidget {
 
 class _NewAreaDialogState extends State<NewAreaDialog> {
   TextEditingController _areaName = TextEditingController();
+  TextEditingController _areaAlias = TextEditingController();
   TextEditingController _minCapacity = TextEditingController();
   TextEditingController _maxCapacity = TextEditingController();
   TextEditingController _maxDuration = TextEditingController();
 
   FocusNode areaNameNode = FocusNode();
+  FocusNode areaAliasNode = FocusNode();
   FocusNode minCapacityNode = FocusNode();
   FocusNode maxCpacityNode = FocusNode();
   FocusNode maxDurationNode = FocusNode();
@@ -38,6 +40,10 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   FocusNode roomTypeNode = FocusNode();
 
   String areaName = "";
+  String areaAlias = "";
+  String selectedBuilding = "";
+  String selectedFloor = "";
+  String selectedType = "";
   String minCapacity = "";
   String maxCapacity = "";
   String maxDuration = "";
@@ -227,7 +233,6 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
           }
         }
       }
-      print('default ----> $defaultFacility');
       // defaultFacility = list;
     });
   }
@@ -235,21 +240,20 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   setProhibitedList(List<Amenities> list) {
     prohibitedFacility.removeWhere((element) => element.amenitiesId != "0");
     setState(() {
-      for (var i = 0; i < allAmenities.length; i++) {
+      for (var i = 0; i < allProhibitedAmenities.length; i++) {
         for (var element in list) {
           if (allProhibitedAmenities[i].amenitiesId == element.amenitiesId) {
-            allAmenities[i].isProhibited = element.isProhibited;
-            prohibitedFacility.insert(defaultFacility.length - 1, element);
+            allProhibitedAmenities[i].isProhibited = element.isProhibited;
+            prohibitedFacility.insert(prohibitedFacility.length - 1, element);
           }
         }
       }
-      // defaultFacility = list;
+      // print(all)
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initRoomType();
     initFloorList();
@@ -354,6 +358,33 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   enabled: true,
                                   focusNode: areaNameNode,
                                   hintText: 'Name here ...',
+                                  onSaved: (newValue) {
+                                    areaName = newValue.toString();
+                                  },
+                                  validator: (value) => value == ""
+                                      ? "Area name is required"
+                                      : null,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            inputField(
+                              'Area Alias',
+                              SizedBox(
+                                width: 300,
+                                child: BlackInputField(
+                                  controller: _areaAlias,
+                                  enabled: true,
+                                  focusNode: areaAliasNode,
+                                  hintText: 'Alias here ...',
+                                  onSaved: (newValue) {
+                                    areaAlias = newValue.toString();
+                                  },
+                                  validator: (value) => value == ""
+                                      ? "Area alias is required"
+                                      : null,
                                 ),
                               ),
                             ),
@@ -374,7 +405,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   value: widget.isEdit
                                       ? buildingList.first['BuildingID']
                                       : null,
-                                  onChanged: (value) {},
+                                  onChanged: (value) {
+                                    selectedBuilding = value;
+                                  },
                                 ),
                               ),
                             ),
@@ -395,7 +428,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   value: widget.isEdit
                                       ? floorList.first['AreaID']
                                       : null,
-                                  onChanged: (value) {},
+                                  onChanged: (value) {
+                                    selectedFloor = value;
+                                  },
                                 ),
                               ),
                             ),
@@ -416,7 +451,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   value: widget.isEdit
                                       ? roomType.first['Value']
                                       : null,
-                                  onChanged: (value) {},
+                                  onChanged: (value) {
+                                    selectedType = value;
+                                  },
                                 ),
                               ),
                             ),
@@ -445,6 +482,12 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                 enabled: true,
                                 focusNode: minCapacityNode,
                                 hintText: '...',
+                                onSaved: (newValue) {
+                                  minCapacity = newValue.toString();
+                                },
+                                validator: (value) => value == ""
+                                    ? "This field is required"
+                                    : null,
                               ),
                             ),
                           ),
@@ -460,6 +503,12 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                 enabled: true,
                                 focusNode: maxCpacityNode,
                                 hintText: '...',
+                                onSaved: (newValue) {
+                                  maxCapacity = newValue.toString();
+                                },
+                                validator: (value) => value == ""
+                                    ? "This field is required"
+                                    : null,
                               ),
                             ),
                           ),
@@ -475,6 +524,12 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                 enabled: true,
                                 focusNode: maxDurationNode,
                                 hintText: '...',
+                                onSaved: (newValue) {
+                                  maxDuration = newValue.toString();
+                                },
+                                validator: (value) => value == ""
+                                    ? "This field is required"
+                                    : null,
                               ),
                             ),
                           ),
@@ -772,10 +827,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                     ),
                                   );
                                 } else {
-                                  return Container(
-                                    height: 165,
-                                    width: 125,
-                                    color: platinum,
+                                  return ProhibitedFacilityItemContainer(
+                                    image: e.photo!,
+                                    name: e.amenitiesName!,
                                   );
                                 }
                               }).toList(),
@@ -1121,6 +1175,7 @@ class _SelectProhibitedFacilityDialogState
           amenitiesName: element.amenitiesName,
           qty: element.qty,
           photo: element.photo,
+          isProhibited: element.isProhibited,
         ),
       );
     }
@@ -1204,7 +1259,7 @@ class _SelectProhibitedFacilityDialogState
                                       }
                                     });
                                   },
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -1230,7 +1285,7 @@ class _SelectProhibitedFacilityDialogState
                         onTap: () {
                           // Amenities amen = Amenities();
                           selectedAmen = amenities
-                              .where((element) => element.qty! > 0)
+                              .where((element) => element.isProhibited! == true)
                               .toList();
                           widget.setListAmenities!(selectedAmen);
                           // print(selectedAmen);
@@ -1310,6 +1365,62 @@ class FacilityItemContainer extends StatelessWidget {
             style: helveticaText.copyWith(
               fontSize: 14,
               color: davysGray,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ProhibitedFacilityItemContainer extends StatelessWidget {
+  ProhibitedFacilityItemContainer({
+    super.key,
+    this.name = "",
+    this.image = "",
+  });
+
+  String name;
+  String image;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(7),
+      height: 165,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            height: 80,
+            child: CachedNetworkImage(
+              imageUrl: image,
+              imageBuilder: (context, imageProvider) {
+                return Container(
+                  width: 100,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: Image(
+                        image: imageProvider,
+                      ).image,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Text(
+            name,
+            style: helveticaText.copyWith(
+              fontSize: 14,
+              color: eerieBlack,
               fontWeight: FontWeight.w300,
             ),
           ),

@@ -160,20 +160,17 @@ class _RoomsPageState extends State<RoomsPage> {
         [
           DropdownMenuItem<String>(
             value: item.areaId,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0),
-              child: Text(
-                item.areaName!,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w300,
-                ),
+            child: Text(
+              item.areaName!,
+              style: helveticaText.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
               ),
             ),
           ),
           //If it's last item, we will not add Divider after it.
           if (item != items.last)
-            DropdownMenuItem<String>(
+            const DropdownMenuItem<String>(
               enabled: false,
               child: Divider(
                 color: culturedWhite,

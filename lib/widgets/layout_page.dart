@@ -9,6 +9,7 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/widgets/button/go_to_top_button.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/footer.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:meeting_room_booking_system/widgets/pop_up_profile.dart';
@@ -140,13 +141,33 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
       mainModel = widget.model!;
     }
     getUserProfile().then((value) {
-      setState(() {
-        employeeName = value['Data']['EmpName'];
-        employeeEmail = value['Data']['Email'];
-        if (value['Data']['Admin'] == 1) {
-          isAdmin = true;
-        }
-      });
+      if (value['Status'] == "200") {
+        setState(() {
+          employeeName = value['Data']['EmpName'];
+          employeeEmail = value['Data']['Email'];
+          if (value['Data']['Admin'] == 1) {
+            isAdmin = true;
+          }
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Can\'t connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
     // checkDeviceInfo();
     // if (mounted) {

@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 
 class WhiteDropdown extends StatelessWidget {
   const WhiteDropdown({
@@ -14,6 +15,7 @@ class WhiteDropdown extends StatelessWidget {
     this.onTap,
     this.value,
     this.customHeights,
+    this.isExpanded = false,
   });
 
   final List<DropdownMenuItem<dynamic>>? items;
@@ -26,6 +28,7 @@ class WhiteDropdown extends StatelessWidget {
   final VoidCallback? onTap;
   final dynamic value;
   final List<double>? customHeights;
+  final bool isExpanded;
 
   List<double> _getCustomItemsHeights() {
     List<double> _itemsHeights = [];
@@ -50,6 +53,7 @@ class WhiteDropdown extends StatelessWidget {
       items: items,
       customItemsHeights: customHeights,
       onChanged: onChanged,
+      isExpanded: isExpanded,
       decoration: InputDecoration(
         // constraints: BoxConstraints(maxHeight: 40),
         border: OutlineInputBorder(
@@ -103,10 +107,9 @@ class WhiteDropdown extends StatelessWidget {
       icon: suffixIcon,
       hint: Text(
         hintText!,
-        style: const TextStyle(
-          fontSize: 18,
+        style: helveticaText.copyWith(
+          fontSize: 16,
           fontWeight: FontWeight.w300,
-          fontFamily: 'Helvetica',
           color: lightGray,
         ),
       ),
@@ -116,12 +119,12 @@ class WhiteDropdown extends StatelessWidget {
       //   top: 0,
       //   bottom: 0,
       // ),
-      style: const TextStyle(
-        fontSize: 18,
+      style: helveticaText.copyWith(
+        fontSize: 16,
         fontWeight: FontWeight.w300,
-        fontFamily: 'Helvetica',
         color: culturedWhite,
       ),
+
       // buttonDecoration: BoxDecoration(
       //   borderRadius: BorderRadius.circular(5),
       //   border: Border.all(

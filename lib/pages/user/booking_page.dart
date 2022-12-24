@@ -1860,27 +1860,76 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             );
           }),
         ),
-        Positioned(
-          top: 85,
-          left: 120,
+        Center(
           child: ConstrainedBox(
-            constraints: pageConstraints,
-            child: pictureLoading
-                ? const SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: CircularProgressIndicator(
-                      color: eerieBlack,
+            constraints: const BoxConstraints(
+              maxWidth: 1366,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 100,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          right: 50,
+                          top: 90,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: pageConstraints,
+                          child: pictureLoading
+                              ? const SizedBox(
+                                  width: 100,
+                                  height: 100,
+                                  child: CircularProgressIndicator(
+                                    color: eerieBlack,
+                                  ),
+                                )
+                              : BookingRoomPicture(
+                                  pictures: resultPicture,
+                                  name: roomName,
+                                  area: floor,
+                                  pictNotFound: isPictEmpty,
+                                ),
+                        ),
+                      ),
                     ),
-                  )
-                : BookingRoomPicture(
-                    pictures: resultPicture,
-                    name: roomName,
-                    area: floor,
-                    pictNotFound: isPictEmpty,
                   ),
+                  Container(
+                    width: 600,
+                  )
+                ],
+              ),
+            ),
           ),
         ),
+        // Positioned(
+        //   top: 85,
+        //   left: 120,
+        //   child: ConstrainedBox(
+        //     constraints: pageConstraints,
+        //     child: pictureLoading
+        //         ? const SizedBox(
+        //             width: 100,
+        //             height: 100,
+        //             child: CircularProgressIndicator(
+        //               color: eerieBlack,
+        //             ),
+        //           )
+        //         : BookingRoomPicture(
+        //             pictures: resultPicture,
+        //             name: roomName,
+        //             area: floor,
+        //             pictNotFound: isPictEmpty,
+        //           ),
+        //   ),
+        // ),
       ],
     );
     ;

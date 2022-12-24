@@ -241,7 +241,7 @@ class ListRoomContainer extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(
-                              width: 90,
+                              width: 50,
                             ),
                             const Icon(
                               MdiIcons.television,

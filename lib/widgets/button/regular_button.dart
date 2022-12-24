@@ -5,7 +5,7 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 class RegularButton extends StatelessWidget {
   RegularButton({
     required this.text,
-    this.fontSize,
+    this.fontSize = 16,
     this.onTap,
     required this.disabled,
     this.padding,
@@ -64,7 +64,7 @@ class RegularButton extends StatelessWidget {
         textStyle: MaterialStateProperty.resolveWith<TextStyle>(
           (states) {
             return helveticaText.copyWith(
-              fontSize: 16,
+              fontSize: fontSize,
               fontWeight: fontWeight,
             );
           },
