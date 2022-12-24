@@ -4,6 +4,7 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/constant/custom_scroll_behavior.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
+import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/area_menu_page.dart/new_area_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
@@ -86,18 +87,18 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
       areaList = value['Data']['List'];
       for (var element in areaList) {
         room.add(Room(
-          idRoom: element['RoomID'],
+          roomId: element['RoomID'],
           roomName: element['RoomName'],
           roomType: element['RoomType'],
-          building: element['SiteLocation'],
-          floor: element['AreaName'],
+          buildingName: element['SiteLocation'],
+          floorName: element['AreaName'],
           minCapacity: element['MinCapacity'].toString(),
           maxCapacity: element['MaxCapacity'].toString(),
           coverPhoto: element['CoverPhoto'],
-          maxDuration: element['Duration'].toString(),
-          facility: element['AvailableAmenities'],
+          maxBookingDuration: element['Duration'].toString(),
+          defaultFacilities: element['AvailableAmenities'],
           prohibitedFacilities: element['ForbiddenAmenities'],
-          photoList: element['RoomPhotos'],
+          areaPhoto: element['RoomPhotos'],
           isCollapsed: false,
         ));
       }
@@ -118,18 +119,18 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
       // }
       for (var element in areaList) {
         room.add(Room(
-          idRoom: element['RoomID'],
+          roomId: element['RoomID'],
           roomName: element['RoomName'],
           roomType: element['RoomType'],
-          building: element['SiteLocation'],
-          floor: element['AreaName'],
+          buildingName: element['SiteLocation'],
+          floorName: element['AreaName'],
           minCapacity: element['MinCapacity'].toString(),
           maxCapacity: element['MaxCapacity'].toString(),
           coverPhoto: element['CoverPhoto'],
-          maxDuration: element['Duration'].toString(),
-          facility: element['AvailableAmenities'],
+          maxBookingDuration: element['Duration'].toString(),
+          defaultFacilities: element['AvailableAmenities'],
           prohibitedFacilities: element['ForbiddenAmenities'],
-          photoList: element['RoomPhotos'],
+          areaPhoto: element['RoomPhotos'],
           isCollapsed: false,
         ));
       }
@@ -215,18 +216,18 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
             isCollapse: room[index].isCollapsed,
             onTap: onTapListArea,
             close: closeDetail,
-            idRoom: room[index].idRoom,
+            idRoom: room[index].roomId,
             roomName: room[index].roomName,
             roomType: room[index].roomType,
             maxCapacity: room[index].maxCapacity,
             minCapacity: room[index].minCapacity,
-            floor: room[index].floor,
-            building: room[index].building,
-            maxDuration: room[index].maxDuration,
+            floor: room[index].floorName,
+            building: room[index].buildingName,
+            maxDuration: room[index].maxBookingDuration,
             coverPhoto: room[index].coverPhoto,
-            facility: room[index].facility,
+            facility: room[index].defaultFacilities,
             prohibitedFacility: room[index].prohibitedFacilities,
-            photoList: room[index].photoList,
+            photoList: room[index].areaPhoto,
           );
         },
       ),
@@ -384,16 +385,6 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                                       searchTerm.pageNumber =
                                           currentPaginatedPage.toString();
                                       updateList();
-                                      // getMyBookingList(searchTerm)
-                                      //     .then((value) {
-                                      //   setState(() {
-                                      //     myBookList =
-                                      //         value['Data']['List'];
-                                      //     countPagination(
-                                      //         value['Data']
-                                      //             ['TotalRows']);
-                                      //   });
-                                      // });
                                       print(showedPage);
                                       print('current ${searchTerm.pageNumber}');
                                     },
@@ -946,39 +937,39 @@ class _AreaListContainerState extends State<AreaListContainer> {
   }
 }
 
-class Room {
-  Room({
-    this.idRoom = "",
-    this.roomName = "",
-    this.floor = "",
-    this.building = "",
-    this.maxCapacity = "",
-    this.minCapacity = "",
-    this.roomType = "",
-    this.facility,
-    this.coverPhoto = "",
-    this.maxDuration = "",
-    this.photoList,
-    this.prohibitedFacilities,
-    this.isCollapsed = false,
-  });
-  String idRoom;
-  String roomName;
-  String floor;
-  String building;
-  String minCapacity;
-  String maxCapacity;
-  String maxDuration;
-  String roomType;
-  String coverPhoto;
-  List? photoList;
-  List? facility;
-  List? prohibitedFacilities;
-  bool isCollapsed;
+// class Room {
+//   Room({
+//     this.idRoom = "",
+//     this.roomName = "",
+//     this.floor = "",
+//     this.building = "",
+//     this.maxCapacity = "",
+//     this.minCapacity = "",
+//     this.roomType = "",
+//     this.facility,
+//     this.coverPhoto = "",
+//     this.maxDuration = "",
+//     this.photoList,
+//     this.prohibitedFacilities,
+//     this.isCollapsed = false,
+//   });
+//   String idRoom;
+//   String roomName;
+//   String floor;
+//   String building;
+//   String minCapacity;
+//   String maxCapacity;
+//   String maxDuration;
+//   String roomType;
+//   String coverPhoto;
+//   List? photoList;
+//   List? facility;
+//   List? prohibitedFacilities;
+//   bool isCollapsed;
 
-  @override
-  String toString() {
-    // TODO: implement toString
-    return "{idRoom : $idRoom, roomName : $idRoom, facility : $facility,}";
-  }
-}
+//   @override
+//   String toString() {
+//     // TODO: implement toString
+//     return "{idRoom : $idRoom, roomName : $idRoom, facility : $facility,}";
+//   }
+// }

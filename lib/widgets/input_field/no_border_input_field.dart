@@ -9,6 +9,7 @@ class NoBorderInputField extends StatelessWidget {
     this.onSaved,
     this.validator,
     this.enable = false,
+    this.fontSize = 18,
   });
 
   TextEditingController? controller;
@@ -17,6 +18,7 @@ class NoBorderInputField extends StatelessWidget {
   FormFieldSetter<String>? onSaved;
   FormFieldValidator? validator;
   bool enable;
+  double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +30,9 @@ class NoBorderInputField extends StatelessWidget {
       onSaved: onSaved,
       // focusNode: dateNode,
       controller: controller,
-      style: const TextStyle(
+      style: TextStyle(
         fontFamily: 'Helvetica',
-        fontSize: 20,
+        fontSize: fontSize,
         fontWeight: FontWeight.w300,
         height: 1.3,
         color: davysGray,
@@ -47,7 +49,7 @@ class NoBorderInputField extends StatelessWidget {
         ),
         suffixIcon: Icon(
           Icons.keyboard_arrow_down_sharp,
-          size: 24,
+          size: 22,
           color: eerieBlack,
         ),
         // contentPadding: EdgeInsets.only(

@@ -15,6 +15,7 @@ class BlackInputField extends StatelessWidget {
     this.maxLines,
     this.prefixIcon,
     this.onFieldSubmitted,
+    this.fontSize = 16,
   });
 
   final TextEditingController controller;
@@ -29,6 +30,7 @@ class BlackInputField extends StatelessWidget {
   ValueChanged<String>? onFieldSubmitted;
   int? maxLines;
   Widget? prefixIcon;
+  double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -109,8 +111,8 @@ class BlackInputField extends StatelessWidget {
           isCollapsed: true,
           focusColor: culturedWhite,
           hintText: hintText,
-          hintStyle: const TextStyle(
-            fontSize: 18,
+          hintStyle: TextStyle(
+            fontSize: fontSize,
             fontWeight: FontWeight.w300,
             color: sonicSilver,
           ),
@@ -124,8 +126,8 @@ class BlackInputField extends StatelessWidget {
           suffixIconColor: eerieBlack,
           prefixIcon: prefixIcon,
         ),
-        style: const TextStyle(
-          fontSize: 18,
+        style: TextStyle(
+          fontSize: fontSize,
           fontWeight: FontWeight.w300,
           color: eerieBlack,
         ),

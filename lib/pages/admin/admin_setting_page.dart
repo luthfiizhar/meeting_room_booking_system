@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/area_menu_page.dart/area_menu_page.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/capacity_menu_page/capacity_menu_page.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/floor_menu_page/floor_menu_page.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/setting_page_menu.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
@@ -21,8 +23,8 @@ class AdminSettingPage extends StatefulWidget {
 
 class _AdminSettingPageState extends State<AdminSettingPage> {
   ScrollController scrollController = ScrollController();
-  String menu = "Area";
-  int index = 2;
+  String menu = "Capacity";
+  int index = 3;
 
   onChangedMenu(String value) {
     setState(() {
@@ -88,6 +90,8 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
                           return FloorMenuSettingPage();
                         case "Area":
                           return AreaMenuPage();
+                        case "Capacity":
+                          return CapacityMenuPage();
                         default:
                           return Container(
                             color: greenAcent,
@@ -154,10 +158,36 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   String phone = "";
   String phoneCode = "";
 
+  bool isConnectedToGoogle = false;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
+    getUserProfile().then((value) {
+      print("User Profile -> $value");
+      setState(() {
+        name = value['Data']['EmpName'];
+        nip = value['Data']['EmpNIP'];
+        email = value['Data']['Email'];
+        avaya = value['AvayaNumber'] ?? "-";
+        phoneCode = value['Data']['CountryCode'];
+        phone = value['Data']['PhoneNumber'];
+        int gooleSync = value['Data']['GoogleAccountSync'];
+        if (gooleSync == 1) {
+          isConnectedToGoogle = true;
+        } else {
+          isConnectedToGoogle = false;
+        }
+
+        _name.text = name;
+        _nip.text = nip;
+        _avaya.text = avaya;
+        _email.text = email;
+        _phoneCode.text = phoneCode;
+        _phone.text = phone;
+      });
+    });
 
     nameNode.addListener(() {
       setState(() {});
@@ -336,15 +366,20 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.check_circle_sharp,
+              Icon(
+                isConnectedToGoogle
+                    ? Icons.check_circle_sharp
+                    : Icons.remove_circle_sharp,
+                color: isConnectedToGoogle ? greenAcent : orangeAccent,
                 size: 16,
               ),
               const SizedBox(
                 width: 10,
               ),
               Text(
-                'You are linked to Google Workspace account',
+                isConnectedToGoogle
+                    ? 'You are linked to Google Workspace account'
+                    : 'You are not linked to Google Workspace account',
                 style: helveticaText.copyWith(
                   fontSize: 18,
                   fontWeight: FontWeight.w300,
@@ -360,7 +395,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
         inputRow(
           '',
           TransparentBorderedBlackButton(
-            text: 'Link My Account',
+            text: isConnectedToGoogle ? 'Unlink My Account' : 'Link My Account',
             disabled: false,
             onTap: () {},
             padding: ButtonSize().mediumSize(),
