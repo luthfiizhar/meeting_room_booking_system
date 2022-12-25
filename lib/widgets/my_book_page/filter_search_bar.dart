@@ -8,6 +8,7 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
+import 'package:meeting_room_booking_system/widgets/input_field/search_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/white_input_field.dart';
 import 'package:universal_html/html.dart' as html;
 
@@ -135,6 +136,7 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
               // color: Colors.amber,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     // width: 500,
@@ -189,17 +191,16 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
                     width: 200,
                     // color: Colors.green,
                     // child: Text('haha'),
-                    child: BlackInputField(
+                    child: SearchInputField(
                       controller: widget.searchController!,
                       obsecureText: false,
                       enabled: true,
                       maxLines: 1,
                       focusNode: searchNode,
-                      hintText: 'Search',
+                      hintText: 'Search here...',
                       onFieldSubmitted: (value) => widget.search!(),
-                      prefixIcon: const Icon(
-                        Icons.search,
-                        color: davysGray,
+                      prefixIcon: const ImageIcon(
+                        AssetImage('assets/icons/search_icon.png'),
                       ),
                     ),
                   )

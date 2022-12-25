@@ -5,6 +5,7 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/area_menu_page.dart/area_menu_page.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/capacity_menu_page/capacity_menu_page.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/event_menu_page.dart/event_menu_page.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/floor_menu_page/floor_menu_page.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/setting_page_menu.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
@@ -92,6 +93,8 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
                           return AreaMenuPage();
                         case "Capacity":
                           return CapacityMenuPage();
+                        case "Event":
+                          return EventMenuPage();
                         default:
                           return Container(
                             color: greenAcent,

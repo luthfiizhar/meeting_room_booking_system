@@ -97,6 +97,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/
+    - assets/icons/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
@@ -125,15 +126,14 @@ flutter:
       fonts:
         - asset: assets/fonts/Helvetica-01.ttf
           weight: 400
-        - asset: assets/fonts/Helvetica-Black.ttf
-          weight: 800
         - asset: assets/fonts/Helvetica-Bold-02.ttf
           weight: 700
         - asset: assets/fonts/Helvetica-Light-05.ttf
-          weight: 300
-        
-    # - family: HelveticaBlack
-    #   fonts:
-    #     - asset: assets/fonts/Helvetica Black.ttf
+          weight: 300        
+    - family: Helvetica Black
+      fonts:
+        - asset: assets/fonts/Helvetica-Black.ttf
+          weight: 400
+          style: normal
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

@@ -12,22 +12,22 @@ class ScheduleContainer extends StatefulWidget {
 
 class _ScheduleContainerState extends State<ScheduleContainer> {
   List schedule = [
-    {
-      'eventName': 'RAKER FBI',
-      'totalParticipant': '90',
-      'eventTime': '08:00 - 11:30 WIB',
-      'location': 'Auditorium 3',
-      'floor': '3rd Floor',
-      'bookingId': '',
-    },
-    {
-      'eventName': 'Creative Meeting Marketing ACE',
-      'totalParticipant': '',
-      'eventTime': '10:00 - 12:00 WIB',
-      'location': 'Amphiteatre',
-      'floor': '3rd Floor',
-      'bookingId': '',
-    },
+    // {
+    //   'eventName': 'RAKER FBI',
+    //   'totalParticipant': '90',
+    //   'eventTime': '08:00 - 11:30 WIB',
+    //   'location': 'Auditorium 3',
+    //   'floor': '3rd Floor',
+    //   'bookingId': '',
+    // },
+    // {
+    //   'eventName': 'Creative Meeting Marketing ACE',
+    //   'totalParticipant': '',
+    //   'eventTime': '10:00 - 12:00 WIB',
+    //   'location': 'Amphiteatre',
+    //   'floor': '3rd Floor',
+    //   'bookingId': '',
+    // },
   ];
   DateTime date = DateTime.now();
 
@@ -122,37 +122,53 @@ class _ScheduleContainerState extends State<ScheduleContainer> {
               const SizedBox(
                 height: 22,
               ),
-              ListView.builder(
-                itemCount: schedule.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: index == 0 ? 0 : 20,
-                          bottom: index != schedule.length - 1 ? 20 : 0,
-                        ),
-                        child: ScheduleListContainer(
-                          index: index,
-                          eventName: schedule[index]['eventName'],
-                          eventTime: schedule[index]['eventTime'],
-                          location: schedule[index]['location'],
-                          floor: schedule[index]['floor'],
-                          bookingId: schedule[index]['bookingId'],
-                          totalParticipant: schedule[index]['totalParticipant'],
+              schedule.isEmpty
+                  ? SizedBox(
+                      height: 200,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'You don\'t have schedule for today.',
+                          style: helveticaText.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w300,
+                            color: davysGray,
+                          ),
                         ),
                       ),
-                      index != schedule.length - 1
-                          ? const Divider(
-                              color: davysGray,
-                              thickness: 0.5,
-                            )
-                          : const SizedBox()
-                    ],
-                  );
-                },
-              ),
+                    )
+                  : ListView.builder(
+                      itemCount: schedule.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: index == 0 ? 0 : 20,
+                                bottom: index != schedule.length - 1 ? 20 : 0,
+                              ),
+                              child: ScheduleListContainer(
+                                index: index,
+                                eventName: schedule[index]['eventName'],
+                                eventTime: schedule[index]['eventTime'],
+                                location: schedule[index]['location'],
+                                floor: schedule[index]['floor'],
+                                bookingId: schedule[index]['bookingId'],
+                                totalParticipant: schedule[index]
+                                    ['totalParticipant'],
+                              ),
+                            ),
+                            index != schedule.length - 1
+                                ? const Divider(
+                                    color: davysGray,
+                                    thickness: 0.5,
+                                  )
+                                : const SizedBox()
+                          ],
+                        );
+                      },
+                    ),
             ],
           ),
         ),

@@ -66,7 +66,7 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                     widget.date,
                     style: helveticaText.copyWith(
                       fontSize: 16,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w300,
                       color: davysGray,
                       height: 1.3,
                     ),
@@ -78,7 +78,7 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                     widget.location,
                     style: helveticaText.copyWith(
                       fontSize: 16,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w300,
                       color: davysGray,
                       height: 1.3,
                     ),
@@ -90,7 +90,7 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                     widget.time,
                     style: helveticaText.copyWith(
                       fontSize: 16,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w300,
                       color: davysGray,
                       height: 1.3,
                     ),
@@ -172,7 +172,7 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                         widget.status,
                         style: helveticaText.copyWith(
                           fontSize: 16,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w300,
                           color: davysGray,
                           height: 1.3,
                         ),

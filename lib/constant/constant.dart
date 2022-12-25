@@ -16,6 +16,10 @@ const TextStyle helveticaText = TextStyle(
   height: 1.15,
 );
 
+const TextStyle helveticaBlackText = TextStyle(
+  fontFamily: 'Helvetica Black',
+);
+
 const TextStyle titlePage = TextStyle(
   fontFamily: 'Helvetica',
   fontSize: 24,

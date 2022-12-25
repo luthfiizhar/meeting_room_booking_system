@@ -71,10 +71,10 @@ class LeftFeatureContainer extends StatelessWidget {
           height: 250,
           decoration: BoxDecoration(
             color: davysGray,
-            // image: DecorationImage(
-            //   image: backgroundImage!.image,
-            //   fit: BoxFit.cover,
-            // ),
+            image: DecorationImage(
+              image: backgroundImage!.image,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ],
@@ -105,7 +105,14 @@ class RightFeatureContainer extends StatelessWidget {
         Container(
           width: 330,
           height: 250,
-          color: backgroundColor,
+          // color: backgroundColor,
+          decoration: BoxDecoration(
+            color: davysGray,
+            image: DecorationImage(
+              image: backgroundImage!.image,
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
         const SizedBox(
           width: 20,
