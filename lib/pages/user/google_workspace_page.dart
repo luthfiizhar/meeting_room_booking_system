@@ -537,9 +537,6 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
   }
 
   googleLink() {
-    setState(() {
-      isLoadingSync = true;
-    });
     getLinkGoogleAuth().then((value) async {
       html.WindowBase popUpWindow;
 
@@ -548,11 +545,14 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
         'GWS',
         'width=400, height=500, scrollbars=yes',
       );
+
       String code = "";
       html.window.onMessage.listen((event) async {
         if (event.data.toString().contains('token=')) {
           code = event.data.toString().split('token=')[1];
-          print(code);
+          setState(() {
+            isLoadingSync = true;
+          });
           await Future.delayed(const Duration(seconds: 2), () async {
             popUpWindow.close();
             setState(() {

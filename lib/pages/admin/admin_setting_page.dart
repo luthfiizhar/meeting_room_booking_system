@@ -12,8 +12,10 @@ import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
+import 'dart:html' as html;
 
 class AdminSettingPage extends StatefulWidget {
   const AdminSettingPage({super.key});
@@ -43,12 +45,15 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
     setState(() {});
   }
 
+  resetAllStatus(bool value) {}
+
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       index: 0,
       scrollController: scrollController,
       resetState: resetState,
+      setDatePickerStatus: resetAllStatus,
       child: ConstrainedBox(
         constraints: pageConstraints,
         child: Padding(
@@ -163,6 +168,8 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
 
   bool isConnectedToGoogle = false;
 
+  bool isLoadingSync = false;
+
   @override
   void initState() {
     super.initState();
@@ -235,6 +242,67 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
     avayaNode.dispose();
     phoneNode.dispose();
     phoneCodeNode.dispose();
+  }
+
+  googleLink() {
+    getLinkGoogleAuth().then((value) async {
+      html.WindowBase popUpWindow;
+
+      popUpWindow = html.window.open(
+        value['Data']['Link'],
+        'GWS',
+        'width=400, height=500, scrollbars=yes',
+      );
+
+      String code = "";
+      html.window.onMessage.listen((event) async {
+        if (event.data.toString().contains('token=')) {
+          code = event.data.toString().split('token=')[1];
+          setState(() {
+            isLoadingSync = true;
+          });
+          await Future.delayed(const Duration(seconds: 2), () async {
+            popUpWindow.close();
+            setState(() {
+              isLoadingSync = false;
+            });
+            saveTokenGoogle(code).then((value) {
+              print(value);
+
+              if (value['Status'] == "200") {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialogBlack(
+                    title: value['Title'],
+                    contentText: value['Message'],
+                    isSuccess: true,
+                  ),
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialogBlack(
+                    title: value['Title'],
+                    contentText: value['Message'],
+                    isSuccess: false,
+                  ),
+                );
+              }
+            }).onError((error, stackTrace) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialogBlack(
+                  title: 'Failed',
+                  contentText: error.toString(),
+                  isSuccess: false,
+                ),
+              );
+            });
+          });
+        }
+      });
+      if (code != "") {}
+    });
   }
 
   @override
@@ -397,12 +465,22 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
         ),
         inputRow(
           '',
-          TransparentBorderedBlackButton(
-            text: isConnectedToGoogle ? 'Unlink My Account' : 'Link My Account',
-            disabled: false,
-            onTap: () {},
-            padding: ButtonSize().mediumSize(),
-          ),
+          isLoadingSync
+              ? const CircularProgressIndicator(
+                  color: eerieBlack,
+                )
+              : TransparentBorderedBlackButton(
+                  text: isConnectedToGoogle
+                      ? 'Unlink My Account'
+                      : 'Link My Account',
+                  disabled: false,
+                  onTap: () {
+                    if (!isConnectedToGoogle) {
+                      googleLink();
+                    } else {}
+                  },
+                  padding: ButtonSize().mediumSize(),
+                ),
         ),
         divider(),
         Row(
