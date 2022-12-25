@@ -778,7 +778,7 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
             child: Text(
               'Features',
               style: helveticaBlackText.copyWith(
-                fontSize: 100,
+                fontSize: 150,
                 // backgroundColor: violetAccent,
                 fontWeight: FontWeight.w400,
                 foreground: Paint()
@@ -797,7 +797,7 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
             child: Text(
               'Features',
               style: helveticaBlackText.copyWith(
-                fontSize: 100,
+                fontSize: 150,
                 // backgroundColor: violetAccent,
                 fontWeight: FontWeight.w400,
                 foreground: Paint()
