@@ -10,6 +10,7 @@ import 'package:meeting_room_booking_system/constant/custom_scroll_behavior.dart
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/booking_room_info.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
+import 'package:meeting_room_booking_system/pages/admin/admin_detail_booking.dart';
 import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page.dart';
 import 'package:meeting_room_booking_system/pages/admin/admin_setting_page.dart';
 import 'package:meeting_room_booking_system/pages/login_page.dart'
@@ -301,6 +302,18 @@ class MyApp extends StatelessWidget {
           key: state.pageKey,
           child: AdminListPage(),
         ),
+        routes: [
+          GoRoute(
+            name: 'detail_approval',
+            path: 'detail_event/eventID=:eventId',
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              child: AdminDetailBooking(
+                bookingId: state.params['eventId'],
+              ),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         name: 'setting',

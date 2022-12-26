@@ -27,11 +27,13 @@ class NavigationBarWeb extends StatefulWidget {
     this.popUpStatus,
     this.getProfile,
     this.resetState,
+    this.updateLogin,
   });
 
   int? index;
   Function? popUpProfile;
   Function? resetState;
+  Function? updateLogin;
   bool? popUpStatus;
   OverlayEntry? getProfile;
 
@@ -476,7 +478,13 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                                 // loginDummy().then((value) {});
                                 loginCerberus().then((value) {
                                   setState(() {});
-                                  widget.resetState!();
+                                  getUserProfile().then((value) {
+                                    print(value);
+                                    widget.resetState!();
+                                    widget.updateLogin!(
+                                        value['Data']['EmpName'],
+                                        value['Data']['Email']);
+                                  });
                                 });
                                 // showDialog(
                                 //   context: context,

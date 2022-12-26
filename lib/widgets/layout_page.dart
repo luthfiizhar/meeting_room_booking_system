@@ -25,6 +25,7 @@ class LayoutPageWeb extends StatefulWidget {
     required this.scrollController,
     this.resetState,
     this.model,
+    this.topButtonVisible = true,
   });
 
   Widget? child;
@@ -33,6 +34,7 @@ class LayoutPageWeb extends StatefulWidget {
   final ScrollController? scrollController;
   Function? resetState;
   MainModel? model;
+  bool? topButtonVisible;
   // bool isAdmin;
 
   @override
@@ -62,6 +64,13 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
     }
     widget.setDatePickerStatus!(false);
     setState(() {});
+  }
+
+  updateAfterLogin(String name, String email) {
+    setState(() {
+      employeeName = name;
+      employeeEmail = email;
+    });
   }
 
   _scrollListener(ScrollController scrollInfo, MainModel model) {
@@ -269,6 +278,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                           popUpStatus: profileVisible,
                           getProfile: _getEntry(context),
                           resetState: widget.resetState,
+                          updateLogin: updateAfterLogin,
                         ),
                       ),
                       Expanded(
@@ -372,7 +382,9 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                     ),
                   ),
                   Visibility(
-                    visible: model.upBottonVisible,
+                    visible: widget.topButtonVisible == false
+                        ? false
+                        : model.upBottonVisible,
                     child: Positioned(
                       bottom: !model.upBottonVisible
                           ? 20

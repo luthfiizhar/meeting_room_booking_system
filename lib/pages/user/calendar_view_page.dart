@@ -248,60 +248,59 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
       scrollController: scrollController,
       setDatePickerStatus: setDatePickerStatus,
       resetState: resetState,
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 10,
-        ),
-        child: Stack(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height - 70 - 80,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 110),
-                      child: calendarUserPage(),
-                    ),
+      topButtonVisible: false,
+      child: Stack(
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height - 70 - 115,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 110),
+                    child: calendarUserPage(),
                   ),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 750),
-                    switchInCurve: Curves.easeIn,
-                    switchOutCurve: Curves.easeOut,
-                    child: isShowDetail
-                        ? isLoadingGetDetail
-                            ? const CircularProgressIndicator(
-                                color: eerieBlack,
-                              )
-                            : SizedBox(
-                                height: MediaQuery.of(context).size.width > 1366
-                                    ? MediaQuery.of(context).size.height - 180
-                                    : null,
-                                child: DetailAppointmentContainer(
-                                  // event: selectedEvent,
-                                  closeDetail: closeDetail,
-                                  bookingDetail: detailEvent,
-                                ),
-                              )
-                        : SizedBox(),
-                  ),
-                ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: white,
-                  // border: Border(
-                  //   bottom: BorderSide(color: platinum),
-                  // ),
                 ),
-                child: customHeader(),
-              ),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 750),
+                  switchInCurve: Curves.easeIn,
+                  switchOutCurve: Curves.easeOut,
+                  child: isShowDetail
+                      ? isLoadingGetDetail
+                          ? const CircularProgressIndicator(
+                              color: eerieBlack,
+                            )
+                          : SizedBox(
+                              height: MediaQuery.of(context).size.width > 1366
+                                  ? MediaQuery.of(context).size.height -
+                                      70 -
+                                      115
+                                  : null,
+                              child: DetailAppointmentContainer(
+                                // event: selectedEvent,
+                                closeDetail: closeDetail,
+                                bookingDetail: detailEvent,
+                              ),
+                            )
+                      : SizedBox(),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: white,
+                // border: Border(
+                //   bottom: BorderSide(color: platinum),
+                // ),
+              ),
+              child: customHeader(),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -373,12 +372,10 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                     ),
                     Text(
                       displayMonthString,
-                      style: const TextStyle(
-                        fontFamily: 'Helvetica',
+                      style: helveticaText.copyWith(
                         color: eerieBlack,
                         fontSize: 18,
                         fontWeight: FontWeight.w300,
-                        height: 1.3,
                       ),
                     ),
                   ],

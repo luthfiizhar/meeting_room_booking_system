@@ -595,7 +595,9 @@ class _RoomsPageState extends State<RoomsPage> {
                       child: isShowDetail
                           ? SizedBox(
                               height: MediaQuery.of(context).size.width > 1366
-                                  ? MediaQuery.of(context).size.height - 180
+                                  ? (100 * dataRoom.length) >= 600
+                                      ? (100 * dataRoom.length) + 100 + 63
+                                      : MediaQuery.of(context).size.height - 180
                                   : null,
                               child: DetailAppointmentContainer(
                                 // event: selectedEvent,

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/pages/user/rooms_page.dart';
@@ -97,9 +98,8 @@ class _DetailAppointmentContainerState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$eventName ($attendantsNumber Person)',
-                      style: const TextStyle(
-                        fontFamily: 'Helvetica',
+                      eventName,
+                      style: helveticaText.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         color: eerieBlack,
@@ -167,10 +167,9 @@ class _DetailAppointmentContainerState
                     const SizedBox(
                       height: 40,
                     ),
-                    const Text(
+                    Text(
                       'User Info',
-                      style: TextStyle(
-                        fontFamily: 'Helvetica',
+                      style: helveticaText.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         color: blueAccent,
@@ -369,12 +368,10 @@ class _DetailAppointmentContainerState
           width: 125,
           child: Text(
             label,
-            style: const TextStyle(
-              fontFamily: 'Helvetica',
+            style: helveticaText.copyWith(
               fontSize: 16,
               fontWeight: FontWeight.w300,
               color: sonicSilver,
-              height: 1.3,
             ),
           ),
         ),
@@ -385,12 +382,10 @@ class _DetailAppointmentContainerState
             children: [
               Text(
                 content,
-                style: const TextStyle(
-                  fontFamily: 'Helvetica',
+                style: helveticaText.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: davysGray,
-                  height: 1.3,
                 ),
                 textAlign: TextAlign.right,
                 // textDirection: TextDirection.ltr,

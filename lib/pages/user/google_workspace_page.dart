@@ -1172,6 +1172,7 @@ class _FaqContainerState extends State<FaqContainer> {
         fontSize: 18,
         fontWeight: FontWeight.w300,
         color: davysGray,
+        height: 1.38,
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/approval_list_content_container.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/filter_search_bar_admin.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
@@ -16,15 +17,15 @@ class AdminListPage extends StatefulWidget {
 class _AdminListPageState extends State<AdminListPage> {
   ScrollController scrollController = ScrollController();
   TextEditingController _search = TextEditingController();
-  String roomType = "MeetingRoom";
+  String statusApproval = "Requested";
   ListApprovalBody searchTerm = ListApprovalBody();
   FocusNode showPerRowsNode = FocusNode();
   List approvalList = [];
   List showPerPageList = ["5", "10", "20", "50", "100"];
 
   int currentPaginatedPage = 1;
-  List availablePage = [1, 2, 3, 4, 5];
-  List showedPage = [1, 2, 3, 4, 5];
+  List availablePage = [1];
+  List showedPage = [1];
 
   countPagination(int totalRow) {
     print('total row -> $totalRow');
@@ -49,8 +50,9 @@ class _AdminListPageState extends State<AdminListPage> {
       currentPaginatedPage = 1;
       searchTerm.pageNumber = currentPaginatedPage.toString();
       searchTerm.statusRoom = value;
-      roomType = value;
-      // getMyBookingList(searchTerm).then((value) {
+      statusApproval = value;
+      updateList();
+      // getAuditoriumApprovalList(searchTerm).then((value) {
       //   myBookList = value['Data']['List'];
       //   countPagination(value['Data']['TotalRows']);
       //   showedPage = availablePage.take(5).toList();
@@ -64,6 +66,7 @@ class _AdminListPageState extends State<AdminListPage> {
       currentPaginatedPage = 1;
       searchTerm.keyWords = _search.text;
       searchTerm.pageNumber = currentPaginatedPage.toString();
+      updateList();
       // getMyBookingList(searchTerm).then((value) {
       //   print(value);
       //   myBookList = value['Data']['List'];
@@ -87,6 +90,7 @@ class _AdminListPageState extends State<AdminListPage> {
         }
       }
       searchTerm.orderBy = orderBy;
+      updateList();
       // getMyBookingList(searchTerm).then((value) {
       //   setState(() {
       //     myBookList = value['Data']['List'];
@@ -103,8 +107,32 @@ class _AdminListPageState extends State<AdminListPage> {
 
   setDatePickerStatus(bool value) {}
 
+  updateList() {
+    getAuditoriumApprovalList(searchTerm).then((value) {
+      setState(() {
+        approvalList = value['Data']['List'];
+        countPagination(value['Data']['TotalRows']);
+        showedPage = availablePage.take(5).toList();
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAuditoriumApprovalList(searchTerm).then((value) {
+      approvalList = value['Data']['List'];
+      countPagination(value['Data']['TotalRows']);
+      showedPage = availablePage.take(5).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    double paginationWidth = availablePage.length <= 5
+        ? ((45 * (showedPage.length.toDouble())))
+        : ((55 * (showedPage.length.toDouble())));
     return LayoutPageWeb(
       index: 0,
       setDatePickerStatus: setDatePickerStatus,
@@ -120,7 +148,7 @@ class _AdminListPageState extends State<AdminListPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(
-                height: 20,
+                height: 35,
               ),
               Text(
                 'Need Approval List',
@@ -129,9 +157,12 @@ class _AdminListPageState extends State<AdminListPage> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
+              const SizedBox(
+                height: 30,
+              ),
               FilterSearchBarAdmin(
                 index: 0,
-                roomType: roomType,
+                statusApproval: statusApproval,
                 getRoomStatus: statusRoomChanged,
                 search: searchMyBook,
                 searchController: _search,
@@ -194,6 +225,7 @@ class _AdminListPageState extends State<AdminListPage> {
                     ),
                   ),
                   Expanded(
+                    flex: 2,
                     child: InkWell(
                       onTap: () {
                         onTapHeader("RoomName");
@@ -243,30 +275,8 @@ class _AdminListPageState extends State<AdminListPage> {
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        onTapHeader("Status");
-                      },
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Status',
-                              style: helveticaText.copyWith(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: davysGray,
-                              ),
-                            ),
-                          ),
-                          iconSort("Status"),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                        ],
-                      ),
-                    ),
+                  const Expanded(
+                    child: SizedBox(),
                   ),
                   const SizedBox(
                     width: 20,
@@ -339,6 +349,7 @@ class _AdminListPageState extends State<AdminListPage> {
                             onChanged: (value) {
                               setState(() {
                                 searchTerm.max = value!.toString();
+                                updateList();
                                 // getMyBookingList(searchTerm).then((value) {
                                 //   myBookList = value['Data']['List'];
                                 //   countPagination(value['Data']['TotalRows']);
@@ -394,7 +405,7 @@ class _AdminListPageState extends State<AdminListPage> {
                                     }
                                     searchTerm.pageNumber =
                                         currentPaginatedPage.toString();
-
+                                    updateList();
                                     // getMyBookingList(searchTerm)
                                     //     .then((value) {
                                     //   myBookList = value['Data']['List'];
@@ -425,7 +436,7 @@ class _AdminListPageState extends State<AdminListPage> {
                           width: 5,
                         ),
                         SizedBox(
-                          width: 275,
+                          width: paginationWidth, //275,
                           height: 35,
                           child: Row(
                             children: [
@@ -468,19 +479,7 @@ class _AdminListPageState extends State<AdminListPage> {
                                               searchTerm.pageNumber =
                                                   currentPaginatedPage
                                                       .toString();
-                                              // getMyBookingList(searchTerm)
-                                              //     .then((value) {
-                                              //   setState(() {
-                                              //     myBookList =
-                                              //         value['Data']['List'];
-                                              //     countPagination(
-                                              //         value['Data']
-                                              //             ['TotalRows']);
-                                              //   });
-                                              // });
-                                              print(showedPage);
-                                              print(
-                                                  'current ${searchTerm.pageNumber}');
+                                              updateList();
                                             },
                                       child: Container(
                                         width: 35,
@@ -517,11 +516,8 @@ class _AdminListPageState extends State<AdminListPage> {
                                   );
                                 },
                               ),
-                              const SizedBox(
-                                width: 5,
-                              ),
                               Visibility(
-                                visible: availablePage.length < 5 ||
+                                visible: availablePage.length <= 5 ||
                                         currentPaginatedPage ==
                                             availablePage.last
                                     ? false
@@ -553,9 +549,6 @@ class _AdminListPageState extends State<AdminListPage> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          width: 5,
-                        ),
                         InkWell(
                           onTap: currentPaginatedPage != availablePage.last
                               ? () {
@@ -571,7 +564,7 @@ class _AdminListPageState extends State<AdminListPage> {
                                     }
                                     searchTerm.pageNumber =
                                         currentPaginatedPage.toString();
-
+                                    updateList();
                                     // getMyBookingList(searchTerm)
                                     //     .then((value) {
                                     //   myBookList = value['Data']['List'];
@@ -692,7 +685,8 @@ class _AdminListPageState extends State<AdminListPage> {
 
 class ListApprovalBody {
   ListApprovalBody({
-    this.statusRoom = "Request",
+    this.statusRoom = "Requested",
+    this.roomType = "Auditorium",
     this.keyWords = "",
     this.max = "5",
     this.pageNumber = "1",
@@ -701,6 +695,7 @@ class ListApprovalBody {
   });
 
   String statusRoom;
+  String roomType;
   String keyWords;
   String max;
   String pageNumber;

@@ -94,6 +94,8 @@ class _SearchPageState extends State<SearchPage> {
   String meetingTypeName = "Meeting Room";
   String meetingTypeValue = "MeetingRoom";
   String coverPhotoRoomType = "";
+  String roomName = "";
+  String buildingName = "";
   List roomType = [];
   String sort = "alphabetical";
   dynamic resultArea;
@@ -474,6 +476,8 @@ class _SearchPageState extends State<SearchPage> {
           if (element['Value'] == meetingTypeValue) {
             setState(() {
               coverPhotoRoomType = element['Image'];
+              roomName = element['RoomName'];
+              buildingName = element['BuildingName'] ?? "Head Office";
             });
           }
         }
@@ -686,12 +690,16 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {});
   }
 
-  onMeetingTypeSelected(String value, String name, String url) {
-    meetingTypeValue = value;
-    meetingTypeName = name;
-    coverPhotoRoomType = url;
-    setOpacityOn(false);
-    setState(() {});
+  onMeetingTypeSelected(String value, String name, String url, String nameRoom,
+      String nameBuilding) {
+    setState(() {
+      meetingTypeValue = value;
+      meetingTypeName = name;
+      coverPhotoRoomType = url;
+      roomName = nameRoom;
+      buildingName = nameBuilding;
+      setOpacityOn(false);
+    });
   }
 
   setStartTime(String start) {
@@ -1099,7 +1107,7 @@ class _SearchPageState extends State<SearchPage> {
                                                     CrossAxisAlignment.end,
                                                 children: [
                                                   Text(
-                                                    meetingTypeName,
+                                                    roomName,
                                                     style:
                                                         helveticaText.copyWith(
                                                       fontSize: 18,
@@ -1112,7 +1120,7 @@ class _SearchPageState extends State<SearchPage> {
                                                     height: 5,
                                                   ),
                                                   Text(
-                                                    '- Head Office',
+                                                    '- $buildingName',
                                                     style:
                                                         helveticaText.copyWith(
                                                       fontSize: 14,

@@ -4,8 +4,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
+import 'package:meeting_room_booking_system/widgets/input_field/search_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/white_input_field.dart';
 import 'package:universal_html/html.dart' as html;
 
@@ -13,14 +16,14 @@ class FilterSearchBarAdmin extends StatefulWidget {
   FilterSearchBarAdmin({
     super.key,
     this.index,
-    this.roomType,
+    this.statusApproval,
     this.getRoomStatus,
     this.search,
     this.searchController,
   });
 
   int? index;
-  String? roomType;
+  String? statusApproval;
   Function? getRoomStatus;
   Function? search;
   TextEditingController? searchController;
@@ -34,7 +37,9 @@ class _FilterSearchBarAdminState extends State<FilterSearchBarAdmin> {
   bool _hovering = false;
   bool onSelected = false;
   FocusNode searchNode = FocusNode();
-  String? roomType;
+  String? statusApproval;
+
+  List? typeList = [];
 
   TextEditingController? _search = TextEditingController();
 
@@ -48,31 +53,59 @@ class _FilterSearchBarAdminState extends State<FilterSearchBarAdmin> {
     // TODO: implement initState
     super.initState();
     index = widget.index;
-    roomType = widget.roomType;
+    statusApproval = widget.statusApproval;
     indexColor = _random.nextInt(color.length);
     selectedColor = color[indexColor];
+
+    approvalListBookingCount().then((value) {
+      print(value);
+      if (value['Status'] == "200") {
+        setState(() {
+          typeList = value['Data'];
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
   }
 
   void onHighlight(String type) {
     switch (type) {
-      case "Request":
-        changeHighlight(0);
+      case "Requested":
+        changeHighlight(0, type);
         widget.getRoomStatus!(type);
         break;
       case "Approved":
-        changeHighlight(1);
+        changeHighlight(1, type);
         widget.getRoomStatus!(type);
         break;
-      case "Decline":
-        changeHighlight(2);
+      case "Declined":
+        changeHighlight(2, type);
         widget.getRoomStatus!(type);
         break;
     }
   }
 
-  void changeHighlight(int newIndex) {
+  void changeHighlight(int newIndex, String status) {
     setState(() {
       index = newIndex;
+      statusApproval = status;
     });
   }
 
@@ -103,47 +136,63 @@ class _FilterSearchBarAdminState extends State<FilterSearchBarAdmin> {
             child: Container(
               // color: Colors.amber,
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                     // width: 500,
                     child: Row(
-                      children: [
-                        FilterSearchBarAdminItem(
-                          title: 'Request',
-                          type: 'Request',
-                          onHighlight: onHighlight,
-                          selected: index == 0,
-                          color: selectedColor,
-                        ),
-                        const SizedBox(
-                          width: 50,
-                        ),
-                        FilterSearchBarAdminItem(
-                          title: 'Approved',
-                          type: 'Approved',
-                          onHighlight: onHighlight,
-                          selected: index == 1,
-                          color: selectedColor,
-                        ),
-                        const SizedBox(
-                          width: 50,
-                        ),
-                        FilterSearchBarAdminItem(
-                          title: 'Declined',
-                          type: 'Declined',
-                          onHighlight: onHighlight,
-                          selected: index == 2,
-                          color: selectedColor,
-                        ),
-                      ],
+                      children: typeList!.map((e) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            right: 50,
+                          ),
+                          child: FilterSearchBarAdminItem(
+                            title: e['Title'],
+                            type: e['Title'],
+                            bookingCount: e['Count'].toString(),
+                            onHighlight: onHighlight,
+                            color: selectedColor,
+                            selected: statusApproval == e['Title'],
+                          ),
+                        );
+                      }).toList(),
+                      // children: [
+                      //   FilterSearchBarAdminItem(
+                      //     title: 'Request',
+                      //     type: 'Request',
+                      //     onHighlight: onHighlight,
+                      //     selected: index == 0,
+                      //     color: selectedColor,
+                      //   ),
+                      //   const SizedBox(
+                      //     width: 50,
+                      //   ),
+                      //   FilterSearchBarAdminItem(
+                      //     title: 'Approved',
+                      //     type: 'Approved',
+                      //     onHighlight: onHighlight,
+                      //     selected: index == 1,
+                      //     color: selectedColor,
+                      //   ),
+                      //   const SizedBox(
+                      //     width: 50,
+                      //   ),
+                      //   FilterSearchBarAdminItem(
+                      //     title: 'Declined',
+                      //     type: 'Declined',
+                      //     onHighlight: onHighlight,
+                      //     selected: index == 2,
+                      //     color: selectedColor,
+                      //   ),
+                      // ],
                     ),
                   ),
                   Container(
                     width: 200,
                     // color: Colors.green,
                     // child: Text('haha'),
-                    child: BlackInputField(
+                    child: SearchInputField(
                       controller: widget.searchController!,
                       obsecureText: false,
                       enabled: true,
@@ -151,9 +200,8 @@ class _FilterSearchBarAdminState extends State<FilterSearchBarAdmin> {
                       focusNode: searchNode,
                       hintText: 'Search',
                       onFieldSubmitted: (value) => widget.search!(),
-                      prefixIcon: const Icon(
-                        Icons.search,
-                        color: davysGray,
+                      prefixIcon: const ImageIcon(
+                        AssetImage('assets/icons/search_icon.png'),
                       ),
                     ),
                   )
@@ -191,6 +239,7 @@ class FilterSearchBarAdminItem extends StatelessWidget {
     this.selected,
     this.onHighlight,
     this.color,
+    this.bookingCount,
   });
 
   final String? title;
@@ -198,6 +247,7 @@ class FilterSearchBarAdminItem extends StatelessWidget {
   final bool? selected;
   final Function? onHighlight;
   final Color? color;
+  final String? bookingCount;
 
   @override
   Widget build(BuildContext context) {
@@ -212,6 +262,7 @@ class FilterSearchBarAdminItem extends StatelessWidget {
           selected: selected,
           type: type,
           color: color!,
+          bookingCount: bookingCount,
         ),
       ),
     );
@@ -229,7 +280,8 @@ class FilterSearchBarAdminInteractiveItem extends MouseRegion {
     String? text,
     bool? selected,
     String? type,
-    Color color = blueAccent,
+    Color? color,
+    String? bookingCount,
   }) : super(
           onHover: (PointerHoverEvent evt) {
             appContainer.style.cursor = 'pointer';
@@ -238,7 +290,11 @@ class FilterSearchBarAdminInteractiveItem extends MouseRegion {
             appContainer.style.cursor = 'default';
           },
           child: FilterSearchBarAdminInteractiveText(
-              text: text!, selected: selected!, color: color),
+            text: text!,
+            selected: selected!,
+            color: color!,
+            bookingCount: bookingCount,
+          ),
         );
 }
 
@@ -246,9 +302,13 @@ class FilterSearchBarAdminInteractiveText extends StatefulWidget {
   final String? text;
   final bool? selected;
   final Color color;
+  String? bookingCount;
 
   FilterSearchBarAdminInteractiveText(
-      {@required this.text, this.selected, this.color = blueAccent});
+      {@required this.text,
+      this.selected,
+      this.color = blueAccent,
+      this.bookingCount});
 
   @override
   FilterSearchBarAdminInteractiveTextState createState() =>
@@ -323,25 +383,32 @@ class FilterSearchBarAdminInteractiveTextState
                 const SizedBox(
                   width: 10,
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: sonicSilver,
-                  ),
-                  child: Text(
-                    '10',
-                    style: helveticaText.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: culturedWhite,
-                      height: 1.3,
-                    ),
-                  ),
-                ),
+                widget.bookingCount == "0"
+                    ? SizedBox()
+                    : Padding(
+                        padding: const EdgeInsets.only(
+                          left: 10,
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: sonicSilver,
+                          ),
+                          child: Text(
+                            widget.bookingCount!,
+                            style: helveticaText.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: culturedWhite,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+                      ),
               ],
             ),
           ),

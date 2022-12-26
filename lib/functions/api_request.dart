@@ -6,6 +6,7 @@ import 'package:meeting_room_booking_system/model/booking_class.dart';
 import 'package:http/http.dart' as http;
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
+import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page.dart';
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -178,7 +179,7 @@ Future searchRoomApi(
       "StartTime" : "$startTime",
       "EndTime" : "$endTime",
       "Date" : "$date",
-      "Capacity" : $capacity,
+      "Capacity" : "$capacity",
       "Sort" : "$sort",
       "Amenities" : $amenities,
       "Area" : $floor
@@ -566,6 +567,43 @@ Future getMyBookingList(MyListBody body) async {
   }
 }
 
+Future getAuditoriumApprovalList(ListApprovalBody body) async {
+  print('delete this');
+  // print(bookingId);
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url =
+      Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/approval/list');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+
+  var bodySend = """
+  {
+    "RoomType" : "${body.roomType}",
+    "Status" : "${body.statusRoom}",
+    "Keywords" : "${body.keyWords}",
+    "MaxRecord" : "${body.max}",
+    "PageNumber" : "${body.pageNumber}",
+    "OrderBy" : "${body.orderBy}",
+    "OrderDir" : "${body.orderDir}"
+  }
+  """;
+  print(bodySend);
+  try {
+    var response = await http.post(url, headers: requestHeader, body: bodySend);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
 Future getFloorList(SearchTerm body) async {
   // print(bookingId);
   var box = await Hive.openBox('userLogin');
@@ -841,6 +879,28 @@ Future myBookBookingCount() async {
   }
 }
 
+Future approvalListBookingCount() async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(
+      apiUrlGlobal, '/MRBS_Backend/public/api/admin/approval/tab-count');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
 Future getUserProfile() async {
   var box = await Hive.openBox('userLogin');
   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
@@ -853,6 +913,50 @@ Future getUserProfile() async {
   };
   try {
     var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future approveAuditorium(String bookingId) async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(apiUrlGlobal,
+      '/MRBS_Backend/public/api/admin/approval/auditorium/accept/$bookingId');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.post(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future rejectAuditorium(String bookingId) async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(apiUrlGlobal,
+      '/MRBS_Backend/public/api/admin/approval/auditorium/reject/$bookingId');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.post(url, headers: requestHeader);
 
     var data = json.decode(response.body);
 

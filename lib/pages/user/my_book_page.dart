@@ -169,9 +169,9 @@ class _MyBookingPageState extends State<MyBookingPage> {
 
   @override
   Widget build(BuildContext context) {
-    double paginationWidth = availablePage.length > 5
-        ? (45 * (showedPage.length.toDouble() + 1))
-        : (45 * (showedPage.length.toDouble())) + 5;
+    double paginationWidth = availablePage.length <= 5
+        ? ((45 * (showedPage.length.toDouble())))
+        : ((55 * (showedPage.length.toDouble())));
     return LayoutPageWeb(
       index: 3,
       scrollController: scrollController,
@@ -596,11 +596,8 @@ class _MyBookingPageState extends State<MyBookingPage> {
                                     );
                                   },
                                 ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
                                 Visibility(
-                                  visible: availablePage.length < 5 ||
+                                  visible: availablePage.length <= 5 ||
                                           currentPaginatedPage ==
                                               availablePage.last
                                       ? false
@@ -631,9 +628,6 @@ class _MyBookingPageState extends State<MyBookingPage> {
                                 ),
                               ],
                             ),
-                          ),
-                          const SizedBox(
-                            width: 5,
                           ),
                           InkWell(
                             onTap: currentPaginatedPage != availablePage.last

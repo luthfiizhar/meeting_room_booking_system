@@ -44,8 +44,12 @@ class MeetingTypeContainer extends StatelessWidget {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
-                setMeetingType!(meetingType![index]['Value'],
-                    meetingType![index]['Name'], meetingType![index]['Image']);
+                setMeetingType!(
+                    meetingType![index]['Value'],
+                    meetingType![index]['Name'],
+                    meetingType![index]['Image'],
+                    meetingType![index]['RoomName'],
+                    meetingType![index]['BuildingName'] ?? "Head Office");
                 setMeetingTypeStatus!(false);
               },
               child: Column(
