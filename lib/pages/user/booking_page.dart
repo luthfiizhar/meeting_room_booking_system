@@ -369,11 +369,13 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       for (var i = 0; i < resultAmenities.length; i++) {
         for (var j = 0; j < value.length; j++) {
           if (resultAmenities[i]['AmenitiesID'] == value[j].amenitiesId) {
-            resultAmenities[i]['Default'] = value[j].qty;
+            resultAmenities[i]['Amount'] = value[j].qty;
+            resultAmenities[i]['Default'] = value[j].defaultAmount;
           }
         }
       }
       listAmenities = value;
+      print('list amenities ----> $listAmenities');
     });
   }
 
@@ -464,8 +466,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       roomType = "MeetingRoom";
     }
     getRoomDetail(widget.roomId!).then((value) {
-      print('roomDetail');
-      print(value);
       setState(() {
         pictureLoading = false;
         roomName = value['Data']['RoomName'];
@@ -478,7 +478,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                 amenitiesId: element['AmenitiesID'],
                 amenitiesName: element['AmenitiesName'],
                 photo: element['ImageURL'],
-                qty: element['Default'],
+                qty: element['Amount'],
+                defaultAmount: element['Default'],
               ),
             );
           }
@@ -513,17 +514,18 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         getMeetingType().then((value) {
           // print(value['Data']);
           List result = value['Data'];
-
-          for (var element in result) {
-            listEventType!.add(
-              RadioModel(
-                isSelected: false,
-                text: element['Name'],
-                value: element['Value'],
-              ),
-            );
-          }
-          selectedEventType = value['Data'][0]['Value'];
+          setState(() {
+            for (var element in result) {
+              listEventType!.add(
+                RadioModel(
+                  isSelected: false,
+                  text: element['Name'],
+                  value: element['Value'],
+                ),
+              );
+            }
+            selectedEventType = value['Data'][0]['Value'];
+          });
         });
         if (widget.isEdit == "true") {
           setState(() {
@@ -2069,7 +2071,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                   for (var i = 0; i < resultAmenities.length; i++) {
                     if (resultAmenities[i]['AmenitiesID'] ==
                         listAmenities[index].amenitiesId) {
-                      resultAmenities[i]['Default'] = 0;
+                      resultAmenities[i]['Amount'] = 0;
                     }
                   }
                   listAmenities.removeAt(index);
@@ -2086,10 +2088,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Food & Beverages',
-          style: TextStyle(
-            fontFamily: 'Helvetica',
+          style: helveticaText.copyWith(
             fontSize: 24,
             fontWeight: FontWeight.w700,
           ),

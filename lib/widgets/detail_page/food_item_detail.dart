@@ -42,8 +42,8 @@ class _FoodAmenitiesItemDetailState extends State<FoodAmenitiesItemDetail> {
               child: Column(
                 children: [
                   Container(
-                    width: 100,
-                    height: 80,
+                    width: 50,
+                    height: 50,
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: Image.network(widget.result!['ImageURL']).image,

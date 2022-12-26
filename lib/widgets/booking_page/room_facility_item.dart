@@ -38,20 +38,24 @@ class _RoomFacilityItemState extends State<RoomFacilityItem> {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onHover: !widget.displayOnly
-          ? (event) {
-              setState(() {
-                isHovered = true;
-              });
-            }
-          : null,
-      onExit: !widget.displayOnly
-          ? (event) {
-              setState(() {
-                isHovered = false;
-              });
-            }
-          : null,
+      onHover: widget.result!.defaultAmount! > 0
+          ? null
+          : !widget.displayOnly
+              ? (event) {
+                  setState(() {
+                    isHovered = true;
+                  });
+                }
+              : null,
+      onExit: widget.result!.defaultAmount! > 0
+          ? null
+          : !widget.displayOnly
+              ? (event) {
+                  setState(() {
+                    isHovered = false;
+                  });
+                }
+              : null,
       child: Padding(
         padding: const EdgeInsets.only(
           right: 15,

@@ -222,11 +222,10 @@ class _DetailEventPageState extends State<DetailEventPage> {
                             ),
                             Text(
                               description,
-                              style: const TextStyle(
+                              style: helveticaText.copyWith(
                                 fontFamily: 'Helvetica',
                                 fontSize: 18,
                                 fontWeight: FontWeight.w300,
-                                height: 1.3,
                               ),
                             ),
                             const SizedBox(

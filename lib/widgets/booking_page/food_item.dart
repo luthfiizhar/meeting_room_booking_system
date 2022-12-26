@@ -57,8 +57,8 @@ class _FoodItemState extends State<FoodItem> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      width: 100,
-                      height: 80,
+                      width: 50,
+                      height: 50,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: Image.network(widget.listFood!.photo!).image,

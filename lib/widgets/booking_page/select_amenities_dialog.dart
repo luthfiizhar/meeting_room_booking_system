@@ -31,11 +31,6 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    // getAmenitiesList(widget.roomId!).then((value) {
-    //   // print(value);
-    //   setState(() {
-    //     listAmen = value['Data'];
     print(widget.listAmen!);
     for (var element in widget.listAmen!) {
       amenities.add(
@@ -43,12 +38,10 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
             amenitiesId: element['AmenitiesID'] ?? element.amenitiesId,
             amenitiesName: element['AmenitiesName'] ?? element.amenitiesName,
             qty: element['Default'] ?? element.qty,
-            photo: element['ImageURL'] ?? element.photo),
+            photo: element['ImageURL'] ?? element.photo,
+            defaultAmount: element['Default'] ?? element.defaultAmount),
       );
     }
-    //     print(amenities.toString());
-    //   });
-    // });
   }
 
   @override
