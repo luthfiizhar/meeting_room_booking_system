@@ -49,6 +49,7 @@ String? jwtToken = "";
 String? token = "";
 bool isTokenValid = false;
 bool firstLogIn = true;
+bool isAdmin = false;
 
 loginCheck() async {
   var box = await Hive.openBox('userLogin');
@@ -317,10 +318,12 @@ class MyApp extends StatelessWidget {
       ),
       GoRoute(
         name: 'setting',
-        path: '/setting',
+        path: '/setting/:isAdmin',
         pageBuilder: (context, state) => NoTransitionPage<void>(
           key: state.pageKey,
-          child: AdminSettingPage(),
+          child: AdminSettingPage(
+            isAdmin: state.params['isAdmin'],
+          ),
         ),
       ),
       GoRoute(

@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/white_input_field.dart';
@@ -15,11 +16,13 @@ class SettingPageMenu extends StatefulWidget {
     this.index,
     this.menu,
     this.onChagedMenu,
+    this.isAdmin = false,
   });
 
   int? index;
   String? menu;
   Function? onChagedMenu;
+  bool isAdmin;
 
   @override
   State<SettingPageMenu> createState() => _SettingPageMenuState();
@@ -126,63 +129,70 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                   const SizedBox(
                     height: 20,
                   ),
-                  SettingPageMenuItem(
-                    title: 'Floor',
-                    type: 'Floor',
-                    onHighlight: onHighlight,
-                    selected: index == 1,
-                    color: selectedColor,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SettingPageMenuItem(
-                    title: 'Area',
-                    type: 'Area',
-                    onHighlight: onHighlight,
-                    selected: index == 2,
-                    color: selectedColor,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SettingPageMenuItem(
-                    title: 'Capacity',
-                    type: 'Capacity',
-                    onHighlight: onHighlight,
-                    selected: index == 3,
-                    color: selectedColor,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SettingPageMenuItem(
-                    title: 'Event',
-                    type: 'Event',
-                    onHighlight: onHighlight,
-                    selected: index == 4,
-                    color: selectedColor,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SettingPageMenuItem(
-                    title: 'Facility',
-                    type: 'Facility',
-                    onHighlight: onHighlight,
-                    selected: index == 5,
-                    color: selectedColor,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SettingPageMenuItem(
-                    title: 'Admin',
-                    type: 'Admin',
-                    onHighlight: onHighlight,
-                    selected: index == 6,
-                    color: selectedColor,
-                  ),
+                  !widget.isAdmin
+                      ? SizedBox()
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SettingPageMenuItem(
+                              title: 'Floor',
+                              type: 'Floor',
+                              onHighlight: onHighlight,
+                              selected: index == 1,
+                              color: selectedColor,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            SettingPageMenuItem(
+                              title: 'Area',
+                              type: 'Area',
+                              onHighlight: onHighlight,
+                              selected: index == 2,
+                              color: selectedColor,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            SettingPageMenuItem(
+                              title: 'Capacity',
+                              type: 'Capacity',
+                              onHighlight: onHighlight,
+                              selected: index == 3,
+                              color: selectedColor,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            SettingPageMenuItem(
+                              title: 'Event',
+                              type: 'Event',
+                              onHighlight: onHighlight,
+                              selected: index == 4,
+                              color: selectedColor,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            SettingPageMenuItem(
+                              title: 'Facility',
+                              type: 'Facility',
+                              onHighlight: onHighlight,
+                              selected: index == 5,
+                              color: selectedColor,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            SettingPageMenuItem(
+                              title: 'Admin',
+                              type: 'Admin',
+                              onHighlight: onHighlight,
+                              selected: index == 6,
+                              color: selectedColor,
+                            ),
+                          ],
+                        )
                 ],
               ),
             ),
@@ -272,7 +282,6 @@ class SettingPageMenuInteractiveTextState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

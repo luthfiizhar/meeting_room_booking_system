@@ -766,12 +766,14 @@ class _RoomsPageState extends State<RoomsPage> {
                 }
 
                 getBookingDetail(selectedEvent!.bookingID!).then((value) {
+                  print(value);
                   setState(() {
-                    print(value);
+                    // print(value);
                     detailEvent.bookingId = value['Data']['BookingID'];
                     detailEvent.location = value['Data']['RoomName'];
                     detailEvent.summary = value['Data']['Summary'];
-                    detailEvent.description = value['Data']['Description'];
+                    detailEvent.description =
+                        value['Data']['Description'] ?? "";
                     detailEvent.eventDate = value['Data']['BookingDate'];
                     detailEvent.eventTime = value['Data']['BookingStartTime'] +
                         " - " +

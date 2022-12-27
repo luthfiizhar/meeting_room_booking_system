@@ -957,6 +957,7 @@ class _SearchPageState extends State<SearchPage> {
         submitFilter,
         sort,
       ).then((value) {
+        print(value);
         setState(() {
           isSearching = false;
           searchResult = value["Data"]["Room"];
@@ -1316,6 +1317,10 @@ class _SearchPageState extends State<SearchPage> {
                                                                               index]
                                                                           [
                                                                           'EndTime'],
+                                                                      floor: searchResult[
+                                                                              index]
+                                                                          [
+                                                                          'AreaName'],
                                                                       startTime:
                                                                           searchResult[index]
                                                                               [

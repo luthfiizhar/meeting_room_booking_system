@@ -8,6 +8,7 @@ const BoxConstraints pageConstraints = BoxConstraints(
 
 const BoxConstraints homeLeftSideConstrains = BoxConstraints(
   minHeight: 200,
+  // maxHeight: 200,
   minWidth: 786,
 );
 

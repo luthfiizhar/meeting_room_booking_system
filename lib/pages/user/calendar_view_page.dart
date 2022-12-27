@@ -181,12 +181,14 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
     print('data');
     print(data);
     for (var element in data) {
+      print(element['BookingID']);
       _events.appointments!.add(
         Event(
           from: DateTime.parse(element['StartDateTime']),
           to: DateTime.parse(element['EndDateTime']),
           eventName: element['Summary'],
           bookingId: element['BookingID'],
+          background: element['BookingID'] == '-' ? violetAccent : greenAcent,
         ),
       );
     }

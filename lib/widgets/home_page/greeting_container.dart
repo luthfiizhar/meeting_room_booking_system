@@ -15,16 +15,23 @@ class GreetingContainer extends StatefulWidget {
 
 class _GreetingContainerState extends State<GreetingContainer> {
   String name = "";
+  String greeting = "";
   checkData() async {
     var box = await Hive.openBox('userLogin');
 
     name = box.get('name');
+    setState(() {});
+  }
+
+  setGreeting(String value) {
+    greeting = value;
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkData();
   }
 
   @override
@@ -45,7 +52,7 @@ class _GreetingContainerState extends State<GreetingContainer> {
             color: platinum,
             width: 1,
           ),
-          image: DecorationImage(
+          image: const DecorationImage(
             image: AssetImage('assets/greeting_bg.png'),
             fit: BoxFit.cover,
           ),
@@ -79,7 +86,7 @@ class _GreetingContainerState extends State<GreetingContainer> {
               height: 10,
             ),
             Text(
-              'Luthfi Izhariman',
+              name,
               style: helveticaText.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.w400,

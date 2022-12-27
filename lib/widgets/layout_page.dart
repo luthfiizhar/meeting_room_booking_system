@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
@@ -11,6 +12,7 @@ import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/widgets/button/go_to_top_button.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/footer.dart';
+import 'package:meeting_room_booking_system/widgets/login_pop_up.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:meeting_room_booking_system/widgets/pop_up_profile.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -43,6 +45,7 @@ class LayoutPageWeb extends StatefulWidget {
 
 class _LayoutPageWebState extends State<LayoutPageWeb> {
   ScrollController? _scrollController;
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   final info = NetworkInfo();
   MainModel mainModel = MainModel();
@@ -66,7 +69,10 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
     setState(() {});
   }
 
-  updateAfterLogin(String name, String email) {
+  updateAfterLogin(String name, String email) async {
+    var box = await Hive.openBox('userLogin');
+
+    box.put('name', name);
     setState(() {
       employeeName = name;
       employeeEmail = email;
@@ -159,14 +165,24 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
           }
         });
       } else {
+        // showDialog(
+        //   context: context,
+        //   builder: (context) => AlertDialogBlack(
+        //     title: value['Title'],
+        //     contentText: value['Message'],
+        //     isSuccess: false,
+        //   ),
+        // );
         showDialog(
           context: context,
-          builder: (context) => AlertDialogBlack(
-            title: value['Title'],
-            contentText: value['Message'],
-            isSuccess: false,
+          barrierDismissible: false,
+          builder: (context) => LoginPopUp(
+            resetState: resetState,
+            updateLogin: updateAfterLogin,
           ),
-        );
+        ).then((value) {
+          resetState();
+        });
       }
     }).onError((error, stackTrace) {
       showDialog(
@@ -234,6 +250,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
           });
         }
         return Scaffold(
+          key: scaffoldKey,
           // floatingActionButton: InkWell(
           //   onTap: () {},
           //   child: Container(
@@ -376,6 +393,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                             popUpProfile: popUpProfile,
                             resetState: resetState,
                             isAdmin: isAdmin,
+                            scaffoldKey: scaffoldKey,
                           ),
                         ),
                       ),

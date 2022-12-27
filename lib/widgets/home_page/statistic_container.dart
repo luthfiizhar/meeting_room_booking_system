@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
+
+class StatPercentage {
+  StatPercentage({
+    this.status = "",
+    this.percentage = 0.0,
+    this.color,
+  });
+  String status;
+  double percentage;
+  Color? color;
+}
 
 class StatisticContainer extends StatefulWidget {
   const StatisticContainer({super.key});
@@ -10,41 +22,47 @@ class StatisticContainer extends StatefulWidget {
 }
 
 class _StatisticContainerState extends State<StatisticContainer> {
-  List bookingStatus = [
-    {
-      'id': '1',
-      'status': 'Checked In',
-      'percentage': 62.5,
-      'color': greenAcent,
-    },
-    {
-      'id': '2',
-      'status': 'Canceled',
-      'percentage': 25,
-      'color': orangeAccent,
-    },
-    {
-      'id': '3',
-      'status': 'Auto Released',
-      'percentage': 12.5,
-      'color': violetAccent,
-    },
+  List<StatPercentage> bookingStatus = [];
+
+  List<StatPercentage> eventCreation = [];
+  List<Color> colorList = [
+    greenAcent,
+    orangeAccent,
+    violetAccent,
   ];
 
-  List eventCreation = [
-    {
-      'id': '1',
-      'status': 'Booked',
-      'percentage': 75,
-      'color': greenAcent,
-    },
-    {
-      'id': '2',
-      'status': 'Impromptu',
-      'percentage': 25,
-      'color': orangeAccent,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // getStatisticDashboard().then((value) {
+    //   setState(() {
+    //     dynamic listBookStat = value['Data']['BookingStatus'];
+    //     dynamic eventCreationStat = value['Data']['EventCreation'];
+    //     int i = 0;
+    //     for (var element in listBookStat) {
+    //       bookingStatus.add(
+    //         StatPercentage(
+    //           status: element['Status'],
+    //           percentage: element['Percentage'],
+    //           color: colorList[i],
+    //         ),
+    //       );
+    //       i++;
+    //     }
+    //     for (var element in eventCreationStat) {
+    //       bookingStatus.add(
+    //         StatPercentage(
+    //           status: element['Status'],
+    //           percentage: element['Percentage'],
+    //           color: colorList[i],
+    //         ),
+    //       );
+    //       i++;
+    //     }
+    //   });
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
@@ -227,7 +245,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
               image: AssetImage('assets/persistance_1.png'),
               fit: BoxFit.cover,
               filterQuality: FilterQuality.none,
-              opacity: 0.3,
+              opacity: 0.5,
             ),
             color: eerieBlack,
             borderRadius: BorderRadius.circular(5),
@@ -265,67 +283,80 @@ class _StatisticContainerState extends State<StatisticContainer> {
         ),
         Container(
           width: 400,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                width: 400,
-                height: 46,
-                child: ListView.builder(
-                  itemCount: bookingStatus.length,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    double widthPercent =
-                        400.0 * (bookingStatus[index]['percentage'] / 100);
-                    return SizedBox(
-                      width: widthPercent,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: index == 0
-                                    ? Radius.circular(5)
-                                    : Radius.zero,
-                                topLeft: index == 0
-                                    ? Radius.circular(5)
-                                    : Radius.zero,
-                                bottomRight: index == bookingStatus.length - 1
-                                    ? Radius.circular(5)
-                                    : Radius.zero,
-                                topRight: index == bookingStatus.length - 1
-                                    ? Radius.circular(5)
-                                    : Radius.zero,
-                              ),
-                              color: bookingStatus[index]['color'],
-                            ),
-                            width: widthPercent,
-                            height: 20,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "${bookingStatus[index]['percentage']} %",
-                            style: helveticaText.copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w300,
-                              color: bookingStatus[index]['color'],
-                            ),
-                          ),
-                        ],
+          child: bookingStatus.isEmpty
+              ? Center(
+                  child: Text(
+                    'No Data Available',
+                    style: helveticaText.copyWith(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: sonicSilver,
+                    ),
+                  ),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                    );
-                  },
+                      width: 400,
+                      height: 46,
+                      child: ListView.builder(
+                        itemCount: bookingStatus.length,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          double widthPercent =
+                              400.0 * (bookingStatus[index].percentage / 100);
+                          return SizedBox(
+                            width: widthPercent,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: index == 0
+                                          ? Radius.circular(5)
+                                          : Radius.zero,
+                                      topLeft: index == 0
+                                          ? Radius.circular(5)
+                                          : Radius.zero,
+                                      bottomRight:
+                                          index == bookingStatus.length - 1
+                                              ? Radius.circular(5)
+                                              : Radius.zero,
+                                      topRight:
+                                          index == bookingStatus.length - 1
+                                              ? Radius.circular(5)
+                                              : Radius.zero,
+                                    ),
+                                    color: bookingStatus[index].color,
+                                  ),
+                                  width: widthPercent,
+                                  height: 20,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "${bookingStatus[index].percentage} %",
+                                  style: helveticaText.copyWith(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w300,
+                                    color: bookingStatus[index].color,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
         ),
         const SizedBox(
           height: 20,
@@ -341,14 +372,14 @@ class _StatisticContainerState extends State<StatisticContainer> {
                   width: 10,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: e['color'],
+                    color: e.color,
                   ),
                 ),
                 const SizedBox(
                   width: 8,
                 ),
                 Text(
-                  e['status'],
+                  e.status,
                   style: helveticaText.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w300,
@@ -383,67 +414,80 @@ class _StatisticContainerState extends State<StatisticContainer> {
         ),
         Container(
           width: 250,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                width: 250,
-                height: 46,
-                child: ListView.builder(
-                  itemCount: eventCreation.length,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    double widthPercent =
-                        250.0 * (eventCreation[index]['percentage'] / 100);
-                    return SizedBox(
-                      width: widthPercent,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: index == 0
-                                    ? Radius.circular(5)
-                                    : Radius.zero,
-                                topLeft: index == 0
-                                    ? Radius.circular(5)
-                                    : Radius.zero,
-                                bottomRight: index == eventCreation.length - 1
-                                    ? Radius.circular(5)
-                                    : Radius.zero,
-                                topRight: index == eventCreation.length - 1
-                                    ? Radius.circular(5)
-                                    : Radius.zero,
-                              ),
-                              color: eventCreation[index]['color'],
-                            ),
-                            width: widthPercent,
-                            height: 20,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "${eventCreation[index]['percentage']} %",
-                            style: helveticaText.copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w300,
-                              color: eventCreation[index]['color'],
-                            ),
-                          ),
-                        ],
+          child: eventCreation.isEmpty
+              ? Center(
+                  child: Text(
+                    'No Data Available',
+                    style: helveticaText.copyWith(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: sonicSilver,
+                    ),
+                  ),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                    );
-                  },
+                      width: 250,
+                      height: 46,
+                      child: ListView.builder(
+                        itemCount: eventCreation.length,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          double widthPercent =
+                              250.0 * (eventCreation[index].percentage / 100);
+                          return SizedBox(
+                            width: widthPercent,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: index == 0
+                                          ? Radius.circular(5)
+                                          : Radius.zero,
+                                      topLeft: index == 0
+                                          ? Radius.circular(5)
+                                          : Radius.zero,
+                                      bottomRight:
+                                          index == eventCreation.length - 1
+                                              ? Radius.circular(5)
+                                              : Radius.zero,
+                                      topRight:
+                                          index == eventCreation.length - 1
+                                              ? Radius.circular(5)
+                                              : Radius.zero,
+                                    ),
+                                    color: eventCreation[index].color,
+                                  ),
+                                  width: widthPercent,
+                                  height: 20,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "${eventCreation[index].percentage} %",
+                                  style: helveticaText.copyWith(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w300,
+                                    color: eventCreation[index].color,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
         ),
         const SizedBox(
           height: 20,
@@ -459,14 +503,14 @@ class _StatisticContainerState extends State<StatisticContainer> {
                   width: 10,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: e['color'],
+                    color: e.color,
                   ),
                 ),
                 const SizedBox(
                   width: 8,
                 ),
                 Text(
-                  e['status'],
+                  e.status,
                   style: helveticaText.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w300,

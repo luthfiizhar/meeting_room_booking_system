@@ -476,25 +476,28 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                                 // jwtToken = "login";
                                 // Scaffold.of(context).openEndDrawer();
                                 // loginDummy().then((value) {});
-                                loginCerberus().then((value) {
-                                  setState(() {});
-                                  getUserProfile().then((value) {
-                                    print(value);
-                                    widget.resetState!();
-                                    widget.updateLogin!(
-                                        value['Data']['EmpName'],
-                                        value['Data']['Email']);
-                                  });
-                                });
-                                // showDialog(
-                                //   context: context,
-                                //   barrierDismissible: false,
-                                //   builder: (context) {
-                                //     return LoginPopUp();
-                                //   },
-                                // ).then((value) {
+                                // loginCerberus().then((value) {
                                 //   setState(() {});
+                                //   getUserProfile().then((value) {
+                                //     print(value);
+                                //     widget.resetState!();
+                                //     widget.updateLogin!(
+                                //         value['Data']['EmpName'],
+                                //         value['Data']['Email']);
+                                //   });
                                 // });
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) {
+                                    return LoginPopUp(
+                                      resetState: widget.resetState,
+                                      updateLogin: widget.updateLogin,
+                                    );
+                                  },
+                                ).then((value) {
+                                  setState(() {});
+                                });
                                 setState(() {});
                               },
                             )

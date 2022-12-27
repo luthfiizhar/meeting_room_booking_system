@@ -64,7 +64,7 @@ class _DetailAppointmentContainerState
     eventName = widget.bookingDetail!.summary;
     attendantsNumber = widget.bookingDetail!.attendatsNumber;
     location = widget.bookingDetail!.location;
-    // floor = value['Data']['Room']
+    floor = widget.bookingDetail!.floor;
     eventTime = widget.bookingDetail!.eventTime;
     eventDate = widget.bookingDetail!.eventDate;
     duration = widget.bookingDetail!.duration;
@@ -123,7 +123,7 @@ class _DetailAppointmentContainerState
                     ),
                     rowDetail(
                       'Floor',
-                      '2nd Floor',
+                      floor,
                     ),
                     const Padding(
                       padding: EdgeInsets.symmetric(

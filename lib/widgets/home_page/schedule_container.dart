@@ -43,9 +43,10 @@ class _ScheduleContainerState extends State<ScheduleContainer> {
     });
   }
 
+  initGetSchedule() {}
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -134,7 +135,8 @@ class _ScheduleContainerState extends State<ScheduleContainer> {
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
-                          'You don\'t have schedule for today.',
+                          'You don\'t have schedule for this Day.',
+                          textAlign: TextAlign.center,
                           style: helveticaText.copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.w300,

@@ -91,6 +91,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   String roomTypeValue = "MeetingRoom";
   String roomTypeImage = "";
 
+  List? upcomingData = [];
+  String emptyMessage = "";
+
   DateTime selectedDate = DateTime.now();
 
   bool datePickerVisible = false;
@@ -138,30 +141,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
   }
 
-  @override
-  void dispose() {
-    // _controller.dispose();
-    _dateController.dispose();
-    _participantController.dispose();
-    _timeController.dispose();
-    _facilityController.dispose();
-    // scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
-    _dateController.text = formattedDate;
-    _facilityController.text = 'None';
-    _timeController.text = 'Choose Time';
-    _participantController.text = '1';
-    participantSelected = "1";
-
-    initTime();
+  initRoomType() {
     getRoomType().then((value) {
       setState(() {
         initLoading = false;
@@ -177,6 +157,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         }
       } else {}
     }).onError((error, stackTrace) {});
+  }
+
+  initUpcomingEvent() {
+    getUpcomingEvent().then((value) {
+      print(value);
+      setState(() {
+        upcomingData = [value['Data']];
+        emptyMessage = value['Message'];
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // _controller.dispose();
+    _dateController.dispose();
+    _participantController.dispose();
+    _timeController.dispose();
+    _facilityController.dispose();
+    // scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
+    _dateController.text = formattedDate;
+    _facilityController.text = 'None';
+    _timeController.text = 'Choose Time';
+    _participantController.text = '1';
+    participantSelected = "1";
+
+    initTime();
+    initRoomType();
+    // initUpcomingEvent();
   }
 
   resetAllVisibleStatus(bool value) {
@@ -387,6 +404,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   resetState() {
+    // super.initState();
+    print('reset');
     setState(() {});
   }
 

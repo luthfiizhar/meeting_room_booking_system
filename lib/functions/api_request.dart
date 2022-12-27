@@ -310,7 +310,7 @@ Future getMeetingType() async {
   }
 }
 
-Future loginDummy() async {
+Future loginDummy(String username, String password) async {
   var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/login-dummy');
   Map<String, String> requestHeader = {
     // 'Authorization': 'Bearer $tokenDummy',
@@ -320,7 +320,7 @@ Future loginDummy() async {
 
   var bodySend = """
     {
-        "Username" : "164369",
+        "Username" : "$username",
         "Password" : "dummy"
     }
   """;
@@ -339,20 +339,59 @@ Future loginDummy() async {
   }
 }
 
-Future loginCerberus() async {
+Future loginCerberus(
+    String username, String password, String selectedUser) async {
+  String tempUsername;
+  String tempPassword;
+  var bodySend;
+  switch (selectedUser) {
+    case "Luthfi":
+      tempUsername = "169742.luthfi";
+      tempPassword = "Greedisgood2,";
+      bodySend = """
+  {
+        "Username" : "KLGROUP\\\\169742.luthfi",
+        "Password" : "GreedisGood2,"
+  }
+  """;
+      break;
+    case "Edward":
+      tempUsername = "151839.edward";
+      tempPassword = "Userhci8*,";
+      bodySend = """
+  {
+        "Username" : "KLGROUP\\\\151839.edward",
+        "Password" : "Userhci8*,"
+  }
+  """;
+      break;
+    case "Nico":
+      tempUsername = "164369.nico";
+      tempPassword = "nico123";
+      bodySend = """
+  {
+        "Username" : "KLGROUP\\\\164369.nico",
+        "Password" : "164369.nico"
+  }
+  """;
+      break;
+    default:
+      tempUsername = "169742.luthfi";
+      tempPassword = "Greedisgood2,";
+  }
   var url =
       Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/login-mrbs-cerberus');
   Map<String, String> requestHeader = {
     'Content-Type': 'application/json',
   };
 
-  var bodySend = """
-  {
-        "Username" : "KLGROUP\\\\169742.luthfi",
-        "Password" : "Greedisgood2,"
-  }
-  """;
-  // print(bodySend);
+  // bodySend = """
+  // {
+  //       "Username" : "KLGROUP\\\\169742.luthfi",
+  //       "Password" : "GreedisGood2,"
+  // }
+  // """;
+  print(bodySend);
 
   try {
     print('try');
@@ -365,6 +404,9 @@ Future loginCerberus() async {
         'jwtToken', data['Data']['Token'] != null ? data['Data']['Token'] : "");
     jwtToken = data['Data']['Token'];
     isTokenValid = true;
+    if (data['Data']['Roles']['Admin'] == 1) {
+      isAdmin = true;
+    }
 
     return data;
   } on Error catch (e) {
@@ -957,6 +999,94 @@ Future rejectAuditorium(String bookingId) async {
   };
   try {
     var response = await http.post(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future getUpcomingEvent() async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(
+      apiUrlGlobal, '/MRBS_Backend/public/api/dashboard/upcoming-event');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future getSchedule() async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(
+      apiUrlGlobal, '/MRBS_Backend/public/api/dashboard/upcoming-event');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future getStatisticDashboard() async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url =
+      Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/dashboard/statistics');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.post(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future getSuggestAvailableRoom() async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(
+      apiUrlGlobal, '/MRBS_Backend/public/api/dashboard/available-room');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
 
     var data = json.decode(response.body);
 

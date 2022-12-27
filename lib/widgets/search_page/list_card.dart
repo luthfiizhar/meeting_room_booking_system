@@ -23,6 +23,7 @@ class ListRoomContainer extends StatelessWidget {
     this.date,
     this.roomID,
     this.roomType,
+    this.floor = "",
   });
 
   String? roomID;
@@ -38,6 +39,7 @@ class ListRoomContainer extends StatelessWidget {
   String? duration;
   String? date;
   String? roomType;
+  String? floor;
 
   @override
   Widget build(BuildContext context) {
@@ -232,7 +234,7 @@ class ListRoomContainer extends StatelessWidget {
                               width: 12,
                             ),
                             Text(
-                              '1st Floor',
+                              floor!,
                               style: helveticaText.copyWith(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w300,

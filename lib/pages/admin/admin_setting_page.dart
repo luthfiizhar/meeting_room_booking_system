@@ -18,16 +18,18 @@ import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'dart:html' as html;
 
 class AdminSettingPage extends StatefulWidget {
-  const AdminSettingPage({super.key});
+  AdminSettingPage({super.key, this.isAdmin = "false"});
 
+  String? isAdmin;
   @override
   State<AdminSettingPage> createState() => _AdminSettingPageState();
 }
 
 class _AdminSettingPageState extends State<AdminSettingPage> {
   ScrollController scrollController = ScrollController();
-  String menu = "Capacity";
-  int index = 3;
+  String menu = "Profile";
+  int index = 0;
+  bool isAdmin = false;
 
   onChangedMenu(String value) {
     setState(() {
@@ -37,8 +39,11 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    print("isAdmin-->>  ${widget.isAdmin}");
+    if (widget.isAdmin == "true") {
+      isAdmin = true;
+    }
   }
 
   resetState() {
@@ -83,6 +88,7 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
                     index: index,
                     menu: menu,
                     onChagedMenu: onChangedMenu,
+                    isAdmin: isAdmin,
                   ),
                   const SizedBox(
                     width: 50,

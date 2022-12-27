@@ -1058,48 +1058,64 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                   height: 20,
                                 ),
                                 //REPEAT SECTION
-                                inputField(
-                                  'Repeat:',
-                                  SizedBox(
-                                    width: 250,
-                                    child: BlackDropdown(
-                                      focusNode: repeatNode,
-                                      customHeights:
-                                          _getCustomItemsHeights(repeatItems!),
-                                      items: addDividerItem(repeatItems!),
-                                      enabled: true,
-                                      hintText: '',
-                                      onChanged: (value) {
-                                        repeatValue = value;
-                                        if (repeatValue != "NONE") {
-                                          _repeatInterval.text = "1";
-                                        } else {
-                                          _repeatInterval.text = "0";
-                                        }
+                                Visibility(
+                                  visible:
+                                      roomType == "MeetingRoom" ? true : false,
+                                  child: Column(
+                                    children: [
+                                      inputField(
+                                        'Repeat:',
+                                        SizedBox(
+                                          width: 250,
+                                          child: BlackDropdown(
+                                            focusNode: repeatNode,
+                                            customHeights:
+                                                _getCustomItemsHeights(
+                                                    repeatItems!),
+                                            items: addDividerItem(repeatItems!),
+                                            enabled: true,
+                                            hintText: '',
+                                            onChanged: (value) {
+                                              repeatValue = value;
+                                              if (repeatValue != "NONE") {
+                                                _repeatInterval.text = "1";
+                                              } else {
+                                                _repeatInterval.text = "0";
+                                              }
 
-                                        if (repeatValue == "MONTHLY") {
-                                          selectedRepeatDate = selectedDate!
-                                              .add(const Duration(days: 30));
-                                          _repeatEnd.text =
-                                              DateFormat('dd MMM yyy')
-                                                  .format(selectedRepeatDate!);
-                                        }
+                                              if (repeatValue == "MONTHLY") {
+                                                selectedRepeatDate =
+                                                    selectedDate!.add(
+                                                        const Duration(
+                                                            days: 30));
+                                                _repeatEnd.text = DateFormat(
+                                                        'dd MMM yyy')
+                                                    .format(
+                                                        selectedRepeatDate!);
+                                              }
 
-                                        if (repeatValue == "WEEKLY") {
-                                          selectedRepeatDate = selectedDate!
-                                              .add(const Duration(days: 7));
-                                          _repeatEnd.text =
-                                              DateFormat('dd MMM yyy')
-                                                  .format(selectedRepeatDate!);
-                                        }
-                                      },
-                                      value: repeatValue,
-                                    ),
+                                              if (repeatValue == "WEEKLY") {
+                                                selectedRepeatDate =
+                                                    selectedDate!.add(
+                                                        const Duration(
+                                                            days: 7));
+                                                _repeatEnd.text = DateFormat(
+                                                        'dd MMM yyy')
+                                                    .format(
+                                                        selectedRepeatDate!);
+                                              }
+                                            },
+                                            value: repeatValue,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
+
                                 //REPEAT OPTIONS
                                 Visibility(
                                   visible: repeatValue == "NONE" ? false : true,

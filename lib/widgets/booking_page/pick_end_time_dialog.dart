@@ -140,7 +140,6 @@ class _PickEndTimeDialogState extends State<PickEndTimeDialog> {
       indexWarna++;
       jam = jam + 2;
     }
-    ;
   }
 
   setEndTime(String start) {

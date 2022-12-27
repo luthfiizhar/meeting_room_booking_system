@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
@@ -12,6 +13,7 @@ class PopUpProfile extends StatelessWidget {
     this.popUpProfile,
     this.resetState,
     this.isAdmin = false,
+    this.scaffoldKey,
   });
 
   String? name;
@@ -19,6 +21,7 @@ class PopUpProfile extends StatelessWidget {
   Function? popUpProfile;
   Function? resetState;
   bool isAdmin;
+  GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +117,8 @@ class PopUpProfile extends StatelessWidget {
                     ),
               TextButton(
                 onPressed: () {
-                  context.goNamed('setting');
+                  context.goNamed('setting',
+                      params: {'isAdmin': isAdmin.toString()});
                 },
                 child: Text(
                   'My Profile',
@@ -129,13 +133,23 @@ class PopUpProfile extends StatelessWidget {
                 height: 15,
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   popUpProfile!(false);
-                  logout().then((value) {
-                    if (value['Status'] == "200") {
-                      resetState!();
-                    }
-                  });
+                  var box = await Hive.openBox('userLogin');
+                  var jwt =
+                      box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+                  jwtToken = "";
+                  box.put('jwtToken', "");
+                  resetState!;
+                  context.go('/home');
+                  // logout().then((value) {
+                  //   print(value);
+                  //   if (value['Status'] == "200") {
+                  //     // context.goNamed('home');
+                  //     scaffoldKey!.currentContext!.go('/home');
+                  //     resetState!();
+                  //   }
+                  // });
                 },
                 child: Text(
                   'Logout',

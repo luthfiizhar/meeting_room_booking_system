@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
+import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 
 class LoginPopUp extends StatefulWidget {
-  const LoginPopUp({super.key});
+  LoginPopUp({
+    super.key,
+    this.resetState,
+    this.updateLogin,
+  });
+
+  Function? resetState;
+  Function? updateLogin;
 
   @override
   State<LoginPopUp> createState() => _LoginPopUpState();
@@ -24,9 +35,15 @@ class _LoginPopUpState extends State<LoginPopUp> {
   String? username = "";
   String? password = "";
 
+  String selectedUser = "Luthfi";
+
+  List user = ['Luthfi', 'Edward', 'Nico'];
+
   bool? showPassword = true;
 
   bool? rememberMe = false;
+
+  bool? isLoading = false;
 
   final _formKey = new GlobalKey<FormState>();
 
@@ -100,9 +117,9 @@ class _LoginPopUpState extends State<LoginPopUp> {
                       const SizedBox(
                         height: 50,
                       ),
-                      const Text(
+                      Text(
                         'Login',
-                        style: TextStyle(
+                        style: helveticaText.copyWith(
                           fontSize: 30,
                           fontWeight: FontWeight.w700,
                           color: eerieBlack,
@@ -111,10 +128,11 @@ class _LoginPopUpState extends State<LoginPopUp> {
                       const SizedBox(
                         height: 15,
                       ),
-                      const Text(
-                        'Please login using your windows credential.',
-                        style: TextStyle(
+                      Text(
+                        'Please login using your windows/laptop credential.',
+                        style: helveticaText.copyWith(
                           fontSize: 18,
+                          height: 1.67,
                           fontWeight: FontWeight.w300,
                           color: davysGray,
                         ),
@@ -147,6 +165,9 @@ class _LoginPopUpState extends State<LoginPopUp> {
                         validator: (value) => _username.text == ""
                             ? 'This field is required'
                             : null,
+                        onSaved: (newValue) {
+                          username = newValue.toString();
+                        },
                       ),
                       const SizedBox(
                         height: 20,
@@ -175,8 +196,12 @@ class _LoginPopUpState extends State<LoginPopUp> {
                               controller: _password,
                               focusNode: _passwordNode,
                               enabled: true,
+                              maxLines: 1,
                               obsecureText: showPassword,
                               hintText: 'Your password here ...',
+                              onSaved: (newValue) {
+                                password = newValue.toString();
+                              },
                               suffixIcon: _passwordNode.hasFocus
                                   ? IconButton(
                                       onPressed: () {
@@ -205,61 +230,129 @@ class _LoginPopUpState extends State<LoginPopUp> {
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 3,
-                            ),
-                            child: BlackCheckBox(
-                              selectedValue: rememberMe,
-                              filled: false,
-                              onChanged: (value) {
-                                if (rememberMe!) {
-                                  rememberMe = false;
-                                } else {
-                                  rememberMe = true;
-                                }
-                                setState(() {});
-                              },
-                              label: 'Remember Me',
-                            ),
-                          ),
-                        ],
-                      ),
+
+                      // Column(
+                      //   children: user.map((e) {
+                      //     return CustomRadioButton(
+                      //       group: selectedUser,
+                      //       value: e,
+                      //       label: e,
+                      //       onChanged: (value) {
+                      //         setState(() {
+                      //           selectedUser = value;
+                      //         });
+                      //       },
+                      //     );
+                      //   }).toList(),
+                      // ),
+                      // const SizedBox(
+                      //   height: 100,
+                      // ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.start,
+                      //   children: [
+                      //     Padding(
+                      //       padding: const EdgeInsets.only(
+                      //         left: 3,
+                      //       ),
+                      //       child: BlackCheckBox(
+                      //         selectedValue: rememberMe,
+                      //         filled: false,
+                      //         onChanged: (value) {
+                      //           if (rememberMe!) {
+                      //             rememberMe = false;
+                      //           } else {
+                      //             rememberMe = true;
+                      //           }
+                      //           setState(() {});
+                      //         },
+                      //         label: 'Remember Me',
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       const SizedBox(
                         height: 40,
                       ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'How to get username & password?',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: davysGray,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
+                      // const Align(
+                      //   alignment: Alignment.center,
+                      //   child: Text(
+                      //     'How to get username & password?',
+                      //     style: TextStyle(
+                      //       fontSize: 14,
+                      //       fontWeight: FontWeight.w400,
+                      //       color: davysGray,
+                      //       decoration: TextDecoration.underline,
+                      //     ),
+                      //   ),
+                      // ),
+                      // const SizedBox(
+                      //   height: 30,
+                      // ),
                       Align(
                         alignment: Alignment.center,
                         child: RegularButton(
                           text: 'Login',
                           disabled: false,
-                          padding: ButtonSize().mediumSize(),
+                          padding: ButtonSize().longSize(),
                           onTap: () {
+                            setState(() {
+                              isLoading = true;
+                            });
                             if (_formKey.currentState!.validate()) {
-                              jwtToken = "login";
-                              setState(() {});
-                              Navigator.of(context).pop(true);
+                              _formKey.currentState!.save();
+                              // loginCerberus(username!, password!, selectedUser)
+                              loginDummy(
+                                username!,
+                                password!,
+                              ).then((value) {
+                                print("login Dummy $value");
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                if (value['Status'] == "200") {
+                                  getUserProfile().then((value) {
+                                    print("getUserProfile $value");
+                                    if (value['Status'] == "200") {
+                                      widget.resetState!();
+                                      widget.updateLogin!(
+                                          value['Data']['EmpName'],
+                                          value['Data']['Email']);
+                                      Navigator.of(context).pop(true);
+                                    }
+                                  }).onError((error, stackTrace) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogBlack(
+                                        title: 'Can\'t connect to API',
+                                        contentText: error.toString(),
+                                        isSuccess: false,
+                                      ),
+                                    );
+                                  });
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialogBlack(
+                                      title: value['Title'],
+                                      contentText: value['Message'],
+                                      isSuccess: false,
+                                    ),
+                                  );
+                                }
+                              }).onError((error, stackTrace) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialogBlack(
+                                    title: 'Can\'t connect to API',
+                                    contentText: error.toString(),
+                                    isSuccess: false,
+                                  ),
+                                );
+                              });
                             }
                           },
                         ),
@@ -268,20 +361,20 @@ class _LoginPopUpState extends State<LoginPopUp> {
                   ),
                 ),
               ),
-              Positioned(
-                top: 20,
-                right: 20,
-                child: IconButton(
-                  splashRadius: 1,
-                  style: ButtonStyle(
-                    splashFactory: NoSplash.splashFactory,
-                  ),
-                  icon: Icon(Icons.close),
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                ),
-              )
+              // Positioned(
+              //   top: 20,
+              //   right: 20,
+              //   child: IconButton(
+              //     splashRadius: 1,
+              //     style: const ButtonStyle(
+              //       splashFactory: NoSplash.splashFactory,
+              //     ),
+              //     icon: Icon(Icons.close),
+              //     onPressed: () {
+              //       Navigator.of(context).pop(false);
+              //     },
+              //   ),
+              // )
             ],
           ),
         ),
