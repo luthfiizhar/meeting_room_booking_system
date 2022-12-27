@@ -332,6 +332,11 @@ Future loginDummy(String username, String password) async {
     var box = await Hive.openBox('userLogin');
     box.put(
         'jwtToken', data['Data']['Token'] != null ? data['Data']['Token'] : "");
+    jwtToken = data['Data']['Token'];
+    isTokenValid = true;
+    if (data['Data']['Roles']['Admin'] == 1) {
+      isAdmin = true;
+    }
     print(response.body);
     return data;
   } on Error catch (e) {

@@ -28,6 +28,7 @@ class LayoutPageWeb extends StatefulWidget {
     this.resetState,
     this.model,
     this.topButtonVisible = true,
+    this.scaffoldKey,
   });
 
   Widget? child;
@@ -37,6 +38,7 @@ class LayoutPageWeb extends StatefulWidget {
   Function? resetState;
   MainModel? model;
   bool? topButtonVisible;
+  GlobalKey<ScaffoldState>? scaffoldKey;
   // bool isAdmin;
 
   @override
@@ -70,6 +72,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   }
 
   updateAfterLogin(String name, String email) async {
+    print('updateLogin');
     var box = await Hive.openBox('userLogin');
 
     box.put('name', name);
@@ -179,6 +182,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
           builder: (context) => LoginPopUp(
             resetState: resetState,
             updateLogin: updateAfterLogin,
+            scaffoldKey: widget.scaffoldKey,
           ),
         ).then((value) {
           resetState();
@@ -231,9 +235,10 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   }
 
   resetState() {
+    print('resetStateLayout');
     widget.resetState!();
     setState(() {
-      print(jwtToken);
+      // print(jwtToken);
     });
   }
 
@@ -250,18 +255,8 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
           });
         }
         return Scaffold(
-          key: scaffoldKey,
-          // floatingActionButton: InkWell(
-          //   onTap: () {},
-          //   child: Container(
-          //     width: 30,
-          //     height: 30,
-          //     child: Icon(
-          //       Icons.arrow_upward_sharp,
-          //     ),
-          //   ),
-          // ),
-          endDrawer: Drawer(
+          key: widget.scaffoldKey,
+          endDrawer: const Drawer(
             backgroundColor: white,
             child: Text('Drawer'),
           ),
@@ -290,11 +285,11 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                           ],
                         ),
                         child: NavigationBarWeb(
+                          scaffoldKey: widget.scaffoldKey,
                           index: widget.index,
                           popUpProfile: popUpProfile,
                           popUpStatus: profileVisible,
-                          getProfile: _getEntry(context),
-                          resetState: widget.resetState,
+                          resetState: resetState,
                           updateLogin: updateAfterLogin,
                         ),
                       ),

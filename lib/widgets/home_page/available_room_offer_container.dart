@@ -30,17 +30,19 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getSuggestAvailableRoom().then((value) {
-      print(value);
-      setState(() {
-        roomId = value['Data']['RoomID'];
-        roomName = value['Data']['RoomName'];
-        floor = value['Data']['AreaName'];
-        startTime = value['Data']['Start'];
-        endTime = value['Data']['End'];
-        photoUrl = value['Data']['RoomImage'];
-      });
-    });
+    // getSuggestAvailableRoom().then((value) {
+    //   print(value);
+    //   setState(() {
+    //     if (value['Data'] != []) {
+    //       roomId = value['Data']['RoomID'];
+    //       roomName = value['Data']['RoomName'];
+    //       floor = value['Data']['AreaName'];
+    //       startTime = value['Data']['Start'];
+    //       endTime = value['Data']['End'];
+    //       photoUrl = value['Data']['RoomImage'];
+    //     }
+    //   });
+    // });
   }
 
   @override

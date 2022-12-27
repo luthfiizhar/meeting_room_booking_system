@@ -43,6 +43,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
 
   bool isShowDetail = false;
   bool isLoadingGetDetail = false;
+  bool isLoadingGetCalendar2 = true;
   BookingDetail detailEvent = BookingDetail();
 
   String selectedView = "Weekly";
@@ -245,6 +246,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
     // double cellWidth = isShowDetail
     //     ? (MediaQuery.of(context).size.width - 400) / 7
     //     : (MediaQuery.of(context).size.width - 50) / 7;
+
     return LayoutPageWeb(
       index: 4,
       scrollController: scrollController,
@@ -302,6 +304,22 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
               child: customHeader(),
             ),
           ),
+          Visibility(
+            visible: isLoadingGetCalendar2,
+            child: Opacity(
+              opacity: 0.5,
+              child: Container(
+                color: culturedWhite,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height - 70 - 115,
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    color: eerieBlack,
+                  ),
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -956,6 +974,9 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
 
           getUserCalendar(startDate.toString(), endDate.toString())
               .then((value) {
+            setState(() {
+              isLoadingGetCalendar2 = false;
+            });
             print(value);
             assignDataToCalendar(value['Data']);
           });

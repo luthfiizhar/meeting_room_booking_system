@@ -63,6 +63,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _dateController = TextEditingController();
   TextEditingController _facilityController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
@@ -405,13 +406,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   resetState() {
     // super.initState();
-    print('reset');
+    scaffoldKey.currentState!.setState(() {});
+    print('resetHome');
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
+      scaffoldKey: scaffoldKey,
       resetState: resetState,
       scrollController: scrollController,
       index: widget.index,

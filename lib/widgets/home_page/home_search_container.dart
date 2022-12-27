@@ -171,6 +171,11 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                             },
                             imageBuilder: (context, imageProvider) {
                               return Container(
+                                padding: const EdgeInsets.only(
+                                  bottom: 12,
+                                  left: 15,
+                                  right: 15,
+                                ),
                                 width: 175,
                                 height: 112,
                                 decoration: BoxDecoration(
@@ -181,6 +186,43 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                                     fit: BoxFit.cover,
                                     opacity: 0.5,
                                   ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Type',
+                                      style: helveticaText.copyWith(
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 14,
+                                        color: culturedWhite,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 7,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          widget.roomTypeName!,
+                                          style: helveticaText.copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 18,
+                                            color: culturedWhite,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        const Icon(
+                                          Icons.keyboard_arrow_down_sharp,
+                                          size: 20,
+                                          color: culturedWhite,
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
                               );
                             },

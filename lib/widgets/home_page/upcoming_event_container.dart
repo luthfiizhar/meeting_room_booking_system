@@ -19,6 +19,16 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
 
   String emptyMessage = "";
 
+  String bookingId = "";
+  String roomName = "";
+  String floor = "";
+  String roomPhoto = "";
+  String date = "";
+  String summary = "";
+  String duration = "";
+
+  bool isEmpty = true;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -26,13 +36,21 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
     getUpcomingEvent().then((value) {
       print(value);
       setState(() {
-        if (value['Data'] == []) {
-          upcomingData = [];
-        } else {
-          upcomingData = [value['Data']];
-        }
+        if (value['Status'] == "200") {
+          if (value['Data'] == []) {
+            upcomingData = [];
+          } else {
+            isEmpty = false;
+            upcomingData = [value['Data']];
+            bookingId = value['Data']['BookingID'];
+            roomName = value['Data']['RoomName'];
+            date = value['Data']['Date'];
+            summary = value['Data']['Summary'];
+            duration = value['Data']['Duration'];
+          }
 
-        emptyMessage = value['Message'];
+          emptyMessage = value['Message'];
+        }
       });
     });
   }
@@ -49,7 +67,7 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
       constraints: homeLeftSideConstrains,
       child: Stack(
         children: [
-          upcomingData.isEmpty
+          isEmpty
               ? SizedBox()
               : Align(
                   alignment: Alignment.center,
@@ -57,18 +75,21 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                     height: 200,
                     width: double.infinity,
                     child: CachedNetworkImage(
-                      imageUrl: upcomingData.first['RoomPhoto'],
+                      imageUrl: roomPhoto,
+                      errorWidget: (context, url, error) {
+                        return Text(error.toString());
+                      },
                       imageBuilder: (context, imageProvider) {
                         return Container(
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: imageProvider,
-                              opacity: upcomingData.isEmpty ? 1 : 0.5,
+                              opacity: isEmpty ? 1 : 0.5,
                               fit: BoxFit.cover,
                             ),
-                            color: upcomingData == [] ? white : eerieBlack,
+                            color: isEmpty ? white : eerieBlack,
                             borderRadius: BorderRadius.circular(10),
-                            border: upcomingData.isEmpty
+                            border: isEmpty
                                 ? Border.all(color: platinum, width: 1)
                                 : null,
                           ),
@@ -78,15 +99,13 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                   ),
                 ),
           Container(
-            height: upcomingData.isEmpty ? 200 : null,
+            height: isEmpty ? 200 : null,
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 22.5, horizontal: 35),
             decoration: BoxDecoration(
-              color: upcomingData == [] ? white : Colors.transparent,
+              color: isEmpty ? white : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
-              border: upcomingData.isEmpty
-                  ? Border.all(color: platinum, width: 1)
-                  : null,
+              border: isEmpty ? Border.all(color: platinum, width: 1) : null,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +121,7 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                 const SizedBox(
                   height: 25,
                 ),
-                upcomingData.isEmpty
+                isEmpty
                     ? Text(
                         'You don\'t have upcoming event.',
                         style: helveticaText.copyWith(
@@ -119,7 +138,7 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                               Column(
                                 children: [
                                   Text(
-                                    upcomingData.first['Date']
+                                    date
                                         .toString()
                                         .split(' ')
                                         .last
@@ -134,7 +153,7 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                                     height: 3,
                                   ),
                                   Text(
-                                    upcomingData.first['Date']
+                                    date
                                         .toString()
                                         .split(' ')
                                         .first
@@ -161,7 +180,7 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                                 width: 13,
                               ),
                               Text(
-                                upcomingData.first['Summary'],
+                                summary,
                                 style: helveticaText.copyWith(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w700,
@@ -178,7 +197,7 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                '${upcomingData.first['Summary']} at ${upcomingData.first['Duration']} WIB',
+                                '$floor} at $duration WIB',
                                 style: helveticaText.copyWith(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w300,
@@ -188,9 +207,8 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                               TransparentBorderedWhiteButton(
                                 disabled: false,
                                 onTap: () {
-                                  context.goNamed('detail_event', params: {
-                                    'eventId': upcomingData.first['BookingID']
-                                  });
+                                  context.goNamed('detail_event',
+                                      params: {'eventId': bookingId});
                                 },
                                 text: 'See Details',
                                 padding: ButtonSize().mediumSize(),

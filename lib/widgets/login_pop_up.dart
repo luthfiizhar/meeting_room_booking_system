@@ -16,10 +16,12 @@ class LoginPopUp extends StatefulWidget {
     super.key,
     this.resetState,
     this.updateLogin,
+    this.scaffoldKey,
   });
 
   Function? resetState;
   Function? updateLogin;
+  GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   State<LoginPopUp> createState() => _LoginPopUpState();
@@ -311,11 +313,11 @@ class _LoginPopUpState extends State<LoginPopUp> {
                                   isLoading = false;
                                 });
                                 if (value['Status'] == "200") {
-                                  getUserProfile().then((value) {
+                                  getUserProfile().then((value) async {
                                     print("getUserProfile $value");
                                     if (value['Status'] == "200") {
-                                      widget.resetState!();
-                                      widget.updateLogin!(
+                                      await widget.resetState!();
+                                      await widget.updateLogin!(
                                           value['Data']['EmpName'],
                                           value['Data']['Email']);
                                       Navigator.of(context).pop(true);

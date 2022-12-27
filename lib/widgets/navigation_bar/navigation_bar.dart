@@ -28,6 +28,7 @@ class NavigationBarWeb extends StatefulWidget {
     this.getProfile,
     this.resetState,
     this.updateLogin,
+    this.scaffoldKey,
   });
 
   int? index;
@@ -36,6 +37,7 @@ class NavigationBarWeb extends StatefulWidget {
   Function? updateLogin;
   bool? popUpStatus;
   OverlayEntry? getProfile;
+  GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   State<NavigationBarWeb> createState() => _NavigationBarWebState();
@@ -491,14 +493,16 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                                   barrierDismissible: false,
                                   builder: (context) {
                                     return LoginPopUp(
+                                      scaffoldKey: widget.scaffoldKey,
                                       resetState: widget.resetState,
                                       updateLogin: widget.updateLogin,
                                     );
                                   },
                                 ).then((value) {
-                                  setState(() {});
+                                  widget.resetState!;
+                                  widget.scaffoldKey!.currentState!
+                                      .setState(() {});
                                 });
-                                setState(() {});
                               },
                             )
                           // LogoutButton(
