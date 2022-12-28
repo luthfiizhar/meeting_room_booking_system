@@ -130,9 +130,9 @@ class _RoomsPageState extends State<RoomsPage> {
   }
 
   setDatePickerStatus(bool value) {
-    setState(() {
-      isShowDetail = false;
-    });
+    // setState(() {
+    //   isShowDetail = false;
+    // });
   }
 
   closeDetail() {
@@ -456,6 +456,7 @@ class _RoomsPageState extends State<RoomsPage> {
 
     return LayoutPageWeb(
       scrollController: scrollController,
+      topButtonVisible: false,
       index: 2,
       setDatePickerStatus: setDatePickerStatus,
       resetState: resetState,
@@ -494,93 +495,7 @@ class _RoomsPageState extends State<RoomsPage> {
                     Expanded(
                       child: Column(
                         children: [
-                          Row(
-                            children: [
-                              RegularButton(
-                                text: 'Today',
-                                disabled: false,
-                                padding: ButtonSize().smallSize(),
-                                onTap: () {
-                                  setState(() {
-                                    selectedDate = DateTime.now();
-                                  });
-                                  datePickerControl.selectedDate = selectedDate;
-                                  calendarControl!.displayDate = selectedDate;
-                                },
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    selectedDate = calendarControl!.displayDate!
-                                        .subtract(const Duration(days: 1));
-                                  });
-                                  datePickerControl.selectedDate = selectedDate;
-                                  calendarControl!.displayDate = selectedDate;
-                                },
-                                splashRadius: 20,
-                                icon: const Icon(
-                                  Icons.chevron_left_sharp,
-                                  size: 28,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    selectedDate = calendarControl!.displayDate!
-                                        .add(const Duration(days: 1));
-                                  });
-                                  // getBookingListRoom(
-                                  //     selectedArea!, selectedDate!.toString());
-                                  datePickerControl.selectedDate = selectedDate;
-                                  calendarControl!.displayDate = selectedDate;
-                                },
-                                splashRadius: 20,
-                                icon: const Icon(
-                                  Icons.chevron_right_sharp,
-                                  size: 28,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              Text(
-                                DateFormat('d MMMM y').format(selectedDate!),
-                                style: const TextStyle(
-                                  fontFamily: 'Helvetica',
-                                  color: eerieBlack,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w300,
-                                  height: 1.3,
-                                ),
-                              ),
-                              const Expanded(
-                                child: SizedBox(),
-                              ),
-                              SizedBox(
-                                width: 170,
-                                child: WhiteDropdown(
-                                  focusNode: areaNode,
-                                  customHeights:
-                                      _getCustomItemsHeights(areaList),
-                                  items: addDividerItem(areaList),
-                                  enabled: true,
-                                  hintText: '',
-                                  onChanged: (value) {
-                                    print(value);
-                                    selectedArea = value;
-                                    onChangedArea(selectedArea!);
-                                  },
-                                  value: selectedArea,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                            ],
-                          ),
+                          headerCustom(),
                           const SizedBox(
                             height: 20,
                           ),
@@ -593,16 +508,20 @@ class _RoomsPageState extends State<RoomsPage> {
                       switchInCurve: Curves.easeIn,
                       switchOutCurve: Curves.easeOut,
                       child: isShowDetail
-                          ? SizedBox(
-                              height: MediaQuery.of(context).size.width > 1366
-                                  ? (100 * dataRoom.length) >= 600
-                                      ? (100 * dataRoom.length) + 100 + 63
-                                      : MediaQuery.of(context).size.height - 180
-                                  : null,
-                              child: DetailAppointmentContainer(
-                                // event: selectedEvent,
-                                closeDetail: closeDetail,
-                                bookingDetail: detailEvent,
+                          ? GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                height: MediaQuery.of(context).size.width > 1366
+                                    ? (100 * dataRoom.length) >= 600
+                                        ? (100 * dataRoom.length) + 100 + 63
+                                        : MediaQuery.of(context).size.height -
+                                            180
+                                    : null,
+                                child: DetailAppointmentContainer(
+                                  // event: selectedEvent,
+                                  closeDetail: closeDetail,
+                                  bookingDetail: detailEvent,
+                                ),
                               ),
                             )
                           : SizedBox(),
@@ -615,7 +534,95 @@ class _RoomsPageState extends State<RoomsPage> {
         }),
       ),
     );
-    ;
+  }
+
+  Widget headerCustom() {
+    return Row(
+      children: [
+        RegularButton(
+          text: 'Today',
+          disabled: false,
+          padding: ButtonSize().smallSize(),
+          onTap: () {
+            setState(() {
+              selectedDate = DateTime.now();
+            });
+            datePickerControl.selectedDate = selectedDate;
+            calendarControl!.displayDate = selectedDate;
+          },
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        IconButton(
+          onPressed: () {
+            setState(() {
+              selectedDate = calendarControl!.displayDate!
+                  .subtract(const Duration(days: 1));
+            });
+            datePickerControl.selectedDate = selectedDate;
+            calendarControl!.displayDate = selectedDate;
+          },
+          splashRadius: 20,
+          icon: const Icon(
+            Icons.chevron_left_sharp,
+            size: 28,
+          ),
+        ),
+        IconButton(
+          onPressed: () {
+            setState(() {
+              selectedDate =
+                  calendarControl!.displayDate!.add(const Duration(days: 1));
+            });
+            // getBookingListRoom(
+            //     selectedArea!, selectedDate!.toString());
+            datePickerControl.selectedDate = selectedDate;
+            calendarControl!.displayDate = selectedDate;
+          },
+          splashRadius: 20,
+          icon: const Icon(
+            Icons.chevron_right_sharp,
+            size: 28,
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        Text(
+          DateFormat('d MMMM y').format(selectedDate!),
+          style: const TextStyle(
+            fontFamily: 'Helvetica',
+            color: eerieBlack,
+            fontSize: 20,
+            fontWeight: FontWeight.w300,
+            height: 1.3,
+          ),
+        ),
+        const Expanded(
+          child: SizedBox(),
+        ),
+        SizedBox(
+          width: 170,
+          child: WhiteDropdown(
+            focusNode: areaNode,
+            customHeights: _getCustomItemsHeights(areaList),
+            items: addDividerItem(areaList),
+            enabled: true,
+            hintText: '',
+            onChanged: (value) {
+              print(value);
+              selectedArea = value;
+              onChangedArea(selectedArea!);
+            },
+            value: selectedArea,
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+      ],
+    );
   }
 
   RoomEventDataSource _getRoomDataSource(
@@ -785,6 +792,9 @@ class _RoomsPageState extends State<RoomsPage> {
                     detailEvent.host = value['Data']['EmpName'];
                     detailEvent.attendatsNumber =
                         value['Data']['AttendantsNumber'].toString();
+                    detailEvent.status = value['Data']['Status'];
+                    detailEvent.stepBooking =
+                        value['Data']['BookingStep'].toString();
                     if (!isShowDetail) {
                       isShowDetail = true;
                     }
@@ -804,23 +814,22 @@ class _RoomsPageState extends State<RoomsPage> {
           }
           if (calendarTapDetails.targetElement ==
               CalendarElement.calendarCell) {
-            print('isTokenValid -> $isTokenValid');
             if ((jwtToken != null || jwtToken != "") && isTokenValid) {
               if (calendarTapDetails.date!.compareTo(DateTime.now()) > 0) {
-                bookingDetail.startDate = calendarTapDetails.date;
-                bookingDetail.roomId =
-                    calendarTapDetails.resource!.id.toString();
-                bookingDetail.endDate =
-                    calendarTapDetails.date!.add(Duration(hours: 2));
-                bookingDetail.attendantsNumber = '3';
-                bookingDetail.recursive = '';
-                bookingDetail.description = 'Test Book !!!!!!!!!!';
-                bookingDetail.summary = 'Masih Tes';
-                bookingDetail.meetingType = 'Internal';
-                bookingDetail.recursive = 'NONE';
-                bookingDetail.attendants = [];
-                bookingDetail.amenities = [];
-                bookingDetail.foodAmenities = [];
+                // bookingDetail.startDate = calendarTapDetails.date;
+                // bookingDetail.roomId =
+                //     calendarTapDetails.resource!.id.toString();
+                // bookingDetail.endDate =
+                //     calendarTapDetails.date!.add(Duration(hours: 2));
+                // bookingDetail.attendantsNumber = '3';
+                // bookingDetail.recursive = '';
+                // bookingDetail.description = 'Test Book !!!!!!!!!!';
+                // bookingDetail.summary = 'Masih Tes';
+                // bookingDetail.meetingType = 'Internal';
+                // bookingDetail.recursive = 'NONE';
+                // bookingDetail.attendants = [];
+                // bookingDetail.amenities = [];
+                // bookingDetail.foodAmenities = [];
                 // print('data Room ' + dataRoom.toString());
                 // print('selected area ' + selectedArea!);
                 // print('event room ' + eventRoom.toString());
@@ -1126,6 +1135,8 @@ class BookingDetail {
     this.summary = "",
     this.description = "",
     this.attendatsNumber = "",
+    this.status = "",
+    this.stepBooking = "",
   });
   String bookingId;
   String location;
@@ -1140,4 +1151,7 @@ class BookingDetail {
   String host;
   String email;
   String avaya;
+
+  String status;
+  String stepBooking;
 }

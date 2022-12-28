@@ -24,7 +24,9 @@ class _GreetingContainerState extends State<GreetingContainer> {
   }
 
   setGreeting(String value) {
-    greeting = value;
+    setState(() {
+      greeting = value;
+    });
   }
 
   @override
@@ -32,6 +34,37 @@ class _GreetingContainerState extends State<GreetingContainer> {
     // TODO: implement initState
     super.initState();
     checkData();
+    initGreeting();
+    updateGreeting();
+  }
+
+  initGreeting() {
+    final DateTime now = DateTime.now();
+    if (now.hour >= 5 && now.hour < 12) {
+      setGreeting('Good Morning');
+    } else if (now.hour >= 12 && now.hour < 17) {
+      setGreeting('Good Afternoon');
+    } else if (now.hour >= 17 && now.hour < 21) {
+      setGreeting('Good Evening');
+    } else if (now.hour >= 21 && now.hour < 5) {
+      setGreeting('Good Night');
+    }
+  }
+
+  updateGreeting() {
+    const oneMin = const Duration(hours: 1);
+    Timer.periodic(oneMin, (Timer t) {
+      final DateTime now = DateTime.now();
+      if (now.hour >= 5 && now.hour < 12) {
+        setGreeting('Good Morning');
+      } else if (now.hour >= 12 && now.hour < 17) {
+        setGreeting('Good Afternoon');
+      } else if (now.hour >= 17 && now.hour < 21) {
+        setGreeting('Good Evening');
+      } else if (now.hour >= 21 && now.hour < 5) {
+        setGreeting('Good Night');
+      }
+    });
   }
 
   @override
@@ -73,7 +106,7 @@ class _GreetingContainerState extends State<GreetingContainer> {
             Row(
               children: [
                 Text(
-                  'Good Morning,',
+                  '$greeting,',
                   style: helveticaText.copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w300,
@@ -104,9 +137,11 @@ class Clock extends StatefulWidget {
   Clock({
     super.key,
     this.time = "",
+    this.setGreeting,
   });
 
   String time;
+  Function? setGreeting;
 
   @override
   State<Clock> createState() => _ClockState();
@@ -127,11 +162,16 @@ class _ClockState extends State<Clock> {
   void _getTime() {
     final DateTime now = DateTime.now();
     final String formattedDateTime = _formatDateTime(now);
+    // if (now.hour >= 5 && now.hour < 12) {
+    //   widget.setGreeting!('Good Morning');
+    // } else if (now.hour >= 12 && now.hour < 17) {
+    //   widget.setGreeting!('Good Afternoon');
+    // } else if (now.hour >= 17 && now.hour < 21) {
+    //   widget.setGreeting!('Good Evening');
+    // } else if (now.hour >= 21 && now.hour < 5) {
+    //   widget.setGreeting!('Good Night');
+    // }
     setState(() {
-      // if (now.minute == 45 && now.second == 0) {
-      //   print('menit 45');
-      //   widget.checkDb!();
-      // }
       widget.time = formattedDateTime;
     });
   }

@@ -19,7 +19,7 @@ class ParticipantContainer extends StatelessWidget {
   //   '7 - 10',
   //   'More than 10',
   // ];
-  List? items = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '>10'];
+  List? items = ['2', '3', '4', '5', '6', '7', '8', '9', '>10'];
 
   @override
   Widget build(BuildContext context) {

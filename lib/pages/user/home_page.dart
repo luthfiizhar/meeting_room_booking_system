@@ -189,8 +189,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _dateController.text = formattedDate;
     _facilityController.text = 'None';
     _timeController.text = 'Choose Time';
-    _participantController.text = '1';
-    participantSelected = "1";
+    _participantController.text = '2';
+    participantSelected = "2";
 
     initTime();
     initRoomType();
@@ -504,13 +504,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: datePickerVisible,
                           child: Positioned(
                             left: 265,
-                            top: 695,
+                            top: 715,
                             child: CustomDatePicker(
                               controller: datePickerControl,
                               isDark: true,
                               changeDate: onDateChanged,
                               currentDate: selectedDate,
                               setPickerStatus: setDatePickerVisible,
+                              canPickPastDay: false,
                             ),
                           ),
                         ),
@@ -518,7 +519,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: timePickerContainerVisible,
                           child: Positioned(
                             left: 465,
-                            top: 695,
+                            top: 715,
                             child: TimePickerContainer(
                               // controller: datePickerControl,
                               endTime: endTime,
@@ -540,7 +541,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Visibility(
                           visible: startTimeContainerVisible,
                           child: Positioned(
-                            top: 825,
+                            top: 845,
                             left: 475,
                             child: StartTimeContainer(
                               items: startTimeList,
@@ -553,7 +554,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Visibility(
                           visible: endTimeContainerVisible,
                           child: Positioned(
-                            top: 825,
+                            top: 845,
                             left: 595,
                             child: EndTimeContainer(
                               items: endTimeList,
@@ -568,7 +569,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: participantContainerVisible,
                           child: Positioned(
                             left: 265,
-                            top: 775,
+                            top: 795,
                             child: ParticipantContainer(
                               setParticipantStatus: setParticipantStatus,
                               onChangeParticipant: onParticipanSelected,
@@ -579,7 +580,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: amenitiesContainerVisible,
                           child: Positioned(
                             left: 465,
-                            top: 775,
+                            top: 795,
                             child: AmenitiesContainer(
                               tvOnChange: (value) {
                                 if (checkBoxTv) {
@@ -635,7 +636,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: meetingTypeContainerVisible,
                           child: Positioned(
                             left: 30,
-                            top: 830,
+                            top: 850,
                             child: RoomTypeContainerHomePage(
                               changeRoomType: changeRoomType,
                               setContainerStatus: setMeetingTypeContainerStatus,

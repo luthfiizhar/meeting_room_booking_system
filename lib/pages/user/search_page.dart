@@ -3,52 +3,30 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
-import 'package:meeting_room_booking_system/model/room.dart';
-import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
 import 'package:meeting_room_booking_system/widgets/amenities_container.dart';
 import 'package:meeting_room_booking_system/widgets/banner/landscape_white_banner.dart';
-import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
-import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
-import 'package:meeting_room_booking_system/widgets/button/regular_button_white.dart';
-import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
-import 'package:meeting_room_booking_system/widgets/button/transparent_button_white.dart';
-import 'package:meeting_room_booking_system/widgets/calendar_view_page/calendar_menu_item.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
-import 'package:meeting_room_booking_system/widgets/checkboxes/white_checkbox.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
-import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
-import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_white.dart';
-import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
-import 'package:meeting_room_booking_system/widgets/dropdown/white_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/end_time_container.dart';
-import 'package:meeting_room_booking_system/widgets/footer.dart';
-import 'package:meeting_room_booking_system/widgets/input/input_search_page.dart';
-import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
-import 'package:meeting_room_booking_system/widgets/input_field/white_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/meeting_type_container.dart';
-import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:meeting_room_booking_system/widgets/participant_container.dart';
-import 'package:meeting_room_booking_system/widgets/pop_up_profile.dart';
 import 'package:meeting_room_booking_system/widgets/search_container.dart';
-import 'package:meeting_room_booking_system/widgets/search_page/check_box_amenities.dart';
 import 'package:meeting_room_booking_system/widgets/search_page/filter_container.dart';
 import 'package:meeting_room_booking_system/widgets/search_page/list_card.dart';
 import 'package:meeting_room_booking_system/widgets/search_page/sorting_container.dart';
 import 'package:meeting_room_booking_system/widgets/start_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/time_picker_container.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:go_router/go_router.dart';
@@ -101,11 +79,13 @@ class _SearchPageState extends State<SearchPage> {
   dynamic resultArea;
 
   List<RadioModel> listSorting = [
-    RadioModel(isSelected: false, text: 'Lowest Floor'),
-    RadioModel(isSelected: false, text: 'Highest Floor'),
-    RadioModel(isSelected: false, text: 'Lowest Capacity'),
-    RadioModel(isSelected: false, text: 'Highest Capacity'),
-    RadioModel(isSelected: false, text: 'Alphabetical'),
+    RadioModel(isSelected: false, text: 'Lowest Floor', value: 'floor_highest'),
+    RadioModel(isSelected: false, text: 'Highest Floor', value: 'floor_lowest'),
+    RadioModel(
+        isSelected: false, text: 'Lowest Capacity', value: 'capacity_lowest'),
+    RadioModel(
+        isSelected: false, text: 'Highest Capacity', value: 'capacity_highest'),
+    RadioModel(isSelected: false, text: 'Alphabetical', value: 'alphabetical'),
   ];
   String selectedSorting = "Lowest Floor";
 
@@ -847,6 +827,48 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  onChangeSorting(String value, String text) {
+    print(value);
+    List listAmen = [];
+    for (var element in facilitySelected) {
+      listAmen.add('"$element"');
+    }
+    setState(() {
+      selectedSorting = text;
+    });
+    sort = value;
+
+    print(listAmen);
+    searchRoomApi(
+      selectedDateFormatted,
+      startTime,
+      endTime,
+      participantSelected,
+      listAmen,
+      meetingTypeValue,
+      submitFilter,
+      sort,
+    ).then((value) {
+      setState(() {
+        isSearching = false;
+        searchResult = value["Data"]["Room"];
+      });
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Can\'t Connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      ).then((value) {
+        setState(() {
+          isSearching = false;
+        });
+      });
+    });
+  }
+
   searchFromHome(MainModel model) {
     autoScroll(context, model);
     dynamic date = DateTime.parse(widget.queryParam['date']);
@@ -1256,6 +1278,8 @@ class _SearchPageState extends State<SearchPage> {
                                                                 listSorting,
                                                             selectedSorting:
                                                                 selectedSorting,
+                                                            onChangeSorting:
+                                                                onChangeSorting,
                                                           ),
                                                           const SizedBox(
                                                             height: 20,
@@ -1283,7 +1307,33 @@ class _SearchPageState extends State<SearchPage> {
                                                             ),
                                                           )
                                                         : searchResult.isEmpty
-                                                            ? SizedBox()
+                                                            ? Visibility(
+                                                                visible: searchResult
+                                                                            .isEmpty &&
+                                                                        submitFilter
+                                                                            .isEmpty
+                                                                    ? false
+                                                                    : true,
+                                                                child: SizedBox(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: 200,
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      'No room available at the moment',
+                                                                      style: helveticaText
+                                                                          .copyWith(
+                                                                        fontSize:
+                                                                            20,
+                                                                        fontWeight:
+                                                                            FontWeight.w300,
+                                                                        color:
+                                                                            davysGray,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              )
                                                             : Container(
                                                                 child: ListView
                                                                     .builder(
@@ -1449,6 +1499,7 @@ class _SearchPageState extends State<SearchPage> {
                         changeDate: onDateChanged,
                         setPickerStatus: setDatePickerVisible,
                         currentDate: selectedDate,
+                        canPickPastDay: false,
                       ),
                     ),
                   ),

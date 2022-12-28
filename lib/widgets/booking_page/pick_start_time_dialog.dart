@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -12,11 +13,13 @@ class PickStartTimeDialog extends StatefulWidget {
     this.selectedTime,
     this.setStartTime,
     this.selectedDate,
+    this.roomId,
   });
 
   String? selectedTime;
   DateTime? selectedDate;
   Function? setStartTime;
+  String? roomId;
 
   @override
   State<PickStartTimeDialog> createState() => _PickStartTimeDialogState();
@@ -143,14 +146,23 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
     ;
   }
 
+  initStartTimeSelector() {
+    startTimeSelector(widget.roomId!).then((value) {
+      print(value);
+      setState(() {
+        timeList = value['Data'];
+      });
+    });
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     var todayDateTime = DateTime.now();
     today = DateFormat('EEEE, d MMMM y').format(todayDateTime);
     addAppointmen();
-    setStartTime();
+    // setStartTime();
+    initStartTimeSelector();
   }
 
   @override
@@ -217,11 +229,12 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                                     InkWell(
                                       onTap: () {
                                         // widget.selectedTime = timeList[index];
-                                        widget.setStartTime!(timeList[index]);
+                                        widget.setStartTime!(
+                                            timeList[index]['Time']);
                                         Navigator.of(context).pop();
                                       },
                                       child: Text(
-                                        timeList[index],
+                                        timeList[index]['Time'],
                                         style: const TextStyle(
                                           color: davysGray,
                                           fontSize: 16,

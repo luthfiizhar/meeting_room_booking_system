@@ -11,6 +11,7 @@ class CustomDatePicker extends StatelessWidget {
     this.setPickerStatus,
     this.currentDate,
     this.isDark = true,
+    this.canPickPastDay = true,
   });
 
   DateRangePickerController? controller;
@@ -18,6 +19,7 @@ class CustomDatePicker extends StatelessWidget {
   Function? setPickerStatus;
   DateTime? currentDate;
   bool isDark;
+  bool canPickPastDay;
 
   @override
   Widget build(BuildContext context) {
@@ -61,13 +63,12 @@ class CustomDatePicker extends StatelessWidget {
         child: SfDateRangePicker(
           controller: controller,
           initialSelectedDate: currentDate,
-          // minDate: DateTime.now(),
+          minDate: canPickPastDay ? null : DateTime.now(),
           showNavigationArrow: true,
           view: DateRangePickerView.month,
           selectionMode: DateRangePickerSelectionMode.single,
           selectionColor: davysGray,
           todayHighlightColor: culturedWhite,
-
           headerStyle: DateRangePickerHeaderStyle(
             textStyle: TextStyle(
               fontFamily: 'Helvetica',
@@ -95,6 +96,11 @@ class CustomDatePicker extends StatelessWidget {
           //   );
           // },
           monthCellStyle: DateRangePickerMonthCellStyle(
+            disabledDatesTextStyle: const TextStyle(
+              fontFamily: 'Helvetica',
+              fontSize: 12,
+              color: davysGray,
+            ),
             leadingDatesTextStyle: TextStyle(
               fontFamily: 'Helvetica',
               fontSize: 12,

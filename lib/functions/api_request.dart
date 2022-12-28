@@ -1035,19 +1035,25 @@ Future getUpcomingEvent() async {
   }
 }
 
-Future getSchedule() async {
+Future getSchedule(String time) async {
   var box = await Hive.openBox('userLogin');
   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
-  var url = Uri.https(
-      apiUrlGlobal, '/MRBS_Backend/public/api/dashboard/upcoming-event');
+  var url =
+      Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/dashboard/widget');
   Map<String, String> requestHeader = {
     'Authorization': 'Bearer $jwt',
     // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
     'Content-Type': 'application/json',
   };
+
+  var bodySend = """
+  {
+      "Date" : "$time"
+  }
+  """;
   try {
-    var response = await http.get(url, headers: requestHeader);
+    var response = await http.post(url, headers: requestHeader, body: bodySend);
 
     var data = json.decode(response.body);
 
@@ -1057,7 +1063,7 @@ Future getSchedule() async {
   }
 }
 
-Future getStatisticDashboard() async {
+Future getStatisticDashboard(String days) async {
   var box = await Hive.openBox('userLogin');
   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -1068,8 +1074,13 @@ Future getStatisticDashboard() async {
     // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
     'Content-Type': 'application/json',
   };
+  var bodySend = """
+    {
+      "Days" : "$days"
+    }
+  """;
   try {
-    var response = await http.post(url, headers: requestHeader);
+    var response = await http.post(url, headers: requestHeader, body: bodySend);
 
     var data = json.decode(response.body);
 
@@ -1088,6 +1099,41 @@ Future getSuggestAvailableRoom() async {
   Map<String, String> requestHeader = {
     'Authorization': 'Bearer $jwt',
     // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future startTimeSelector(String roomId) async {
+  var url = Uri.https(
+      apiUrlGlobal, '/MRBS_Backend/public/api/tablet/start-time/$roomId');
+  Map<String, String> requestHeader = {
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.get(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future getRoomSchedule(String roomId) async {
+  var url = Uri.https(
+      apiUrlGlobal, '/MRBS_Backend/public/api/tablet/schedule/$roomId');
+  Map<String, String> requestHeader = {
     'Content-Type': 'application/json',
   };
   try {

@@ -257,38 +257,59 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
         children: [
           Container(
             height: MediaQuery.of(context).size.height - 70 - 115,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
               children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 110),
-                    child: calendarUserPage(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 110),
+                        child: calendarUserPage(),
+                      ),
+                    ),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 750),
+                      switchInCurve: Curves.easeIn,
+                      switchOutCurve: Curves.easeOut,
+                      child: isShowDetail
+                          ? isLoadingGetDetail
+                              ? const CircularProgressIndicator(
+                                  color: eerieBlack,
+                                )
+                              : SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.width > 1366
+                                          ? MediaQuery.of(context).size.height -
+                                              70 -
+                                              115
+                                          : null,
+                                  child: DetailAppointmentContainer(
+                                    // event: selectedEvent,
+                                    closeDetail: closeDetail,
+                                    bookingDetail: detailEvent,
+                                  ),
+                                )
+                          : SizedBox(),
+                    ),
+                  ],
+                ),
+                Visibility(
+                  visible: isLoadingGetCalendar2,
+                  child: Opacity(
+                    opacity: 0.5,
+                    child: Container(
+                      color: culturedWhite,
+                      width: MediaQuery.of(context).size.width,
+                      height: double.infinity,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: eerieBlack,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 750),
-                  switchInCurve: Curves.easeIn,
-                  switchOutCurve: Curves.easeOut,
-                  child: isShowDetail
-                      ? isLoadingGetDetail
-                          ? const CircularProgressIndicator(
-                              color: eerieBlack,
-                            )
-                          : SizedBox(
-                              height: MediaQuery.of(context).size.width > 1366
-                                  ? MediaQuery.of(context).size.height -
-                                      70 -
-                                      115
-                                  : null,
-                              child: DetailAppointmentContainer(
-                                // event: selectedEvent,
-                                closeDetail: closeDetail,
-                                bookingDetail: detailEvent,
-                              ),
-                            )
-                      : SizedBox(),
-                ),
+                )
               ],
             ),
           ),
@@ -304,22 +325,6 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
               child: customHeader(),
             ),
           ),
-          Visibility(
-            visible: isLoadingGetCalendar2,
-            child: Opacity(
-              opacity: 0.5,
-              child: Container(
-                color: culturedWhite,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height - 70 - 115,
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    color: eerieBlack,
-                  ),
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );
@@ -1126,12 +1131,12 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
         // headerDateFormat: 'MMM,yyy',
         showNavigationArrow: true,
         view: CalendarView.week,
-        allowedViews: [
+        allowedViews: const [
           CalendarView.month,
           CalendarView.day,
           CalendarView.week,
         ],
-        monthViewSettings: MonthViewSettings(
+        monthViewSettings: const MonthViewSettings(
           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
         ),
         // scheduleViewSettings: ScheduleViewSettings(),

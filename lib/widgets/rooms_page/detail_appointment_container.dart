@@ -41,6 +41,7 @@ class _DetailAppointmentContainerState
   String avaya = "";
   String attendantsNumber = "";
   String bookingType = "";
+  String bookingStep = "";
 
   @override
   void initState() {
@@ -71,6 +72,7 @@ class _DetailAppointmentContainerState
     host = widget.bookingDetail!.host;
     email = widget.bookingDetail!.email;
     avaya = widget.bookingDetail!.avaya;
+    bookingStep = widget.bookingDetail!.stepBooking;
   }
 
   @override
@@ -217,125 +219,133 @@ class _DetailAppointmentContainerState
                     const SizedBox(
                       height: 40,
                     ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              MdiIcons.informationOutline,
-                              color: blueAccent,
-                              size: 26,
-                            ),
-                            onPressed: () {
-                              context.goNamed('detail_event', params: {
-                                'eventId': widget.bookingDetail!.bookingId,
-                              });
-                            },
-                            tooltip: 'Detail Info',
-                          ),
-                          // IconButton(
-                          //   icon: const Icon(
-                          //     MdiIcons.emailOutline,
-                          //     color: blueAccent,
-                          //     size: 26,
-                          //   ),
-                          //   onPressed: () {},
-                          //   tooltip: 'Email',
-                          // ),
-                          // IconButton(
-                          //   icon: const Icon(
-                          //     Icons.sync_alt,
-                          //     color: blueAccent,
-                          //     size: 26,
-                          //   ),
-                          //   onPressed: () {},
-                          //   tooltip: 'Trade',
-                          // ),
-                          IconButton(
-                            icon: const Icon(
-                              MdiIcons.closeCircleOutline,
-                              color: blueAccent,
-                              size: 26,
-                            ),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => const ConfirmDialogBlack(
-                                  title: 'Cancel Booking',
-                                  contentText:
-                                      'Are you sure want cancel this booking?',
-                                ),
-                              ).then((value) {
-                                setState(() {
-                                  // isCancelLoading = true;
+                    Visibility(
+                      visible: bookingStep == "3" || bookingStep == "4"
+                          ? false
+                          : true,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                MdiIcons.informationOutline,
+                                color: blueAccent,
+                                size: 26,
+                              ),
+                              onPressed: () {
+                                context.goNamed('detail_event', params: {
+                                  'eventId': widget.bookingDetail!.bookingId,
                                 });
-                                if (value) {
-                                  if (bookingType == "SINGLE") {
-                                    deleteBooking(widget.event!.bookingID!)
-                                        .then((value) {
-                                      print(value);
-                                      setState(() {
-                                        // isCancelLoading = false;
+                              },
+                              tooltip: 'Detail Info',
+                            ),
+                            // IconButton(
+                            //   icon: const Icon(
+                            //     MdiIcons.emailOutline,
+                            //     color: blueAccent,
+                            //     size: 26,
+                            //   ),
+                            //   onPressed: () {},
+                            //   tooltip: 'Email',
+                            // ),
+                            // IconButton(
+                            //   icon: const Icon(
+                            //     Icons.sync_alt,
+                            //     color: blueAccent,
+                            //     size: 26,
+                            //   ),
+                            //   onPressed: () {},
+                            //   tooltip: 'Trade',
+                            // ),
+                            IconButton(
+                              icon: const Icon(
+                                MdiIcons.closeCircleOutline,
+                                color: blueAccent,
+                                size: 26,
+                              ),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      const ConfirmDialogBlack(
+                                    title: 'Cancel Booking',
+                                    contentText:
+                                        'Are you sure want cancel this booking?',
+                                  ),
+                                ).then((value) {
+                                  setState(() {
+                                    // isCancelLoading = true;
+                                  });
+                                  if (value) {
+                                    if (bookingType == "SINGLE") {
+                                      deleteBooking(widget.event!.bookingID!)
+                                          .then((value) {
+                                        print(value);
+                                        setState(() {
+                                          // isCancelLoading = false;
+                                        });
+                                        if (value['Status'] == "200") {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                AlertDialogBlack(
+                                              title: value['Title'],
+                                              contentText: value['Message'],
+                                            ),
+                                          ).then((value) {
+                                            context.go('/rooms');
+                                          });
+                                        }
+                                      }).onError((error, stackTrace) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: 'Failed connect to API',
+                                            contentText: error.toString(),
+                                            isSuccess: false,
+                                          ),
+                                        );
                                       });
-                                      if (value['Status'] == "200") {
+                                    }
+                                    if (bookingType == "RECURRENT") {
+                                      deleteBookingRecurrent(
+                                              widget.event!.bookingID!)
+                                          .then((value) {
+                                        print(value);
+                                        if (value['Status'] == "200") {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                AlertDialogBlack(
+                                              title: value['Title'],
+                                              contentText: value['Message'],
+                                            ),
+                                          ).then((value) {
+                                            context.go('/rooms');
+                                          });
+                                        }
+                                      }).onError((error, stackTrace) {
                                         showDialog(
                                           context: context,
                                           builder: (context) =>
                                               AlertDialogBlack(
-                                            title: value['Title'],
-                                            contentText: value['Message'],
+                                            title: 'Failed connect to API',
+                                            contentText: error.toString(),
+                                            isSuccess: false,
                                           ),
-                                        ).then((value) {
-                                          context.go('/rooms');
-                                        });
-                                      }
-                                    }).onError((error, stackTrace) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialogBlack(
-                                          title: 'Failed connect to API',
-                                          contentText: error.toString(),
-                                          isSuccess: false,
-                                        ),
-                                      );
-                                    });
+                                        );
+                                      });
+                                    }
                                   }
-                                  if (bookingType == "RECURRENT") {
-                                    deleteBookingRecurrent(
-                                            widget.event!.bookingID!)
-                                        .then((value) {
-                                      print(value);
-                                      if (value['Status'] == "200") {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              AlertDialogBlack(
-                                            title: value['Title'],
-                                            contentText: value['Message'],
-                                          ),
-                                        ).then((value) {
-                                          context.go('/rooms');
-                                        });
-                                      }
-                                    }).onError((error, stackTrace) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialogBlack(
-                                          title: 'Failed connect to API',
-                                          contentText: error.toString(),
-                                          isSuccess: false,
-                                        ),
-                                      );
-                                    });
-                                  }
-                                }
-                              });
-                            },
-                            tooltip: 'Cancel',
-                          ),
-                        ],
+                                });
+                              },
+                              tooltip: 'Cancel',
+                            ),
+                          ],
+                        ),
                       ),
                     )
                     // Text(widget.event!.resourceIds![0].toString()),
@@ -349,7 +359,9 @@ class _DetailAppointmentContainerState
                   onPressed: () {
                     widget.closeDetail!();
                   },
-                  icon: Icon(Icons.close_sharp),
+                  icon: const Icon(
+                    Icons.close_sharp,
+                  ),
                 ),
               ),
             ],

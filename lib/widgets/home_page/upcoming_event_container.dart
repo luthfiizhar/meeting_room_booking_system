@@ -34,12 +34,18 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
     // TODO: implement initState
     super.initState();
     getUpcomingEvent().then((value) {
-      print(value);
-      setState(() {
-        if (value['Status'] == "200") {
-          if (value['Data'] == []) {
-            upcomingData = [];
-          } else {
+      print("Upcoming Result $value");
+
+      if (value['Status'].toString() == "200") {
+        if (value['Data'].toString() == "[]") {
+          print('if upcoming kosong');
+          setState(() {
+            isEmpty = true;
+            emptyMessage = value['Message'];
+          });
+        } else {
+          print('if upcoming ada');
+          setState(() {
             isEmpty = false;
             upcomingData = [value['Data']];
             bookingId = value['Data']['BookingID'];
@@ -47,11 +53,11 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
             date = value['Data']['Date'];
             summary = value['Data']['Summary'];
             duration = value['Data']['Duration'];
-          }
-
-          emptyMessage = value['Message'];
+            roomPhoto = value['Data']['RoomPhoto'];
+            floor = value['Data']['AreaName'];
+          });
         }
-      });
+      }
     });
   }
 
@@ -123,7 +129,7 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                 ),
                 isEmpty
                     ? Text(
-                        'You don\'t have upcoming event.',
+                        emptyMessage,
                         style: helveticaText.copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
@@ -197,7 +203,7 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                '$floor} at $duration WIB',
+                                '$floor at $duration WIB',
                                 style: helveticaText.copyWith(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w300,

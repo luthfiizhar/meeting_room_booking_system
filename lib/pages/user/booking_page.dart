@@ -352,6 +352,43 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     setState(() {
       _date.text = value;
       selectedDate = date;
+      if (DateFormat('yyyy-MM-dd').format(date) !=
+          DateFormat('yyyy-MM-dd').format(DateTime.now())) {
+        startTime = '07:00';
+        endTime = '07:15';
+      } else {
+        dynamic hour = TimeOfDay.now().hour;
+        dynamic minute = TimeOfDay.now().minute;
+        dynamic endMinute = minute;
+        dynamic endHour = hour + 1;
+        if (TimeOfDay.now().minute >= 0 && TimeOfDay.now().minute < 15) {
+          minute = TimeOfDay.now().replacing(minute: 15).minute;
+        } else if (TimeOfDay.now().minute > 15 &&
+            TimeOfDay.now().minute <= 30) {
+          minute = TimeOfDay.now().replacing(minute: 30).minute;
+        } else if (TimeOfDay.now().minute > 30 &&
+            TimeOfDay.now().minute <= 45) {
+          minute = TimeOfDay.now().replacing(minute: 45).minute;
+        } else if (TimeOfDay.now().minute > 45 &&
+            TimeOfDay.now().minute <= 60) {
+          minute = TimeOfDay.now().replacing(minute: 0).minute;
+          hour = hour + 1;
+        }
+        // endMinute = minute + 15;
+        // endHour = endHour + 1;
+        if (endMinute == 60) {
+          endHour = hour;
+          endMinute = 0;
+        }
+        hour = hour.toString().padLeft(2, '0');
+        minute = minute.toString().padLeft(2, '0');
+
+        endHour = endHour.toString().padLeft(2, '0');
+        endMinute = endMinute.toString().padLeft(2, '0');
+
+        startTime = "$hour:$minute";
+        endTime = "$endHour:$endMinute";
+      }
     });
   }
 
@@ -772,6 +809,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                           selectedTime: startTime,
                                           setStartTime: setStartTime,
                                           selectedDate: selectedDate,
+                                          roomId: widget.roomId,
                                         ),
                                       ).then((value) {
                                         print(startTime);
@@ -1059,8 +1097,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                 ),
                                 //REPEAT SECTION
                                 Visibility(
-                                  visible:
-                                      roomType == "MeetingRoom" ? true : false,
+                                  // visible:
+                                  //     roomType == "MeetingRoom" ? true : false,
+                                  visible: false,
                                   child: Column(
                                     children: [
                                       inputField(
@@ -1355,14 +1394,23 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                 const SizedBox(
                                   height: 20,
                                 ),
-                                const Divider(
-                                  color: spanishGray,
-                                  thickness: 0.5,
+                                Visibility(
+                                  visible: layoutSectionVisible,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Divider(
+                                        color: spanishGray,
+                                        thickness: 0.5,
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      foodSection(),
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                foodSection(),
                                 Visibility(
                                   visible: layoutSectionVisible,
                                   child: Column(

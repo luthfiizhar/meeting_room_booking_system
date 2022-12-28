@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
@@ -31,36 +32,62 @@ class _StatisticContainerState extends State<StatisticContainer> {
     violetAccent,
   ];
 
+  String totalBooking = "";
+  String averageTime = "";
+  String mostUsedName = "";
+  String mostUsedPhoto = "";
+
+  onFilterChange(String value) {
+    bookingStatus.clear();
+    eventCreation.clear();
+    initStatistic(value);
+  }
+
+  initStatistic(String day) {
+    getStatisticDashboard(day).then((value) {
+      dynamic result = value['Data'];
+      dynamic listBookStat = result['BookingStatus'];
+      dynamic eventCreationStat = result['EventCreation'];
+      setState(() {
+        totalBooking = result['TotalBooking'].toString();
+        averageTime = result['AverageHours'].toString();
+        mostUsedName = result['MostUsedRoom']['RoomName'];
+        mostUsedPhoto = result['MostUsedRoom']['ImageURL'];
+      });
+      int i = 0;
+      for (var element in listBookStat) {
+        setState(() {
+          bookingStatus.add(
+            StatPercentage(
+              status: element['Status'],
+              percentage: element['Percentage'],
+              color: colorList[i],
+            ),
+          );
+        });
+
+        i++;
+      }
+      int j = 0;
+      for (var element in eventCreationStat) {
+        setState(() {
+          eventCreation.add(
+            StatPercentage(
+              status: element['Status'],
+              percentage: element['Percentage'],
+              color: colorList[j],
+            ),
+          );
+        });
+        j++;
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    // getStatisticDashboard().then((value) {
-    //   setState(() {
-    //     dynamic listBookStat = value['Data']['BookingStatus'];
-    //     dynamic eventCreationStat = value['Data']['EventCreation'];
-    //     int i = 0;
-    //     for (var element in listBookStat) {
-    //       bookingStatus.add(
-    //         StatPercentage(
-    //           status: element['Status'],
-    //           percentage: element['Percentage'],
-    //           color: colorList[i],
-    //         ),
-    //       );
-    //       i++;
-    //     }
-    //     for (var element in eventCreationStat) {
-    //       bookingStatus.add(
-    //         StatPercentage(
-    //           status: element['Status'],
-    //           percentage: element['Percentage'],
-    //           color: colorList[i],
-    //         ),
-    //       );
-    //       i++;
-    //     }
-    //   });
-    // });
+    initStatistic("30");
   }
 
   @override
@@ -71,7 +98,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
       //   minWidth: 790,
       //   minHeight: 200,
       // ),
-      constraints: homeLeftSideConstrains,
+      constraints: homeLeftSideConstrains.copyWith(maxHeight: 380),
       child: Container(
         decoration: BoxDecoration(
           color: white,
@@ -83,28 +110,9 @@ class _StatisticContainerState extends State<StatisticContainer> {
           horizontal: 35,
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              children: [
-                Text(
-                  '7 Days',
-                  style: helveticaText.copyWith(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  '30 Days',
-                  style: helveticaText.copyWith(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-              ],
-            ),
+            FilterTextStatistic(changeFilterDay: onFilterChange),
             const SizedBox(
               height: 15,
             ),
@@ -156,7 +164,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
           height: 12,
         ),
         Text(
-          '2451',
+          totalBooking,
           style: helveticaText.copyWith(
             fontSize: 40,
             fontWeight: FontWeight.w300,
@@ -167,7 +175,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
           height: 12,
         ),
         Text(
-          'You are in top 100 user',
+          '',
           style: helveticaText.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w300,
@@ -195,7 +203,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
         ),
         RichText(
           text: TextSpan(
-              text: '1.6 ',
+              text: '$averageTime ',
               style: helveticaText.copyWith(
                 fontSize: 40,
                 fontWeight: FontWeight.w300,
@@ -234,33 +242,42 @@ class _StatisticContainerState extends State<StatisticContainer> {
         Container(
           height: 80,
           width: 250,
-          padding: const EdgeInsets.only(
-            left: 15,
-            bottom: 10,
-            top: 10,
-            right: 15,
-          ),
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/persistance_1.png'),
-              fit: BoxFit.cover,
-              filterQuality: FilterQuality.none,
-              opacity: 0.5,
-            ),
-            color: eerieBlack,
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Align(
-            alignment: Alignment.bottomLeft,
-            child: Text(
-              'Room 103',
-              style: helveticaText.copyWith(
-                fontSize: 14,
-                fontWeight: FontWeight.w300,
-                color: white,
-              ),
-            ),
-          ),
+          child: mostUsedPhoto == ""
+              ? SizedBox()
+              : CachedNetworkImage(
+                  imageUrl: mostUsedPhoto,
+                  imageBuilder: (context, imageProvider) {
+                    return Container(
+                      padding: const EdgeInsets.only(
+                        left: 15,
+                        bottom: 10,
+                        top: 10,
+                        right: 15,
+                      ),
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                          filterQuality: FilterQuality.none,
+                          opacity: 0.6,
+                        ),
+                        color: eerieBlack,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          mostUsedName,
+                          style: helveticaText.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w300,
+                            color: white,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
         )
       ],
     );
@@ -318,19 +335,22 @@ class _StatisticContainerState extends State<StatisticContainer> {
                                 Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.only(
-                                      bottomLeft: index == 0
-                                          ? Radius.circular(5)
-                                          : Radius.zero,
-                                      topLeft: index == 0
-                                          ? Radius.circular(5)
+                                      bottomLeft:
+                                          index == 0 || widthPercent == 400
+                                              ? const Radius.circular(5)
+                                              : Radius.zero,
+                                      topLeft: index == 0 || widthPercent == 400
+                                          ? const Radius.circular(5)
                                           : Radius.zero,
                                       bottomRight:
-                                          index == bookingStatus.length - 1
-                                              ? Radius.circular(5)
+                                          index == bookingStatus.length - 1 ||
+                                                  widthPercent == 400
+                                              ? const Radius.circular(5)
                                               : Radius.zero,
                                       topRight:
-                                          index == bookingStatus.length - 1
-                                              ? Radius.circular(5)
+                                          index == bookingStatus.length - 1 ||
+                                                  widthPercent == 400
+                                              ? const Radius.circular(5)
                                               : Radius.zero,
                                     ),
                                     color: bookingStatus[index].color,
@@ -341,12 +361,16 @@ class _StatisticContainerState extends State<StatisticContainer> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                Text(
-                                  "${bookingStatus[index].percentage} %",
-                                  style: helveticaText.copyWith(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w300,
-                                    color: bookingStatus[index].color,
+                                SizedBox(
+                                  width: widthPercent,
+                                  child: Text(
+                                    "${bookingStatus[index].percentage} %",
+                                    style: helveticaText.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300,
+                                      color: bookingStatus[index].color,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
@@ -448,32 +472,42 @@ class _StatisticContainerState extends State<StatisticContainer> {
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: index == 0
-                                          ? Radius.circular(5)
-                                          : Radius.zero,
-                                      topLeft: index == 0
-                                          ? Radius.circular(5)
-                                          : Radius.zero,
-                                      bottomRight:
-                                          index == eventCreation.length - 1
-                                              ? Radius.circular(5)
-                                              : Radius.zero,
-                                      topRight:
-                                          index == eventCreation.length - 1
-                                              ? Radius.circular(5)
-                                              : Radius.zero,
-                                    ),
-                                    color: eventCreation[index].color,
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
-                                  width: widthPercent,
-                                  height: 20,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft:
+                                            index == 0 || widthPercent == 250
+                                                ? const Radius.circular(5)
+                                                : Radius.zero,
+                                        topLeft:
+                                            index == 0 || widthPercent == 250
+                                                ? const Radius.circular(5)
+                                                : Radius.zero,
+                                        bottomRight:
+                                            index == eventCreation.length - 1 ||
+                                                    widthPercent == 250
+                                                ? const Radius.circular(5)
+                                                : Radius.zero,
+                                        topRight:
+                                            index == eventCreation.length - 1 ||
+                                                    widthPercent == 250
+                                                ? const Radius.circular(5)
+                                                : Radius.zero,
+                                      ),
+                                      color: eventCreation[index].color,
+                                    ),
+                                    width: widthPercent,
+                                    height: 20,
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 10,
                                 ),
                                 Text(
                                   "${eventCreation[index].percentage} %",
+                                  overflow: TextOverflow.ellipsis,
                                   style: helveticaText.copyWith(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w300,
@@ -525,6 +559,130 @@ class _StatisticContainerState extends State<StatisticContainer> {
           }).toList(),
         )
       ],
+    );
+  }
+}
+
+class FilterTextStatistic extends StatefulWidget {
+  FilterTextStatistic({
+    super.key,
+    this.changeFilterDay,
+  });
+  Function? changeFilterDay;
+  String? filterName;
+
+  @override
+  State<FilterTextStatistic> createState() => _FilterTextStatisticState();
+}
+
+class _FilterTextStatisticState extends State<FilterTextStatistic> {
+  String selectedFilter = "30 Days";
+
+  onHighlight(String value) {
+    switch (value) {
+      case "7 Days":
+        changeHighlight("7 Days");
+        widget.changeFilterDay!("7");
+        break;
+      case "30 Days":
+        changeHighlight("30 Days");
+        widget.changeFilterDay!("30");
+        break;
+      default:
+    }
+  }
+
+  void changeHighlight(String value) {
+    setState(() {
+      selectedFilter = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        children: [
+          FilterTextStatisticItem(
+            title: "7 Days",
+            selected: selectedFilter == "7 Days",
+            onHighlight: onHighlight,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          FilterTextStatisticItem(
+            title: "30 Days",
+            selected: selectedFilter == "30 Days",
+            onHighlight: onHighlight,
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class FilterTextStatisticItem extends StatelessWidget {
+  FilterTextStatisticItem({
+    super.key,
+    this.title,
+    this.selected,
+    this.onHighlight,
+  });
+
+  final String? title;
+  final bool? selected;
+  final Function? onHighlight;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        onHighlight!(title!);
+      },
+      child: FilterStatisticItemText(
+        name: title,
+        selected: selected,
+      ),
+    );
+  }
+}
+
+class FilterStatisticItemText extends StatefulWidget {
+  FilterStatisticItemText({
+    super.key,
+    this.name,
+    this.selected,
+  });
+  String? name;
+  bool? selected;
+
+  @override
+  State<FilterStatisticItemText> createState() =>
+      _FilterStatisticItemTextState();
+}
+
+class _FilterStatisticItemTextState extends State<FilterStatisticItemText> {
+  bool _hovering = false;
+
+  _hovered(bool hovered) {
+    setState(() {
+      _hovering = hovered;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onHover: (_) => _hovered(true),
+      onExit: (_) => _hovered(false),
+      child: Text(
+        widget.name!,
+        style: helveticaText.copyWith(
+            fontSize: 12,
+            fontWeight: FontWeight.w300,
+            color: widget.selected! ? davysGray : spanishGray),
+      ),
     );
   }
 }

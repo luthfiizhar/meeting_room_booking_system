@@ -7,10 +7,12 @@ class SortingContainer extends StatefulWidget {
     super.key,
     this.listSorting,
     this.selectedSorting,
+    this.onChangeSorting,
   });
 
   List<RadioModel>? listSorting;
   String? selectedSorting;
+  Function? onChangeSorting;
 
   @override
   State<SortingContainer> createState() => _SortingContainerState();
@@ -32,9 +34,9 @@ class _SortingContainerState extends State<SortingContainer> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Align(
+          const Align(
             alignment: Alignment.centerLeft,
-            child: const Text(
+            child: Text(
               'Sort Result',
               style: TextStyle(
                 fontFamily: 'Helvetica',
@@ -44,7 +46,7 @@ class _SortingContainerState extends State<SortingContainer> {
               ),
             ),
           ),
-          Padding(
+          const Padding(
             padding: const EdgeInsets.symmetric(vertical: 13),
             child: Divider(
               color: davysGray,
@@ -63,8 +65,9 @@ class _SortingContainerState extends State<SortingContainer> {
                   value: widget.listSorting![index].text,
                   group: widget.selectedSorting,
                   onChanged: (value) {
-                    widget.selectedSorting = widget.listSorting![index].text!;
-                    setState(() {});
+                    // widget.selectedSorting = widget.listSorting![index].text!;
+                    widget.onChangeSorting!(widget.listSorting![index].value,
+                        widget.listSorting![index].text!);
                   },
                   label: widget.listSorting![index].text,
                 ),
