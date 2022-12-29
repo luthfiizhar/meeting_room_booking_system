@@ -314,78 +314,92 @@ class ScheduleListContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                eventName,
-                style: helveticaText.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                  color: orangeAccent,
+    return InkWell(
+      onTap: () {
+        if (bookingId != "-") {
+          context.goNamed(
+            'detail_event',
+            params: {
+              "eventId": bookingId,
+            },
+          );
+        } else {
+          html.window.open('http://calendar.google.com', '');
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  eventName,
+                  style: helveticaText.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: orangeAccent,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                '$duration WIB',
-                style: helveticaText.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w300,
-                  color: davysGray,
+                const SizedBox(
+                  height: 10,
                 ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              bookingId == "-"
-                  ? const SizedBox()
-                  : Text(
-                      '$location, $floor',
-                      style: helveticaText.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
-                        color: davysGray,
+                Text(
+                  '$duration WIB',
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                    color: davysGray,
+                  ),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                bookingId == "-"
+                    ? const SizedBox()
+                    : Text(
+                        '$location, $floor',
+                        style: helveticaText.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w300,
+                          color: davysGray,
+                        ),
+                      ),
+              ],
+            ),
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: bookingId == "-"
+                  ? InkWell(
+                      onTap: () {
+                        html.window.open('http://calendar.google.com', '');
+                      },
+                      child: const Icon(
+                        Icons.keyboard_arrow_right_sharp,
+                        color: orangeAccent,
+                      ),
+                    )
+                  : InkWell(
+                      onTap: () {
+                        if (bookingId != "-") {
+                          context.goNamed(
+                            'detail_event',
+                            params: {
+                              "eventId": bookingId,
+                            },
+                          );
+                        }
+                      },
+                      child: const Icon(
+                        Icons.info_outline,
+                        color: orangeAccent,
                       ),
                     ),
-            ],
-          ),
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: bookingId == "-"
-                ? InkWell(
-                    onTap: () {
-                      html.window.open('http://calendar.google.com', '');
-                    },
-                    child: const Icon(
-                      Icons.keyboard_arrow_right_sharp,
-                      color: orangeAccent,
-                    ),
-                  )
-                : InkWell(
-                    onTap: () {
-                      if (bookingId != "-") {
-                        context.goNamed(
-                          'detail_event',
-                          params: {
-                            "eventId": bookingId,
-                          },
-                        );
-                      }
-                    },
-                    child: const Icon(
-                      Icons.info_outline,
-                      color: orangeAccent,
-                    ),
-                  ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

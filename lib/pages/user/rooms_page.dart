@@ -761,7 +761,7 @@ class _RoomsPageState extends State<RoomsPage> {
         Container(
           // color: Colors.amber,
           // height: MediaQuery.of(context).size.height - 60,
-          height: dataRoom.isNotEmpty ? (100 * dataRoom.length) + 100 : 500,
+          height: dataRoom.isNotEmpty ? (100 * dataRoom.length) + 30 : 500,
           child: SfCalendar(
             onViewChanged: (viewChangedDetails) {
               selectedDate = viewChangedDetails.visibleDates.first;
@@ -1068,7 +1068,6 @@ class _RoomsPageState extends State<RoomsPage> {
               endHour: 19,
             ),
             todayHighlightColor: orangeAccent,
-
             resourceViewSettings: const ResourceViewSettings(
               size: 100,
               displayNameTextStyle: TextStyle(
@@ -1099,8 +1098,8 @@ class _RoomsPageState extends State<RoomsPage> {
             const SizedBox(
               height: 30,
             ),
-            Container(
-              height: dataRoom.isNotEmpty ? (100 * dataRoom.length) + 100 : 500,
+            SizedBox(
+              height: dataRoom.isNotEmpty ? (100 * dataRoom.length) + 30 : 500,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: dataRoom.map((e) {
@@ -1108,13 +1107,13 @@ class _RoomsPageState extends State<RoomsPage> {
                     children: [
                       Expanded(
                         child: SizedBox(
-                          height: 122,
+                          height: 100,
                           child: Align(
                             alignment: Alignment.bottomCenter,
                             child: Container(
                               width: double.infinity,
-                              height: 5,
-                              color: eerieBlack,
+                              height: 7,
+                              color: Colors.transparent,
                             ),
                           ),
                         ),
@@ -1132,7 +1131,7 @@ class _RoomsPageState extends State<RoomsPage> {
                 color: eerieBlack.withOpacity(0.6),
                 width: double.infinity,
                 height:
-                    dataRoom.isNotEmpty ? (100 * dataRoom.length) + 100 : 500,
+                    dataRoom.isNotEmpty ? (100 * dataRoom.length) + 40 : 500,
                 child: const Center(
                   child: CircularProgressIndicator(
                     color: eerieBlack,

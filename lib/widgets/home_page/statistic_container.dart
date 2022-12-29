@@ -447,7 +447,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
                                             width: 400.0 *
                                                 (value.percentage / 100),
                                             child: Text(
-                                              "${value.percentage}",
+                                              "${value.percentage}%",
                                               textAlign: index ==
                                                       bookingStatus.length - 1
                                                   ? TextAlign.end
@@ -468,7 +468,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
                                               width: 400.0 *
                                                   (value.percentage / 100),
                                               child: Text(
-                                                "${value.percentage}",
+                                                "${value.percentage}%",
                                                 textAlign: index ==
                                                         bookingStatus.length - 1
                                                     ? TextAlign.end

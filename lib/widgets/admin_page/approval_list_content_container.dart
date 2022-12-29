@@ -41,260 +41,260 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                 thickness: 0.5,
               )
             : const SizedBox(),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 17,
-            bottom: 17,
-          ),
+        InkWell(
+          onTap: () {
+            context.goNamed(
+              'detail_approval',
+              params: {
+                'eventId': widget.bookingId,
+              },
+            );
+          },
           child: Container(
-            child: Row(
-              children: [
-                //EVENT NAME
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    widget.eventName,
-                    style: helveticaText.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: davysGray,
+            padding: const EdgeInsets.only(
+              top: 17,
+              bottom: 17,
+            ),
+            child: Container(
+              child: Row(
+                children: [
+                  //EVENT NAME
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      widget.eventName,
+                      style: helveticaText.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: davysGray,
+                      ),
                     ),
                   ),
-                ),
-                //DATE
-                Expanded(
-                  child: Text(
-                    widget.date,
-                    style: helveticaText.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      color: davysGray,
+                  //DATE
+                  Expanded(
+                    child: Text(
+                      widget.date,
+                      style: helveticaText.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                        color: davysGray,
+                      ),
                     ),
                   ),
-                ),
-                //LOCATION
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    widget.location,
-                    style: helveticaText.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      color: davysGray,
+                  //LOCATION
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      widget.location,
+                      style: helveticaText.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                        color: davysGray,
+                      ),
                     ),
                   ),
-                ),
-                //TIME
-                Expanded(
-                  child: Text(
-                    widget.time,
-                    style: helveticaText.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      color: davysGray,
+                  //TIME
+                  Expanded(
+                    child: Text(
+                      widget.time,
+                      style: helveticaText.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                        color: davysGray,
+                      ),
                     ),
                   ),
-                ),
-                //STATUS
-                Expanded(
-                  child: widget.status != "Approval"
-                      ? Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Builder(builder: (context) {
-                              switch (widget.status) {
-                                case 'Checked In':
-                                  return const Icon(
-                                    Icons.check_circle,
-                                    size: 16,
-                                    color: greenAcent,
-                                  );
-                                case 'Checked Out':
-                                  return const Icon(
-                                    Icons.check_circle,
-                                    size: 16,
-                                    color: greenAcent,
-                                  );
-                                case 'Approved':
-                                  return const Icon(
-                                    Icons.check_circle,
-                                    size: 16,
-                                    color: greenAcent,
-                                  );
-                                case 'Impromptu':
-                                  return const Icon(
-                                    Icons.check_circle,
-                                    size: 16,
-                                    color: greenAcent,
-                                  );
-                                case 'Canceled':
-                                  return const Icon(
-                                    Icons.remove_circle_sharp,
-                                    size: 16,
-                                    color: orangeAccent,
-                                  );
-                                case 'Auto Released':
-                                  return const Icon(
-                                    Icons.remove_circle_sharp,
-                                    size: 16,
-                                    color: orangeAccent,
-                                  );
-                                case 'Declined':
-                                  return const Icon(
-                                    Icons.remove_circle_sharp,
-                                    size: 16,
-                                    color: orangeAccent,
-                                  );
-                                case 'Rejected':
-                                  return const Icon(
-                                    Icons.remove_circle_sharp,
-                                    size: 16,
-                                    color: orangeAccent,
-                                  );
-                                case 'Waiting Check In':
-                                  return const Icon(
-                                    MdiIcons.alertCircleOutline,
-                                    size: 16,
-                                    color: orangeAccent,
-                                  );
-                                case 'Waiting Approval':
-                                  return const Icon(
-                                    MdiIcons.alertCircleOutline,
-                                    size: 16,
-                                    color: orangeAccent,
-                                  );
-                                default:
-                                  return const Icon(
-                                    Icons.check_circle,
-                                    size: 16,
-                                    color: greenAcent,
-                                  );
-                              }
-                            }),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              widget.status,
-                              style: helveticaText.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300,
-                                color: davysGray,
-                                height: 1.3,
-                              ),
-                            ),
-                          ],
-                        )
-                      : Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                approveAuditorium(widget.bookingId)
-                                    .then((value) {
-                                  if (value['Status'] == "200") {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialogBlack(
-                                        title: value['Title'],
-                                        contentText: value['Message'],
-                                        isSuccess: true,
-                                      ),
+                  //STATUS
+                  Expanded(
+                    child: widget.status != "Approval"
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Builder(builder: (context) {
+                                switch (widget.status) {
+                                  case 'Checked In':
+                                    return const Icon(
+                                      Icons.check_circle,
+                                      size: 16,
+                                      color: greenAcent,
                                     );
-                                  } else {
+                                  case 'Checked Out':
+                                    return const Icon(
+                                      Icons.check_circle,
+                                      size: 16,
+                                      color: greenAcent,
+                                    );
+                                  case 'Approved':
+                                    return const Icon(
+                                      Icons.check_circle,
+                                      size: 16,
+                                      color: greenAcent,
+                                    );
+                                  case 'Impromptu':
+                                    return const Icon(
+                                      Icons.check_circle,
+                                      size: 16,
+                                      color: greenAcent,
+                                    );
+                                  case 'Canceled':
+                                    return const Icon(
+                                      Icons.remove_circle_sharp,
+                                      size: 16,
+                                      color: orangeAccent,
+                                    );
+                                  case 'Auto Released':
+                                    return const Icon(
+                                      Icons.remove_circle_sharp,
+                                      size: 16,
+                                      color: orangeAccent,
+                                    );
+                                  case 'Declined':
+                                    return const Icon(
+                                      Icons.remove_circle_sharp,
+                                      size: 16,
+                                      color: orangeAccent,
+                                    );
+                                  case 'Rejected':
+                                    return const Icon(
+                                      Icons.remove_circle_sharp,
+                                      size: 16,
+                                      color: orangeAccent,
+                                    );
+                                  case 'Waiting Check In':
+                                    return const Icon(
+                                      MdiIcons.alertCircleOutline,
+                                      size: 16,
+                                      color: orangeAccent,
+                                    );
+                                  case 'Waiting Approval':
+                                    return const Icon(
+                                      MdiIcons.alertCircleOutline,
+                                      size: 16,
+                                      color: orangeAccent,
+                                    );
+                                  default:
+                                    return const Icon(
+                                      Icons.check_circle,
+                                      size: 16,
+                                      color: greenAcent,
+                                    );
+                                }
+                              }),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                widget.status,
+                                style: helveticaText.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w300,
+                                  color: davysGray,
+                                  height: 1.3,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  approveAuditorium(widget.bookingId)
+                                      .then((value) {
+                                    if (value['Status'] == "200") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: value['Title'],
+                                          contentText: value['Message'],
+                                          isSuccess: true,
+                                        ),
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: value['Title'],
+                                          contentText: value['Message'],
+                                          isSuccess: false,
+                                        ),
+                                      );
+                                    }
+                                  }).onError((error, stackTrace) {
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialogBlack(
-                                        title: value['Title'],
-                                        contentText: value['Message'],
+                                        title: 'Can\'t connect to API',
+                                        contentText: error.toString(),
                                         isSuccess: false,
                                       ),
                                     );
-                                  }
-                                }).onError((error, stackTrace) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialogBlack(
-                                      title: 'Can\'t connect to API',
-                                      contentText: error.toString(),
-                                      isSuccess: false,
-                                    ),
-                                  );
-                                });
-                              },
-                              child: const Icon(
-                                Icons.check_circle,
-                                size: 20,
-                                color: greenAcent,
+                                  });
+                                },
+                                child: const Icon(
+                                  Icons.check_circle,
+                                  size: 20,
+                                  color: greenAcent,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                rejectAuditorium(widget.bookingId)
-                                    .then((value) {
-                                  if (value['Status'] == "200") {
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  rejectAuditorium(widget.bookingId)
+                                      .then((value) {
+                                    if (value['Status'] == "200") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: value['Title'],
+                                          contentText: value['Message'],
+                                          isSuccess: true,
+                                        ),
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: value['Title'],
+                                          contentText: value['Message'],
+                                          isSuccess: false,
+                                        ),
+                                      );
+                                    }
+                                  }).onError((error, stackTrace) {
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialogBlack(
-                                        title: value['Title'],
-                                        contentText: value['Message'],
-                                        isSuccess: true,
-                                      ),
-                                    );
-                                  } else {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialogBlack(
-                                        title: value['Title'],
-                                        contentText: value['Message'],
+                                        title: 'Can\'t connect to API',
+                                        contentText: error.toString(),
                                         isSuccess: false,
                                       ),
                                     );
-                                  }
-                                }).onError((error, stackTrace) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialogBlack(
-                                      title: 'Can\'t connect to API',
-                                      contentText: error.toString(),
-                                      isSuccess: false,
-                                    ),
-                                  );
-                                });
-                              },
-                              child: const Icon(
-                                Icons.remove_circle_sharp,
-                                size: 20,
-                                color: orangeAccent,
+                                  });
+                                },
+                                child: const Icon(
+                                  Icons.remove_circle_sharp,
+                                  size: 20,
+                                  color: orangeAccent,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 30,
-                            )
-                          ],
-                        ),
-                ),
-                InkWell(
-                  onTap: () {
-                    context.goNamed(
-                      'detail_approval',
-                      params: {
-                        'eventId': widget.bookingId,
-                      },
-                    );
-                  },
-                  child: const SizedBox(
+                              const SizedBox(
+                                width: 30,
+                              )
+                            ],
+                          ),
+                  ),
+                  const SizedBox(
                     width: 20,
                     child: Icon(
                       Icons.chevron_right_sharp,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

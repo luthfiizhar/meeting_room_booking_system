@@ -39,12 +39,17 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                 thickness: 0.5,
               )
             : const SizedBox(),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 17,
-            bottom: 17,
-          ),
+        InkWell(
+          onTap: () {
+            context.goNamed('detail_booking_list', params: {
+              'eventId': widget.bookingId,
+            });
+          },
           child: Container(
+            padding: const EdgeInsets.only(
+              top: 17,
+              bottom: 17,
+            ),
             child: Row(
               children: [
                 //EVENT NAME
@@ -180,17 +185,10 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                     ],
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    context.goNamed('detail_booking_list', params: {
-                      'eventId': widget.bookingId,
-                    });
-                  },
-                  child: const SizedBox(
-                    width: 20,
-                    child: Icon(
-                      Icons.chevron_right_sharp,
-                    ),
+                const SizedBox(
+                  width: 20,
+                  child: Icon(
+                    Icons.chevron_right_sharp,
                   ),
                 ),
               ],
