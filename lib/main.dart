@@ -248,16 +248,18 @@ class MyApp extends StatelessWidget {
           key: state.pageKey,
           child: MyBookingPage(),
         ),
-        // routes: [
-        //   GoRoute(
-        //     name: 'detail_event',
-        //     path: 'detail_event/eventID=:eventId',
-        //     pageBuilder: (context, state) => NoTransitionPage<void>(
-        //       key: state.pageKey,
-        //       child: DetailEventPage(),
-        //     ),
-        //   )
-        // ],
+        routes: [
+          GoRoute(
+            name: 'detail_booking_list',
+            path: 'detail_event/eventID=:eventId',
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              child: DetailEventPage(
+                bookingId: state.params['eventId'],
+              ),
+            ),
+          )
+        ],
       ),
       GoRoute(
           name: 'booking',

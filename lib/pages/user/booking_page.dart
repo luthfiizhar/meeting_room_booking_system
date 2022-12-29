@@ -337,7 +337,21 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   setStartTime(String value) {
     setState(() {
       startTime = value;
+
       _startTime.text = startTime;
+
+      var hour = int.parse(value.split(':').first);
+      var minute = int.parse(value.split(':').last);
+      var minuteEnd = minute;
+      var hourEnd = hour + 1;
+      if (minuteEnd == 60) {
+        hourEnd = hourEnd + 1;
+        minuteEnd = 0;
+      }
+
+      endTime =
+          "${hourEnd.toString().padLeft(2, '0')}:${minuteEnd.toString().padLeft(2, '0')}";
+      _endTime.text = endTime;
     });
   }
 
@@ -810,6 +824,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                           setStartTime: setStartTime,
                                           selectedDate: selectedDate,
                                           roomId: widget.roomId,
+                                          roomName: roomName,
                                         ),
                                       ).then((value) {
                                         print(startTime);
@@ -842,8 +857,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                   PickEndTimeDialog(
                                                 selectedTime: startTime,
                                                 startTime: startTime,
+                                                endTime: endTime,
                                                 setEndTime: setEndTime,
                                                 selectedDate: selectedDate,
+                                                roomId: widget.roomId,
+                                                roomName: roomName,
                                               ),
                                             ).then((value) {
                                               // print(startTime);

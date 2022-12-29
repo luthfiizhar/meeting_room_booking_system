@@ -219,47 +219,47 @@ class _DetailAppointmentContainerState
                     const SizedBox(
                       height: 40,
                     ),
-                    Visibility(
-                      visible: bookingStep == "3" || bookingStep == "4"
-                          ? false
-                          : true,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            IconButton(
-                              icon: const Icon(
-                                MdiIcons.informationOutline,
-                                color: blueAccent,
-                                size: 26,
-                              ),
-                              onPressed: () {
-                                context.goNamed('detail_event', params: {
-                                  'eventId': widget.bookingDetail!.bookingId,
-                                });
-                              },
-                              tooltip: 'Detail Info',
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              MdiIcons.informationOutline,
+                              color: blueAccent,
+                              size: 26,
                             ),
-                            // IconButton(
-                            //   icon: const Icon(
-                            //     MdiIcons.emailOutline,
-                            //     color: blueAccent,
-                            //     size: 26,
-                            //   ),
-                            //   onPressed: () {},
-                            //   tooltip: 'Email',
-                            // ),
-                            // IconButton(
-                            //   icon: const Icon(
-                            //     Icons.sync_alt,
-                            //     color: blueAccent,
-                            //     size: 26,
-                            //   ),
-                            //   onPressed: () {},
-                            //   tooltip: 'Trade',
-                            // ),
-                            IconButton(
+                            onPressed: () {
+                              context.goNamed('detail_event', params: {
+                                'eventId': widget.bookingDetail!.bookingId,
+                              });
+                            },
+                            tooltip: 'Detail Info',
+                          ),
+                          // IconButton(
+                          //   icon: const Icon(
+                          //     MdiIcons.emailOutline,
+                          //     color: blueAccent,
+                          //     size: 26,
+                          //   ),
+                          //   onPressed: () {},
+                          //   tooltip: 'Email',
+                          // ),
+                          // IconButton(
+                          //   icon: const Icon(
+                          //     Icons.sync_alt,
+                          //     color: blueAccent,
+                          //     size: 26,
+                          //   ),
+                          //   onPressed: () {},
+                          //   tooltip: 'Trade',
+                          // ),
+                          Visibility(
+                            visible: bookingStep == "3" || bookingStep == "4"
+                                ? false
+                                : true,
+                            child: IconButton(
                               icon: const Icon(
                                 MdiIcons.closeCircleOutline,
                                 color: blueAccent,
@@ -344,8 +344,8 @@ class _DetailAppointmentContainerState
                               },
                               tooltip: 'Cancel',
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     )
                     // Text(widget.event!.resourceIds![0].toString()),

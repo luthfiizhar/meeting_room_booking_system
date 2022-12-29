@@ -420,7 +420,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       index: widget.index,
       setDatePickerStatus: resetAllVisibleStatus,
       child: ConstrainedBox(
-        constraints: pageConstraints,
+        constraints: pageConstraints.copyWith(
+            // maxHeight: 2000,
+            ),
         child: jwtToken == "" || jwtToken == null
             ? const Align(
                 alignment: Alignment.center,
@@ -441,45 +443,52 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Table(
-                              columnWidths: const {
-                                0: FlexColumnWidth(4.5),
-                                1: FlexColumnWidth(2)
-                              },
+                            // Table(
+                            //   columnWidths: const {
+                            //     0: FlexColumnWidth(4.5),
+                            //     1: FlexColumnWidth(2)
+                            //   },
+                            //   children: [
+                            //     TableRow(
+                            //       children: [
+                            //         Padding(
+                            //           padding: const EdgeInsets.only(
+                            //             right: 25,
+                            //           ),
+                            //           child: row1(),
+                            //         ),
+                            //         TableCell(
+                            //           verticalAlignment:
+                            //               TableCellVerticalAlignment.fill,
+                            //           child: Container(
+                            //             alignment: Alignment.center,
+                            //             child: row2(),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ],
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TableRow(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 25,
-                                      ),
-                                      child: row1(),
-                                    ),
-                                    TableCell(
-                                      verticalAlignment:
-                                          TableCellVerticalAlignment.fill,
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: row2(),
-                                      ),
-                                    ),
-                                  ],
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    minWidth: 786,
+                                    maxWidth: 786,
+                                  ),
+                                  child: row1(),
+                                ),
+                                const SizedBox(
+                                  width: 30,
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: row2(),
                                 ),
                               ],
-                              // Row(
-                              //   mainAxisAlignment:
-                              //       MainAxisAlignment.spaceBetween,
-                              //   children: [
-                              //     row1(),
-                              //     const SizedBox(
-                              //       width: 30,
-                              //     ),
-                              //     Expanded(
-                              //       child: row2(),
-                              //     ),
-                              //   ],
-                              // ),
                             ),
+                            // ),
                           ],
                         ),
                         opacityOn
@@ -504,7 +513,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: datePickerVisible,
                           child: Positioned(
                             left: 265,
-                            top: 715,
+                            top: 310,
                             child: CustomDatePicker(
                               controller: datePickerControl,
                               isDark: true,
@@ -519,7 +528,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: timePickerContainerVisible,
                           child: Positioned(
                             left: 465,
-                            top: 715,
+                            top: 310,
                             child: TimePickerContainer(
                               // controller: datePickerControl,
                               endTime: endTime,
@@ -541,7 +550,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Visibility(
                           visible: startTimeContainerVisible,
                           child: Positioned(
-                            top: 845,
+                            top: 440,
                             left: 475,
                             child: StartTimeContainer(
                               items: startTimeList,
@@ -554,7 +563,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Visibility(
                           visible: endTimeContainerVisible,
                           child: Positioned(
-                            top: 845,
+                            top: 440,
                             left: 595,
                             child: EndTimeContainer(
                               items: endTimeList,
@@ -569,7 +578,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: participantContainerVisible,
                           child: Positioned(
                             left: 265,
-                            top: 795,
+                            top: 390,
                             child: ParticipantContainer(
                               setParticipantStatus: setParticipantStatus,
                               onChangeParticipant: onParticipanSelected,
@@ -580,7 +589,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: amenitiesContainerVisible,
                           child: Positioned(
                             left: 465,
-                            top: 795,
+                            top: 390,
                             child: AmenitiesContainer(
                               tvOnChange: (value) {
                                 if (checkBoxTv) {
@@ -636,7 +645,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: meetingTypeContainerVisible,
                           child: Positioned(
                             left: 30,
-                            top: 850,
+                            top: 420,
                             child: RoomTypeContainerHomePage(
                               changeRoomType: changeRoomType,
                               setContainerStatus: setMeetingTypeContainerStatus,
@@ -661,10 +670,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         const SizedBox(
           height: 30,
         ),
-        StatisticContainer(),
-        const SizedBox(
-          height: 30,
-        ),
         HomeRoomSearchContainer(
           dateController: _dateController,
           participantController: _participantController,
@@ -686,6 +691,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           searchRoom: search,
           initLoading: initLoading,
         ),
+        const SizedBox(
+          height: 30,
+        ),
+        StatisticContainer(),
         const SizedBox(
           height: 30,
         ),

@@ -182,7 +182,7 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                 ),
                 InkWell(
                   onTap: () {
-                    context.goNamed('detail_event', params: {
+                    context.goNamed('detail_booking_list', params: {
                       'eventId': widget.bookingId,
                     });
                   },

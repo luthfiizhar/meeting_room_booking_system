@@ -1112,15 +1112,25 @@ Future getSuggestAvailableRoom() async {
   }
 }
 
-Future startTimeSelector(String roomId) async {
+Future startTimeSelector(String roomId, String date) async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
   var url = Uri.https(
-      apiUrlGlobal, '/MRBS_Backend/public/api/tablet/start-time/$roomId');
+      apiUrlGlobal, '/MRBS_Backend/public/api/user/booking/start-date');
   Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
     // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
     'Content-Type': 'application/json',
   };
+  var bodySend = """
+  {
+    "RoomID" : "$roomId",
+    "Date" : "$date"
+  }
+  """;
   try {
-    var response = await http.get(url, headers: requestHeader);
+    var response = await http.post(url, headers: requestHeader, body: bodySend);
 
     var data = json.decode(response.body);
 
@@ -1130,14 +1140,25 @@ Future startTimeSelector(String roomId) async {
   }
 }
 
-Future getRoomSchedule(String roomId) async {
+Future getRoomSchedule(String roomId, String selectedDate) async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
   var url = Uri.https(
-      apiUrlGlobal, '/MRBS_Backend/public/api/tablet/schedule/$roomId');
+      apiUrlGlobal, '/MRBS_Backend/public/api/user/booking/room-schedule');
   Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
     'Content-Type': 'application/json',
   };
+  var bodySend = """
+  {
+    "RoomID" : "$roomId",
+    "Date" : "$selectedDate"
+  }
+  """;
+  print(bodySend);
   try {
-    var response = await http.get(url, headers: requestHeader);
+    var response = await http.post(url, headers: requestHeader, body: bodySend);
 
     var data = json.decode(response.body);
 

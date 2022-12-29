@@ -121,14 +121,17 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
                                         text: '-',
                                         onTap: () {
                                           int min = amenities[index].qty!;
-
-                                          if (min > 0) {
-                                            min--;
-                                            amenities[index].qty = min;
-                                          } else {
-                                            min = 0;
-                                            amenities[index].qty = min;
+                                          if (amenities[index].defaultAmount! ==
+                                              0) {
+                                            if (min > 0) {
+                                              min--;
+                                              amenities[index].qty = min;
+                                            } else {
+                                              min = 0;
+                                              amenities[index].qty = min;
+                                            }
                                           }
+
                                           setState(() {});
                                         },
                                         padding: ButtonSize().itemQtyButton(),

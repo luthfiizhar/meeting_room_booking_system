@@ -5,6 +5,7 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
+import 'package:meeting_room_booking_system/widgets/booking_page/room_schedule.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class PickStartTimeDialog extends StatefulWidget {
@@ -14,12 +15,14 @@ class PickStartTimeDialog extends StatefulWidget {
     this.setStartTime,
     this.selectedDate,
     this.roomId,
+    this.roomName = "",
   });
 
   String? selectedTime;
   DateTime? selectedDate;
   Function? setStartTime;
   String? roomId;
+  String? roomName;
 
   @override
   State<PickStartTimeDialog> createState() => _PickStartTimeDialogState();
@@ -97,7 +100,6 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
         .replacing(hour: hour, minute: minute); //TimeOfDay(hour: 9, minute: 0);
     final endTime = TimeOfDay(hour: 19, minute: 0);
     final step = Duration(minutes: 15);
-    print(widget.selectedDate);
     if (widget.selectedDate!.day == DateTime.now().day) {
       timeList = getTimes(startTime, endTime, step).map((tod) => tod).toList();
     } else {
@@ -147,8 +149,9 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
   }
 
   initStartTimeSelector() {
-    startTimeSelector(widget.roomId!).then((value) {
-      print(value);
+    startTimeSelector(widget.roomId!,
+            DateFormat('yyyy-MM-dd').format(widget.selectedDate!))
+        .then((value) {
       setState(() {
         timeList = value['Data'];
       });
@@ -255,94 +258,10 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                       ),
                       GestureDetector(
                         onTap: () {},
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            left: 25,
-                            right: 25,
-                            top: 20,
-                            bottom: 20,
-                          ),
-                          height: 500,
-                          width: 300,
-                          decoration: BoxDecoration(
-                            color: culturedWhite,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Room Schedule',
-                                style: TextStyle(
-                                  fontFamily: 'Helvetica',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: eerieBlack,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                today,
-                                style: const TextStyle(
-                                  fontFamily: 'Helvetica',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w300,
-                                  color: davysGray,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  // color: Colors.blue,
-                                  height: 380,
-                                  child: SfCalendar(
-                                    controller: _calendar,
-                                    onTap: (calendarTapDetails) {
-                                      if (calendarTapDetails.targetElement ==
-                                          CalendarElement.calendarCell) {
-                                        // print(calendarTapDetails.date);
-                                        // var hour = calendarTapDetails.date!.hour
-                                        //     .toString()
-                                        //     .padLeft(2, '0');
-                                        // var minute = calendarTapDetails.date!.minute
-                                        //     .toString()
-                                        //     .padLeft(2, '0');
-                                        // var startTime = "$hour:$minute";
-                                        // widget.setStartTime!(startTime);
-                                        // Navigator.pop(context);
-                                      }
-                                    },
-                                    appointmentBuilder: appointmentBuilder,
-                                    view: CalendarView.day,
-                                    initialDisplayDate: widget.selectedDate,
-                                    dataSource: events,
-                                    timeSlotViewSettings:
-                                        const TimeSlotViewSettings(
-                                      timeFormat: 'H:mm',
-                                      startHour: 5,
-                                      endHour: 20,
-                                      timeIntervalHeight: 26,
-                                      timeTextStyle: TextStyle(
-                                        fontFamily: 'Helvetica',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w300,
-                                        color: davysGray,
-                                      ),
-                                    ),
-                                    headerDateFormat: 'yMMMMd',
-                                    todayHighlightColor: eerieBlack,
-                                    viewNavigationMode: ViewNavigationMode.none,
-                                    headerHeight: 0,
-                                    viewHeaderHeight: 0,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
+                        child: RoomSchedule(
+                          selectedDate: widget.selectedDate,
+                          roomId: widget.roomId,
+                          roomName: widget.roomName,
                         ),
                       ),
                     ],
@@ -351,39 +270,6 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget appointmentBuilder(BuildContext context,
-      CalendarAppointmentDetails calendarAppointmentDetails) {
-    final RoomEvent appointment = calendarAppointmentDetails.appointments.first;
-
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        height: double.infinity,
-        width: 175,
-        decoration: BoxDecoration(
-          color: appointment.background,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              appointment.eventName!,
-              style: TextStyle(
-                fontFamily: 'Helvetica',
-                fontSize: 14,
-                color: appointment.isDark ? culturedWhite : eerieBlack,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
         ),
       ),
     );

@@ -247,34 +247,50 @@ class _StatisticContainerState extends State<StatisticContainer> {
               : CachedNetworkImage(
                   imageUrl: mostUsedPhoto,
                   imageBuilder: (context, imageProvider) {
-                    return Container(
-                      padding: const EdgeInsets.only(
-                        left: 15,
-                        bottom: 10,
-                        top: 10,
-                        right: 15,
-                      ),
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                          filterQuality: FilterQuality.none,
-                          opacity: 0.6,
-                        ),
-                        color: eerieBlack,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Text(
-                          mostUsedName,
-                          style: helveticaText.copyWith(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w300,
-                            color: white,
+                    return Stack(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(
+                            left: 15,
+                            bottom: 10,
+                            top: 10,
+                            right: 15,
+                          ),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                              filterQuality: FilterQuality.none,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
-                      ),
+                        Container(
+                          height: 80,
+                          width: 250,
+                          padding: const EdgeInsets.only(
+                            left: 15,
+                            bottom: 10,
+                            top: 10,
+                            right: 15,
+                          ),
+                          decoration: BoxDecoration(
+                            color: eerieBlack.withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              mostUsedName,
+                              style: helveticaText.copyWith(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w300,
+                                color: white,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     );
                   },
                 ),
@@ -320,63 +336,178 @@ class _StatisticContainerState extends State<StatisticContainer> {
                       ),
                       width: 400,
                       height: 46,
-                      child: ListView.builder(
-                        itemCount: bookingStatus.length,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          double widthPercent =
-                              400.0 * (bookingStatus[index].percentage / 100);
-                          return SizedBox(
-                            width: widthPercent,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft:
-                                          index == 0 || widthPercent == 400
-                                              ? const Radius.circular(5)
-                                              : Radius.zero,
-                                      topLeft: index == 0 || widthPercent == 400
-                                          ? const Radius.circular(5)
-                                          : Radius.zero,
-                                      bottomRight:
-                                          index == bookingStatus.length - 1 ||
-                                                  widthPercent == 400
-                                              ? const Radius.circular(5)
-                                              : Radius.zero,
-                                      topRight:
-                                          index == bookingStatus.length - 1 ||
-                                                  widthPercent == 400
-                                              ? const Radius.circular(5)
-                                              : Radius.zero,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 20,
+                            width: 400,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: bookingStatus
+                                  .asMap()
+                                  .map(
+                                    (index, value) => MapEntry(
+                                      index,
+                                      Builder(builder: (context) {
+                                        double widthPercent =
+                                            399 * (value.percentage / 100);
+                                        return Container(
+                                          width: widthPercent,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: index == 0 ||
+                                                      widthPercent == 400
+                                                  ? const Radius.circular(5)
+                                                  : Radius.zero,
+                                              topLeft: index == 0 ||
+                                                      widthPercent == 400
+                                                  ? const Radius.circular(5)
+                                                  : Radius.zero,
+                                              bottomRight: index ==
+                                                          bookingStatus.length -
+                                                              1 ||
+                                                      widthPercent == 400
+                                                  ? const Radius.circular(5)
+                                                  : Radius.zero,
+                                              topRight: index ==
+                                                          bookingStatus.length -
+                                                              1 ||
+                                                      widthPercent == 400
+                                                  ? const Radius.circular(5)
+                                                  : Radius.zero,
+                                            ),
+                                            color: value.color,
+                                          ),
+                                        );
+                                      }),
                                     ),
-                                    color: bookingStatus[index].color,
-                                  ),
-                                  width: widthPercent,
-                                  height: 20,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                SizedBox(
-                                  width: widthPercent,
-                                  child: Text(
-                                    "${bookingStatus[index].percentage} %",
-                                    style: helveticaText.copyWith(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w300,
-                                      color: bookingStatus[index].color,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
+                                  )
+                                  .values
+                                  .toList(),
                             ),
-                          );
-                        },
+                            // child: ListView.builder(
+                            //   itemCount: bookingStatus.length,
+                            //   shrinkWrap: true,
+                            //   scrollDirection: Axis.horizontal,
+                            //   itemBuilder: (context, index) {
+                            //     double widthPercent = 400.0 *
+                            //         (bookingStatus[index].percentage / 100);
+                            //     return SizedBox(
+                            //       width: widthPercent,
+                            //       height: 20,
+                            //       child: Container(
+                            //         width: widthPercent,
+                            //         height: 20,
+                            //         decoration: BoxDecoration(
+                            //           borderRadius: BorderRadius.only(
+                            //             bottomLeft:
+                            //                 index == 0 || widthPercent == 400
+                            //                     ? const Radius.circular(5)
+                            //                     : Radius.zero,
+                            //             topLeft:
+                            //                 index == 0 || widthPercent == 400
+                            //                     ? const Radius.circular(5)
+                            //                     : Radius.zero,
+                            //             bottomRight:
+                            //                 index == bookingStatus.length - 1 ||
+                            //                         widthPercent == 400
+                            //                     ? const Radius.circular(5)
+                            //                     : Radius.zero,
+                            //             topRight:
+                            //                 index == bookingStatus.length - 1 ||
+                            //                         widthPercent == 400
+                            //                     ? const Radius.circular(5)
+                            //                     : Radius.zero,
+                            //           ),
+                            //           color: bookingStatus[index].color,
+                            //         ),
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          SizedBox(
+                            width: 400,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: bookingStatus
+                                  .asMap()
+                                  .map(
+                                    (index, value) => MapEntry(
+                                      index,
+                                      Builder(builder: (context) {
+                                        if (index == bookingStatus.length - 1 ||
+                                            index == 0) {
+                                          return Container(
+                                            // color: blueAccent,
+                                            width: 400.0 *
+                                                (value.percentage / 100),
+                                            child: Text(
+                                              "${value.percentage}",
+                                              textAlign: index ==
+                                                      bookingStatus.length - 1
+                                                  ? TextAlign.end
+                                                  : null,
+                                              style: helveticaText.copyWith(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w300,
+                                                color:
+                                                    bookingStatus[index].color,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        } else {
+                                          return Flexible(
+                                            child: Container(
+                                              // color: blueAccent,
+                                              width: 400.0 *
+                                                  (value.percentage / 100),
+                                              child: Text(
+                                                "${value.percentage}",
+                                                textAlign: index ==
+                                                        bookingStatus.length - 1
+                                                    ? TextAlign.end
+                                                    : null,
+                                                style: helveticaText.copyWith(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w300,
+                                                  color: bookingStatus[index]
+                                                      .color,
+                                                  // backgroundColor:
+                                                  //     bookingStatus[index]
+                                                  //         .color,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }),
+                                    ),
+                                  )
+                                  .values
+                                  .toList(),
+                              // children: [
+                              //   SizedBox(
+                              //     child: Text(
+                              //       "${bookingStatus[index].percentage} %",
+                              //       style: helveticaText.copyWith(
+                              //         fontSize: 14,
+                              //         fontWeight: FontWeight.w300,
+                              //         color: bookingStatus[index].color,
+                              //       ),
+                              //       overflow: TextOverflow.ellipsis,
+                              //     ),
+                              //   ),
+                              // ],
+                            ),
+                          ),
+                        ],
                       ),
                     )
                   ],
@@ -449,78 +580,88 @@ class _StatisticContainerState extends State<StatisticContainer> {
                     ),
                   ),
                 )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      width: 250,
-                      height: 46,
-                      child: ListView.builder(
-                        itemCount: eventCreation.length,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          double widthPercent =
-                              250.0 * (eventCreation[index].percentage / 100);
-                          return SizedBox(
-                            width: widthPercent,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
+              : Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  width: 250,
+                  height: 46,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 250,
+                        height: 20,
+                        child: ListView.builder(
+                          itemCount: eventCreation.length,
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            double widthPercent =
+                                250.0 * (eventCreation[index].percentage / 100);
+                            return SizedBox(
+                              width: widthPercent,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft:
-                                            index == 0 || widthPercent == 250
-                                                ? const Radius.circular(5)
-                                                : Radius.zero,
-                                        topLeft:
-                                            index == 0 || widthPercent == 250
-                                                ? const Radius.circular(5)
-                                                : Radius.zero,
-                                        bottomRight:
-                                            index == eventCreation.length - 1 ||
-                                                    widthPercent == 250
-                                                ? const Radius.circular(5)
-                                                : Radius.zero,
-                                        topRight:
-                                            index == eventCreation.length - 1 ||
-                                                    widthPercent == 250
-                                                ? const Radius.circular(5)
-                                                : Radius.zero,
-                                      ),
-                                      color: eventCreation[index].color,
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft:
+                                          index == 0 || widthPercent == 250
+                                              ? const Radius.circular(5)
+                                              : Radius.zero,
+                                      topLeft: index == 0 || widthPercent == 250
+                                          ? const Radius.circular(5)
+                                          : Radius.zero,
+                                      bottomRight:
+                                          index == eventCreation.length - 1 ||
+                                                  widthPercent == 250
+                                              ? const Radius.circular(5)
+                                              : Radius.zero,
+                                      topRight:
+                                          index == eventCreation.length - 1 ||
+                                                  widthPercent == 250
+                                              ? const Radius.circular(5)
+                                              : Radius.zero,
                                     ),
-                                    width: widthPercent,
-                                    height: 20,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  "${eventCreation[index].percentage} %",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: helveticaText.copyWith(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w300,
                                     color: eventCreation[index].color,
                                   ),
+                                  width: widthPercent,
+                                  height: 20,
                                 ),
-                              ],
-                            ),
-                          );
-                        },
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    )
-                  ],
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: eventCreation
+                            .asMap()
+                            .map((index, value) => MapEntry(
+                                  index,
+                                  Text(
+                                    "${value.percentage} %",
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: index == eventCreation.length - 1
+                                        ? TextAlign.end
+                                        : null,
+                                    style: helveticaText.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300,
+                                      color: value.color,
+                                    ),
+                                  ),
+                                ))
+                            .values
+                            .toList(),
+                      ),
+                    ],
+                  ),
                 ),
         ),
         const SizedBox(

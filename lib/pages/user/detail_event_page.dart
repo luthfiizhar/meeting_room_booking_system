@@ -17,6 +17,7 @@ import 'package:meeting_room_booking_system/widgets/dialogs/booking_page_dialog.
 import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/room_booking_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
+import 'dart:html' as html;
 
 class DetailEventPage extends StatefulWidget {
   DetailEventPage({
@@ -502,7 +503,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
         divider2(),
         detailContent('Repeat', repeat),
         divider2(),
-        detailContent('Meet Url', meetUrl),
+        detailContentMeetUrl('Meet Url', meetUrl),
         const SizedBox(
           height: 30,
         ),
@@ -787,6 +788,35 @@ class _DetailEventPageState extends State<DetailEventPage> {
     );
   }
 
+  detailContentMeetUrl(String label, String content) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: helveticaText.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: sonicSilver,
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            html.window.open(content, '');
+          },
+          child: Text(
+            content,
+            style: helveticaText.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: davysGray,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Text detailTitle(String text) {
     return Text(
       text,
@@ -841,7 +871,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 120,
+            width: 80,
             child: Text(
               status,
               style: helveticaText.copyWith(
@@ -850,6 +880,9 @@ class _DetailEventPageState extends State<DetailEventPage> {
                 color: sonicSilver,
               ),
             ),
+          ),
+          const SizedBox(
+            width: 20,
           ),
           Expanded(
             child: Column(

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
@@ -26,7 +27,42 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
   String roomType = "";
   bool isEmpty = true;
 
+  String startTimeBook = "";
+  String endTimeBook = "";
+
   // List availableList = [];
+
+  initTime() {
+    dynamic hour = TimeOfDay.now().hour;
+    dynamic minute = TimeOfDay.now().minute;
+    dynamic endMinute;
+    dynamic endHour;
+    if (TimeOfDay.now().minute >= 0 && TimeOfDay.now().minute < 15) {
+      minute = TimeOfDay.now().replacing(minute: 15).minute;
+    } else if (TimeOfDay.now().minute > 15 && TimeOfDay.now().minute <= 30) {
+      minute = TimeOfDay.now().replacing(minute: 30).minute;
+    } else if (TimeOfDay.now().minute > 30 && TimeOfDay.now().minute <= 45) {
+      minute = TimeOfDay.now().replacing(minute: 45).minute;
+    } else if (TimeOfDay.now().minute > 45 && TimeOfDay.now().minute <= 60) {
+      minute = TimeOfDay.now().replacing(minute: 0).minute;
+      hour = hour + 1;
+    }
+    endMinute = minute;
+    endHour = hour + 1;
+    if (endMinute == 60) {
+      endHour = hour;
+      endMinute = 0;
+    }
+    hour = hour.toString().padLeft(2, '0');
+    minute = minute.toString().padLeft(2, '0');
+
+    endHour = endHour.toString().padLeft(2, '0');
+    endMinute = endMinute.toString().padLeft(2, '0');
+    setState(() {
+      startTimeBook = "$hour:$minute";
+      endTimeBook = "$endHour:$endMinute";
+    });
+  }
 
   @override
   void initState() {
@@ -88,7 +124,7 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
               top: 25,
             ),
             decoration: BoxDecoration(
-              color: eerieBlack.withOpacity(0.6),
+              color: eerieBlack.withOpacity(0.4),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Align(
@@ -134,12 +170,22 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
                         TransparentBorderedWhiteButton(
                           text: 'Book Now',
                           onTap: () {
-                            DateTime today = DateTime.now();
+                            String today =
+                                DateFormat('yyyy-MM-dd').format(DateTime.now());
+                            initTime();
                             context.goNamed(
-                              'booking_room',
+                              'booking_rooms',
                               params: {
-                                'eventId': roomId,
+                                'roomId': roomId,
+                                'date': today,
+                                'startTime': startTimeBook,
+                                'endTime': endTimeBook,
+                                'participant': '2',
+                                'facilities': '[]',
+                                'roomType': roomType,
+                                'isEdit': 'false',
                               },
+                              queryParams: {},
                             );
                           },
                           padding: ButtonSize().smallSize(),

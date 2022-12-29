@@ -58,6 +58,10 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
           });
         }
       }
+    }).onError((error, stackTrace) {
+      setState(() {
+        isEmpty = true;
+      });
     });
   }
 
@@ -203,7 +207,7 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                '$floor at $duration WIB',
+                                '$roomName at $duration WIB',
                                 style: helveticaText.copyWith(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w300,

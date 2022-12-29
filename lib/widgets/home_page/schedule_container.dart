@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
+import 'dart:html' as html;
 
 class ScheduleContainer extends StatefulWidget {
   ScheduleContainer({super.key});
@@ -89,17 +90,17 @@ class _ScheduleContainerState extends State<ScheduleContainer> {
         minWidth: 350,
         maxHeight: 2000,
       ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-        decoration: BoxDecoration(
-          color: white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: platinum,
-            width: 1,
+      child: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+          decoration: BoxDecoration(
+            color: white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: platinum,
+              width: 1,
+            ),
           ),
-        ),
-        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -183,37 +184,104 @@ class _ScheduleContainerState extends State<ScheduleContainer> {
                             ),
                           ),
                         )
-                      : ListView.builder(
-                          itemCount: schedule.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    top: index == 0 ? 0 : 20,
-                                    bottom:
-                                        index != schedule.length - 1 ? 20 : 0,
-                                  ),
-                                  child: ScheduleListContainer(
-                                    index: index,
-                                    eventName: schedule[index]['Summary'],
-                                    duration: schedule[index]['Duration'],
-                                    location: schedule[index]['RoomName'],
-                                    floor: schedule[index]['AreaName'],
-                                    bookingId: schedule[index]['BookingID'],
-                                  ),
-                                ),
-                                index != schedule.length - 1
-                                    ? const Divider(
-                                        color: davysGray,
-                                        thickness: 0.5,
-                                      )
-                                    : const SizedBox()
-                              ],
-                            );
-                          },
-                        ),
+                      : Builder(builder: (context) {
+                          return Column(
+                            children: schedule
+                                .asMap()
+                                .map((index, element) {
+                                  return MapEntry(
+                                    index,
+                                    Column(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            top: index == 0 ? 0 : 20,
+                                            bottom: index != schedule.length - 1
+                                                ? 20
+                                                : 0,
+                                          ),
+                                          child: ScheduleListContainer(
+                                            index: index,
+                                            eventName: element['Summary'],
+                                            duration: element['Duration'],
+                                            location: element['RoomName'],
+                                            floor: element['AreaName'],
+                                            bookingId: element['BookingID'],
+                                          ),
+                                        ),
+                                        index != schedule.length - 1
+                                            ? const Divider(
+                                                color: davysGray,
+                                                thickness: 0.5,
+                                              )
+                                            : const SizedBox()
+                                      ],
+                                    ),
+                                  );
+                                })
+                                .values
+                                .toList(),
+                            // children: schedule.map((element) {
+                            //   return Column(
+                            //     children: [
+                            //       Padding(
+                            //         padding: EdgeInsets.only(
+                            //           top: index == 0 ? 0 : 20,
+                            //           bottom:
+                            //               index != schedule.length - 1 ? 20 : 0,
+                            //         ),
+                            //         child: ScheduleListContainer(
+                            //           index: index,
+                            //           eventName: element['Summary'],
+                            //           duration: element['Duration'],
+                            //           location: element['RoomName'],
+                            //           floor: element['AreaName'],
+                            //           bookingId: element['BookingID'],
+                            //         ),
+                            //       ),
+                            //       index != schedule.length - 1
+                            //           ? const Divider(
+                            //               color: davysGray,
+                            //               thickness: 0.5,
+                            //             )
+                            //           : const SizedBox()
+                            //     ],
+                            //   );
+                            // }).toList(),
+                          );
+                        }),
+              // ListView.builder(
+              //     physics: AlwaysScrollableScrollPhysics(),
+              //     itemCount: schedule.length,
+              //     shrinkWrap: true,
+              //     itemBuilder: (context, index) {
+              //       return Column(
+              //         children: [
+              //           Padding(
+              //             padding: EdgeInsets.only(
+              //               top: index == 0 ? 0 : 20,
+              //               bottom:
+              //                   index != schedule.length - 1 ? 20 : 0,
+              //             ),
+              //             child: ScheduleListContainer(
+              //               index: index,
+              //               eventName: schedule[index]['Summary'],
+              //               duration: schedule[index]['Duration'],
+              //               location: schedule[index]['RoomName'],
+              //               floor: schedule[index]['AreaName'],
+              //               bookingId: schedule[index]['BookingID'],
+              //             ),
+              //           ),
+              //           index != schedule.length - 1
+              //               ? const Divider(
+              //                   color: davysGray,
+              //                   thickness: 0.5,
+              //                 )
+              //               : const SizedBox()
+              //         ],
+              //       );
+              //     },
+              //   ),
             ],
           ),
         ),
@@ -291,7 +359,15 @@ class ScheduleListContainer extends StatelessWidget {
             right: 0,
             bottom: 0,
             child: bookingId == "-"
-                ? const SizedBox()
+                ? InkWell(
+                    onTap: () {
+                      html.window.open('http://calendar.google.com', '');
+                    },
+                    child: const Icon(
+                      Icons.keyboard_arrow_right_sharp,
+                      color: orangeAccent,
+                    ),
+                  )
                 : InkWell(
                     onTap: () {
                       if (bookingId != "-") {

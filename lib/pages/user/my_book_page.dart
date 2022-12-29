@@ -410,6 +410,8 @@ class _MyBookingPageState extends State<MyBookingPage> {
                               focusNode: showPerRowsNode,
                               onChanged: (value) {
                                 setState(() {
+                                  currentPaginatedPage = 1;
+                                  searchTerm.pageNumber = "1";
                                   searchTerm.max = value!.toString();
                                   getMyBookingList(searchTerm).then((value) {
                                     myBookList = value['Data']['List'];

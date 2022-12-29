@@ -170,60 +170,78 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                               );
                             },
                             imageBuilder: (context, imageProvider) {
-                              return Container(
-                                padding: const EdgeInsets.only(
-                                  bottom: 12,
-                                  left: 15,
-                                  right: 15,
-                                ),
-                                width: 175,
-                                height: 112,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.black,
-                                  image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
-                                    opacity: 0.5,
-                                  ),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Type',
-                                      style: helveticaText.copyWith(
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 14,
-                                        color: culturedWhite,
+                              return Stack(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 12,
+                                      left: 15,
+                                      right: 15,
+                                    ),
+                                    width: 175,
+                                    height: 112,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.black,
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover,
+                                        // opacity: 0.5,
                                       ),
                                     ),
-                                    const SizedBox(
-                                      height: 7,
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 12,
+                                      left: 15,
+                                      right: 15,
                                     ),
-                                    Row(
+                                    width: 175,
+                                    height: 112,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: eerieBlack.withOpacity(0.4),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          widget.roomTypeName!,
+                                          'Type',
                                           style: helveticaText.copyWith(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 18,
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 14,
                                             color: culturedWhite,
                                           ),
                                         ),
                                         const SizedBox(
-                                          width: 5,
+                                          height: 7,
                                         ),
-                                        const Icon(
-                                          Icons.keyboard_arrow_down_sharp,
-                                          size: 20,
-                                          color: culturedWhite,
-                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              widget.roomTypeName!,
+                                              style: helveticaText.copyWith(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 18,
+                                                color: culturedWhite,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            const Icon(
+                                              Icons.keyboard_arrow_down_sharp,
+                                              size: 20,
+                                              color: culturedWhite,
+                                            ),
+                                          ],
+                                        )
                                       ],
-                                    )
-                                  ],
-                                ),
+                                    ),
+                                  ),
+                                ],
                               );
                             },
                           ),

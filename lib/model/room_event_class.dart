@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 
 class RoomEvent {
   RoomEvent({
-    this.eventName,
-    this.organizer,
-    this.contactID,
-    this.capacity,
+    this.eventName = "",
+    this.organizer = "",
+    this.contactID = "",
+    this.capacity = 2,
     this.from,
     this.to,
-    this.background,
-    this.isAllDay,
-    this.startTimeZone,
-    this.endTimeZone,
-    this.recurrenceRule,
+    this.background = Colors.black,
+    this.isAllDay = false,
+    this.startTimeZone = "",
+    this.endTimeZone = "",
+    this.recurrenceRule = "",
     this.resourceIds,
     this.isDark = true,
-    this.bookingID,
+    this.bookingID = "",
   });
 
   String? eventName;

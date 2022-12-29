@@ -1,27 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/event_class.dart';
 import 'package:meeting_room_booking_system/model/event_data_source.dart';
-import 'package:meeting_room_booking_system/model/main_model.dart';
-import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/pages/user/rooms_page.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
-import 'package:meeting_room_booking_system/widgets/calendar_view_page/calendar_menu_item.dart';
-import 'package:meeting_room_booking_system/widgets/dialogs/dialog_detail_event.dart';
-import 'package:meeting_room_booking_system/widgets/footer.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
-import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:meeting_room_booking_system/widgets/rooms_page/detail_appointment_container.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class CalendarViewPage extends StatefulWidget {
@@ -269,7 +260,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                       ),
                     ),
                     AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 750),
+                      duration: const Duration(milliseconds: 200),
                       switchInCurve: Curves.easeIn,
                       switchOutCurve: Curves.easeOut,
                       child: isShowDetail
@@ -984,6 +975,15 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
             });
             print(value);
             assignDataToCalendar(value['Data']);
+          }).onError((error, stackTrace) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Error fetching user data!',
+                  maxLines: 1,
+                ),
+              ),
+            );
           });
 
           if (_calendar.view == CalendarView.day) {
@@ -1140,7 +1140,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
         ),
         // scheduleViewSettings: ScheduleViewSettings(),
-        todayHighlightColor: Colors.black,
+        todayHighlightColor: orangeAccent,
         timeSlotViewSettings: TimeSlotViewSettings(
           // timelineAppointmentHeight: -1,
           timeIntervalHeight: 50,
