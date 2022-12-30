@@ -10,7 +10,7 @@ class BlackDropdown extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.suffixIcon,
-    required this.enabled,
+    this.enabled = true,
     this.onTap,
     this.value,
     this.customHeights,

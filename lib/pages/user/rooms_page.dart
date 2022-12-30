@@ -793,7 +793,8 @@ class _RoomsPageState extends State<RoomsPage> {
                 color: eerieBlack,
               ),
             ),
-            initialDisplayDate: selectedDate,
+            initialDisplayDate:
+                selectedDate!.subtract(const Duration(minutes: 15)),
             onTap: (calendarTapDetails) {
               if (calendarTapDetails.targetElement ==
                   CalendarElement.appointment) {

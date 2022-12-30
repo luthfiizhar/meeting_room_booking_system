@@ -176,10 +176,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
 
   bool isLoadingSync = false;
 
-  @override
-  void initState() {
-    super.initState();
-
+  initGetUserProfile() {
     getUserProfile().then((value) {
       print("User Profile -> $value");
       setState(() {
@@ -204,7 +201,12 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
         _phone.text = phone;
       });
     });
+  }
 
+  @override
+  void initState() {
+    super.initState();
+    initGetUserProfile();
     nameNode.addListener(() {
       setState(() {});
     });
@@ -276,6 +278,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
               print(value);
 
               if (value['Status'] == "200") {
+                initGetUserProfile();
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialogBlack(
@@ -483,7 +486,40 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                   onTap: () {
                     if (!isConnectedToGoogle) {
                       googleLink();
-                    } else {}
+                    } else {
+                      revokeGoogleAcc().then((value) {
+                        print(value);
+                        if (value['Status'].toString() == "200") {
+                          initGetUserProfile();
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialogBlack(
+                              title: value['Title'],
+                              contentText: value['Message'],
+                              isSuccess: true,
+                            ),
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialogBlack(
+                              title: value['Title'],
+                              contentText: value['Message'],
+                              isSuccess: false,
+                            ),
+                          );
+                        }
+                      }).onError((error, stackTrace) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialogBlack(
+                            title: 'Failed',
+                            contentText: error.toString(),
+                            isSuccess: false,
+                          ),
+                        );
+                      });
+                    }
                   },
                   padding: ButtonSize().mediumSize(),
                 ),

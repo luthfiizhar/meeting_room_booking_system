@@ -125,15 +125,6 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                                 ? const SizedBox()
                                 : CachedNetworkImage(
                                     imageUrl: widget.roomTypeUrl!,
-                                    placeholder: (context, url) {
-                                      return const SizedBox(
-                                        height: 50,
-                                        width: 50,
-                                        child: CircularProgressIndicator(
-                                          color: eerieBlack,
-                                        ),
-                                      );
-                                    },
                                     imageBuilder: (context, imageProvider) {
                                       return Container(
                                         width: 175,

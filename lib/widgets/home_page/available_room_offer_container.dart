@@ -7,6 +7,7 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
+import 'package:shimmer/shimmer.dart';
 
 class AvailableRoomContainer extends StatefulWidget {
   AvailableRoomContainer({
@@ -90,7 +91,16 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
     return Stack(
       children: [
         photoUrl == ""
-            ? const SizedBox()
+            ? const Shimmer(
+                gradient: LinearGradient(
+                  colors: [platinum, grayx11, davysGray],
+                ),
+                direction: ShimmerDirection.rtl,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 375,
+                ),
+              )
             : SizedBox(
                 width: double.infinity,
                 height: 375,

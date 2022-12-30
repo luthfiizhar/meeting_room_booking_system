@@ -340,6 +340,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
                       onPressed: () {
@@ -384,7 +385,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                       ),
                     ),
                     const SizedBox(
-                      width: 29,
+                      width: 10,
                     ),
                     Text(
                       displayMonthString,
@@ -397,30 +398,44 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                   ],
                 ),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    // Row(
+                    //   children: [],
+                    // ),
+                    legends(greenAcent, 'This system'),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    legends(violetAccent, 'Google Calendar'),
+                    const SizedBox(
+                      width: 30,
+                    ),
                     RegularButton(
                       text: 'Today',
                       disabled: false,
+                      fontSize: 14,
                       padding: ButtonSize().smallSize(),
                       onTap: () {
                         _calendar.displayDate = DateTime.now();
                       },
                     ),
                     const SizedBox(
-                      width: 18,
+                      width: 11,
                     ),
                     const VerticalDivider(
                       color: davysGray,
                       thickness: 0.5,
                     ),
                     const SizedBox(
-                      width: 18,
+                      width: 11,
                     ),
                     Row(
                       children: [
                         RegularButton(
                           text: 'Monthly',
                           disabled: false,
+                          fontSize: 14,
                           padding: ButtonSize().smallSize(),
                           onTap: () {
                             _calendar.view = CalendarView.month;
@@ -429,13 +444,14 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                       ],
                     ),
                     const SizedBox(
-                      width: 10,
+                      width: 7,
                     ),
                     Row(
                       children: [
                         RegularButton(
                           text: 'Weekly',
                           disabled: false,
+                          fontSize: 14,
                           padding: ButtonSize().smallSize(),
                           onTap: () {
                             _calendar.view = CalendarView.week;
@@ -444,7 +460,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                       ],
                     ),
                     const SizedBox(
-                      width: 10,
+                      width: 7,
                     ),
                     Row(
                       children: [
@@ -459,7 +475,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                       ],
                     ),
                     const SizedBox(
-                      width: 10,
+                      width: 7,
                     ),
                   ],
                 ),
@@ -491,6 +507,33 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
         ],
       );
     });
+  }
+
+  Widget legends(Color color, String label) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 15,
+          height: 15,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+          ),
+        ),
+        const SizedBox(
+          width: 5,
+        ),
+        Text(
+          label,
+          style: helveticaText.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: davysGray,
+          ),
+        )
+      ],
+    );
   }
 
   Widget monthlyViewHeader(double cellWidth) {
@@ -948,6 +991,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
         allowViewNavigation: true,
         headerHeight: 0,
         viewHeaderHeight: 0,
+        cellEndPadding: 0,
         viewHeaderStyle: ViewHeaderStyle(
             dateTextStyle: helveticaText.copyWith(
               fontSize: 18,
@@ -976,6 +1020,9 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
             print(value);
             assignDataToCalendar(value['Data']);
           }).onError((error, stackTrace) {
+            setState(() {
+              isLoadingGetCalendar2 = false;
+            });
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text(
@@ -1073,7 +1120,8 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
           });
         },
         headerDateFormat: 'MMMM y',
-        initialDisplayDate: DateTime.now(),
+        initialDisplayDate:
+            DateTime.now().subtract(const Duration(minutes: 15)),
         onTap: (calendarTapDetails) {
           // print(_calendar.forward);
           if (calendarTapDetails.targetElement ==
@@ -1140,11 +1188,16 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
         ),
         // scheduleViewSettings: ScheduleViewSettings(),
+        appointmentTextStyle: helveticaText.copyWith(
+          fontWeight: FontWeight.w400,
+          fontSize: 14,
+          color: culturedWhite,
+        ),
         todayHighlightColor: orangeAccent,
         timeSlotViewSettings: TimeSlotViewSettings(
           // timelineAppointmentHeight: -1,
           timeIntervalHeight: 50,
-          timeFormat: 'H:mm ',
+          timeFormat: 'HH:mm ',
           // timeIntervalWidth: -1,
           timeInterval: const Duration(
             minutes: 15,

@@ -606,21 +606,6 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
       resetState: resetState,
       child: Stack(
         children: [
-          Column(
-            children: [
-              const SizedBox(
-                height: 80,
-              ),
-              introSection(),
-              const SizedBox(
-                height: 140,
-              ),
-              featureSection(),
-              howToSection(),
-              faqSection(),
-              endSection(),
-            ],
-          ),
           Positioned(
             top: 160,
             right: -75,
@@ -636,6 +621,21 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                 ),
               ),
             ),
+          ),
+          Column(
+            children: [
+              const SizedBox(
+                height: 80,
+              ),
+              introSection(),
+              const SizedBox(
+                height: 140,
+              ),
+              featureSection(),
+              howToSection(),
+              faqSection(),
+              endSection(),
+            ],
           ),
         ],
       ),

@@ -852,6 +852,28 @@ Future getLinkGoogleAuth() async {
   }
 }
 
+Future revokeGoogleAcc() async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url =
+      Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/user/revoke/google');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.post(url, headers: requestHeader);
+
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
 Future saveTokenGoogle(String token) async {
   var box = await Hive.openBox('userLogin');
   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
@@ -940,6 +962,29 @@ Future approvalListBookingCount() async {
   try {
     var response = await http.get(url, headers: requestHeader);
 
+    var data = json.decode(response.body);
+
+    return data;
+  } on Error catch (e) {
+    return e;
+  }
+}
+
+Future getContactList() async {
+  var box = await Hive.openBox('userLogin');
+  var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+  var url = Uri.https(
+      apiUrlGlobal, '/MRBS_Backend/public/api/google/get-contact-list');
+  Map<String, String> requestHeader = {
+    'Authorization': 'Bearer $jwt',
+    // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+    'Content-Type': 'application/json',
+  };
+  try {
+    var response = await http.post(url, headers: requestHeader);
+
+    print('response -> ${response.body}');
     var data = json.decode(response.body);
 
     return data;

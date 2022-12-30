@@ -23,6 +23,7 @@ import 'package:meeting_room_booking_system/widgets/booking_page/room_facility_i
 import 'package:meeting_room_booking_system/widgets/booking_page/select_amenities_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/select_food_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/select_layout_dialog.dart';
+import 'package:meeting_room_booking_system/widgets/booking_page/suggestion_email_container.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
@@ -104,6 +105,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   FocusNode repeatEndNode = FocusNode();
   FocusNode repeatOnNode = FocusNode();
   FocusNode additionalNoteNode = FocusNode();
+  OverlayEntry? _overlayEntry;
 
   String eventName = "";
   String eventDesc = "";
@@ -119,6 +121,12 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
   String roomName = "";
   String floor = "";
+
+  String filterContact = "";
+  String messageEmptyContact = "";
+  List contactList = [];
+  List filterContactList = [];
+  bool isContactEmpty = true;
 
   bool emptyLayout = true;
   String layoutId = "";
@@ -158,6 +166,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   bool layoutSectionVisible = false;
   bool repeatSectionVisible = true;
   bool layoutFromupload = false;
+  bool emailSuggestionVisible = false;
   late bool isEdit;
 
   bool isPictEmpty = true;
@@ -256,6 +265,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     setState(() {
       datePickerVisible = value;
       datePickerRepeatVisible = value;
+      emailSuggestionVisible = value;
+      emailNode.unfocus();
+      filterContactList = contactList;
     });
   }
 
@@ -444,6 +456,47 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     });
   }
 
+  selectGuest(String value) {
+    print('select guest');
+    setState(() {
+      invitedGuest.add(value);
+      _email.text = "";
+      emailNode.unfocus();
+      emailSuggestionVisible = false;
+    });
+  }
+
+  OverlayEntry emailOverlay() {
+    RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+    var size = renderBox!.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+
+    return OverlayEntry(
+        builder: (context) => Positioned(
+              left: offset.dx + 200,
+              top: offset.dy + 600,
+              width: size.width,
+              child: Material(
+                elevation: 4.0,
+                child: Container(
+                  color: platinum,
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      ListTile(
+                        title: Text('Syria'),
+                      ),
+                      ListTile(
+                        title: Text('Lebanon'),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ));
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -507,6 +560,34 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     //     }
     //   }
     // }
+    getContactList().then((value) {
+      print("Contact List $value");
+
+      if (value['Status'].toString() == "200") {
+        if (value['Data'].toString() == "[]") {
+          setState(() {
+            contactList = [];
+            isContactEmpty = true;
+            messageEmptyContact = value['Message'];
+          });
+        } else {
+          setState(() {
+            contactList = value['Data'];
+            filterContactList = contactList;
+            isContactEmpty = false;
+          });
+        }
+      } else {}
+    }).onError((error, stackTrace) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Error fetching contact data!',
+            maxLines: 1,
+          ),
+        ),
+      );
+    });
     if (widget.roomId!.startsWith('AU')) {
       roomType = "Auditorium";
     }
@@ -605,6 +686,20 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       });
     });
 
+    _email.addListener(() {
+      setState(() {
+        // filterContact = _email.text;
+        if (_email.text != "") {
+          filterContactList.clear();
+          for (var element in contactList) {
+            // element['Name'].toString().contains(_email.text);
+            // if (_email.text =) {}
+            filterContactList
+                .add(element['Name'].toString().contains(_email.text));
+          }
+        }
+      });
+    });
     eventDescNode.addListener(
       () {
         setState(() {});
@@ -646,7 +741,19 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       },
     );
     emailNode.addListener(() {
-      setState(() {});
+      setState(() {
+        if (emailNode.hasFocus) {
+          // _overlayEntry = emailOverlay();
+          // Overlay.of(context)!.insert(_overlayEntry!);
+          emailSuggestionVisible = true;
+        } else {
+          // emailSuggestionVisible = false;
+          // _overlayEntry!.remove();
+        }
+        if (emailSuggestionVisible) {
+          emailNode.requestFocus();
+        }
+      });
     });
     additionalNoteNode.addListener(() {
       setState(() {});
@@ -1800,6 +1907,20 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                               ],
                             ),
                           ),
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: emailSuggestionVisible,
+                      child: Positioned(
+                        top: 475,
+                        right: 0,
+                        child: EmailSuggestionContainer(
+                          contactList: filterContactList,
+                          emptyMessage: messageEmptyContact,
+                          isEmpty: isContactEmpty,
+                          filter: filterContact,
+                          selectGuest: selectGuest,
                         ),
                       ),
                     ),
