@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:shimmer/shimmer.dart';
 
 class BookingRoomPicture extends StatefulWidget {
   BookingRoomPicture({
@@ -34,7 +36,7 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
         minHeight: 450,
         minWidth: 500,
         maxWidth: 500,
-        maxHeight: 500,
+        maxHeight: 450,
       ),
       child: Material(
         color: Colors.transparent,
@@ -48,7 +50,7 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: davysGray,
+                  // color: davysGray,
                 ),
                 child: Column(
                   children: [
@@ -65,14 +67,69 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                               ? const Radius.circular(10)
                               : Radius.zero,
                         ),
-                        image: DecorationImage(
-                          image: widget.pictNotFound
-                              ? Image.asset('asset/image_not_found.jpg').image
-                              : NetworkImage(
-                                  widget.pictures!.first['ImageURL']),
-                          fit: BoxFit.cover,
-                        ),
+                        // image: DecorationImage(
+                        //   image: widget.pictNotFound
+                        //       ? Image.asset('asset/image_not_found.jpg').image
+                        //       : NetworkImage(
+                        //           widget.pictures!.first['ImageURL']),
+                        //   fit: BoxFit.cover,
+                        // ),
                       ),
+                      child: widget.pictures!.first['ImageURL'] == ""
+                          ? const SizedBox()
+                          : CachedNetworkImage(
+                              imageUrl: widget.pictures!.first['ImageURL'],
+                              imageBuilder: (context, imageProvider) {
+                                return Container(
+                                  height:
+                                      widget.pictures!.length == 1 ? 350 : 270,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: const Radius.circular(10),
+                                      topRight: const Radius.circular(10),
+                                      bottomLeft: widget.pictures!.length == 1
+                                          ? const Radius.circular(10)
+                                          : Radius.zero,
+                                      bottomRight: widget.pictures!.length == 1
+                                          ? const Radius.circular(10)
+                                          : Radius.zero,
+                                    ),
+                                  ),
+                                );
+                              },
+                              placeholder: (context, url) {
+                                return Shimmer(
+                                  gradient: const LinearGradient(
+                                    colors: [platinum, grayx11, davysGray],
+                                  ),
+                                  direction: ShimmerDirection.rtl,
+                                  child: Container(
+                                    height: widget.pictures!.length == 1
+                                        ? 350
+                                        : 270,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: const Radius.circular(10),
+                                        topRight: const Radius.circular(10),
+                                        bottomLeft: widget.pictures!.length == 1
+                                            ? const Radius.circular(10)
+                                            : Radius.zero,
+                                        bottomRight:
+                                            widget.pictures!.length == 1
+                                                ? const Radius.circular(10)
+                                                : Radius.zero,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                     ),
                     widget.pictures!.length == 1
                         ? const SizedBox()

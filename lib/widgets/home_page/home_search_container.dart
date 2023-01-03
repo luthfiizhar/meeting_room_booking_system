@@ -109,39 +109,7 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                     }
                   },
                   child: widget.initLoading
-                      ? Shimmer(
-                          gradient: const LinearGradient(
-                            colors: [platinum, grayx11, davysGray],
-                          ),
-                          direction: ShimmerDirection.rtl,
-                          child: Container(
-                            width: 175,
-                            height: 112,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: widget.roomTypeUrl == ""
-                                ? const SizedBox()
-                                : CachedNetworkImage(
-                                    imageUrl: widget.roomTypeUrl!,
-                                    imageBuilder: (context, imageProvider) {
-                                      return Container(
-                                        width: 175,
-                                        height: 112,
-                                        decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover,
-                                            opacity: 0.4,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                          ),
-                        )
+                      ? const SizedBox()
                       : Container(
                           width: 175,
                           height: 112,
@@ -152,11 +120,18 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                           child: CachedNetworkImage(
                             imageUrl: widget.roomTypeUrl!,
                             placeholder: (context, url) {
-                              return const SizedBox(
-                                height: 50,
-                                width: 50,
-                                child: CircularProgressIndicator(
-                                  color: eerieBlack,
+                              return Shimmer(
+                                gradient: const LinearGradient(
+                                  colors: [platinum, grayx11, davysGray],
+                                ),
+                                direction: ShimmerDirection.rtl,
+                                child: Container(
+                                  width: 175,
+                                  height: 112,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                 ),
                               );
                             },

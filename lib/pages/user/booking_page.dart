@@ -35,6 +35,7 @@ import 'package:meeting_room_booking_system/widgets/input_field/no_border_input_
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:provider/provider.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:http/http.dart' as http;
 
@@ -2186,11 +2187,21 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                         child: ConstrainedBox(
                           constraints: pageConstraints,
                           child: pictureLoading
-                              ? const SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child: CircularProgressIndicator(
-                                    color: eerieBlack,
+                              ? Shimmer(
+                                  gradient: const LinearGradient(
+                                    colors: [platinum, grayx11, davysGray],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  ),
+                                  direction: ShimmerDirection.rtl,
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      minHeight: 450,
+                                      minWidth: 500,
+                                      maxWidth: 500,
+                                      maxHeight: 450,
+                                    ),
+                                    child: const SizedBox(),
                                   ),
                                 )
                               : BookingRoomPicture(
