@@ -97,6 +97,7 @@ class _DetailAppointmentContainerState
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Text(
                       eventName,

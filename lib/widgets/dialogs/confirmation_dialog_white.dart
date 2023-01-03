@@ -10,10 +10,12 @@ class ConfirmDialogWhite extends StatelessWidget {
   const ConfirmDialogWhite({
     required this.title,
     required this.contentText,
+    required this.onConfirm,
   });
 
   final String? title;
   final String? contentText;
+  final VoidCallback? onConfirm;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +124,7 @@ class ConfirmDialogWhite extends StatelessWidget {
                     ),
                     RegularButton(
                       text: 'Confirm',
-                      onTap: () {},
+                      onTap: onConfirm,
                       padding: ButtonSize().mediumSize(),
                       disabled: false,
                     ),
@@ -134,6 +136,5 @@ class ConfirmDialogWhite extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }

@@ -119,7 +119,27 @@ class _RoomsPageState extends State<RoomsPage> {
     });
     setState(() {
       getBookingListRoom(selectedArea!, selectedDate.toString()).then((value) {
-        assignDataToCalendar(value['Data']);
+        if (value['Status'].toString() == "200") {
+          assignDataToCalendar(value['Data']);
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialogBlack(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
+        }
+      }).onError((error, stackTrace) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: 'Failed connect to API',
+            contentText: error.toString(),
+            isSuccess: false,
+          ),
+        );
       });
     });
     //     .map((e) {
@@ -435,35 +455,10 @@ class _RoomsPageState extends State<RoomsPage> {
   }
   """;
     try {
-      var response = await http.post(
-        url,
-        headers: requestHeader,
-        body: bodySend,
-      );
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
 
       var data = json.decode(response.body);
-      // print(data);
-
-      // List dataRoom = data['Data'];
-      // int length = dataRoom.length;
-      // print(dataRoom);
-      // roomEvents.clear();
-      // for (var i = 0; i < length; i++) {
-      //   List eventRoom = dataRoom[i]['Bookings'];
-      //   if (eventRoom.isEmpty) {
-      //     break;
-      //   }
-      //   for (var j = 0; j < eventRoom.length; j++) {
-      //     roomEvents.add(
-      //       Appointment(
-      //         // subject: ,
-      //         resourceIds: [dataRoom[i]['RoomID']],
-      //         startTime: DateTime.parse(eventRoom[j]['StartDateTime']),
-      //         endTime: DateTime.parse(eventRoom[j]['EndDateTime']),
-      //       ),
-      //     );
-      //   }
-      // }
       return data;
     } on Error catch (e) {
       return e;
@@ -550,12 +545,20 @@ class _RoomsPageState extends State<RoomsPage> {
                           ? GestureDetector(
                               onTap: () {},
                               child: Container(
-                                height: MediaQuery.of(context).size.width > 1366
-                                    ? (100 * dataRoom.length) >= 600
-                                        ? (100 * dataRoom.length) + 100 + 63
-                                        : MediaQuery.of(context).size.height -
+                                // height: MediaQuery.of(context).size.width > 1366
+                                //     ? (100 * dataRoom.length) >= 600
+                                //         ? (100 * dataRoom.length) + 100 + 63
+                                //         : MediaQuery.of(context).size.height -
+                                //             180
+                                //     : (100 * dataRoom.length) >= 600
+                                //         ? (100 * dataRoom.length) + 100 + 63
+                                //         : null,
+                                height: (100 * dataRoom.length) >= 600
+                                    ? (100 * dataRoom.length) + 100 + 63
+                                    : MediaQuery.of(context).size.width > 1366
+                                        ? MediaQuery.of(context).size.height -
                                             180
-                                    : null,
+                                        : 735,
                                 child: DetailAppointmentContainer(
                                   // event: selectedEvent,
                                   closeDetail: closeDetail,
@@ -685,108 +688,6 @@ class _RoomsPageState extends State<RoomsPage> {
     );
   }
 
-  RoomEventDataSource _getRoomDataSource(
-      int selectedRoom, Function resetState) {
-    switch (selectedRoom) {
-      case 1:
-        resourceCol.clear();
-        resourceCol.add(CalendarResource(
-          displayName: 'R. 101',
-          id: 'RM-1',
-          color: Colors.black54,
-        ));
-        resourceCol.add(CalendarResource(
-          displayName: 'R. 102',
-          id: 'RM-2',
-          color: Colors.black87,
-        ));
-        break;
-
-      case 2:
-        resourceCol.clear();
-        resourceCol.add(CalendarResource(
-          displayName: 'R. 201',
-          id: 'RM-3',
-          color: Colors.black54,
-        ));
-        resourceCol.add(CalendarResource(
-          displayName: 'R. 202',
-          id: 'RM-4',
-          color: Colors.black87,
-        ));
-        resourceCol.add(CalendarResource(
-          displayName: 'R. 203',
-          id: 'RM-5',
-          color: Colors.black54,
-        ));
-        break;
-      default:
-    }
-    getBookingListRoom('AR-1', DateTime.now().toString()).then((value) {
-      resetState;
-    });
-    // resourceCol.add(CalendarResource(
-    //   displayName: 'R. 101',
-    //   id: '0001',
-    //   color: Colors.transparent,
-    // ));
-    // resourceCol.add(CalendarResource(
-    //   displayName: 'R. 102',
-    //   id: '0002',
-    //   color: Colors.transparent,
-    // ));
-    // roomEvents.add(
-    //   Appointment(
-    //     startTime: DateTime.now().add(Duration(hours: 6)),
-    //     endTime: DateTime.now().add(Duration(hours: 8)),
-    //     subject: 'General Meeting',
-    //     color: Colors.red,
-    //     resourceIds: ['RM-1'],
-    //   ),
-    // );
-
-    // roomEvents.add(
-    //   Appointment(
-    //     startTime: DateTime.now().add(Duration(hours: 1)),
-    //     endTime: DateTime.now().add(Duration(hours: 5)),
-    //     subject: 'General Meeting 2',
-    //     color: Colors.blue,
-    //     resourceIds: ['RM-2'],
-    //   ),
-    // );
-
-    // roomEvents.add(
-    //   Appointment(
-    //     startTime: DateTime.now().add(Duration(hours: 3)),
-    //     endTime: DateTime.now().add(Duration(hours: 5)),
-    //     subject: 'General Meeting 3',
-    //     color: Colors.amber,
-    //     resourceIds: ['RM-3'],
-    //   ),
-    // );
-
-    // roomEvents.add(
-    //   Appointment(
-    //     startTime: DateTime.now().add(Duration(hours: 2)),
-    //     endTime: DateTime.now().add(Duration(hours: 4)),
-    //     subject: 'MRBS',
-    //     color: Colors.green,
-    //     resourceIds: ['RM-4'],
-    //   ),
-    // );
-
-    // roomEvents.add(
-    //   Appointment(
-    //     startTime: DateTime.now(),
-    //     endTime: DateTime.now(),
-    //     subject: 'Weekly Meeting',
-    //     color: Colors.amber,
-    //     resourceIds: ['RM-5'],
-    //   ),
-    // );
-    return RoomEventDataSource(roomEvents, resourceCol);
-  }
-
   Widget calendarRoomPage(MainModel model) {
     return Stack(
       children: [
@@ -804,8 +705,26 @@ class _RoomsPageState extends State<RoomsPage> {
                         viewChangedDetails.visibleDates[0].toString())
                     .then((value) {
                   print(value);
-                  assignDataToCalendar(value['Data']);
-                  setState(() {});
+                  if (value['Status'].toString() == "200") {
+                    assignDataToCalendar(value['Data']);
+                    setState(() {});
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialogBlack(
+                        title: value['Title'],
+                        contentText: value['Message'],
+                      ),
+                    );
+                  }
+                }).onError((error, stackTrace) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialogBlack(
+                      title: 'Failed connect to API',
+                      contentText: error.toString(),
+                    ),
+                  );
                 });
               }
             },
