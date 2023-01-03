@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
@@ -199,7 +200,7 @@ class _DetailAppointmentContainerState
                         thickness: 0.5,
                       ),
                     ),
-                    rowDetail(
+                    rowDetailEmail(
                       'Email',
                       email,
                     ),
@@ -371,6 +372,58 @@ class _DetailAppointmentContainerState
           ),
         ),
       ),
+    );
+  }
+
+  Widget rowDetailEmail(String label, String content) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 125,
+          child: Text(
+            label,
+            style: helveticaText.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              color: sonicSilver,
+            ),
+          ),
+        ),
+        Expanded(
+            child: Align(
+          alignment: Alignment.centerRight,
+          child: Wrap(
+            children: [
+              InkWell(
+                onTap: () async {
+                  await Clipboard.setData(ClipboardData(text: content));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      duration: Duration(seconds: 1),
+                      content: Text(
+                        'Email copied.',
+                        maxLines: 1,
+                      ),
+                    ),
+                  );
+                },
+                child: Text(
+                  content,
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: davysGray,
+                  ),
+                  textAlign: TextAlign.right,
+                  // textDirection: TextDirection.ltr,
+                ),
+              ),
+            ],
+          ),
+        )),
+      ],
     );
   }
 
