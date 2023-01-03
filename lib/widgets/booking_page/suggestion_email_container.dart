@@ -62,8 +62,13 @@ class _EmailSuggestionContainerState extends State<EmailSuggestionContainer> {
                   itemCount: widget.contactList!.length,
                   itemBuilder: (context, index) {
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         InkWell(
+                          onTap: () {
+                            widget.selectGuest!(
+                                widget.contactList![index]['Email']);
+                          },
                           child: EmailSuggestionListBody(
                             name: widget.contactList![index]['Name'],
                             email: widget.contactList![index]['Email'],

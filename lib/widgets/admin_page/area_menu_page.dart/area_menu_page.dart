@@ -7,6 +7,7 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/area_menu_page.dart/new_area_dialog.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 
@@ -20,6 +21,7 @@ class AreaMenuPage extends StatefulWidget {
 }
 
 class _AreaMenuPageState extends State<AreaMenuPage> {
+  ReqAPI apiReq = ReqAPI();
   TextEditingController _search = TextEditingController();
   FocusNode searchNode = FocusNode();
   FocusNode showPerRowsNode = FocusNode();
@@ -83,26 +85,46 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
   updateList() {
     areaList.clear();
     room.clear();
-    getRoomList(searchTerm).then((value) {
-      areaList = value['Data']['List'];
-      for (var element in areaList) {
-        room.add(Room(
-          roomId: element['RoomID'],
-          roomName: element['RoomName'],
-          roomType: element['RoomType'],
-          buildingName: element['SiteLocation'],
-          floorName: element['AreaName'],
-          minCapacity: element['MinCapacity'].toString(),
-          maxCapacity: element['MaxCapacity'].toString(),
-          coverPhoto: element['CoverPhoto'],
-          maxBookingDuration: element['Duration'].toString(),
-          defaultFacilities: element['AvailableAmenities'],
-          prohibitedFacilities: element['ForbiddenAmenities'],
-          areaPhoto: element['RoomPhotos'],
-          isCollapsed: false,
-        ));
+    apiReq.getRoomList(searchTerm).then((value) {
+      if (value['Status'].toString() == "200") {
+        areaList = value['Data']['List'];
+        for (var element in areaList) {
+          room.add(Room(
+            roomId: element['RoomID'],
+            roomName: element['RoomName'],
+            roomType: element['RoomType'],
+            buildingName: element['SiteLocation'],
+            floorName: element['AreaName'],
+            minCapacity: element['MinCapacity'].toString(),
+            maxCapacity: element['MaxCapacity'].toString(),
+            coverPhoto: element['CoverPhoto'],
+            maxBookingDuration: element['Duration'].toString(),
+            defaultFacilities: element['AvailableAmenities'],
+            prohibitedFacilities: element['ForbiddenAmenities'],
+            areaPhoto: element['RoomPhotos'],
+            isCollapsed: false,
+          ));
+        }
+        countPagination(value['Data']['TotalRows']);
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       }
-      countPagination(value['Data']['TotalRows']);
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
   }
 
@@ -111,30 +133,50 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
     // TODO: implement initState
     super.initState();
 
-    getRoomList(searchTerm).then((value) {
-      // print(value);
-      areaList = value['Data']['List'];
-      // for (var element in areaList) {
-      //   areaList.add({'isCollapsed': false});
-      // }
-      for (var element in areaList) {
-        room.add(Room(
-          roomId: element['RoomID'],
-          roomName: element['RoomName'],
-          roomType: element['RoomType'],
-          buildingName: element['SiteLocation'],
-          floorName: element['AreaName'],
-          minCapacity: element['MinCapacity'].toString(),
-          maxCapacity: element['MaxCapacity'].toString(),
-          coverPhoto: element['CoverPhoto'],
-          maxBookingDuration: element['Duration'].toString(),
-          defaultFacilities: element['AvailableAmenities'],
-          prohibitedFacilities: element['ForbiddenAmenities'],
-          areaPhoto: element['RoomPhotos'],
-          isCollapsed: false,
-        ));
+    apiReq.getRoomList(searchTerm).then((value) {
+      if (value['Status'].toString() == "200") {
+        // print(value);
+        areaList = value['Data']['List'];
+        // for (var element in areaList) {
+        //   areaList.add({'isCollapsed': false});
+        // }
+        for (var element in areaList) {
+          room.add(Room(
+            roomId: element['RoomID'],
+            roomName: element['RoomName'],
+            roomType: element['RoomType'],
+            buildingName: element['SiteLocation'],
+            floorName: element['AreaName'],
+            minCapacity: element['MinCapacity'].toString(),
+            maxCapacity: element['MaxCapacity'].toString(),
+            coverPhoto: element['CoverPhoto'],
+            maxBookingDuration: element['Duration'].toString(),
+            defaultFacilities: element['AvailableAmenities'],
+            prohibitedFacilities: element['ForbiddenAmenities'],
+            areaPhoto: element['RoomPhotos'],
+            isCollapsed: false,
+          ));
+        }
+        countPagination(value['Data']['TotalRows']);
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       }
-      countPagination(value['Data']['TotalRows']);
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
   }
 

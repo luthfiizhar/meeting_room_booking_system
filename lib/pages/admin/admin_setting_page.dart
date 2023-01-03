@@ -26,6 +26,7 @@ class AdminSettingPage extends StatefulWidget {
 }
 
 class _AdminSettingPageState extends State<AdminSettingPage> {
+  ReqAPI apiReq = ReqAPI();
   ScrollController scrollController = ScrollController();
   String menu = "Profile";
   int index = 0;
@@ -151,6 +152,7 @@ class ProfileMenuSetting extends StatefulWidget {
 }
 
 class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
+  ReqAPI apiReq = ReqAPI();
   TextEditingController _name = TextEditingController();
   TextEditingController _nip = TextEditingController();
   TextEditingController _email = TextEditingController();
@@ -177,29 +179,49 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   bool isLoadingSync = false;
 
   initGetUserProfile() {
-    getUserProfile().then((value) {
+    apiReq.getUserProfile().then((value) {
       print("User Profile -> $value");
-      setState(() {
-        name = value['Data']['EmpName'];
-        nip = value['Data']['EmpNIP'];
-        email = value['Data']['Email'];
-        avaya = value['AvayaNumber'] ?? "-";
-        phoneCode = value['Data']['CountryCode'];
-        phone = value['Data']['PhoneNumber'];
-        int gooleSync = value['Data']['GoogleAccountSync'];
-        if (gooleSync == 1) {
-          isConnectedToGoogle = true;
-        } else {
-          isConnectedToGoogle = false;
-        }
+      if (value['Status'].toString() == "200") {
+        setState(() {
+          name = value['Data']['EmpName'];
+          nip = value['Data']['EmpNIP'];
+          email = value['Data']['Email'];
+          avaya = value['AvayaNumber'] ?? "-";
+          phoneCode = value['Data']['CountryCode'];
+          phone = value['Data']['PhoneNumber'];
+          int gooleSync = value['Data']['GoogleAccountSync'];
+          if (gooleSync == 1) {
+            isConnectedToGoogle = true;
+          } else {
+            isConnectedToGoogle = false;
+          }
 
-        _name.text = name;
-        _nip.text = nip;
-        _avaya.text = avaya;
-        _email.text = email;
-        _phoneCode.text = phoneCode;
-        _phone.text = phone;
-      });
+          _name.text = name;
+          _nip.text = nip;
+          _avaya.text = avaya;
+          _email.text = email;
+          _phoneCode.text = phoneCode;
+          _phone.text = phone;
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
   }
 
@@ -253,7 +275,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   }
 
   googleLink() {
-    getLinkGoogleAuth().then((value) async {
+    apiReq.getLinkGoogleAuth().then((value) async {
       html.WindowBase popUpWindow;
 
       popUpWindow = html.window.open(
@@ -274,7 +296,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
             setState(() {
               isLoadingSync = false;
             });
-            saveTokenGoogle(code).then((value) {
+            apiReq.saveTokenGoogle(code).then((value) {
               print(value);
 
               if (value['Status'] == "200") {
@@ -301,7 +323,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialogBlack(
-                  title: 'Failed',
+                  title: 'Failed connect to API',
                   contentText: error.toString(),
                   isSuccess: false,
                 ),
@@ -311,6 +333,15 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
         }
       });
       if (code != "") {}
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
   }
 
@@ -487,7 +518,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                     if (!isConnectedToGoogle) {
                       googleLink();
                     } else {
-                      revokeGoogleAcc().then((value) {
+                      apiReq.revokeGoogleAcc().then((value) {
                         print(value);
                         if (value['Status'].toString() == "200") {
                           initGetUserProfile();

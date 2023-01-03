@@ -4,6 +4,7 @@ import 'package:flutter_intro/flutter_intro.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:meeting_room_booking_system/app_config.dart';
 import 'package:meeting_room_booking_system/app_view.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/custom_scroll_behavior.dart';
@@ -66,8 +67,8 @@ void main() async {
   // print(ipv4);
   await loginCheck();
   // runApp(MyApp());
-  ReqAPI reqApi = ReqAPI();
-  reqApi.checkToken().then((value) {
+  ReqAPI apiReq = ReqAPI();
+  apiReq.checkToken().then((value) {
     print(value);
     if (value["Status"] == "200") {
       isTokenValid = true;
@@ -75,7 +76,14 @@ void main() async {
       isTokenValid = false;
     }
     print('token valid? $isTokenValid');
-    runApp(MyApp());
+    runApp(
+      AppConfig(
+        appName: 'MRBS DEVELOPMENT',
+        apiBaseUrl: 'fmklg.klgsys.com',
+        flavorName: 'development',
+        child: MyApp(),
+      ),
+    );
   });
 
   // loginCheck().then((_) {

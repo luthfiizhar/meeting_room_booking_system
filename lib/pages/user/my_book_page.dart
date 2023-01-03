@@ -8,6 +8,7 @@ import 'package:meeting_room_booking_system/widgets/banner/black_banner.dart';
 import 'package:meeting_room_booking_system/widgets/banner/landscape_black_banner.dart';
 import 'package:meeting_room_booking_system/widgets/banner/landscape_white_banner.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/my_book_page/filter_search_bar.dart';
@@ -26,6 +27,7 @@ class MyBookingPage extends StatefulWidget {
 }
 
 class _MyBookingPageState extends State<MyBookingPage> {
+  ReqAPI apiReq = ReqAPI();
   setDatePickerStatus(bool value) {}
 
   TextEditingController _search = TextEditingController();
@@ -90,22 +92,46 @@ class _MyBookingPageState extends State<MyBookingPage> {
     });
   }
 
+  updateList() {
+    apiReq.getMyBookingList(searchTerm).then((value) {
+      print(value);
+      setState(() {
+        if (value['Status'] == "200") {
+          myBookList = value['Data']['List'];
+
+          countPagination(value['Data']['TotalRows']);
+          showedPage = availablePage.take(5).toList();
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialogBlack(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
+        }
+      });
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     // myBookList = getMyBookList();
 
-    getMyBookingList(searchTerm).then((value) {
-      print(value);
-      setState(() {
-        myBookList = value['Data']['List'];
-
-        countPagination(value['Data']['TotalRows']);
-        showedPage = availablePage.take(5).toList();
-      });
-    });
     // sourceData = MyBookTableSource(myBook: myBookList);
+    updateList();
   }
 
   roomTypeChanged(String value) {
@@ -114,11 +140,12 @@ class _MyBookingPageState extends State<MyBookingPage> {
       searchTerm.pageNumber = currentPaginatedPage.toString();
       searchTerm.roomType = value;
       roomType = value;
-      getMyBookingList(searchTerm).then((value) {
-        myBookList = value['Data']['List'];
-        countPagination(value['Data']['TotalRows']);
-        showedPage = availablePage.take(5).toList();
-      });
+      // apiReq.getMyBookingList(searchTerm).then((value) {
+      //   myBookList = value['Data']['List'];
+      //   countPagination(value['Data']['TotalRows']);
+      //   showedPage = availablePage.take(5).toList();
+      // });
+      updateList();
       print(searchTerm.roomType);
     });
   }
@@ -137,12 +164,13 @@ class _MyBookingPageState extends State<MyBookingPage> {
         }
       }
       searchTerm.orderBy = orderBy;
-      getMyBookingList(searchTerm).then((value) {
-        setState(() {
-          myBookList = value['Data']['List'];
-          countPagination(value['Data']['TotalRows']);
-        });
-      });
+      // apiReq.getMyBookingList(searchTerm).then((value) {
+      //   setState(() {
+      //     myBookList = value['Data']['List'];
+      //     countPagination(value['Data']['TotalRows']);
+      //   });
+      // });
+      updateList();
     });
     print("Order By ${searchTerm.orderBy} ${searchTerm.orderDir}");
   }
@@ -152,12 +180,13 @@ class _MyBookingPageState extends State<MyBookingPage> {
       currentPaginatedPage = 1;
       searchTerm.keyWords = _search.text;
       searchTerm.pageNumber = currentPaginatedPage.toString();
-      getMyBookingList(searchTerm).then((value) {
-        print(value);
-        myBookList = value['Data']['List'];
-        countPagination(value['Data']['TotalRows']);
-        showedPage = availablePage.take(5).toList();
-      });
+      // apiReq.getMyBookingList(searchTerm).then((value) {
+      //   print(value);
+      //   myBookList = value['Data']['List'];
+      //   countPagination(value['Data']['TotalRows']);
+      //   showedPage = availablePage.take(5).toList();
+      // });
+      updateList();
     });
   }
 
@@ -413,11 +442,14 @@ class _MyBookingPageState extends State<MyBookingPage> {
                                   currentPaginatedPage = 1;
                                   searchTerm.pageNumber = "1";
                                   searchTerm.max = value!.toString();
-                                  getMyBookingList(searchTerm).then((value) {
-                                    myBookList = value['Data']['List'];
-                                    countPagination(value['Data']['TotalRows']);
-                                    showedPage = availablePage.take(5).toList();
-                                  });
+                                  // apiReq
+                                  //     .getMyBookingList(searchTerm)
+                                  //     .then((value) {
+                                  //   myBookList = value['Data']['List'];
+                                  //   countPagination(value['Data']['TotalRows']);
+                                  //   showedPage = availablePage.take(5).toList();
+                                  // });
+                                  updateList();
                                 });
                               },
                               value: searchTerm.max,
@@ -470,12 +502,14 @@ class _MyBookingPageState extends State<MyBookingPage> {
                                       searchTerm.pageNumber =
                                           currentPaginatedPage.toString();
 
-                                      getMyBookingList(searchTerm)
-                                          .then((value) {
-                                        myBookList = value['Data']['List'];
-                                        countPagination(
-                                            value['Data']['TotalRows']);
-                                      });
+                                      // apiReq
+                                      //     .getMyBookingList(searchTerm)
+                                      //     .then((value) {
+                                      //   myBookList = value['Data']['List'];
+                                      //   countPagination(
+                                      //       value['Data']['TotalRows']);
+                                      // });
+                                      updateList();
                                     });
                                   }
                                 : null,
@@ -549,19 +583,19 @@ class _MyBookingPageState extends State<MyBookingPage> {
                                                 searchTerm.pageNumber =
                                                     currentPaginatedPage
                                                         .toString();
-                                                getMyBookingList(searchTerm)
-                                                    .then((value) {
-                                                  setState(() {
-                                                    myBookList =
-                                                        value['Data']['List'];
-                                                    countPagination(
-                                                        value['Data']
-                                                            ['TotalRows']);
-                                                  });
-                                                });
-                                                print(showedPage);
-                                                print(
-                                                    'current ${searchTerm.pageNumber}');
+                                                // apiReq
+                                                //     .getMyBookingList(
+                                                //         searchTerm)
+                                                //     .then((value) {
+                                                //   setState(() {
+                                                //     myBookList =
+                                                //         value['Data']['List'];
+                                                //     countPagination(
+                                                //         value['Data']
+                                                //             ['TotalRows']);
+                                                //   });
+                                                // });
+                                                updateList();
                                               },
                                         child: Container(
                                           width: 35,
@@ -648,12 +682,14 @@ class _MyBookingPageState extends State<MyBookingPage> {
                                       searchTerm.pageNumber =
                                           currentPaginatedPage.toString();
 
-                                      getMyBookingList(searchTerm)
-                                          .then((value) {
-                                        myBookList = value['Data']['List'];
-                                        countPagination(
-                                            value['Data']['TotalRows']);
-                                      });
+                                      // apiReq
+                                      //     .getMyBookingList(searchTerm)
+                                      //     .then((value) {
+                                      //   myBookList = value['Data']['List'];
+                                      //   countPagination(
+                                      //       value['Data']['TotalRows']);
+                                      // });
+                                      updateList();
                                     });
                                   }
                                 : null,

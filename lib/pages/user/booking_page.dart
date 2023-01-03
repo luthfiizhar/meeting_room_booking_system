@@ -81,6 +81,7 @@ class BookingRoomPage extends StatefulWidget {
 }
 
 class _BookingRoomPageState extends State<BookingRoomPage> {
+  ReqAPI apiReq = ReqAPI();
   TextEditingController _eventName = TextEditingController();
   TextEditingController _eventDesc = TextEditingController();
   TextEditingController _date = TextEditingController();
@@ -265,9 +266,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     setState(() {
       datePickerVisible = value;
       datePickerRepeatVisible = value;
-      emailSuggestionVisible = value;
       emailNode.unfocus();
-      filterContactList = contactList;
+      emailSuggestionVisible = false;
+
+      // filterContactList = contactList;
     });
   }
 
@@ -497,6 +499,54 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             ));
   }
 
+  initContactList() {
+    apiReq.getContactList().then((value) {
+      print("Contact List $value");
+      emailSuggestionVisible = true;
+      if (value['Status'].toString() == "200") {
+        if (value['Data'].toString() == "[]") {
+          setState(() {
+            contactList = [];
+            isContactEmpty = true;
+            messageEmptyContact = value['Message'];
+          });
+        } else {
+          setState(() {
+            contactList = value['Data'];
+            filterContactList = contactList;
+            isContactEmpty = false;
+          });
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     content: Text(
+      //       'Error fetching contact data!',
+      //       maxLines: 1,
+      //     ),
+      //   ),
+      // );
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -560,34 +610,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     //     }
     //   }
     // }
-    getContactList().then((value) {
-      print("Contact List $value");
 
-      if (value['Status'].toString() == "200") {
-        if (value['Data'].toString() == "[]") {
-          setState(() {
-            contactList = [];
-            isContactEmpty = true;
-            messageEmptyContact = value['Message'];
-          });
-        } else {
-          setState(() {
-            contactList = value['Data'];
-            filterContactList = contactList;
-            isContactEmpty = false;
-          });
-        }
-      } else {}
-    }).onError((error, stackTrace) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Error fetching contact data!',
-            maxLines: 1,
-          ),
-        ),
-      );
-    });
     if (widget.roomId!.startsWith('AU')) {
       roomType = "Auditorium";
     }
@@ -597,7 +620,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     if (widget.roomId!.startsWith('MR')) {
       roomType = "MeetingRoom";
     }
-    getRoomDetail(widget.roomId!).then((value) {
+    apiReq.getRoomDetail(widget.roomId!).then((value) {
       setState(() {
         pictureLoading = false;
         roomName = value['Data']['RoomName'];
@@ -643,21 +666,41 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           repeatSectionVisible = false;
         }
         _repeatOnMonthly.text = selectedDate!.day.toString();
-        getMeetingType().then((value) {
+        apiReq.getMeetingType().then((value) {
           // print(value['Data']);
-          List result = value['Data'];
-          setState(() {
-            for (var element in result) {
-              listEventType!.add(
-                RadioModel(
-                  isSelected: false,
-                  text: element['Name'],
-                  value: element['Value'],
-                ),
-              );
-            }
-            selectedEventType = value['Data'][0]['Value'];
-          });
+          if (value['Status'].toString() == "200") {
+            List result = value['Data'];
+            setState(() {
+              for (var element in result) {
+                listEventType!.add(
+                  RadioModel(
+                    isSelected: false,
+                    text: element['Name'],
+                    value: element['Value'],
+                  ),
+                );
+              }
+              selectedEventType = value['Data'][0]['Value'];
+            });
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialogBlack(
+                title: value['Title'],
+                contentText: value['Message'],
+                isSuccess: false,
+              ),
+            );
+          }
+        }).onError((error, stackTrace) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialogBlack(
+              title: 'Failed connect to API',
+              contentText: error.toString(),
+              isSuccess: false,
+            ),
+          );
         });
         if (widget.isEdit == "true") {
           setState(() {
@@ -684,21 +727,50 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           isEdit = false;
         }
       });
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
 
     _email.addListener(() {
-      setState(() {
-        // filterContact = _email.text;
-        if (_email.text != "") {
-          filterContactList.clear();
-          for (var element in contactList) {
-            // element['Name'].toString().contains(_email.text);
-            // if (_email.text =) {}
-            filterContactList
-                .add(element['Name'].toString().contains(_email.text));
-          }
-        }
-      });
+      // filterContact = _email.text;
+      if (_email.text != "") {
+        // filterContactList.clear();
+        setState(() {
+          print(contactList.where((element) => element['Name']
+              .toString()
+              .toLowerCase()
+              .contains(_email.text.toLowerCase())));
+          filterContactList = contactList
+              .where((element) => element['Name']
+                  .toString()
+                  .toLowerCase()
+                  .contains(_email.text.toLowerCase()))
+              .toList();
+        });
+
+        // for (var element in contactList) {
+        //   // element['Name'].toString().contains(_email.text);
+        //   // if (_email.text =) {}
+        //   if (element['Name'].toString().contains(_email.text) ||
+        //       element['Email'].toString().contains(_email.text)) {
+        //     setState(() {
+        //       filterContactList.add(element);
+        //     });
+        //   }
+        // }
+      }
+      if (_email.text == "") {
+        setState(() {
+          filterContactList = contactList;
+        });
+      }
     });
     eventDescNode.addListener(
       () {
@@ -740,18 +812,41 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         setState(() {});
       },
     );
-    emailNode.addListener(() {
+    emailNode.addListener(() async {
       setState(() {
+        print("Contact List ---> $contactList");
         if (emailNode.hasFocus) {
           // _overlayEntry = emailOverlay();
           // Overlay.of(context)!.insert(_overlayEntry!);
-          emailSuggestionVisible = true;
+          if (_email.text == "") {
+            if (contactList.isEmpty) {
+              initContactList();
+            } else {
+              setState(() {
+                isContactEmpty = false;
+                emailSuggestionVisible = true;
+                filterContactList = contactList;
+              });
+            }
+          } else {
+            if (contactList == []) {
+              initContactList();
+            } else {
+              setState(() {
+                isContactEmpty = false;
+                emailSuggestionVisible = true;
+                filterContactList = contactList
+                    .where((element) => element['Name']
+                        .toString()
+                        .toLowerCase()
+                        .contains(_email.text.toLowerCase()))
+                    .toList();
+              });
+            }
+          }
         } else {
           // emailSuggestionVisible = false;
           // _overlayEntry!.remove();
-        }
-        if (emailSuggestionVisible) {
-          emailNode.requestFocus();
         }
       });
     });
@@ -1686,7 +1781,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             if (roomType == "MeetingRoom") {
                                               if (!isEdit) {
                                                 //BOOKING FUNCTION
-                                                bookingRoom(booking)
+                                                apiReq
+                                                    .bookingRoom(booking)
                                                     .then((value) {
                                                   print(value);
                                                   if (value['Status'] ==
@@ -1729,14 +1825,13 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                   }
                                                   // context.pop();
                                                 }).onError((error, stackTrace) {
-                                                  print(error);
                                                   showDialog(
                                                     context: context,
                                                     builder: (context) =>
-                                                        const AlertDialogBlack(
+                                                        AlertDialogBlack(
                                                       title: 'Failed',
                                                       contentText:
-                                                          'Failed connect to API',
+                                                          error.toString(),
                                                       isSuccess: false,
                                                     ),
                                                   ).then((value) {
@@ -1750,7 +1845,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                               } else {
                                                 print('UPDATE');
                                                 //UPDATE BOOKING FUNCTION
-                                                updateBooking(booking)
+                                                apiReq
+                                                    .updateBooking(booking)
                                                     .then((value) {
                                                   print(value);
                                                   if (value['Status'] ==
@@ -1797,10 +1893,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                   showDialog(
                                                     context: context,
                                                     builder: (context) =>
-                                                        const AlertDialogBlack(
+                                                        AlertDialogBlack(
                                                       title: 'Failed',
                                                       contentText:
-                                                          'Failed connect to API',
+                                                          error.toString(),
                                                       isSuccess: false,
                                                     ),
                                                   ).then((value) {
@@ -1824,7 +1920,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                               }
                                               print(booking.toJson());
                                               //BOOKING AUDI FUNCTION
-                                              bookingAudi(booking)
+                                              apiReq
+                                                  .bookingAudi(booking)
                                                   .then((value) {
                                                 print(value);
                                                 if (value['Status'] == "200") {
@@ -1870,10 +1967,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                 showDialog(
                                                   context: context,
                                                   builder: (context) =>
-                                                      const AlertDialogBlack(
+                                                      AlertDialogBlack(
                                                     title: 'Failed',
                                                     contentText:
-                                                        'Failed connect to API',
+                                                        error.toString(),
                                                     isSuccess: false,
                                                   ),
                                                 ).then((value) {

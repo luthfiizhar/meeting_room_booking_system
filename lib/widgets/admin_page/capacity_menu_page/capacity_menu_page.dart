@@ -4,6 +4,7 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 
@@ -16,6 +17,7 @@ class CapacityMenuPage extends StatefulWidget {
 
 class _CapacityMenuPageState extends State<CapacityMenuPage> {
   // Room room = Room();
+  ReqAPI apiReq = ReqAPI();
 
   TextEditingController _search = TextEditingController();
   FocusNode searchNode = FocusNode();
@@ -69,10 +71,30 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
 
   updateList() {
     areaList.clear();
-    getRoomList(searchTerm).then((value) {
-      areaList = value['Data']['List'];
-      countPagination(value['Data']['TotalRows']);
-      showedPage = availablePage.take(5).toList();
+    apiReq.getRoomList(searchTerm).then((value) {
+      if (value['Status'].toString() == "200") {
+        areaList = value['Data']['List'];
+        countPagination(value['Data']['TotalRows']);
+        showedPage = availablePage.take(5).toList();
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
   }
 
@@ -81,13 +103,33 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
     // TODO: implement initState
     super.initState();
     searchTerm.orderBy = "FloorName";
-    getRoomList(searchTerm).then((value) {
-      setState(() {
-        // print(value);
-        areaList = value['Data']['List'];
-        countPagination(value['Data']['TotalRows']);
-        showedPage = availablePage.take(5).toList();
-      });
+    apiReq.getRoomList(searchTerm).then((value) {
+      if (value['Status'] == "200") {
+        setState(() {
+          // print(value);
+          areaList = value['Data']['List'];
+          countPagination(value['Data']['TotalRows']);
+          showedPage = availablePage.take(5).toList();
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
     searchNode.addListener(() {
       setState(() {});

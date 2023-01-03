@@ -6,6 +6,7 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/room_schedule.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class PickStartTimeDialog extends StatefulWidget {
@@ -29,6 +30,7 @@ class PickStartTimeDialog extends StatefulWidget {
 }
 
 class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
+  ReqAPI apiReq = ReqAPI();
   CalendarController _calendar = CalendarController();
 
   String today = "";
@@ -149,12 +151,31 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
   }
 
   initStartTimeSelector() {
-    startTimeSelector(widget.roomId!,
+    apiReq
+        .startTimeSelector(widget.roomId!,
             DateFormat('yyyy-MM-dd').format(widget.selectedDate!))
         .then((value) {
-      setState(() {
-        timeList = value['Data'];
-      });
+      if (value['Status'] == "200") {
+        setState(() {
+          timeList = value['Data'];
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+        ),
+      );
     });
   }
 

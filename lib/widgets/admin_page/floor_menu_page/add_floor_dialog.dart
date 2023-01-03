@@ -5,6 +5,7 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/white_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
@@ -17,6 +18,7 @@ class AddNewFloorDialog extends StatefulWidget {
 }
 
 class _AddNewFloorDialogState extends State<AddNewFloorDialog> {
+  ReqAPI apiReq = ReqAPI();
   TextEditingController _floorName = TextEditingController();
 
   String selectedBuilding = "";
@@ -72,11 +74,30 @@ class _AddNewFloorDialogState extends State<AddNewFloorDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getBuildingList().then((value) {
-      print(value);
-      setState(() {
-        buildingList = value['Data'];
-      });
+    apiReq.getBuildingList().then((value) {
+      if (value['Status'].toString() == "200") {
+        setState(() {
+          buildingList = value['Data'];
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
     floorNameNode.addListener(() {
       setState(() {});

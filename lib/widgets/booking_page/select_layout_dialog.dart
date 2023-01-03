@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 
 class SelectLayoutDialog extends StatefulWidget {
   SelectLayoutDialog({
@@ -32,6 +33,7 @@ class SelectLayoutDialog extends StatefulWidget {
 }
 
 class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
+  ReqAPI apiReq = ReqAPI();
   List? availableLayout = ['1', '2', '3'];
 
   List layoutList = [];
@@ -69,14 +71,30 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
         }
       });
     }
-    getLayoutList().then((value) {
+    apiReq.getLayoutList().then((value) {
       print(value);
-      if (value["Status"] == "200") {
+      if (value["Status"].toString() == "200") {
         setState(() {
           layoutList = value["Data"];
         });
-      } else {}
-    }).onError((error, stackTrace) {});
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+        ),
+      );
+    });
     _scrollController.addListener(() {
       scroll(_scrollController);
     });

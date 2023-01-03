@@ -46,6 +46,7 @@ class LayoutPageWeb extends StatefulWidget {
 }
 
 class _LayoutPageWebState extends State<LayoutPageWeb> {
+  ReqAPI apiReq = ReqAPI();
   ScrollController? _scrollController;
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -158,7 +159,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
     if (widget.model != null) {
       mainModel = widget.model!;
     }
-    getUserProfile().then((value) {
+    apiReq.getUserProfile().then((value) {
       if (value['Status'] == "200") {
         setState(() {
           employeeName = value['Data']['EmpName'];
@@ -192,7 +193,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
-          title: 'Can\'t connect to API',
+          title: 'Failed connect to API',
           contentText: error.toString(),
           isSuccess: false,
         ),

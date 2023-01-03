@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
@@ -30,6 +29,7 @@ class DetailAppointmentContainer extends StatefulWidget {
 
 class _DetailAppointmentContainerState
     extends State<DetailAppointmentContainer> {
+  ReqAPI apiReq = ReqAPI();
   String eventName = "";
   String location = "";
   String floor = "";
@@ -45,7 +45,6 @@ class _DetailAppointmentContainerState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // print(widget.event!.bookingID!);
     // getBookingDetail(widget.event!.bookingID!).then((value) {
@@ -280,9 +279,11 @@ class _DetailAppointmentContainerState
                                   });
                                   if (value) {
                                     if (bookingType == "SINGLE") {
-                                      deleteBooking(widget.event!.bookingID!)
+                                      apiReq
+                                          .deleteBooking(
+                                              widget.event!.bookingID!)
                                           .then((value) {
-                                        print(value);
+                                        // print(value);
                                         setState(() {
                                           // isCancelLoading = false;
                                         });
@@ -311,10 +312,11 @@ class _DetailAppointmentContainerState
                                       });
                                     }
                                     if (bookingType == "RECURRENT") {
-                                      deleteBookingRecurrent(
+                                      apiReq
+                                          .deleteBookingRecurrent(
                                               widget.event!.bookingID!)
                                           .then((value) {
-                                        print(value);
+                                        // print(value);
                                         if (value['Status'] == "200") {
                                           showDialog(
                                             context: context,

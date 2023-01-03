@@ -43,6 +43,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  ReqAPI apiReq = ReqAPI();
   ScrollController scrollController = ScrollController();
   MainModel mainModel = MainModel();
 
@@ -420,20 +421,31 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
 
-    getAreaList().then((value) {
-      setState(() {
-        resultArea = value['Data'];
-        for (var element in resultArea) {
-          listFilter!.add(CheckBoxModel(
-            name: element['AreaName'],
-            value: element['AreaID'].toString(),
-            selected: true,
-          ));
-          // submitFilter.add("\"${element['AreaID']}\"");
-        }
-      });
-      print(submitFilter);
-      // print(listFilter);
+    apiReq.getAreaList().then((value) {
+      if (value['Status'].toString() == "200") {
+        setState(() {
+          resultArea = value['Data'];
+          for (var element in resultArea) {
+            listFilter!.add(CheckBoxModel(
+              name: element['AreaName'],
+              value: element['AreaID'].toString(),
+              selected: true,
+            ));
+            // submitFilter.add("\"${element['AreaID']}\"");
+          }
+        });
+        print(submitFilter);
+        // print(listFilter);
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
     }).then((value) {
       print(widget.queryParam);
       if (widget.queryParam.isNotEmpty) {
@@ -447,8 +459,17 @@ class _SearchPageState extends State<SearchPage> {
         _facilityController.text = 'None';
         _participantController.text = 'Total Participant';
       }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
-    getRoomType().then((value) {
+    apiReq.getRoomType().then((value) {
       print(value);
       if (value['Status'] == "200") {
         roomType = value['Data'];
@@ -797,7 +818,8 @@ class _SearchPageState extends State<SearchPage> {
     }
 
     print(listAmen);
-    searchRoomApi(
+    apiReq
+        .searchRoomApi(
       selectedDateFormatted,
       startTime,
       endTime,
@@ -806,11 +828,23 @@ class _SearchPageState extends State<SearchPage> {
       meetingTypeValue,
       submitFilter,
       sort,
-    ).then((value) {
-      setState(() {
-        isSearching = false;
-        searchResult = value["Data"]["Room"];
-      });
+    )
+        .then((value) {
+      if (value['Status'] == "200") {
+        setState(() {
+          isSearching = false;
+          searchResult = value["Data"]["Room"];
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
     }).onError((error, stackTrace) {
       showDialog(
         context: context,
@@ -839,7 +873,8 @@ class _SearchPageState extends State<SearchPage> {
     sort = value;
 
     print(listAmen);
-    searchRoomApi(
+    apiReq
+        .searchRoomApi(
       selectedDateFormatted,
       startTime,
       endTime,
@@ -848,16 +883,28 @@ class _SearchPageState extends State<SearchPage> {
       meetingTypeValue,
       submitFilter,
       sort,
-    ).then((value) {
-      setState(() {
-        isSearching = false;
-        searchResult = value["Data"]["Room"];
-      });
+    )
+        .then((value) {
+      if (value['Status'].toString() == "200") {
+        setState(() {
+          isSearching = false;
+          searchResult = value["Data"]["Room"];
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
     }).onError((error, stackTrace) {
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
-          title: 'Can\'t Connect to API',
+          title: 'Failed Connect to API',
           contentText: error.toString(),
           isSuccess: false,
         ),
@@ -916,7 +963,8 @@ class _SearchPageState extends State<SearchPage> {
       meetingTypeValue = widget.queryParam['roomTypeValue'];
       meetingTypeName = widget.queryParam['roomTypeName'];
 
-      searchRoomApi(
+      apiReq
+          .searchRoomApi(
         selectedDateFormatted,
         startTime,
         endTime,
@@ -925,15 +973,34 @@ class _SearchPageState extends State<SearchPage> {
         meetingTypeValue,
         submitFilter,
         sort,
-      ).then((value) {
+      )
+          .then((value) {
         print(value);
         if (value['Status'] == "200") {
           setState(() {
             isSearching = false;
             searchResult = value["Data"]["Room"];
           });
-        } else {}
-      }).onError((error, stackTrace) {});
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialogBlack(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
+        }
+      }).onError((error, stackTrace) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: 'Failed connect to API',
+            contentText: error.toString(),
+            isSuccess: false,
+          ),
+        );
+      });
     });
   }
 
@@ -969,7 +1036,8 @@ class _SearchPageState extends State<SearchPage> {
       }
 
       print(listAmen);
-      searchRoomApi(
+      apiReq
+          .searchRoomApi(
         selectedDateFormatted,
         startTime,
         endTime,
@@ -978,17 +1046,28 @@ class _SearchPageState extends State<SearchPage> {
         meetingTypeValue,
         submitFilter,
         sort,
-      ).then((value) {
-        print(value);
-        setState(() {
-          isSearching = false;
-          searchResult = value["Data"]["Room"];
-        });
+      )
+          .then((value) {
+        if (value['Status'].toString() == "200") {
+          setState(() {
+            isSearching = false;
+            searchResult = value["Data"]["Room"];
+          });
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialogBlack(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
+        }
       }).onError((error, stackTrace) {
         showDialog(
           context: context,
           builder: (context) => AlertDialogBlack(
-            title: 'Can\'t Connect to API',
+            title: 'Failed Connect to API',
             contentText: error.toString(),
             isSuccess: false,
           ),

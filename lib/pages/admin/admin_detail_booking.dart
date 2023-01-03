@@ -25,6 +25,7 @@ class AdminDetailBooking extends StatefulWidget {
 }
 
 class _AdminDetailBookingState extends State<AdminDetailBooking> {
+  ReqAPI apiReq = ReqAPI();
   String summary = "";
   String description = "";
   String roomType = "";
@@ -76,57 +77,77 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getBookingDetail(widget.bookingId!).then((value) {
+    apiReq.getBookingDetail(widget.bookingId!).then((value) {
       print(value['Data']);
-      setState(() {
-        isInitLoading = false;
-        roomId = value['Data']['RoomID'];
-        coverURL = value['Data']['RoomPhotos'];
-        summary = value['Data']['Summary'];
-        description = value['Data']['Description'];
-        roomType = value['Data']['RoomType'];
+      if (value['Status'].toString() == "200") {
+        setState(() {
+          isInitLoading = false;
+          roomId = value['Data']['RoomID'];
+          coverURL = value['Data']['RoomPhotos'];
+          summary = value['Data']['Summary'];
+          description = value['Data']['Description'];
+          roomType = value['Data']['RoomType'];
 
-        bookingType = value['Data']['BookingType'];
+          bookingType = value['Data']['BookingType'];
 
-        startTime = value['Data']['BookingStartTime'];
-        endTime = value['Data']['BookingEndTime'];
-        location = value['Data']['RoomName'];
-        floor = value['Data']['AreaName'];
-        eventDate = value['Data']['BookingDate'];
+          startTime = value['Data']['BookingStartTime'];
+          endTime = value['Data']['BookingEndTime'];
+          location = value['Data']['RoomName'];
+          floor = value['Data']['AreaName'];
+          eventDate = value['Data']['BookingDate'];
 
-        eventTime =
-            "${value['Data']['BookingStartTime']} - ${value['Data']['BookingEndTime']} WIB";
-        duration = value['Data']['Duration'];
-        participantTotal = value['Data']['AttendantsNumber'].toString();
-        eventType = value['Data']['MeetingType'];
-        repeat = value['Data']['Repeat'];
+          eventTime =
+              "${value['Data']['BookingStartTime']} - ${value['Data']['BookingEndTime']} WIB";
+          duration = value['Data']['Duration'];
+          participantTotal = value['Data']['AttendantsNumber'].toString();
+          eventType = value['Data']['MeetingType'];
+          repeat = value['Data']['Repeat'];
 
-        host = value['Data']['EmpName'];
+          host = value['Data']['EmpName'];
 
-        // layoutName = value['Data']['LayoutName'];
-        // layoutImage = value['Data']['LayoutImg'];
+          // layoutName = value['Data']['LayoutName'];
+          // layoutImage = value['Data']['LayoutImg'];
 
-        amenities = value['Data']['Amenities'];
-        foodAmenities = value['Data']['FoodAmenities'];
+          amenities = value['Data']['Amenities'];
+          foodAmenities = value['Data']['FoodAmenities'];
 
-        print('amenities');
-        print(amenities);
-        guestInvited = value['Data']['Attendants'];
+          print('amenities');
+          print(amenities);
+          guestInvited = value['Data']['Attendants'];
 
-        additionalNotes = value['Data']['AdditionalNotes'] ?? "";
+          additionalNotes = value['Data']['AdditionalNotes'] ?? "";
 
-        bookingHistory = value['Data']['History'];
-        repeatType = value['Data']['RepeatType'] ?? "NONE";
-        if (bookingType == "RECURSIVE") {
-          repeatEndDate = DateTime.parse(value['Data']['RepeatEndDate']);
-          monthAbs = value['Data']['MonthAbsolute'].toString();
-          days = value['Data']['Days'];
-          interval = value['Data']['RepInterval'].toString();
-        }
-        formattedDate = DateFormat('yyyy-mm-dd')
-            .format(DateTime.parse(value['Data']['BookingDateOriginal']));
-        selectedDate = value['Data']['BookingDateOriginal'];
-      });
+          bookingHistory = value['Data']['History'];
+          repeatType = value['Data']['RepeatType'] ?? "NONE";
+          if (bookingType == "RECURSIVE") {
+            repeatEndDate = DateTime.parse(value['Data']['RepeatEndDate']);
+            monthAbs = value['Data']['MonthAbsolute'].toString();
+            days = value['Data']['Days'];
+            interval = value['Data']['RepInterval'].toString();
+          }
+          formattedDate = DateFormat('yyyy-mm-dd')
+              .format(DateTime.parse(value['Data']['BookingDateOriginal']));
+          selectedDate = value['Data']['BookingDateOriginal'];
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
   }
 
@@ -247,7 +268,8 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                                   text: 'Approve Event',
                                   disabled: false,
                                   onTap: () {
-                                    approveAuditorium(widget.bookingId!)
+                                    apiReq
+                                        .approveAuditorium(widget.bookingId!)
                                         .then((value) {
                                       if (value['Status'] == "200") {
                                         showDialog(
@@ -274,7 +296,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                                       showDialog(
                                         context: context,
                                         builder: (context) => AlertDialogBlack(
-                                          title: 'Can\'t connect to API',
+                                          title: 'Failed connect to API',
                                           contentText: error.toString(),
                                           isSuccess: false,
                                         ),
@@ -290,7 +312,8 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                                   text: 'Decline Event',
                                   disabled: false,
                                   onTap: () {
-                                    rejectAuditorium(widget.bookingId!)
+                                    apiReq
+                                        .rejectAuditorium(widget.bookingId!)
                                         .then((value) {
                                       if (value['Status'] == "200") {
                                         showDialog(
@@ -317,7 +340,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                                       showDialog(
                                         context: context,
                                         builder: (context) => AlertDialogBlack(
-                                          title: 'Can\'t connect to API',
+                                          title: 'Failed connect to API',
                                           contentText: error.toString(),
                                           isSuccess: false,
                                         ),

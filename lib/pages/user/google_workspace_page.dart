@@ -30,6 +30,7 @@ class GoogleWorkspacePage extends StatefulWidget {
 
 class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
     with TickerProviderStateMixin {
+  ReqAPI apiReq = ReqAPI();
   bool isLoadingSync = false;
   TextEditingController _dateController = TextEditingController();
   TextEditingController _facilityController = TextEditingController();
@@ -537,63 +538,80 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
   }
 
   googleLink() {
-    getLinkGoogleAuth().then((value) async {
-      html.WindowBase popUpWindow;
+    apiReq.getLinkGoogleAuth().then((value) async {
+      if (value['Status'].toString() == "200") {
+        html.WindowBase popUpWindow;
+        popUpWindow = html.window.open(
+          value['Data']['Link'],
+          'GWS',
+          'width=400, height=500, scrollbars=yes',
+        );
 
-      popUpWindow = html.window.open(
-        value['Data']['Link'],
-        'GWS',
-        'width=400, height=500, scrollbars=yes',
-      );
-
-      String code = "";
-      html.window.onMessage.listen((event) async {
-        if (event.data.toString().contains('token=')) {
-          code = event.data.toString().split('token=')[1];
-          setState(() {
-            isLoadingSync = true;
-          });
-          await Future.delayed(const Duration(seconds: 2), () async {
-            popUpWindow.close();
+        String code = "";
+        html.window.onMessage.listen((event) async {
+          if (event.data.toString().contains('token=')) {
+            code = event.data.toString().split('token=')[1];
             setState(() {
-              isLoadingSync = false;
+              isLoadingSync = true;
             });
-            saveTokenGoogle(code).then((value) {
-              print(value);
-
-              if (value['Status'] == "200") {
+            await Future.delayed(const Duration(seconds: 2), () async {
+              popUpWindow.close();
+              setState(() {
+                isLoadingSync = false;
+              });
+              apiReq.saveTokenGoogle(code).then((value) {
+                if (value['Status'] == "200") {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialogBlack(
+                      title: value['Title'],
+                      contentText: value['Message'],
+                      isSuccess: true,
+                    ),
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialogBlack(
+                      title: value['Title'],
+                      contentText: value['Message'],
+                      isSuccess: false,
+                    ),
+                  );
+                }
+              }).onError((error, stackTrace) {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialogBlack(
-                    title: value['Title'],
-                    contentText: value['Message'],
-                    isSuccess: true,
-                  ),
-                );
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialogBlack(
-                    title: value['Title'],
-                    contentText: value['Message'],
+                    title: 'Failed',
+                    contentText: error.toString(),
                     isSuccess: false,
                   ),
                 );
-              }
-            }).onError((error, stackTrace) {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialogBlack(
-                  title: 'Failed',
-                  contentText: error.toString(),
-                  isSuccess: false,
-                ),
-              );
+              });
             });
-          });
-        }
-      });
-      if (code != "") {}
+          }
+        });
+        if (code != "") {}
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
   }
 

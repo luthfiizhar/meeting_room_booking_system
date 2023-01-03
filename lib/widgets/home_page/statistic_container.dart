@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 
 class StatPercentage {
   StatPercentage({
@@ -23,6 +24,7 @@ class StatisticContainer extends StatefulWidget {
 }
 
 class _StatisticContainerState extends State<StatisticContainer> {
+  ReqAPI apiReq = ReqAPI();
   List<StatPercentage> bookingStatus = [];
 
   List<StatPercentage> eventCreation = [];
@@ -44,43 +46,61 @@ class _StatisticContainerState extends State<StatisticContainer> {
   }
 
   initStatistic(String day) {
-    getStatisticDashboard(day).then((value) {
-      dynamic result = value['Data'];
-      dynamic listBookStat = result['BookingStatus'];
-      dynamic eventCreationStat = result['EventCreation'];
-      setState(() {
-        totalBooking = result['TotalBooking'].toString();
-        averageTime = result['AverageHours'].toString();
-        mostUsedName = result['MostUsedRoom']['RoomName'];
-        mostUsedPhoto = result['MostUsedRoom']['ImageURL'];
-      });
-      int i = 0;
-      for (var element in listBookStat) {
+    apiReq.getStatisticDashboard(day).then((value) {
+      if (value['Status'] == "200") {
+        dynamic result = value['Data'];
+        dynamic listBookStat = result['BookingStatus'];
+        dynamic eventCreationStat = result['EventCreation'];
         setState(() {
-          bookingStatus.add(
-            StatPercentage(
-              status: element['Status'],
-              percentage: element['Percentage'],
-              color: colorList[i],
-            ),
-          );
+          totalBooking = result['TotalBooking'].toString();
+          averageTime = result['AverageHours'].toString();
+          mostUsedName = result['MostUsedRoom']['RoomName'];
+          mostUsedPhoto = result['MostUsedRoom']['ImageURL'];
         });
+        int i = 0;
+        for (var element in listBookStat) {
+          setState(() {
+            bookingStatus.add(
+              StatPercentage(
+                status: element['Status'],
+                percentage: element['Percentage'],
+                color: colorList[i],
+              ),
+            );
+          });
 
-        i++;
+          i++;
+        }
+        int j = 0;
+        for (var element in eventCreationStat) {
+          setState(() {
+            eventCreation.add(
+              StatPercentage(
+                status: element['Status'],
+                percentage: element['Percentage'],
+                color: colorList[j],
+              ),
+            );
+          });
+          j++;
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+          ),
+        );
       }
-      int j = 0;
-      for (var element in eventCreationStat) {
-        setState(() {
-          eventCreation.add(
-            StatPercentage(
-              status: element['Status'],
-              percentage: element['Percentage'],
-              color: colorList[j],
-            ),
-          );
-        });
-        j++;
-      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+        ),
+      );
     });
   }
 

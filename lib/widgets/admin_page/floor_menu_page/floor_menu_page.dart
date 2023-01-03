@@ -4,6 +4,7 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/floor_menu_page/add_floor_dialog.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 
@@ -15,6 +16,7 @@ class FloorMenuSettingPage extends StatefulWidget {
 }
 
 class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
+  ReqAPI apiReq = ReqAPI();
   TextEditingController _search = TextEditingController();
   FocusNode searchNode = FocusNode();
   FocusNode showPerRowsNode = FocusNode();
@@ -49,19 +51,43 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
 
   onTapHeader(String orderBy) {}
 
+  updateList() {
+    apiReq.getFloorList(searchTerm).then((value) {
+      if (value['Status'] == "200") {
+        setState(() {
+          // print(value);
+          florList = value['Data']['List'];
+          countPagination(value['Data']['TotalRows']);
+          showedPage = availablePage.take(5).toList();
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     searchTerm.orderBy = "FloorName";
-    getFloorList(searchTerm).then((value) {
-      setState(() {
-        // print(value);
-        florList = value['Data']['List'];
-        countPagination(value['Data']['TotalRows']);
-        showedPage = availablePage.take(5).toList();
-      });
-    });
+    updateList();
     searchNode.addListener(() {
       setState(() {});
     });
@@ -252,14 +278,15 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                       onChanged: (value) {
                         setState(() {
                           searchTerm.max = value!.toString();
-                          getFloorList(searchTerm).then((value) {
-                            setState(() {
-                              // print(value);
-                              florList = value['Data']['List'];
-                              countPagination(value['Data']['TotalRows']);
-                              showedPage = availablePage.take(5).toList();
-                            });
-                          });
+                          // apiReq.getFloorList(searchTerm).then((value) {
+                          //   setState(() {
+                          //     // print(value);
+                          //     florList = value['Data']['List'];
+                          //     countPagination(value['Data']['TotalRows']);
+                          //     showedPage = availablePage.take(5).toList();
+                          //   });
+                          // });
+                          updateList();
                         });
                       },
                       value: searchTerm.max,
@@ -309,14 +336,15 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                               searchTerm.pageNumber =
                                   currentPaginatedPage.toString();
 
-                              getFloorList(searchTerm).then((value) {
-                                setState(() {
-                                  // print(value);
-                                  florList = value['Data']['List'];
-                                  countPagination(value['Data']['TotalRows']);
-                                  showedPage = availablePage.take(5).toList();
-                                });
-                              });
+                              // apiReq.getFloorList(searchTerm).then((value) {
+                              //   setState(() {
+                              //     // print(value);
+                              //     florList = value['Data']['List'];
+                              //     countPagination(value['Data']['TotalRows']);
+                              //     showedPage = availablePage.take(5).toList();
+                              //   });
+                              // });
+                              updateList();
                             });
                           }
                         : null,
@@ -380,19 +408,22 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                                         });
                                         searchTerm.pageNumber =
                                             currentPaginatedPage.toString();
-                                        getFloorList(searchTerm).then((value) {
-                                          setState(() {
-                                            // print(value);
-                                            florList = value['Data']['List'];
-                                            countPagination(
-                                                value['Data']['TotalRows']);
-                                            showedPage =
-                                                availablePage.take(5).toList();
-                                          });
-                                        });
-                                        print(showedPage);
-                                        print(
-                                            'current ${searchTerm.pageNumber}');
+                                        // apiReq
+                                        //     .getFloorList(searchTerm)
+                                        //     .then((value) {
+                                        //   setState(() {
+                                        //     // print(value);
+                                        //     florList = value['Data']['List'];
+                                        //     countPagination(
+                                        //         value['Data']['TotalRows']);
+                                        //     showedPage =
+                                        //         availablePage.take(5).toList();
+                                        //   });
+                                        // });
+                                        // print(showedPage);
+                                        // print(
+                                        //     'current ${searchTerm.pageNumber}');
+                                        updateList();
                                       },
                                 child: Container(
                                   width: 35,
@@ -479,14 +510,15 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                               searchTerm.pageNumber =
                                   currentPaginatedPage.toString();
 
-                              getFloorList(searchTerm).then((value) {
-                                setState(() {
-                                  // print(value);
-                                  florList = value['Data']['List'];
-                                  countPagination(value['Data']['TotalRows']);
-                                  showedPage = availablePage.take(5).toList();
-                                });
-                              });
+                              // apiReq.getFloorList(searchTerm).then((value) {
+                              //   setState(() {
+                              //     // print(value);
+                              //     florList = value['Data']['List'];
+                              //     countPagination(value['Data']['TotalRows']);
+                              //     showedPage = availablePage.take(5).toList();
+                              //   });
+                              // });
+                              updateList();
                             });
                           }
                         : null,

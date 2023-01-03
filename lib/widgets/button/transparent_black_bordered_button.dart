@@ -7,7 +7,8 @@ class TransparentBorderedBlackButton extends StatelessWidget {
   const TransparentBorderedBlackButton({
     super.key,
     this.text,
-    this.fontSize,
+    this.fontSize = 16,
+    this.fontWeight = FontWeight.w300,
     this.disabled = false,
     this.onTap,
     this.padding,
@@ -17,6 +18,7 @@ class TransparentBorderedBlackButton extends StatelessWidget {
   final double? fontSize;
   final VoidCallback? onTap;
   final bool? disabled;
+  final FontWeight? fontWeight;
   final EdgeInsetsGeometry? padding;
 
   Color getColor(Set<MaterialState> states) {
@@ -44,12 +46,12 @@ class TransparentBorderedBlackButton extends StatelessWidget {
             if (states.contains(MaterialState.pressed)) {
               return RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(7.5),
-                side: BorderSide(color: eerieBlack, width: 1),
+                side: const BorderSide(color: eerieBlack, width: 1),
               );
             }
             return RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(7.5),
-              side: BorderSide(
+              side: const BorderSide(
                 color: eerieBlack,
                 width: 1,
               ),
@@ -66,10 +68,9 @@ class TransparentBorderedBlackButton extends StatelessWidget {
         ),
         textStyle: MaterialStateProperty.resolveWith<TextStyle>(
           (states) {
-            return const TextStyle(
-              fontFamily: 'Helvetica',
-              fontSize: 16,
-              fontWeight: FontWeight.w300,
+            return helveticaText.copyWith(
+              fontSize: fontSize,
+              fontWeight: fontWeight,
             );
           },
         ),

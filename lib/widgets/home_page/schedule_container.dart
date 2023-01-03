@@ -6,6 +6,8 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'dart:html' as html;
 
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
+
 class ScheduleContainer extends StatefulWidget {
   ScheduleContainer({super.key});
 
@@ -14,6 +16,7 @@ class ScheduleContainer extends StatefulWidget {
 }
 
 class _ScheduleContainerState extends State<ScheduleContainer> {
+  ReqAPI apiReq = ReqAPI();
   List schedule = [
     // {
     //   'eventName': 'RAKER FBI',
@@ -56,21 +59,36 @@ class _ScheduleContainerState extends State<ScheduleContainer> {
     //   isLoading = true;
     // });
     String formattedDate = DateFormat('dd-MM-yyyy').format(date);
-    getSchedule(formattedDate).then((value) {
+    apiReq.getSchedule(formattedDate).then((value) {
       print("Schedule Result $value");
       if (value['Status'].toString() == "200") {
         setState(() {
           isLoading = false;
           schedule = value['Data'];
         });
-      } else {}
-    }).onError((error, stackTrace) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Error fetching schedule data!',
-            maxLines: 1,
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
           ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     content: Text(
+      //       'Error fetching schedule data!',
+      //       maxLines: 1,
+      //     ),
+      //   ),
+      // );
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
         ),
       );
     });

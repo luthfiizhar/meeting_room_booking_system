@@ -5,6 +5,7 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class RoomSchedule extends StatefulWidget {
@@ -24,6 +25,7 @@ class RoomSchedule extends StatefulWidget {
 }
 
 class _RoomScheduleState extends State<RoomSchedule> {
+  ReqAPI apiReq = ReqAPI();
   CalendarController _calendar = CalendarController();
 
   String today = "";
@@ -47,14 +49,33 @@ class _RoomScheduleState extends State<RoomSchedule> {
       RoomEventDataSource(<RoomEvent>[], <CalendarResource>[]);
 
   initGetSchedule() {
-    getRoomSchedule(widget.roomId!,
+    apiReq
+        .getRoomSchedule(widget.roomId!,
             DateFormat('yyyy-MM-dd').format(widget.selectedDate!))
         .then((value) async {
-      print("RoomSchedule $value");
-      dynamic result = value['Data'];
-      await setDataToCalendar(result);
-      events!.notifyListeners(
-          CalendarDataSourceAction.reset, events!.appointments!);
+      // print("RoomSchedule $value");
+      if (value['Status'] == "200") {
+        dynamic result = value['Data'];
+        await setDataToCalendar(result);
+        events!.notifyListeners(
+            CalendarDataSourceAction.reset, events!.appointments!);
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+        ),
+      );
     });
   }
 

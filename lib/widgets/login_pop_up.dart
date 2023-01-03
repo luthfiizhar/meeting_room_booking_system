@@ -28,6 +28,7 @@ class LoginPopUp extends StatefulWidget {
 }
 
 class _LoginPopUpState extends State<LoginPopUp> {
+  ReqAPI apiReq = ReqAPI();
   TextEditingController _username = TextEditingController();
   TextEditingController _password = TextEditingController();
 
@@ -304,16 +305,18 @@ class _LoginPopUpState extends State<LoginPopUp> {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
                               // loginCerberus(username!, password!, selectedUser)
-                              loginDummy(
+                              apiReq
+                                  .loginDummy(
                                 username!,
                                 password!,
-                              ).then((value) {
+                              )
+                                  .then((value) {
                                 print("login Dummy $value");
                                 setState(() {
                                   isLoading = false;
                                 });
                                 if (value['Status'] == "200") {
-                                  getUserProfile().then((value) async {
+                                  apiReq.getUserProfile().then((value) async {
                                     print("getUserProfile $value");
                                     if (value['Status'] == "200") {
                                       await widget.resetState!();
@@ -321,6 +324,15 @@ class _LoginPopUpState extends State<LoginPopUp> {
                                           value['Data']['EmpName'],
                                           value['Data']['Email']);
                                       Navigator.of(context).pop(true);
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: value['Title'],
+                                          contentText: value['Message'],
+                                          isSuccess: false,
+                                        ),
+                                      );
                                     }
                                   }).onError((error, stackTrace) {
                                     showDialog(
@@ -349,7 +361,7 @@ class _LoginPopUpState extends State<LoginPopUp> {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialogBlack(
-                                    title: 'Can\'t connect to API',
+                                    title: 'Failed connect to API',
                                     contentText: error.toString(),
                                     isSuccess: false,
                                   ),

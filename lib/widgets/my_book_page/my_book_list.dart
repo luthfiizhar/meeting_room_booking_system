@@ -138,7 +138,7 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                               size: 16,
                               color: orangeAccent,
                             );
-                          case 'Auto Released':
+                          case 'Auto Release':
                             return const Icon(
                               Icons.remove_circle_sharp,
                               size: 16,
@@ -150,17 +150,17 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                               size: 16,
                               color: orangeAccent,
                             );
-                          case 'Waiting Check In':
+                          case 'Waiting':
                             return const Icon(
                               MdiIcons.alertCircleOutline,
                               size: 16,
-                              color: orangeAccent,
+                              color: yellow,
                             );
-                          case 'Waiting Approval':
+                          case 'Approval':
                             return const Icon(
                               MdiIcons.alertCircleOutline,
                               size: 16,
-                              color: orangeAccent,
+                              color: yellow,
                             );
                           default:
                             return const Icon(

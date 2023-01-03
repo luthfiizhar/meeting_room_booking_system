@@ -4,6 +4,7 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/approval_list_content_container.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/filter_search_bar_admin.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 
@@ -15,6 +16,7 @@ class AdminListPage extends StatefulWidget {
 }
 
 class _AdminListPageState extends State<AdminListPage> {
+  ReqAPI apiReq = ReqAPI();
   ScrollController scrollController = ScrollController();
   TextEditingController _search = TextEditingController();
   String statusApproval = "Requested";
@@ -108,12 +110,32 @@ class _AdminListPageState extends State<AdminListPage> {
   setDatePickerStatus(bool value) {}
 
   updateList() {
-    getAuditoriumApprovalList(searchTerm).then((value) {
-      setState(() {
-        approvalList = value['Data']['List'];
-        countPagination(value['Data']['TotalRows']);
-        showedPage = availablePage.take(5).toList();
-      });
+    apiReq.getAuditoriumApprovalList(searchTerm).then((value) {
+      if (value['Status'].toString() == "200") {
+        setState(() {
+          approvalList = value['Data']['List'];
+          countPagination(value['Data']['TotalRows']);
+          showedPage = availablePage.take(5).toList();
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
   }
 
@@ -121,11 +143,12 @@ class _AdminListPageState extends State<AdminListPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getAuditoriumApprovalList(searchTerm).then((value) {
-      approvalList = value['Data']['List'];
-      countPagination(value['Data']['TotalRows']);
-      showedPage = availablePage.take(5).toList();
-    });
+    updateList();
+    // apiReq.getAuditoriumApprovalList(searchTerm).then((value) {
+    //   approvalList = value['Data']['List'];
+    //   countPagination(value['Data']['TotalRows']);
+    //   showedPage = availablePage.take(5).toList();
+    // });
   }
 
   @override

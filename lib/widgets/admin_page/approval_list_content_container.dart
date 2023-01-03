@@ -31,6 +31,7 @@ class ApprovalListContainer extends StatefulWidget {
 }
 
 class _ApprovalListContainerState extends State<ApprovalListContainer> {
+  ReqAPI apiReq = ReqAPI();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -160,17 +161,17 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                                       size: 16,
                                       color: orangeAccent,
                                     );
-                                  case 'Waiting Check In':
+                                  case 'Waiting':
                                     return const Icon(
                                       MdiIcons.alertCircleOutline,
                                       size: 16,
-                                      color: orangeAccent,
+                                      color: yellow,
                                     );
-                                  case 'Waiting Approval':
+                                  case 'Approval':
                                     return const Icon(
                                       MdiIcons.alertCircleOutline,
                                       size: 16,
-                                      color: orangeAccent,
+                                      color: yellow,
                                     );
                                   default:
                                     return const Icon(
@@ -200,7 +201,8 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  approveAuditorium(widget.bookingId)
+                                  apiReq
+                                      .approveAuditorium(widget.bookingId)
                                       .then((value) {
                                     if (value['Status'] == "200") {
                                       showDialog(
@@ -225,7 +227,7 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialogBlack(
-                                        title: 'Can\'t connect to API',
+                                        title: 'Failed connect to API',
                                         contentText: error.toString(),
                                         isSuccess: false,
                                       ),
@@ -243,7 +245,8 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  rejectAuditorium(widget.bookingId)
+                                  apiReq
+                                      .rejectAuditorium(widget.bookingId)
                                       .then((value) {
                                     if (value['Status'] == "200") {
                                       showDialog(
@@ -268,7 +271,7 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialogBlack(
-                                        title: 'Can\'t connect to API',
+                                        title: 'Failed connect to API',
                                         contentText: error.toString(),
                                         isSuccess: false,
                                       ),

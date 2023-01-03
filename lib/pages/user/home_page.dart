@@ -25,7 +25,9 @@ import 'package:meeting_room_booking_system/widgets/button/transparent_button_bl
 import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/end_time_container.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/apporval_message.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/available_room_offer_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/feature_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/greeting_container.dart';
@@ -63,6 +65,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  ReqAPI apiReq = ReqAPI();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _dateController = TextEditingController();
   TextEditingController _facilityController = TextEditingController();
@@ -106,6 +109,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool meetingTypeContainerVisible = false;
   bool initLoading = true;
 
+  bool isUserAdmin = false;
+
   ScrollController scrollController = ScrollController();
 
   scrollListener(ScrollController scrollInfo) {}
@@ -143,7 +148,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   initRoomType() {
-    getRoomType().then((value) {
+    apiReq.getRoomType().then((value) {
       setState(() {
         initLoading = false;
       });
@@ -156,17 +161,85 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             });
           }
         }
-      } else {}
-    }).onError((error, stackTrace) {});
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
   }
 
   initUpcomingEvent() {
-    getUpcomingEvent().then((value) {
+    apiReq.getUpcomingEvent().then((value) {
       print(value);
-      setState(() {
-        upcomingData = [value['Data']];
-        emptyMessage = value['Message'];
-      });
+      if (value['Status'] == "200") {
+        setState(() {
+          upcomingData = [value['Data']];
+          emptyMessage = value['Message'];
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
+  initGetUserProfile() {
+    apiReq.getUserProfile().then((value) {
+      if (value['Status'].toString() == "200") {
+        if (value['Data']['Admin'].toString() == "1") {
+          setState(() {
+            isUserAdmin = true;
+          });
+        }
+      } else {
+        // showDialog(
+        //   context: context,
+        //   builder: (context) => AlertDialogBlack(
+        //     title: value['Title'],
+        //     contentText: value['Message'],
+        //     isSuccess: false,
+        //   ),
+        // );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
   }
 
@@ -194,6 +267,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     initTime();
     initRoomType();
+    initGetUserProfile();
     // initUpcomingEvent();
   }
 
@@ -726,6 +800,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        Visibility(
+          visible: isUserAdmin ? true : false,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              ApprovalMessage(),
+              const SizedBox(
+                height: 30,
+              ),
+            ],
+          ),
+        ),
         ScheduleContainer(),
         const SizedBox(
           height: 30,

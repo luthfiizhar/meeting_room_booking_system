@@ -33,6 +33,7 @@ class FilterSearchBar extends StatefulWidget {
 }
 
 class _FilterSearchBarState extends State<FilterSearchBar> {
+  ReqAPI apiReq = ReqAPI();
   int? index;
   bool _hovering = false;
   bool onSelected = false;
@@ -57,7 +58,7 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
     roomType = widget.roomType;
     indexColor = _random.nextInt(color.length);
     selectedColor = color[indexColor];
-    myBookBookingCount().then((value) {
+    apiReq.myBookBookingCount().then((value) {
       if (value['Status'] == "200") {
         setState(() {
           typeList = value['Data'];

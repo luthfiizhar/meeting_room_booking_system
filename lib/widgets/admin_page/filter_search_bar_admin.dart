@@ -33,6 +33,7 @@ class FilterSearchBarAdmin extends StatefulWidget {
 }
 
 class _FilterSearchBarAdminState extends State<FilterSearchBarAdmin> {
+  ReqAPI apiReq = ReqAPI();
   int? index;
   bool _hovering = false;
   bool onSelected = false;
@@ -57,7 +58,7 @@ class _FilterSearchBarAdminState extends State<FilterSearchBarAdmin> {
     indexColor = _random.nextInt(color.length);
     selectedColor = color[indexColor];
 
-    approvalListBookingCount().then((value) {
+    apiReq.approvalListBookingCount().then((value) {
       print(value);
       if (value['Status'] == "200") {
         setState(() {

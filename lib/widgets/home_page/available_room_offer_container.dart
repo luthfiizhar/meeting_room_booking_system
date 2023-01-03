@@ -7,6 +7,7 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:shimmer/shimmer.dart';
 
 class AvailableRoomContainer extends StatefulWidget {
@@ -19,6 +20,7 @@ class AvailableRoomContainer extends StatefulWidget {
 }
 
 class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
+  ReqAPI apiReq = ReqAPI();
   String roomName = "";
   String roomId = "";
   String floor = "";
@@ -69,20 +71,38 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getSuggestAvailableRoom().then((value) {
+    apiReq.getSuggestAvailableRoom().then((value) {
       // print(value);
-      setState(() {
-        if (value['Data'] != []) {
-          isEmpty = false;
-          roomId = value['Data']['RoomID'];
-          roomName = value['Data']['RoomName'];
-          floor = value['Data']['AreaName'];
-          startTime = value['Data']['Start'];
-          endTime = value['Data']['End'];
-          photoUrl = value['Data']['RoomImage'];
-          roomType = value['Data']['RoomType'];
-        }
-      });
+      if (value['Status'].toString() == "200") {
+        setState(() {
+          if (value['Data'] != []) {
+            isEmpty = false;
+            roomId = value['Data']['RoomID'];
+            roomName = value['Data']['RoomName'];
+            floor = value['Data']['AreaName'];
+            startTime = value['Data']['Start'];
+            endTime = value['Data']['End'];
+            photoUrl = value['Data']['RoomImage'];
+            roomType = value['Data']['RoomType'];
+          }
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+        ),
+      );
     });
   }
 

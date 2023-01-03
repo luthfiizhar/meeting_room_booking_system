@@ -6,6 +6,7 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 
 class UpcomingEventContainer extends StatefulWidget {
   UpcomingEventContainer({super.key});
@@ -15,6 +16,7 @@ class UpcomingEventContainer extends StatefulWidget {
 }
 
 class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
+  ReqAPI apiReq = ReqAPI();
   List upcomingData = [];
 
   String emptyMessage = "";
@@ -33,7 +35,7 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getUpcomingEvent().then((value) {
+    apiReq.getUpcomingEvent().then((value) {
       print("Upcoming Result $value");
 
       if (value['Status'].toString() == "200") {
@@ -57,11 +59,26 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
             floor = value['Data']['AreaName'];
           });
         }
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+          ),
+        );
       }
     }).onError((error, stackTrace) {
       setState(() {
         isEmpty = true;
       });
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+        ),
+      );
     });
   }
 

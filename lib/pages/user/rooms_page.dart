@@ -22,6 +22,7 @@ import 'package:meeting_room_booking_system/widgets/dialogs/room_booking_dialog.
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/white_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/footer.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/available_room_offer_container.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:meeting_room_booking_system/widgets/rooms_page/detail_appointment_container.dart';
@@ -38,6 +39,7 @@ class RoomsPage extends StatefulWidget {
 }
 
 class _RoomsPageState extends State<RoomsPage> {
+  ReqAPI apiReq = ReqAPI();
   DateTime? selectedDate = DateTime.now();
   CalendarController? calendarControl = CalendarController();
   DateRangePickerController datePickerControl = DateRangePickerController();
@@ -210,32 +212,51 @@ class _RoomsPageState extends State<RoomsPage> {
     // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
     //   mainModel = Provider.of<MainModel>(context, listen: true);
     // });
-    getAreaListWithRooms().then((value) {
-      print(value);
-      List area = value['Data'];
-      for (var i = 0; i < area.length; i++) {
-        areaList.add(
-          Area(
-            areaId: area[i]["AreaID"],
-            areaName: area[i]["AreaName"],
-            rooms: area[i]['Room'],
+    apiReq.getAreaListWithRooms().then((value) {
+      if (value['Status'].toString() == "200") {
+        List area = value['Data'];
+        for (var i = 0; i < area.length; i++) {
+          areaList.add(
+            Area(
+              areaId: area[i]["AreaID"],
+              areaName: area[i]["AreaName"],
+              rooms: area[i]['Room'],
+            ),
+          );
+        }
+        // print(areaList);
+        selectedArea = areaList.first.areaId;
+        print(selectedArea);
+        print(areaList
+            .where((element) => element.areaId == selectedArea)
+            .first
+            .toJson());
+        // print(areaList.toString());
+        // for (var i = 0; i < areaList.length; i++) {}
+        // print(areaList);
+        onChangedArea(selectedArea!);
+        // addResourceRoom().then((value) {
+        //   _events!.appointments!.clear();
+        // });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
           ),
         );
       }
-      // print(areaList);
-      selectedArea = areaList.first.areaId;
-      print(selectedArea);
-      print(areaList
-          .where((element) => element.areaId == selectedArea)
-          .first
-          .toJson());
-      // print(areaList.toString());
-      // for (var i = 0; i < areaList.length; i++) {}
-      // print(areaList);
-      onChangedArea(selectedArea!);
-      // addResourceRoom().then((value) {
-      //   _events!.appointments!.clear();
-      // });
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
     });
     getBookingListRoom(selectedArea!, selectedDate.toString()).then((value) {
       assignDataToCalendar(value['Data']);
@@ -488,12 +509,23 @@ class _RoomsPageState extends State<RoomsPage> {
                     ),
                     Container(
                       width: 280,
-                      child: CustomDatePicker(
-                        controller: datePickerControl,
-                        isDark: true,
-                        setPickerStatus: setVisible,
-                        changeDate: setDate,
-                        currentDate: selectedDate,
+                      child: Column(
+                        children: [
+                          CustomDatePicker(
+                            controller: datePickerControl,
+                            isDark: true,
+                            setPickerStatus: setVisible,
+                            changeDate: setDate,
+                            currentDate: selectedDate,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          AvailableRoomContainer(),
+                          const SizedBox(
+                            height: 20,
+                          )
+                        ],
                       ),
                     ),
                     const SizedBox(
@@ -806,34 +838,55 @@ class _RoomsPageState extends State<RoomsPage> {
                       isShowDetail = false;
                     }
 
-                    getBookingDetail(selectedEvent!.bookingID!).then((value) {
-                      print(value);
-                      setState(() {
-                        // print(value);
-                        detailEvent.bookingId = value['Data']['BookingID'];
-                        detailEvent.location = value['Data']['RoomName'];
-                        detailEvent.summary = value['Data']['Summary'];
-                        detailEvent.description =
-                            value['Data']['Description'] ?? "";
-                        detailEvent.eventDate = value['Data']['BookingDate'];
-                        detailEvent.eventTime = value['Data']
-                                ['BookingStartTime'] +
-                            " - " +
-                            value['Data']['BookingEndTime'];
-                        detailEvent.duration = value['Data']['Duration'];
-                        detailEvent.floor = value['Data']['AreaName'];
-                        detailEvent.email = value['Data']['Email'];
-                        detailEvent.avaya = value['Data']['AvayaNumber'];
-                        detailEvent.host = value['Data']['EmpName'];
-                        detailEvent.attendatsNumber =
-                            value['Data']['AttendantsNumber'].toString();
-                        detailEvent.status = value['Data']['Status'];
-                        detailEvent.stepBooking =
-                            value['Data']['BookingStep'].toString();
-                        if (!isShowDetail) {
-                          isShowDetail = true;
-                        }
-                      });
+                    apiReq
+                        .getBookingDetail(selectedEvent!.bookingID!)
+                        .then((value) {
+                      if (value['Status'] == "200") {
+                        setState(() {
+                          // print(value);
+                          detailEvent.bookingId = value['Data']['BookingID'];
+                          detailEvent.location = value['Data']['RoomName'];
+                          detailEvent.summary = value['Data']['Summary'];
+                          detailEvent.description =
+                              value['Data']['Description'] ?? "";
+                          detailEvent.eventDate = value['Data']['BookingDate'];
+                          detailEvent.eventTime = value['Data']
+                                  ['BookingStartTime'] +
+                              " - " +
+                              value['Data']['BookingEndTime'];
+                          detailEvent.duration = value['Data']['Duration'];
+                          detailEvent.floor = value['Data']['AreaName'];
+                          detailEvent.email = value['Data']['Email'];
+                          detailEvent.avaya = value['Data']['AvayaNumber'];
+                          detailEvent.host = value['Data']['EmpName'];
+                          detailEvent.attendatsNumber =
+                              value['Data']['AttendantsNumber'].toString();
+                          detailEvent.status = value['Data']['Status'];
+                          detailEvent.stepBooking =
+                              value['Data']['BookingStep'].toString();
+                          if (!isShowDetail) {
+                            isShowDetail = true;
+                          }
+                        });
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialogBlack(
+                            title: value['Title'],
+                            contentText: value['Message'],
+                            isSuccess: false,
+                          ),
+                        );
+                      }
+                    }).onError((error, stackTrace) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialogBlack(
+                          title: 'Failed connect to API',
+                          contentText: error.toString(),
+                          isSuccess: false,
+                        ),
+                      );
                     });
                   });
                 } else {

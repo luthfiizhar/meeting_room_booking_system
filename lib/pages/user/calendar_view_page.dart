@@ -11,6 +11,7 @@ import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
 import 'package:meeting_room_booking_system/pages/user/rooms_page.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/rooms_page/detail_appointment_container.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -23,6 +24,7 @@ class CalendarViewPage extends StatefulWidget {
 }
 
 class _CalendarViewPageState extends State<CalendarViewPage> {
+  ReqAPI apiReq = ReqAPI();
   CalendarController _calendar = CalendarController();
   EventDataSource _events = EventDataSource(<Event>[]);
   Event? selectedEvent;
@@ -408,8 +410,8 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                       width: 10,
                     ),
                     legends(violetAccent, 'Google Calendar'),
-                    const SizedBox(
-                      width: 30,
+                    SizedBox(
+                      width: isShowDetail ? 30 : 100,
                     ),
                     RegularButton(
                       text: 'Today',
@@ -1012,25 +1014,45 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
           print("End ${endDate.toString()}");
           // print(_calendar.view.toString());
 
-          getUserCalendar(startDate.toString(), endDate.toString())
+          apiReq
+              .getUserCalendar(startDate.toString(), endDate.toString())
               .then((value) {
             setState(() {
               isLoadingGetCalendar2 = false;
             });
             print(value);
-            assignDataToCalendar(value['Data']);
+            if (value['Status'].toString() == "200") {
+              assignDataToCalendar(value['Data']);
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialogBlack(
+                  title: value['Title'],
+                  contentText: value['Message'],
+                  isSuccess: false,
+                ),
+              );
+            }
           }).onError((error, stackTrace) {
             setState(() {
               isLoadingGetCalendar2 = false;
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Error fetching user data!',
-                  maxLines: 1,
-                ),
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialogBlack(
+                title: 'Failed connect to API',
+                contentText: error.toString(),
+                isSuccess: false,
               ),
             );
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   const SnackBar(
+            //     content: Text(
+            //       'Error fetching user data!',
+            //       maxLines: 1,
+            //     ),
+            //   ),
+            // );
           });
 
           if (_calendar.view == CalendarView.day) {
@@ -1136,29 +1158,52 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
               }
               isLoadingGetDetail = true;
 
-              getBookingDetail(selectedEvent!.bookingId!).then((value) {
-                setState(() {
-                  isLoadingGetDetail = false;
-                  print(value);
-                  detailEvent.bookingId = value['Data']['BookingID'];
-                  detailEvent.location = value['Data']['RoomName'];
-                  detailEvent.summary = value['Data']['Summary'];
-                  detailEvent.description = value['Data']['Description'];
-                  detailEvent.eventDate = value['Data']['BookingDate'];
-                  detailEvent.eventTime = value['Data']['BookingStartTime'] +
-                      " - " +
-                      value['Data']['BookingEndTime'];
-                  detailEvent.duration = value['Data']['Duration'];
-                  detailEvent.floor = value['Data']['AreaName'];
-                  detailEvent.email = value['Data']['Email'];
-                  detailEvent.avaya = value['Data']['AvayaNumber'];
-                  detailEvent.host = value['Data']['EmpName'];
-                  detailEvent.attendatsNumber =
-                      value['Data']['AttendantsNumber'].toString();
-                  if (!isShowDetail) {
-                    isShowDetail = true;
-                  }
-                });
+              apiReq.getBookingDetail(selectedEvent!.bookingId!).then((value) {
+                if (value['Status'].toString() == "200") {
+                  setState(() {
+                    isLoadingGetDetail = false;
+                    print(value);
+                    detailEvent.bookingId = value['Data']['BookingID'];
+                    detailEvent.location = value['Data']['RoomName'];
+                    detailEvent.summary = value['Data']['Summary'];
+                    detailEvent.description = value['Data']['Description'];
+                    detailEvent.eventDate = value['Data']['BookingDate'];
+                    detailEvent.eventTime = value['Data']['BookingStartTime'] +
+                        " - " +
+                        value['Data']['BookingEndTime'];
+                    detailEvent.duration = value['Data']['Duration'];
+                    detailEvent.floor = value['Data']['AreaName'];
+                    detailEvent.email = value['Data']['Email'];
+                    detailEvent.avaya = value['Data']['AvayaNumber'];
+                    detailEvent.host = value['Data']['EmpName'];
+                    detailEvent.attendatsNumber =
+                        value['Data']['AttendantsNumber'].toString();
+                    if (!isShowDetail) {
+                      isShowDetail = true;
+                    }
+                  });
+                } else {
+                  setState(() {
+                    isLoadingGetDetail = false;
+                  });
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialogBlack(
+                      title: value['Title'],
+                      contentText: value['Message'],
+                      isSuccess: false,
+                    ),
+                  );
+                }
+              }).onError((error, stackTrace) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialogBlack(
+                    title: 'Failed connect to API',
+                    contentText: error.toString(),
+                    isSuccess: false,
+                  ),
+                );
               });
             });
 

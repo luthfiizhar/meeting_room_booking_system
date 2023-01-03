@@ -11,6 +11,7 @@ import 'package:meeting_room_booking_system/widgets/booking_page/select_amenitie
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 
@@ -24,6 +25,7 @@ class NewAreaDialog extends StatefulWidget {
 }
 
 class _NewAreaDialogState extends State<NewAreaDialog> {
+  ReqAPI apiReq = ReqAPI();
   TextEditingController _areaName = TextEditingController();
   TextEditingController _areaAlias = TextEditingController();
   TextEditingController _minCapacity = TextEditingController();
@@ -172,37 +174,91 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   }
 
   initRoomType() async {
-    getRoomType().then((value) {
-      if (value['Status'] == "200") {
+    apiReq.getRoomType().then((value) {
+      if (value['Status'].toString() == "200") {
         setState(() {
           roomType = value['Data'];
         });
-      } else {}
-    }).onError((error, stackTrace) {});
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
   }
 
   initFloorList() async {
-    getFloorListDropdown().then((value) {
-      if (value["Status"] == "200") {
+    apiReq.getFloorListDropdown().then((value) {
+      if (value["Status"].toString() == "200") {
         setState(() {
           floorList = value['Data'];
         });
-      } else {}
-    }).onError((error, stackTrace) {});
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
   }
 
   initBuildingList() async {
-    getBuildingList().then((value) {
+    apiReq.getBuildingList().then((value) {
       if (value["Status"] == "200") {
         setState(() {
           buildingList = value['Data'];
         });
-      } else {}
-    }).onError((error, stackTrace) {});
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
   }
 
   initAmenitiesList() async {
-    getAmenitiesListAdmin().then((value) {
+    apiReq.getAmenitiesListAdmin().then((value) {
       if (value['Status'] == "200") {
         List result = value['Data'];
         for (var element in result) {
@@ -217,8 +273,26 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
             photo: element['ImageURL'].toString(),
           ));
         }
-      } else {}
-    }).then((value) {});
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
   }
 
   setListAmenities(List<Amenities> list) {
