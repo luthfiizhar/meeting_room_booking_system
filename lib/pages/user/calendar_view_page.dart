@@ -407,7 +407,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                     // ),
                     legends(greenAcent, 'This system'),
                     const SizedBox(
-                      width: 10,
+                      width: 30,
                     ),
                     legends(violetAccent, 'Google Calendar'),
                     SizedBox(
