@@ -28,7 +28,6 @@ class LayoutPageWeb extends StatefulWidget {
     this.resetState,
     this.model,
     this.topButtonVisible = true,
-    this.scaffoldKey,
   });
 
   Widget? child;
@@ -38,7 +37,7 @@ class LayoutPageWeb extends StatefulWidget {
   Function? resetState;
   MainModel? model;
   bool? topButtonVisible;
-  GlobalKey<ScaffoldState>? scaffoldKey;
+  // GlobalKey<ScaffoldState>? scaffoldKey;
   // bool isAdmin;
 
   @override
@@ -183,7 +182,6 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
           builder: (context) => LoginPopUp(
             resetState: resetState,
             updateLogin: updateAfterLogin,
-            scaffoldKey: widget.scaffoldKey,
           ),
         ).then((value) {
           resetState();
@@ -256,7 +254,6 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
           });
         }
         return Scaffold(
-          key: widget.scaffoldKey,
           endDrawer: const Drawer(
             backgroundColor: white,
             child: Text('Drawer'),
@@ -286,7 +283,6 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                           ],
                         ),
                         child: NavigationBarWeb(
-                          scaffoldKey: widget.scaffoldKey,
                           index: widget.index,
                           popUpProfile: popUpProfile,
                           popUpStatus: profileVisible,
@@ -389,7 +385,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                             popUpProfile: popUpProfile,
                             resetState: resetState,
                             isAdmin: isAdmin,
-                            scaffoldKey: scaffoldKey,
+                            updateLogin: updateAfterLogin,
                           ),
                         ),
                       ),

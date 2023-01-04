@@ -480,7 +480,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   resetState() {
     // super.initState();
-    scaffoldKey.currentState!.setState(() {});
+    // scaffoldKey.currentState!.setState(() {});
     print('resetHome');
     setState(() {});
   }
@@ -488,7 +488,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
-      scaffoldKey: scaffoldKey,
       resetState: resetState,
       scrollController: scrollController,
       index: widget.index,

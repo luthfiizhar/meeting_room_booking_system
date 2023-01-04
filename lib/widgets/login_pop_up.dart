@@ -16,12 +16,11 @@ class LoginPopUp extends StatefulWidget {
     super.key,
     this.resetState,
     this.updateLogin,
-    this.scaffoldKey,
   });
 
   Function? resetState;
   Function? updateLogin;
-  GlobalKey<ScaffoldState>? scaffoldKey;
+  // GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   State<LoginPopUp> createState() => _LoginPopUpState();

@@ -80,8 +80,9 @@ class _SearchPageState extends State<SearchPage> {
   dynamic resultArea;
 
   List<RadioModel> listSorting = [
-    RadioModel(isSelected: false, text: 'Lowest Floor', value: 'floor_highest'),
-    RadioModel(isSelected: false, text: 'Highest Floor', value: 'floor_lowest'),
+    RadioModel(isSelected: false, text: 'Lowest Floor', value: 'floor_lowest'),
+    RadioModel(
+        isSelected: false, text: 'Highest Floor', value: 'floor_highest'),
     RadioModel(
         isSelected: false, text: 'Lowest Capacity', value: 'capacity_lowest'),
     RadioModel(

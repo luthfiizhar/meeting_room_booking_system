@@ -659,6 +659,11 @@ class _RoomsPageState extends State<RoomsPage> {
                   print(value);
                   selectedArea = value;
                   onChangedArea(selectedArea!);
+                  if (isShowDetail) {
+                    setState(() {
+                      isShowDetail = false;
+                    });
+                  }
                 },
                 value: selectedArea,
               ),
@@ -1041,6 +1046,7 @@ class _RoomsPageState extends State<RoomsPage> {
               endHour: 19,
             ),
             todayHighlightColor: orangeAccent,
+            resourceViewHeaderBuilder: resourceViewHeaderBuilder,
             resourceViewSettings: const ResourceViewSettings(
               size: 100,
               displayNameTextStyle: TextStyle(
@@ -1112,6 +1118,24 @@ class _RoomsPageState extends State<RoomsPage> {
                 ),
               )
       ],
+    );
+  }
+
+  Widget resourceViewHeaderBuilder(
+      BuildContext context, ResourceViewHeaderDetails details) {
+    return Container(
+      color: details.resource.color,
+      child: Center(
+        child: Text(
+          details.resource.displayName,
+          style: helveticaText.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            color: culturedWhite,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 

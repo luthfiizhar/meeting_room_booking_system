@@ -5,6 +5,7 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
+import 'package:meeting_room_booking_system/widgets/login_pop_up.dart';
 
 class PopUpProfile extends StatelessWidget {
   PopUpProfile({
@@ -13,15 +14,16 @@ class PopUpProfile extends StatelessWidget {
     this.popUpProfile,
     this.resetState,
     this.isAdmin = false,
-    this.scaffoldKey,
+    this.updateLogin,
   });
 
+  ReqAPI apiReq = ReqAPI();
   String? name;
   String? email;
   Function? popUpProfile;
   Function? resetState;
+  Function? updateLogin;
   bool isAdmin;
-  GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   Widget build(BuildContext context) {
@@ -141,8 +143,16 @@ class PopUpProfile extends StatelessWidget {
                   jwtToken = "";
                   box.put('jwtToken', "");
                   resetState!;
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) => LoginPopUp(
+                      resetState: resetState,
+                      updateLogin: updateLogin,
+                    ),
+                  );
                   context.go('/home');
-                  // logout().then((value) {
+                  // apiReq.logout().then((value) {
                   //   print(value);
                   //   if (value['Status'] == "200") {
                   //     // context.goNamed('home');
