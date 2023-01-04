@@ -48,6 +48,7 @@ import 'package:meeting_room_booking_system/widgets/search_page/sorting_containe
 import 'package:meeting_room_booking_system/widgets/start_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/time_picker_container.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_framework/responsive_row_column.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -541,6 +542,47 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             //       ],
                             //     ),
                             //   ],
+                            // ResponsiveRowColumn(
+                            //   layout: MediaQuery.of(context).size.width < 1200
+                            //       ? ResponsiveRowColumnType.COLUMN
+                            //       : ResponsiveRowColumnType.ROW,
+                            //   rowCrossAxisAlignment: CrossAxisAlignment.start,
+                            //   rowMainAxisAlignment:
+                            //       MainAxisAlignment.spaceBetween,
+                            //   columnMainAxisAlignment: MainAxisAlignment.start,
+                            //   columnVerticalDirection: VerticalDirection.down,
+                            //   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   // crossAxisAlignment: CrossAxisAlignment.start,
+                            //   rowSpacing: 30,
+                            //   children: [
+                            //     ResponsiveRowColumnItem(
+                            //       columnFlex: 1,
+                            //       columnFit: FlexFit.loose,
+                            //       columnOrder: 1,
+                            //       child: ConstrainedBox(
+                            //         constraints: const BoxConstraints(
+                            //           minWidth: 786,
+                            //           maxWidth: 786,
+                            //         ),
+                            //         child: row1(),
+                            //       ),
+                            //     ),
+                            //     // const ResponsiveRowColumnItem(
+                            //     //   child: SizedBox(
+                            //     //     width: 30,
+                            //     //   ),
+                            //     // ),
+                            //     ResponsiveRowColumnItem(
+                            //       columnFlex: 1,
+                            //       columnFit: FlexFit.loose,
+                            //       columnOrder: 2,
+                            //       child: Expanded(
+                            //         flex: 1,
+                            //         child: row2(),
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,

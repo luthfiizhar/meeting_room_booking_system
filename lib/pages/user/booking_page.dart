@@ -191,59 +191,59 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   bool pictureLoading = true;
   bool isSubmitLoading = false;
 
-  Future getBookingListRoom(String area, String date, MainModel model) async {
-    model.events.appointments!.clear();
-    var box = await Hive.openBox('userLogin');
-    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+  // Future getBookingListRoom(String area, String date, MainModel model) async {
+  //   model.events.appointments!.clear();
+  //   var box = await Hive.openBox('userLogin');
+  //   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
-    var url = Uri.https(
-        apiUrlGlobal, '/MRBS_Backend/public/api/room/booking/list/$area');
-    Map<String, String> requestHeader = {
-      'Authorization': 'Bearer $jwt',
-      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
-      'Content-Type': 'application/json',
-    };
-    var bodySend = """
-  {
-    "StartDate" : "$date",
-    "EndDate" : "$date"
-  }
-  """;
-    try {
-      var response = await http.post(
-        url,
-        headers: requestHeader,
-        body: bodySend,
-      );
+  //   var url = Uri.https(
+  //       apiUrlGlobal, '/MRBS_Backend/public/api/room/booking/list/$area');
+  //   Map<String, String> requestHeader = {
+  //     'Authorization': 'Bearer $jwt',
+  //     // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+  //     'Content-Type': 'application/json',
+  //   };
+  //   var bodySend = """
+  // {
+  //   "StartDate" : "$date",
+  //   "EndDate" : "$date"
+  // }
+  // """;
+  //   try {
+  //     var response = await http.post(
+  //       url,
+  //       headers: requestHeader,
+  //       body: bodySend,
+  //     );
 
-      var data = json.decode(response.body);
-      // print(data);
+  //     var data = json.decode(response.body);
+  //     // print(data);
 
-      // List dataRoom = data['Data'];
-      // int length = dataRoom.length;
-      // print(dataRoom);
-      // roomEvents.clear();
-      // for (var i = 0; i < length; i++) {
-      //   List eventRoom = dataRoom[i]['Bookings'];
-      //   if (eventRoom.isEmpty) {
-      //     break;
-      //   }
-      //   for (var j = 0; j < eventRoom.length; j++) {
-      //     roomEvents.add(
-      //       Appointment(
-      //         // subject: ,
-      //         resourceIds: [dataRoom[i]['RoomID']],
-      //         startTime: DateTime.parse(eventRoom[j]['StartDateTime']),
-      //         endTime: DateTime.parse(eventRoom[j]['EndDateTime']),
-      //       ),
-      //     );
-      //   }
-      // }
-      return data;
-    } on Error catch (e) {
-      return e;
-    }
-  }
+  //     // List dataRoom = data['Data'];
+  //     // int length = dataRoom.length;
+  //     // print(dataRoom);
+  //     // roomEvents.clear();
+  //     // for (var i = 0; i < length; i++) {
+  //     //   List eventRoom = dataRoom[i]['Bookings'];
+  //     //   if (eventRoom.isEmpty) {
+  //     //     break;
+  //     //   }
+  //     //   for (var j = 0; j < eventRoom.length; j++) {
+  //     //     roomEvents.add(
+  //     //       Appointment(
+  //     //         // subject: ,
+  //     //         resourceIds: [dataRoom[i]['RoomID']],
+  //     //         startTime: DateTime.parse(eventRoom[j]['StartDateTime']),
+  //     //         endTime: DateTime.parse(eventRoom[j]['EndDateTime']),
+  //     //       ),
+  //     //     );
+  //     //   }
+  //     // }
+  //     return data;
+  //   } on Error catch (e) {
+  //     return e;
+  //   }
+  // }
 
   Future forRefreshCalendar() async {
     var box = await Hive.openBox('calendarInfo');
@@ -257,10 +257,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   Future updateEvent(MainModel model) async {
     // print(model.selectedArea);
     // print(model.selectedDate);
-    getBookingListRoom(model.selectedArea, model.selectedDate, model)
-        .then((value) {
-      model.setEvents(value['Data'], model.dataRoom, model.eventRoom);
-    });
+    // getBookingListRoom(model.selectedArea, model.selectedDate, model)
+    //     .then((value) {
+    //   model.setEvents(value['Data'], model.dataRoom, model.eventRoom);
+    // });
   }
 
   setDatePickerStatus(bool value) {

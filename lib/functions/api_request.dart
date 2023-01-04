@@ -9,8 +9,8 @@ import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
 
 class ReqAPI {
-  static const apiUrlGlobal = 'fmklg.klgsys.com';
-  // String apiUrlGlobal = ''; // Production
+  // static const apiUrlGlobal = 'fmklg.klgsys.com'; // Development
+  String apiUrlGlobal = 'fmklg-backend.klgsys.com'; // Production
 
   Future bookingRoom(Booking booking) async {
     // booking.toJson();
@@ -191,6 +191,38 @@ class ReqAPI {
     try {
       var response =
           await http.post(url, body: bodySend, headers: requestHeader);
+      var data = json.decode(response.body);
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future getBookingListRoom(String area, String date, List listEvent) async {
+    // String link = 'fmklg.klgsys.com';
+    // String link = 'fmklg-backend.klgsys.com';
+    // _events!.appointments!.clear();
+    listEvent.clear();
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(
+        apiUrlGlobal, '/MRBS_Backend/public/api/room/booking/list/$area');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+    var bodySend = """
+  {
+    "StartDate" : "$date",
+    "EndDate" : "$date"
+  }
+  """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
       var data = json.decode(response.body);
       return data;
     } on Error catch (e) {
@@ -1262,7 +1294,7 @@ class ReqAPI {
   }
 }
 
-String apiUrlGlobal = 'fmklg.klgsys.com'; // Development
+// String apiUrlGlobal = 'fmklg.klgsys.com'; // Development
 // String apiUrlGlobal = ''; // Production
 
 

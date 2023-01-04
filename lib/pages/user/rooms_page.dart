@@ -118,29 +118,33 @@ class _RoomsPageState extends State<RoomsPage> {
       indexColor++;
     });
     setState(() {
-      getBookingListRoom(selectedArea!, selectedDate.toString()).then((value) {
-        if (value['Status'].toString() == "200") {
-          assignDataToCalendar(value['Data']);
-        } else {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialogBlack(
-              title: value['Title'],
-              contentText: value['Message'],
-              isSuccess: false,
-            ),
-          );
-        }
-      }).onError((error, stackTrace) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialogBlack(
-            title: 'Failed connect to API',
-            contentText: error.toString(),
-            isSuccess: false,
-          ),
-        );
-      });
+      updateCalendar(selectedDate.toString());
+      // apiReq
+      //     .getBookingListRoom(
+      //         selectedArea!, selectedDate.toString(), _events!.appointments!)
+      //     .then((value) {
+      //   if (value['Status'].toString() == "200") {
+      //     assignDataToCalendar(value['Data']);
+      //   } else {
+      //     showDialog(
+      //       context: context,
+      //       builder: (context) => AlertDialogBlack(
+      //         title: value['Title'],
+      //         contentText: value['Message'],
+      //         isSuccess: false,
+      //       ),
+      //     );
+      //   }
+      // }).onError((error, stackTrace) {
+      //   showDialog(
+      //     context: context,
+      //     builder: (context) => AlertDialogBlack(
+      //       title: 'Failed connect to API',
+      //       contentText: error.toString(),
+      //       isSuccess: false,
+      //     ),
+      //   );
+      // });
     });
     //     .map((e) {
     //   _events!.resources!.add(
@@ -258,6 +262,13 @@ class _RoomsPageState extends State<RoomsPage> {
         // addResourceRoom().then((value) {
         //   _events!.appointments!.clear();
         // });
+        updateCalendar(selectedDate.toString());
+        // apiReq
+        //     .getBookingListRoom(
+        //         selectedArea!, selectedDate.toString(), _events!.appointments!)
+        //     .then((value) {
+        //   assignDataToCalendar(value['Data']);
+        // });
       } else {
         showDialog(
           context: context,
@@ -278,9 +289,7 @@ class _RoomsPageState extends State<RoomsPage> {
         ),
       );
     });
-    getBookingListRoom(selectedArea!, selectedDate.toString()).then((value) {
-      assignDataToCalendar(value['Data']);
-    });
+
     // addResourceRoom().then((_) {
     //   _events!.appointments!.clear();
     // getBookingListRoom('AR-1', DateTime.now().toString()).then((value) {
@@ -398,6 +407,34 @@ class _RoomsPageState extends State<RoomsPage> {
     });
   }
 
+  updateCalendar(String date) {
+    apiReq
+        .getBookingListRoom(selectedArea!, date, _events!.appointments!)
+        .then((value) {
+      print(value);
+      if (value['Status'].toString() == "200") {
+        assignDataToCalendar(value['Data']);
+        setState(() {});
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+        ),
+      );
+    });
+  }
+
   Future addResourceRoom() async {
     onChangedArea(selectedArea!);
     // _events!.resources!.add(CalendarResource(
@@ -436,34 +473,36 @@ class _RoomsPageState extends State<RoomsPage> {
     // calendarControl!.notifyPropertyChangedListeners('initialDate');
   }
 
-  Future getBookingListRoom(String area, String date) async {
-    _events!.appointments!.clear();
-    var box = await Hive.openBox('userLogin');
-    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+  // Future getBookingListRoom(String area, String date) async {
+  //   // String link = 'fmklg.klgsys.com';
+  //   String link = 'fmklg-backend.klgsys.com';
+  //   _events!.appointments!.clear();
+  //   var box = await Hive.openBox('userLogin');
+  //   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
-    var url = Uri.https(
-        apiUrlGlobal, '/MRBS_Backend/public/api/room/booking/list/$area');
-    Map<String, String> requestHeader = {
-      'Authorization': 'Bearer $jwt',
-      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
-      'Content-Type': 'application/json',
-    };
-    var bodySend = """
-  {
-    "StartDate" : "$date",
-    "EndDate" : "$date"
-  }
-  """;
-    try {
-      var response =
-          await http.post(url, headers: requestHeader, body: bodySend);
+  //   var url =
+  //       Uri.https(link, '/MRBS_Backend/public/api/room/booking/list/$area');
+  //   Map<String, String> requestHeader = {
+  //     'Authorization': 'Bearer $jwt',
+  //     // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+  //     'Content-Type': 'application/json',
+  //   };
+  //   var bodySend = """
+  // {
+  //   "StartDate" : "$date",
+  //   "EndDate" : "$date"
+  // }
+  // """;
+  //   try {
+  //     var response =
+  //         await http.post(url, headers: requestHeader, body: bodySend);
 
-      var data = json.decode(response.body);
-      return data;
-    } on Error catch (e) {
-      return e;
-    }
-  }
+  //     var data = json.decode(response.body);
+  //     return data;
+  //   } on Error catch (e) {
+  //     return e;
+  //   }
+  // }
 
   ScrollController scrollController = ScrollController();
   @override
@@ -706,31 +745,10 @@ class _RoomsPageState extends State<RoomsPage> {
               if (dataRoom == []) {
                 _events!.appointments!.clear();
               } else {
-                getBookingListRoom(selectedArea!,
-                        viewChangedDetails.visibleDates[0].toString())
-                    .then((value) {
-                  print(value);
-                  if (value['Status'].toString() == "200") {
-                    assignDataToCalendar(value['Data']);
-                    setState(() {});
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialogBlack(
-                        title: value['Title'],
-                        contentText: value['Message'],
-                      ),
-                    );
-                  }
-                }).onError((error, stackTrace) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialogBlack(
-                      title: 'Failed connect to API',
-                      contentText: error.toString(),
-                    ),
-                  );
-                });
+                // setState(() {
+                //   loadingGetCalendar = true;
+                // });
+                updateCalendar(viewChangedDetails.visibleDates[0].toString());
               }
             },
             headerHeight: 0,
