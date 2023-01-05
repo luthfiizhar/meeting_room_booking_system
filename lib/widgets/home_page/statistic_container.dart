@@ -389,37 +389,33 @@ class _StatisticContainerState extends State<StatisticContainer> {
                                       Builder(builder: (context) {
                                         double widthPercent =
                                             399 * (value.percentage / 100);
-                                        return Expanded(
-                                          child: Container(
-                                            width: widthPercent,
-                                            height: 20,
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                bottomLeft: index == 0 ||
-                                                        widthPercent == 400
-                                                    ? const Radius.circular(5)
-                                                    : Radius.zero,
-                                                topLeft: index == 0 ||
-                                                        widthPercent == 400
-                                                    ? const Radius.circular(5)
-                                                    : Radius.zero,
-                                                bottomRight: index ==
-                                                            bookingStatus
-                                                                    .length -
-                                                                1 ||
-                                                        widthPercent == 400
-                                                    ? const Radius.circular(5)
-                                                    : Radius.zero,
-                                                topRight: index ==
-                                                            bookingStatus
-                                                                    .length -
-                                                                1 ||
-                                                        widthPercent == 400
-                                                    ? const Radius.circular(5)
-                                                    : Radius.zero,
-                                              ),
-                                              color: value.color,
+                                        return Container(
+                                          width: widthPercent,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: index == 0 ||
+                                                      widthPercent == 400
+                                                  ? const Radius.circular(5)
+                                                  : Radius.zero,
+                                              topLeft: index == 0 ||
+                                                      widthPercent == 400
+                                                  ? const Radius.circular(5)
+                                                  : Radius.zero,
+                                              bottomRight: index ==
+                                                          bookingStatus.length -
+                                                              1 ||
+                                                      widthPercent == 400
+                                                  ? const Radius.circular(5)
+                                                  : Radius.zero,
+                                              topRight: index ==
+                                                          bookingStatus.length -
+                                                              1 ||
+                                                      widthPercent == 400
+                                                  ? const Radius.circular(5)
+                                                  : Radius.zero,
                                             ),
+                                            color: value.color,
                                           ),
                                         );
                                       }),
@@ -472,81 +468,91 @@ class _StatisticContainerState extends State<StatisticContainer> {
                           const SizedBox(
                             height: 10,
                           ),
-                          SizedBox(
-                            width: 400,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: bookingStatus
-                                  .asMap()
-                                  .map(
-                                    (index, value) => MapEntry(
-                                      index,
-                                      Builder(builder: (context) {
-                                        if (index == bookingStatus.length - 1) {
-                                          return Container(
-                                            // color: blueAccent,
-                                            width: 400.0 *
-                                                (value.percentage / 100),
-                                            child: Text(
-                                              "${value.percentage}%",
-                                              textAlign: index ==
-                                                      bookingStatus.length - 1
-                                                  ? TextAlign.end
-                                                  : null,
-                                              style: helveticaText.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w300,
-                                                color:
-                                                    bookingStatus[index].color,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          );
-                                        } else {
-                                          return Expanded(
-                                            child: Container(
-                                              // color: blueAccent,
-                                              width: 400.0 *
-                                                  (value.percentage / 100),
-                                              child: Text(
-                                                "${value.percentage}%",
-                                                textAlign: index ==
-                                                        bookingStatus.length - 1
-                                                    ? TextAlign.end
-                                                    : null,
-                                                style: helveticaText.copyWith(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w300,
-                                                  color: bookingStatus[index]
-                                                      .color,
-                                                  // backgroundColor:
-                                                  //     bookingStatus[index]
-                                                  //         .color,
+                          Column(
+                            children: [
+                              SizedBox(
+                                width: 400,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: bookingStatus
+                                      .asMap()
+                                      .map(
+                                        (index, value) => MapEntry(
+                                          index,
+                                          Builder(builder: (context) {
+                                            if (index ==
+                                                bookingStatus.length - 1) {
+                                              return Container(
+                                                // color: blueAccent,
+                                                width: 400.0 *
+                                                    (value.percentage / 100),
+                                                child: Text(
+                                                  "${value.percentage}%",
+                                                  textAlign: index ==
+                                                          bookingStatus.length -
+                                                              1
+                                                      ? TextAlign.end
+                                                      : null,
+                                                  style: helveticaText.copyWith(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w300,
+                                                    color: bookingStatus[index]
+                                                        .color,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.visible,
+                                                  softWrap: false,
                                                 ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      }),
-                                    ),
-                                  )
-                                  .values
-                                  .toList(),
-                              // children: [
-                              //   SizedBox(
-                              //     child: Text(
-                              //       "${bookingStatus[index].percentage} %",
-                              //       style: helveticaText.copyWith(
-                              //         fontSize: 14,
-                              //         fontWeight: FontWeight.w300,
-                              //         color: bookingStatus[index].color,
-                              //       ),
-                              //       overflow: TextOverflow.ellipsis,
-                              //     ),
-                              //   ),
-                              // ],
-                            ),
+                                              );
+                                            } else {
+                                              return Container(
+                                                // color: blueAccent,
+                                                width: 400.0 *
+                                                    (value.percentage / 100),
+                                                child: Text(
+                                                  "${value.percentage}%",
+                                                  textAlign: index ==
+                                                          bookingStatus.length -
+                                                              1
+                                                      ? TextAlign.end
+                                                      : null,
+                                                  style: helveticaText.copyWith(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w300,
+                                                    color: bookingStatus[index]
+                                                        .color,
+                                                    // backgroundColor:
+                                                    //     bookingStatus[index]
+                                                    //         .color,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.visible,
+                                                  softWrap: false,
+                                                ),
+                                              );
+                                            }
+                                          }),
+                                        ),
+                                      )
+                                      .values
+                                      .toList(),
+                                  // children: [
+                                  //   SizedBox(
+                                  //     child: Text(
+                                  //       "${bookingStatus[index].percentage} %",
+                                  //       style: helveticaText.copyWith(
+                                  //         fontSize: 14,
+                                  //         fontWeight: FontWeight.w300,
+                                  //         color: bookingStatus[index].color,
+                                  //       ),
+                                  //       overflow: TextOverflow.ellipsis,
+                                  //     ),
+                                  //   ),
+                                  // ],
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
