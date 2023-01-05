@@ -140,7 +140,7 @@ class CustomDatePicker extends StatelessWidget {
             color: isDark ? culturedWhite : eerieBlack,
           ),
           onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
-            print(dateRangePickerSelectionChangedArgs.value);
+            // print(dateRangePickerSelectionChangedArgs.value);
             String formattedDate = DateFormat('d MMM yyyy')
                 .format(dateRangePickerSelectionChangedArgs.value);
             changeDate!(

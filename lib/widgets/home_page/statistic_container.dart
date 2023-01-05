@@ -371,33 +371,37 @@ class _StatisticContainerState extends State<StatisticContainer> {
                                       Builder(builder: (context) {
                                         double widthPercent =
                                             399 * (value.percentage / 100);
-                                        return Container(
-                                          width: widthPercent,
-                                          height: 20,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                              bottomLeft: index == 0 ||
-                                                      widthPercent == 400
-                                                  ? const Radius.circular(5)
-                                                  : Radius.zero,
-                                              topLeft: index == 0 ||
-                                                      widthPercent == 400
-                                                  ? const Radius.circular(5)
-                                                  : Radius.zero,
-                                              bottomRight: index ==
-                                                          bookingStatus.length -
-                                                              1 ||
-                                                      widthPercent == 400
-                                                  ? const Radius.circular(5)
-                                                  : Radius.zero,
-                                              topRight: index ==
-                                                          bookingStatus.length -
-                                                              1 ||
-                                                      widthPercent == 400
-                                                  ? const Radius.circular(5)
-                                                  : Radius.zero,
+                                        return Expanded(
+                                          child: Container(
+                                            width: widthPercent,
+                                            height: 20,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                bottomLeft: index == 0 ||
+                                                        widthPercent == 400
+                                                    ? const Radius.circular(5)
+                                                    : Radius.zero,
+                                                topLeft: index == 0 ||
+                                                        widthPercent == 400
+                                                    ? const Radius.circular(5)
+                                                    : Radius.zero,
+                                                bottomRight: index ==
+                                                            bookingStatus
+                                                                    .length -
+                                                                1 ||
+                                                        widthPercent == 400
+                                                    ? const Radius.circular(5)
+                                                    : Radius.zero,
+                                                topRight: index ==
+                                                            bookingStatus
+                                                                    .length -
+                                                                1 ||
+                                                        widthPercent == 400
+                                                    ? const Radius.circular(5)
+                                                    : Radius.zero,
+                                              ),
+                                              color: value.color,
                                             ),
-                                            color: value.color,
                                           ),
                                         );
                                       }),
@@ -460,8 +464,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
                                     (index, value) => MapEntry(
                                       index,
                                       Builder(builder: (context) {
-                                        if (index == bookingStatus.length - 1 ||
-                                            index == 0) {
+                                        if (index == bookingStatus.length - 1) {
                                           return Container(
                                             // color: blueAccent,
                                             width: 400.0 *
@@ -482,7 +485,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
                                             ),
                                           );
                                         } else {
-                                          return Flexible(
+                                          return Expanded(
                                             child: Container(
                                               // color: blueAccent,
                                               width: 400.0 *

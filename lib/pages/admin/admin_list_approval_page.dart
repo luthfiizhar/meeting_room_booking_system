@@ -30,7 +30,6 @@ class _AdminListPageState extends State<AdminListPage> {
   List showedPage = [1];
 
   countPagination(int totalRow) {
-    print('total row -> $totalRow');
     setState(() {
       availablePage.clear();
       if (totalRow == 0) {
@@ -42,7 +41,7 @@ class _AdminListPageState extends State<AdminListPage> {
       for (var i = 0; i < totalPage.ceil(); i++) {
         availablePage.add(i + 1);
       }
-      print(availablePage);
+      // print(availablePage);
       // print(showedPage);
     });
   }
@@ -59,7 +58,7 @@ class _AdminListPageState extends State<AdminListPage> {
       //   countPagination(value['Data']['TotalRows']);
       //   showedPage = availablePage.take(5).toList();
       // });
-      print(searchTerm.statusRoom);
+      // print(searchTerm.statusRoom);
     });
   }
 

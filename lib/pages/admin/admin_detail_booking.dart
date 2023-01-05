@@ -78,7 +78,6 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
     // TODO: implement initState
     super.initState();
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
-      print(value['Data']);
       if (value['Status'].toString() == "200") {
         setState(() {
           isInitLoading = false;
@@ -111,8 +110,6 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           amenities = value['Data']['Amenities'];
           foodAmenities = value['Data']['FoodAmenities'];
 
-          print('amenities');
-          print(amenities);
           guestInvited = value['Data']['Attendants'];
 
           additionalNotes = value['Data']['AdditionalNotes'] ?? "";

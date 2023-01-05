@@ -4,6 +4,7 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/search_input_field.dart';
 
@@ -197,10 +198,17 @@ class _AdminUserPageState extends State<AdminUserPage> {
                 controller: _search,
                 enabled: true,
                 obsecureText: false,
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 hintText: 'Search here',
                 focusNode: searchNode,
                 maxLines: 1,
+                onFieldSubmitted: (value) {
+                  setState(() {
+                    searchTerm.keyWords = value;
+
+                    updateList();
+                  });
+                },
               ),
             ),
           ],
@@ -778,72 +786,104 @@ class _UserAdminListContainerState extends State<UserAdminListContainer> {
         bottom: 7,
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.mail_outline,
-                color: orangeAccent,
+              Row(
+                children: [
+                  const Icon(
+                    Icons.mail_outline,
+                    color: orangeAccent,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    email,
+                    style: helveticaText.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                    ),
+                  )
+                ],
               ),
               const SizedBox(
-                width: 10,
+                width: 30,
               ),
-              Text(
-                email,
-                style: helveticaText.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w300,
-                  color: davysGray,
-                ),
-              )
+              Row(
+                children: [
+                  const Icon(
+                    Icons.phone,
+                    color: orangeAccent,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "+$phoneCode $phoneNumber",
+                    style: helveticaText.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(
+                width: 30,
+              ),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.home_filled,
+                    color: orangeAccent,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    place,
+                    style: helveticaText.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                    ),
+                  )
+                ],
+              ),
             ],
           ),
-          const SizedBox(
-            width: 30,
-          ),
-          Row(
+          Wrap(
+            spacing: 10,
             children: [
-              const Icon(
-                Icons.phone,
-                color: orangeAccent,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                "+$phoneCode $phoneNumber",
-                style: helveticaText.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w300,
-                  color: davysGray,
+              InkWell(
+                onTap: () {},
+                child: const Icon(
+                  Icons.edit,
+                  color: orangeAccent,
                 ),
-              )
-            ],
-          ),
-          const SizedBox(
-            width: 30,
-          ),
-          Row(
-            children: [
-              const Icon(
-                Icons.home_filled,
-                color: orangeAccent,
               ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                place,
-                style: helveticaText.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w300,
-                  color: davysGray,
+              InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => ConfirmDialogBlack(
+                      title: 'Confirmation',
+                      contentText: 'Are you sure want delete this user?',
+                      onTapConfirm: () {
+                        Navigator.of(context).pop(true);
+                      },
+                    ),
+                  );
+                },
+                child: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: orangeAccent,
                 ),
-              )
+              ),
             ],
-          ),
-          const SizedBox(
-            width: 30,
           ),
         ],
       ),

@@ -156,7 +156,7 @@ class _RoomsPageState extends State<RoomsPage> {
     //   );
     //   indexColor++;
     // });
-    print(_events!.resources!);
+    // print(_events!.resources!);
   }
 
   setDatePickerStatus(bool value) {
@@ -232,7 +232,7 @@ class _RoomsPageState extends State<RoomsPage> {
     super.initState();
     // _events.addListener((p0, p1) {});
     _events = RoomEventDataSource(<RoomEvent>[], <CalendarResource>[]);
-    print('ini init state');
+    // print('ini init state');
     // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
     //   mainModel = Provider.of<MainModel>(context, listen: true);
     // });
@@ -250,11 +250,11 @@ class _RoomsPageState extends State<RoomsPage> {
         }
         // print(areaList);
         selectedArea = areaList.first.areaId;
-        print(selectedArea);
-        print(areaList
-            .where((element) => element.areaId == selectedArea)
-            .first
-            .toJson());
+        // print(selectedArea);
+        // print(areaList
+        //     .where((element) => element.areaId == selectedArea)
+        //     .first
+        //     .toJson());
         // print(areaList.toString());
         // for (var i = 0; i < areaList.length; i++) {}
         // print(areaList);
@@ -411,7 +411,7 @@ class _RoomsPageState extends State<RoomsPage> {
     apiReq
         .getBookingListRoom(selectedArea!, date, _events!.appointments!)
         .then((value) {
-      print(value);
+      // print(value);
       if (value['Status'].toString() == "200") {
         assignDataToCalendar(value['Data']);
         setState(() {});
@@ -695,7 +695,7 @@ class _RoomsPageState extends State<RoomsPage> {
                 enabled: true,
                 hintText: '',
                 onChanged: (value) {
-                  print(value);
+                  // print(value);
                   selectedArea = value;
                   onChangedArea(selectedArea!);
                   if (isShowDetail) {

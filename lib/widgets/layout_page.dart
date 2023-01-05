@@ -72,7 +72,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   }
 
   updateAfterLogin(String name, String email) async {
-    print('updateLogin');
+    // print('updateLogin');
     var box = await Hive.openBox('userLogin');
 
     box.put('name', name);
@@ -111,28 +111,28 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
     // widget.setDatePickerStatus!(false);
   }
 
-  Future checkDeviceInfo() async {
-    WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
-    final Connectivity _connectivity = Connectivity();
-    ConnectivityResult connectivityResult =
-        await _connectivity.checkConnectivity();
+  // Future checkDeviceInfo() async {
+  //   WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+  //   final Connectivity _connectivity = Connectivity();
+  //   ConnectivityResult connectivityResult =
+  //       await _connectivity.checkConnectivity();
 
-    if (connectivityResult == ConnectivityResult.mobile) {
-      // I am connected to a mobile network.
-    } else if (connectivityResult == ConnectivityResult.wifi) {
-      // I am connected to a wifi network.
-      print(connectivityResult);
-      _connectivity.checkConnectivity().then((value) {
-        print(value);
-      });
-    }
-    // final add =  await NetworkInterface().addresses;
-    // var info = NetworkInfo();
-    // var wifiIP = await info.getWifiIP();
-    // print('Ip address -> $wifiIP');
-    // print(info);
-    print('Running on -> ${webBrowserInfo.userAgent}');
-  }
+  //   if (connectivityResult == ConnectivityResult.mobile) {
+  //     // I am connected to a mobile network.
+  //   } else if (connectivityResult == ConnectivityResult.wifi) {
+  //     // I am connected to a wifi network.
+  //     // print(connectivityResult);
+  //     _connectivity.checkConnectivity().then((value) {
+  //       // print(value);
+  //     });
+  //   }
+  //   // final add =  await NetworkInterface().addresses;
+  //   // var info = NetworkInfo();
+  //   // var wifiIP = await info.getWifiIP();
+  //   // print('Ip address -> $wifiIP');
+  //   // print(info);
+  //   print('Running on -> ${webBrowserInfo.userAgent}');
+  // }
 
   Future autoScroll() async {
     _scrollController?.animateTo(

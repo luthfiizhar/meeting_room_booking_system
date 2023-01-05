@@ -51,7 +51,7 @@ Future bookingRoom(Booking booking) async {
   """;
 
   try {
-    print('booking');
+    // print('booking');
     var response = await http.post(url, body: bodySend, headers: requestHeader);
 
     var data = json.decode(response.body);
@@ -144,7 +144,7 @@ Future bookingAudi(Booking booking) async {
       "FoodAmenities": ${booking.foodAmenities}
   }
   """;
-  print(bodySend);
+  // print(bodySend);
   try {
     var response = await http.post(url, body: bodySend, headers: requestHeader);
 
@@ -186,7 +186,7 @@ Future searchRoomApi(
       "Area" : $floor
     }
   """;
-  print(bodySend);
+  // print(bodySend);
 
   try {
     var response = await http.post(url, body: bodySend, headers: requestHeader);
@@ -338,7 +338,7 @@ Future loginDummy(String username, String password) async {
     if (data['Data']['Roles']['Admin'] == 1) {
       isAdmin = true;
     }
-    print(response.body);
+    // print(response.body);
     return data;
   } on Error catch (e) {
     return e;
@@ -397,14 +397,12 @@ Future loginCerberus(
   //       "Password" : "GreedisGood2,"
   // }
   // """;
-  print(bodySend);
+  // print(bodySend);
 
   try {
-    print('try');
     var response = await http.post(url, body: bodySend, headers: requestHeader);
 
     var data = json.decode(response.body);
-    print(data);
     var box = await Hive.openBox('userLogin');
     box.put(
         'jwtToken', data['Data']['Token'] != null ? data['Data']['Token'] : "");
@@ -509,7 +507,6 @@ Future getRoomDetail(String roomId) async {
 }
 
 Future getBookingDetail(String bookingId) async {
-  print(bookingId);
   var box = await Hive.openBox('userLogin');
   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -532,8 +529,6 @@ Future getBookingDetail(String bookingId) async {
 }
 
 Future deleteBooking(String bookingId) async {
-  print('delete this');
-  print(bookingId);
   var box = await Hive.openBox('userLogin');
   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -556,8 +551,6 @@ Future deleteBooking(String bookingId) async {
 }
 
 Future deleteBookingRecurrent(String bookingId) async {
-  print('delete this');
-  print(bookingId);
   var box = await Hive.openBox('userLogin');
   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -580,8 +573,6 @@ Future deleteBookingRecurrent(String bookingId) async {
 }
 
 Future getMyBookingList(MyListBody body) async {
-  print('delete this');
-  // print(bookingId);
   var box = await Hive.openBox('userLogin');
   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -603,7 +594,6 @@ Future getMyBookingList(MyListBody body) async {
     "OrderDir" : "${body.orderDir}"
   }
   """;
-  print(bodySend);
   try {
     var response = await http.post(url, headers: requestHeader, body: bodySend);
 
@@ -616,8 +606,6 @@ Future getMyBookingList(MyListBody body) async {
 }
 
 Future getAuditoriumApprovalList(ListApprovalBody body) async {
-  print('delete this');
-  // print(bookingId);
   var box = await Hive.openBox('userLogin');
   var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -640,7 +628,6 @@ Future getAuditoriumApprovalList(ListApprovalBody body) async {
     "OrderDir" : "${body.orderDir}"
   }
   """;
-  print(bodySend);
   try {
     var response = await http.post(url, headers: requestHeader, body: bodySend);
 
@@ -893,7 +880,6 @@ Future saveTokenGoogle(String token) async {
     }
   """;
 
-  print(bodySend);
   try {
     var response = await http.post(url, headers: requestHeader, body: bodySend);
 
@@ -985,7 +971,6 @@ Future getContactList() async {
   try {
     var response = await http.post(url, headers: requestHeader);
 
-    print('response -> ${response.body}');
     var data = json.decode(response.body);
 
     return data;
@@ -1202,7 +1187,6 @@ Future getRoomSchedule(String roomId, String selectedDate) async {
     "Date" : "$selectedDate"
   }
   """;
-  print(bodySend);
   try {
     var response = await http.post(url, headers: requestHeader, body: bodySend);
 
