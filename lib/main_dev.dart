@@ -69,7 +69,7 @@ void main() async {
   // runApp(MyApp());
   ReqAPI apiReq = ReqAPI();
   apiReq.checkToken().then((value) {
-    print(value);
+    // print(value);
     if (value["Status"] == "200") {
       isTokenValid = true;
     } else {

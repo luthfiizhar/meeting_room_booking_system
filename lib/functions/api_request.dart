@@ -1011,6 +1011,38 @@ class ReqAPI {
     }
   }
 
+  Future getFacilitiesTableList(SearchTerm body) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(
+        apiUrlGlobal, '/MRBS_Backend/public/api/admin/amenities-table');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+      "Keywords": "${body.keyWords}",
+      "MaxRecord": "${body.max}",
+      "PageNumber": "${body.pageNumber}"
+    }
+    """;
+
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   Future myBookBookingCount() async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";

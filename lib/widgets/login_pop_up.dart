@@ -131,7 +131,7 @@ class _LoginPopUpState extends State<LoginPopUp> {
                         height: 15,
                       ),
                       Text(
-                        'Please login using your windows/laptop credential.',
+                        'Please login using your Windows / laptop credential.',
                         style: helveticaText.copyWith(
                           fontSize: 18,
                           height: 1.67,
