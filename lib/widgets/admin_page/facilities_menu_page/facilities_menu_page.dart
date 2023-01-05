@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/amenities_class.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/facilities_menu_page/add_facility_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
@@ -27,7 +29,7 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
 
   int selectedIndexArea = 0;
 
-  List facilitiesList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+  List facilitiesList = [];
   List<Amenities> facilities = [];
 
   List showPerPageList = ["5", "10", "20", "50", "100"];
@@ -58,6 +60,7 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
   onTapHeader(String orderBy) {}
 
   updateList() {
+    facilitiesList.clear();
     apiReq.getFacilitiesTableList(searchTerm).then((value) {
       if (value['Status'] == '200') {
         print(value);
@@ -114,12 +117,12 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
             ),
             InkWell(
               onTap: () {
-                // showDialog(
-                //   context: context,
-                //   builder: (context) => NewAreaDialog(
-                //     isEdit: false,
-                //   ),
-                // );
+                showDialog(
+                  context: context,
+                  builder: (context) => AddNewFacilityDialog(
+                    isEdit: false,
+                  ),
+                );
               },
               child: SizedBox(
                 child: Row(
@@ -155,9 +158,20 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                 controller: _search,
                 enabled: true,
                 obsecureText: false,
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: davysGray,
+                ),
                 hintText: 'Search here',
                 focusNode: searchNode,
+                maxLines: 1,
+                onFieldSubmitted: (value) {
+                  print('submit');
+                  setState(() {
+                    searchTerm.keyWords = value;
+                    updateList();
+                  });
+                },
               ),
             ),
           ],
@@ -195,26 +209,48 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
         //       .values
         //       .toList(),
         // ),
-        GridView.builder(
-          shrinkWrap: true,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            childAspectRatio: 3 / 4,
-            crossAxisCount: 4,
-          ),
-          itemCount: facilitiesList.length,
-          itemBuilder: (context, index) {
-            return Container(
-              height: 295,
-              width: 200,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: platinum,
-                  width: 0.5,
+        facilitiesList.isEmpty
+            ? SizedBox(
+                width: double.infinity,
+                height: 230,
+                child: Center(
+                  child: Text(
+                    'No Facility available in the system.',
+                    style: helveticaText.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                    ),
+                  ),
                 ),
+              )
+            : GridView.builder(
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 3 / 4,
+                  crossAxisCount: 4,
+                ),
+                itemCount: facilitiesList.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    height: 295,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: platinum,
+                        width: 0.5,
+                      ),
+                    ),
+                    child: FacilitiesListContainer(
+                      facilitiesId:
+                          facilitiesList[index]['AmenitiesID'].toString(),
+                      imageUrl: facilitiesList[index]['ImageURL'],
+                      type: facilitiesList[index]['AmenitiesType'],
+                      name: facilitiesList[index]['AmenitiesName'],
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
         const SizedBox(
           height: 30,
         ),
@@ -516,10 +552,121 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
 }
 
 class FacilitiesListContainer extends StatelessWidget {
-  const FacilitiesListContainer({super.key});
+  const FacilitiesListContainer({
+    super.key,
+    this.facilitiesId = "",
+    this.imageUrl = "",
+    this.name = "",
+    this.type = "",
+    this.isProhibited = false,
+  });
+
+  final String facilitiesId;
+  final String imageUrl;
+  final String name;
+  final String type;
+  final bool isProhibited;
 
   @override
   Widget build(BuildContext context) {
-    return Column();
+    return Container(
+      padding: const EdgeInsets.only(
+        top: 15,
+        bottom: 12,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: SizedBox(
+              width: 200,
+              height: 175,
+              child: imageUrl == ""
+                  ? SizedBox()
+                  : CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      imageBuilder: (context, imageProvider) {
+                        return Container(
+                          padding: const EdgeInsets.all(15),
+                          width: 200,
+                          height: 175,
+                          // decoration: BoxDecoration(
+                          //   image: DecorationImage(
+                          //     image: imageProvider,
+                          //     fit: BoxFit.contain,
+                          //     alignment: Alignment.center,
+                          //   ),
+                          // ),
+                          child: Center(
+                            child: Image(
+                              image: imageProvider,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Container(
+            padding: const EdgeInsets.only(
+              left: 20,
+              right: 20,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: davysGray,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  type,
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: davysGray,
+                  ),
+                ),
+                const SizedBox(
+                  height: 33,
+                ),
+                Wrap(
+                  spacing: 10,
+                  children: [
+                    InkWell(
+                      onTap: () {},
+                      child: const Icon(
+                        Icons.edit,
+                        color: orangeAccent,
+                        size: 18,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {},
+                      child: const Icon(
+                        Icons.delete_outline_outlined,
+                        color: orangeAccent,
+                        size: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
