@@ -58,9 +58,11 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
   onTapHeader(String orderBy) {}
 
   updateList() {
-    apiReq.getFacilitiesList().then((value) {
+    apiReq.getFacilitiesTableList(searchTerm).then((value) {
       if (value['Status'] == '200') {
-        facilitiesList = value['Data'];
+        print(value);
+        facilitiesList = value['Data']['List'];
+        countPagination(value['Data']['TotalRows']);
       } else {
         showDialog(
           context: context,
@@ -510,5 +512,14 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
           ),
           bottom: BorderSide()),
     );
+  }
+}
+
+class FacilitiesListContainer extends StatelessWidget {
+  const FacilitiesListContainer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column();
   }
 }

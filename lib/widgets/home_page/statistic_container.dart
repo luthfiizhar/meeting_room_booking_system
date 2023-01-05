@@ -49,8 +49,8 @@ class _StatisticContainerState extends State<StatisticContainer> {
     apiReq.getStatisticDashboard(day).then((value) {
       if (value['Status'] == "200") {
         dynamic result = value['Data'];
-        dynamic listBookStat = result['BookingStatus'];
-        dynamic eventCreationStat = result['EventCreation'];
+        List listBookStat = result['BookingStatus'];
+        List eventCreationStat = result['EventCreation'];
         setState(() {
           totalBooking = result['TotalBooking'].toString();
           averageTime = result['AverageHours'].toString();
@@ -58,31 +58,36 @@ class _StatisticContainerState extends State<StatisticContainer> {
           mostUsedPhoto = result['MostUsedRoom']['ImageURL'];
         });
         int i = 0;
-        for (var element in listBookStat) {
-          setState(() {
-            bookingStatus.add(
-              StatPercentage(
-                status: element['Status'],
-                percentage: element['Percentage'],
-                color: colorList[i],
-              ),
-            );
-          });
+        if (listBookStat.any((element) => element['Percentage'] != 0)) {
+          for (var element in listBookStat) {
+            setState(() {
+              bookingStatus.add(
+                StatPercentage(
+                  status: element['Status'],
+                  percentage: element['Percentage'],
+                  color: colorList[i],
+                ),
+              );
+            });
 
-          i++;
+            i++;
+          }
         }
-        int j = 0;
-        for (var element in eventCreationStat) {
-          setState(() {
-            eventCreation.add(
-              StatPercentage(
-                status: element['Status'],
-                percentage: element['Percentage'],
-                color: colorList[j],
-              ),
-            );
-          });
-          j++;
+
+        if (eventCreationStat.any((element) => element['Percentage'] != 0)) {
+          int j = 0;
+          for (var element in eventCreationStat) {
+            setState(() {
+              eventCreation.add(
+                StatPercentage(
+                  status: element['Status'],
+                  percentage: element['Percentage'],
+                  color: colorList[j],
+                ),
+              );
+            });
+            j++;
+          }
         }
       } else {
         showDialog(
@@ -157,6 +162,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 bookingStatusContainer(),
                 eventCreationContainer(),
@@ -263,7 +269,18 @@ class _StatisticContainerState extends State<StatisticContainer> {
           height: 80,
           width: 250,
           child: mostUsedPhoto == ""
-              ? SizedBox()
+              ? SizedBox(
+                  height: 46,
+                  width: double.infinity,
+                  child: Text(
+                    'No Data Available',
+                    style: helveticaText.copyWith(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                    ),
+                  ),
+                )
               : CachedNetworkImage(
                   imageUrl: mostUsedPhoto,
                   imageBuilder: (context, imageProvider) {
@@ -322,6 +339,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
   Widget bookingStatusContainer() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
           'Booking Status',
