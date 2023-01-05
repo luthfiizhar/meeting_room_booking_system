@@ -42,7 +42,7 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
   @override
   void initState() {
     super.initState();
-    print("isAdmin-->>  ${widget.isAdmin}");
+    // print("isAdmin-->>  ${widget.isAdmin}");
     if (widget.isAdmin == "true") {
       isAdmin = true;
     }
@@ -99,19 +99,19 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
                     child: Builder(builder: (context) {
                       switch (menu) {
                         case "Profile":
-                          return ProfileMenuSetting();
+                          return const ProfileMenuSetting();
                         case "Floor":
-                          return FloorMenuSettingPage();
+                          return const FloorMenuSettingPage();
                         case "Area":
                           return AreaMenuPage();
                         case "Capacity":
-                          return CapacityMenuPage();
+                          return const CapacityMenuPage();
                         case "Event":
-                          return EventMenuPage();
+                          return const EventMenuPage();
                         case "Facility":
-                          return FacilitiesMenuPage();
+                          return const FacilitiesMenuPage();
                         case "Admin":
-                          return AdminUserPage();
+                          return const AdminUserPage();
                         default:
                           return Container(
                             color: greenAcent,
@@ -158,12 +158,12 @@ class ProfileMenuSetting extends StatefulWidget {
 
 class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   ReqAPI apiReq = ReqAPI();
-  TextEditingController _name = TextEditingController();
-  TextEditingController _nip = TextEditingController();
-  TextEditingController _email = TextEditingController();
-  TextEditingController _avaya = TextEditingController();
-  TextEditingController _phone = TextEditingController();
-  TextEditingController _phoneCode = TextEditingController();
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _nip = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _avaya = TextEditingController();
+  final TextEditingController _phone = TextEditingController();
+  final TextEditingController _phoneCode = TextEditingController();
 
   FocusNode nameNode = FocusNode();
   FocusNode nipNode = FocusNode();
@@ -185,7 +185,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
 
   initGetUserProfile() {
     apiReq.getUserProfile().then((value) {
-      print("User Profile -> $value");
+      // print("User Profile -> $value");
       if (value['Status'].toString() == "200") {
         setState(() {
           name = value['Data']['EmpName'];
@@ -302,8 +302,6 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
               isLoadingSync = false;
             });
             apiReq.saveTokenGoogle(code).then((value) {
-              print(value);
-
               if (value['Status'] == "200") {
                 initGetUserProfile();
                 showDialog(
@@ -524,7 +522,6 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                       googleLink();
                     } else {
                       apiReq.revokeGoogleAcc().then((value) {
-                        print(value);
                         if (value['Status'].toString() == "200") {
                           initGetUserProfile();
                           showDialog(

@@ -90,7 +90,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
     // TODO: implement initState
     super.initState();
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
-      print(value['Data']);
+      // print(value['Data']);
       if (value['Status'].toString() == "200") {
         setState(() {
           isInitLoading = false;
@@ -123,16 +123,10 @@ class _DetailEventPageState extends State<DetailEventPage> {
           hostEmail = value['Data']['Email'];
           // layoutName = value['Data']['LayoutName'];
           // layoutImage = value['Data']['LayoutImg'];
-
           amenities = value['Data']['Amenities'];
           foodAmenities = value['Data']['FoodAmenities'];
-
-          print('amenities');
-          print(amenities);
           guestInvited = value['Data']['Attendants'];
-
           additionalNotes = value['Data']['AdditionalNotes'] ?? "";
-
           bookingHistory = value['Data']['History'];
           repeatType = value['Data']['RepeatType'] ?? "NONE";
           if (bookingType == "RECURSIVE") {
@@ -322,7 +316,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                             text: 'Edit Event',
                                             disabled: false,
                                             onTap: () {
-                                              print(roomId);
+                                              // print(roomId);
                                               context.goNamed(
                                                 'booking',
                                                 params: {
@@ -401,10 +395,13 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                               showDialog(
                                                 context: context,
                                                 builder: (context) =>
-                                                    const ConfirmDialogBlack(
+                                                    ConfirmDialogBlack(
                                                   title: 'Cancel Booking',
                                                   contentText:
                                                       'Are you sure want cancel this booking?',
+                                                  onTapConfirm: () {
+                                                    Navigator.of(context).pop();
+                                                  },
                                                 ),
                                               ).then((value) {
                                                 setState(() {
@@ -416,7 +413,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                         .deleteBooking(
                                                             widget.bookingId!)
                                                         .then((value) {
-                                                      print(value);
+                                                      // print(value);
                                                       setState(() {
                                                         isCancelLoading = false;
                                                       });
@@ -469,7 +466,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                         .deleteBookingRecurrent(
                                                             widget.bookingId!)
                                                         .then((value) {
-                                                      print(value);
+                                                      // print(value);
                                                       if (value['Status']
                                                               .toString() ==
                                                           "200") {

@@ -186,7 +186,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   initUpcomingEvent() {
     apiReq.getUpcomingEvent().then((value) {
-      print(value);
+      // print(value);
       if (value['Status'] == "200") {
         setState(() {
           upcomingData = [value['Data']];
@@ -482,7 +482,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   resetState() {
     // super.initState();
     // scaffoldKey.currentState!.setState(() {});
-    print('resetHome');
+    // print('resetHome');
     setState(() {});
   }
 
@@ -725,7 +725,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 } else {
                                   _facilityController.text = "None";
                                 }
-                                print(facilitySelected);
+                                // print(facilitySelected);
                                 setState(() {});
                               },
                               cameraOnChange: (value) {
@@ -747,7 +747,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 } else {
                                   _facilityController.text = "None";
                                 }
-                                print(facilitySelected);
+                                // print(facilitySelected);
 
                                 setState(() {});
                               },

@@ -58,7 +58,7 @@ loginCheck() async {
       ? box.get('jwtToken')
       : "";
 
-  print("jwt: " + jwtToken.toString());
+  // print("jwt: " + jwtToken.toString());
 }
 
 void main() async {

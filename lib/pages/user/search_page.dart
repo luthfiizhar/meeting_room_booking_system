@@ -109,9 +109,7 @@ class _SearchPageState extends State<SearchPage> {
   GlobalKey key6 = GlobalKey();
 
   Future autoScroll(BuildContext context, MainModel model) async {
-    print('autoScroll');
     model.setAutoScrollSearch(true);
-    print(Provider.of<MainModel>(context, listen: false).autoScrollSearch);
     // Scrollable.ensureVisible(
     //   datakey!.currentContext!,
     //   duration: Duration(seconds: 1),
@@ -127,24 +125,17 @@ class _SearchPageState extends State<SearchPage> {
       // textSkip: "SKIP",
       // paddingFocus: 10,
       // opacityShadow: 0.8,
-      onClickTarget: (target) {
-        print(target);
-      },
+      onClickTarget: (target) {},
       onClickTargetWithTapPosition: (target, tapDetails) {
         print("target: $target");
         print(
             "clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
       },
-      onClickOverlay: (target) {
-        print(target);
-      },
+      onClickOverlay: (target) {},
       onSkip: () {
         Provider.of<MainModel>(context, listen: false).onBoardDone();
-        print("skip");
       },
-      onFinish: () {
-        print("finish");
-      },
+      onFinish: () {},
     );
     // TutorialCoachMark().show(context: context);
     if (Provider.of<MainModel>(context, listen: false).firstLogin) {
@@ -435,7 +426,7 @@ class _SearchPageState extends State<SearchPage> {
             // submitFilter.add("\"${element['AreaID']}\"");
           }
         });
-        print(submitFilter);
+        // print(submitFilter);
         // print(listFilter);
       } else {
         showDialog(
@@ -448,13 +439,13 @@ class _SearchPageState extends State<SearchPage> {
         );
       }
     }).then((value) {
-      print(widget.queryParam);
+      // print(widget.queryParam);
       if (widget.queryParam.isNotEmpty) {
-        print('dr Home');
+        // print('dr Home');
 
         searchFromHome(mainModel);
       } else {
-        print('bukan dari home');
+        // print('bukan dari home');
         String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
         _dateController.text = formattedDate;
         _facilityController.text = 'None';
@@ -471,7 +462,7 @@ class _SearchPageState extends State<SearchPage> {
       );
     });
     apiReq.getRoomType().then((value) {
-      print(value);
+      // print(value);
       if (value['Status'] == "200") {
         roomType = value['Data'];
         for (var element in roomType) {
@@ -525,7 +516,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   showBoardingPage() {
-    print(Provider.of<MainModel>(context, listen: false).firstLogin);
+    // print(Provider.of<MainModel>(context, listen: false).firstLogin);
     if (Provider.of<MainModel>(context, listen: false).firstLogin) {
       Future.delayed(
         Duration(milliseconds: 500),
@@ -806,7 +797,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   onChangeFilter() {
-    print(listFilter);
+    // print(listFilter);
     submitFilter.clear();
     for (var element in listFilter!) {
       if (element.selected!) {
@@ -818,7 +809,7 @@ class _SearchPageState extends State<SearchPage> {
       listAmen.add('"$element"');
     }
 
-    print(listAmen);
+    // print(listAmen);
     apiReq
         .searchRoomApi(
       selectedDateFormatted,
@@ -863,7 +854,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   onChangeSorting(String value, String text) {
-    print(value);
+    // print(value);
     List listAmen = [];
     for (var element in facilitySelected) {
       listAmen.add('"$element"');
@@ -873,7 +864,7 @@ class _SearchPageState extends State<SearchPage> {
     });
     sort = value;
 
-    print(listAmen);
+    // print(listAmen);
     apiReq
         .searchRoomApi(
       selectedDateFormatted,
@@ -921,10 +912,10 @@ class _SearchPageState extends State<SearchPage> {
     autoScroll(context, model);
     dynamic date = DateTime.parse(widget.queryParam['date']);
     List listAmen = [];
-    print('facility-> ${widget.queryParam['facility']}');
+    // print('facility-> ${widget.queryParam['facility']}');
     setState(() {
       if (submitFilter.isEmpty) {
-        print('masuk sini');
+        // print('masuk sini');
         for (var element in listFilter!) {
           element.selected = true;
         }
@@ -976,7 +967,7 @@ class _SearchPageState extends State<SearchPage> {
         sort,
       )
           .then((value) {
-        print(value);
+        // print(value);
         if (value['Status'] == "200") {
           setState(() {
             isSearching = false;
@@ -1036,7 +1027,7 @@ class _SearchPageState extends State<SearchPage> {
         listAmen.add('"$element"');
       }
 
-      print(listAmen);
+      // print(listAmen);
       apiReq
           .searchRoomApi(
         selectedDateFormatted,
@@ -1609,7 +1600,7 @@ class _SearchPageState extends State<SearchPage> {
                           } else {
                             _facilityController.text = "None";
                           }
-                          print(facilitySelected);
+                          // print(facilitySelected);
                           setState(() {});
                         },
                         cameraOnChange: (value) {
@@ -1630,7 +1621,7 @@ class _SearchPageState extends State<SearchPage> {
                           } else {
                             _facilityController.text = "None";
                           }
-                          print(facilitySelected);
+                          // print(facilitySelected);
 
                           setState(() {});
                         },

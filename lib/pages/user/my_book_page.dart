@@ -75,7 +75,7 @@ class _MyBookingPageState extends State<MyBookingPage> {
   ];
 
   countPagination(int totalRow) {
-    print('total row -> $totalRow');
+    // print('total row -> $totalRow');
     setState(() {
       availablePage.clear();
       if (totalRow == 0) {
@@ -87,14 +87,14 @@ class _MyBookingPageState extends State<MyBookingPage> {
       for (var i = 0; i < totalPage.ceil(); i++) {
         availablePage.add(i + 1);
       }
-      print(availablePage);
+      // print(availablePage);
       // print(showedPage);
     });
   }
 
   updateList() {
     apiReq.getMyBookingList(searchTerm).then((value) {
-      print(value);
+      // print(value);
       setState(() {
         if (value['Status'] == "200") {
           myBookList = value['Data']['List'];
@@ -146,7 +146,7 @@ class _MyBookingPageState extends State<MyBookingPage> {
       //   showedPage = availablePage.take(5).toList();
       // });
       updateList();
-      print(searchTerm.roomType);
+      // print(searchTerm.roomType);
     });
   }
 
@@ -172,7 +172,7 @@ class _MyBookingPageState extends State<MyBookingPage> {
       // });
       updateList();
     });
-    print("Order By ${searchTerm.orderBy} ${searchTerm.orderDir}");
+    // print("Order By ${searchTerm.orderBy} ${searchTerm.orderDir}");
   }
 
   searchMyBook() {

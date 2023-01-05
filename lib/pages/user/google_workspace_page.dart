@@ -200,10 +200,10 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
         element['isCollapse'] = false;
       }
       if (!faqList[index]['isCollapse']) {
-        print('if false');
+        // print('if false');
         faqList[index]['isCollapse'] = true;
       } else if (faqList[index]['isCollapse']) {
-        print('if true');
+        // print('if true');
         faqList[index]['isCollapse'] = false;
       }
     });
@@ -258,7 +258,7 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("param-> ${widget.param}");
+    // print("param-> ${widget.param}");
     animateIntroSection();
     scrollController.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -277,22 +277,22 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
       // paddingFocus: 10,
       // opacityShadow: 0.8,
       onClickTarget: (target) {
-        print(target);
+        // print(target);
       },
       onClickTargetWithTapPosition: (target, tapDetails) {
-        print("target: $target");
-        print(
-            "clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
+        // print("target: $target");
+        // print(
+        //     "clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
       },
       onClickOverlay: (target) {
-        print(target);
+        // print(target);
       },
       onSkip: () {
         Provider.of<MainModel>(context, listen: false).onBoardDone();
-        print("skip");
+        // print("skip");
       },
       onFinish: () {
-        print("finish");
+        // print("finish");
       },
     );
     // TutorialCoachMark().show(context: context);

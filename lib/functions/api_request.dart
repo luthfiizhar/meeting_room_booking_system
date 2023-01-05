@@ -48,7 +48,6 @@ class ReqAPI {
   """;
 
     try {
-      print('booking');
       var response =
           await http.post(url, body: bodySend, headers: requestHeader);
 
@@ -143,7 +142,6 @@ class ReqAPI {
       "FoodAmenities": ${booking.foodAmenities}
   }
   """;
-    print(bodySend);
     try {
       var response =
           await http.post(url, body: bodySend, headers: requestHeader);
@@ -186,7 +184,6 @@ class ReqAPI {
       "Area" : $floor
     }
   """;
-    print(bodySend);
 
     try {
       var response =
@@ -395,7 +392,6 @@ class ReqAPI {
       if (data['Data']['Roles']['Admin'] == 1) {
         isAdmin = true;
       }
-      print(response.body);
       return data;
     } on Error catch (e) {
       return e;
@@ -454,15 +450,13 @@ class ReqAPI {
     //       "Password" : "GreedisGood2,"
     // }
     // """;
-    print(bodySend);
 
     try {
-      print('try');
       var response =
           await http.post(url, body: bodySend, headers: requestHeader);
 
       var data = json.decode(response.body);
-      print(data);
+      ;
       var box = await Hive.openBox('userLogin');
       box.put('jwtToken',
           data['Data']['Token'] != null ? data['Data']['Token'] : "");
@@ -568,7 +562,6 @@ class ReqAPI {
   }
 
   Future getBookingDetail(String bookingId) async {
-    print(bookingId);
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -591,8 +584,6 @@ class ReqAPI {
   }
 
   Future deleteBooking(String bookingId) async {
-    print('delete this');
-    print(bookingId);
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -615,8 +606,6 @@ class ReqAPI {
   }
 
   Future deleteBookingRecurrent(String bookingId) async {
-    print('delete this');
-    print(bookingId);
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -639,8 +628,6 @@ class ReqAPI {
   }
 
   Future getMyBookingList(MyListBody body) async {
-    print('delete this');
-    // print(bookingId);
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -662,7 +649,6 @@ class ReqAPI {
     "OrderDir" : "${body.orderDir}"
   }
   """;
-    print(bodySend);
     try {
       var response =
           await http.post(url, headers: requestHeader, body: bodySend);
@@ -676,8 +662,6 @@ class ReqAPI {
   }
 
   Future getAuditoriumApprovalList(ListApprovalBody body) async {
-    print('delete this');
-    // print(bookingId);
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -700,7 +684,6 @@ class ReqAPI {
     "OrderDir" : "${body.orderDir}"
   }
   """;
-    print(bodySend);
     try {
       var response =
           await http.post(url, headers: requestHeader, body: bodySend);
@@ -993,7 +976,6 @@ class ReqAPI {
     }
   """;
 
-    print(bodySend);
     try {
       var response =
           await http.post(url, headers: requestHeader, body: bodySend);
@@ -1087,7 +1069,6 @@ class ReqAPI {
     try {
       var response = await http.post(url, headers: requestHeader);
 
-      print('response -> ${response.body}');
       var data = json.decode(response.body);
 
       return data;
@@ -1337,7 +1318,6 @@ class ReqAPI {
     "Date" : "$selectedDate"
   }
   """;
-    print(bodySend);
     try {
       var response =
           await http.post(url, headers: requestHeader, body: bodySend);

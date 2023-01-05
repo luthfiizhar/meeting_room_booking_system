@@ -68,13 +68,13 @@ void main() async {
   // runApp(MyApp());
   ReqAPI reqApi = ReqAPI();
   reqApi.checkToken().then((value) {
-    print(value);
+    // print(value);
     if (value["Status"] == "200") {
       isTokenValid = true;
     } else {
       isTokenValid = false;
     }
-    print('token valid? $isTokenValid');
+    // print('token valid? $isTokenValid');
     runApp(MyApp());
   });
 

@@ -183,25 +183,21 @@ class MainModel extends ChangeNotifier {
 
   void setSelectedDate(String value) {
     _selectedDate = value;
-    print(_selectedDate);
     notifyListeners();
   }
 
   void setSelectedArea(String value) {
     _selectedArea = value;
-    print(_selectedArea);
     notifyListeners();
   }
 
   void setDataAndEventRoom(List value) {
     _dataRoom = value;
-    print(_dataRoom);
     notifyListeners();
   }
 
   setEventRoom(List value) {
     _eventRoom = value;
-    print(_eventRoom);
     notifyListeners();
   }
 }

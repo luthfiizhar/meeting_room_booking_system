@@ -172,10 +172,10 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
 
   assignDataToCalendar(dynamic data) {
     _events.appointments!.clear();
-    print('data');
-    print(data);
+    // print('data');
+    // print(data);
     for (var element in data) {
-      print(element['BookingID']);
+      // print(element['BookingID']);
       _events.appointments!.add(
         Event(
           from: DateTime.parse(element['StartDateTime']),
@@ -1006,12 +1006,9 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
               color: eerieBlack,
             )),
         onViewChanged: (viewChangedDetails) {
-          print(_calendar.view);
           startDate = viewChangedDetails.visibleDates.first;
           endDate = viewChangedDetails.visibleDates.last;
 
-          print("Start ${startDate.toString()}");
-          print("End ${endDate.toString()}");
           // print(_calendar.view.toString());
 
           apiReq
@@ -1020,7 +1017,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
             setState(() {
               isLoadingGetCalendar2 = false;
             });
-            print(value);
+            // print(value);
             if (value['Status'].toString() == "200") {
               assignDataToCalendar(value['Data']);
             } else {
@@ -1162,7 +1159,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                 if (value['Status'].toString() == "200") {
                   setState(() {
                     isLoadingGetDetail = false;
-                    print(value);
+                    // print(value);
                     detailEvent.bookingId = value['Data']['BookingID'];
                     detailEvent.location = value['Data']['RoomName'];
                     detailEvent.summary = value['Data']['Summary'];

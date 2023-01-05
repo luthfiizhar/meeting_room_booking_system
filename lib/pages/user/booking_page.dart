@@ -441,7 +441,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         }
       }
       listAmenities = value;
-      print('list amenities ----> $listAmenities');
     });
   }
 
@@ -460,7 +459,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   }
 
   selectGuest(String value) {
-    print('select guest');
     setState(() {
       invitedGuest.add(value);
       _email.text = "";
@@ -502,7 +500,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
   initContactList() {
     apiReq.getContactList().then((value) {
-      print("Contact List $value");
       emailSuggestionVisible = true;
       if (value['Status'].toString() == "200") {
         if (value['Data'].toString() == "[]") {
@@ -707,8 +704,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           setState(() {
             isEdit = true;
             dynamic editData = widget.edit;
-            print('bahan edit');
-            print(editData);
+            // print('bahan edit');
+            // print(editData);
             _eventName.text = editData['summary'];
             _eventDesc.text = editData['description'];
             _additionalNote.text = editData['additionalNote'];
@@ -744,10 +741,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       if (_email.text != "") {
         // filterContactList.clear();
         setState(() {
-          print(contactList.where((element) => element['Name']
-              .toString()
-              .toLowerCase()
-              .contains(_email.text.toLowerCase())));
           filterContactList = contactList
               .where((element) => element['Name']
                   .toString()
@@ -815,7 +808,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     );
     emailNode.addListener(() async {
       setState(() {
-        print("Contact List ---> $contactList");
         if (emailNode.hasFocus) {
           // _overlayEntry = emailOverlay();
           // Overlay.of(context)!.insert(_overlayEntry!);
@@ -1029,9 +1021,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                           roomId: widget.roomId,
                                           roomName: roomName,
                                         ),
-                                      ).then((value) {
-                                        print(startTime);
-                                      });
+                                      );
                                     },
                                     child: SizedBox(
                                       width: 80,
@@ -1135,7 +1125,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                               maxLines: 1,
                                               obsecureText: false,
                                               onFieldSubmitted: (x) {
-                                                print(x);
                                                 if (_email.text != "") {
                                                   setState(() {
                                                     invitedGuest
@@ -1785,7 +1774,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                 apiReq
                                                     .bookingRoom(booking)
                                                     .then((value) {
-                                                  print(value);
+                                                  // print(value);
                                                   if (value['Status'] ==
                                                       "200") {
                                                     showDialog(
@@ -1844,12 +1833,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                 });
                                                 //END BOOOKING FUNCTION
                                               } else {
-                                                print('UPDATE');
                                                 //UPDATE BOOKING FUNCTION
                                                 apiReq
                                                     .updateBooking(booking)
                                                     .then((value) {
-                                                  print(value);
+                                                  // print(value);
                                                   if (value['Status'] ==
                                                       "200") {
                                                     showDialog(
@@ -1890,7 +1878,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                   }
                                                   // context.pop();
                                                 }).onError((error, stackTrace) {
-                                                  print(error);
+                                                  // print(error);
                                                   showDialog(
                                                     context: context,
                                                     builder: (context) =>
@@ -1919,12 +1907,12 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                 booking.layoutImage =
                                                     layoutBase64;
                                               }
-                                              print(booking.toJson());
+                                              // print(booking.toJson());
                                               //BOOKING AUDI FUNCTION
                                               apiReq
                                                   .bookingAudi(booking)
                                                   .then((value) {
-                                                print(value);
+                                                // print(value);
                                                 if (value['Status'] == "200") {
                                                   showDialog(
                                                     context: context,
@@ -1964,7 +1952,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                 }
                                                 // context.pop();
                                               }).onError((error, stackTrace) {
-                                                print(error);
+                                                // print(error);
                                                 showDialog(
                                                   context: context,
                                                   builder: (context) =>
