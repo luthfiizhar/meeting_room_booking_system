@@ -280,6 +280,28 @@ class ReqAPI {
 //   }
 // }
 
+  Future getFacilitiesList() async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/amenities');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   Future getAreaList() async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
@@ -711,6 +733,41 @@ class ReqAPI {
     "PageNumber" : "${body.pageNumber}",
     "SortBy" : "${body.orderBy}",
     "SortOrder" : "${body.orderDir}"
+  }
+  """;
+    // print(bodySend);
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future getUserAdminList(SearchTerm body) async {
+    // print(bookingId);
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/user/list');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+  {
+    "Keywords" : "${body.keyWords}",
+    "MaxRecord" : "${body.max}",
+    "PageNumber" : "${body.pageNumber}",
+    "OrderBy" : "${body.orderBy}",
+    "OrderDir" : "${body.orderDir}"
   }
   """;
     // print(bodySend);

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
-import 'package:meeting_room_booking_system/model/search_term.dart';
-import 'package:meeting_room_booking_system/widgets/admin_page/area_menu_page.dart/area_menu_page.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/area_menu_page/area_menu_page.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/capacity_menu_page/capacity_menu_page.dart';
-import 'package:meeting_room_booking_system/widgets/admin_page/event_menu_page.dart/event_menu_page.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/event_menu_page/event_menu_page.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/facilities_menu_page/facilities_menu_page.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/floor_menu_page/floor_menu_page.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/setting_page_menu.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/user_admin_page/user_admin_page.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
@@ -107,6 +108,10 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
                           return CapacityMenuPage();
                         case "Event":
                           return EventMenuPage();
+                        case "Facility":
+                          return FacilitiesMenuPage();
+                        case "Admin":
+                          return AdminUserPage();
                         default:
                           return Container(
                             color: greenAcent,

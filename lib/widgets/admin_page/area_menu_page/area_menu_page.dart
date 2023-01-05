@@ -6,10 +6,11 @@ import 'package:meeting_room_booking_system/constant/custom_scroll_behavior.dart
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
-import 'package:meeting_room_booking_system/widgets/admin_page/area_menu_page.dart/new_area_dialog.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/area_menu_page/new_area_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
+import 'package:meeting_room_booking_system/widgets/input_field/search_input_field.dart';
 
 class AreaMenuPage extends StatefulWidget {
   AreaMenuPage({
@@ -235,7 +236,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
           ),
           SizedBox(
             width: 220,
-            child: BlackInputField(
+            child: SearchInputField(
               controller: _search,
               enabled: true,
               obsecureText: false,
