@@ -37,6 +37,8 @@ class SearchContainer extends StatelessWidget {
     this.participantKey,
     this.timeKey,
     this.datakey,
+    this.buttonSearchKey,
+    this.searchSettingsKey,
     this.searchRoom,
     this.meetingTypeName,
     this.roomTypeCover,
@@ -67,6 +69,8 @@ class SearchContainer extends StatelessWidget {
   String? meetingTypeSelected;
   String? meetingTypeName;
   String? roomTypeCover;
+  GlobalKey? searchSettingsKey;
+  GlobalKey? buttonSearchKey;
   GlobalKey? dateKey;
   GlobalKey? timeKey;
   GlobalKey? participantKey;
@@ -174,6 +178,7 @@ class SearchContainer extends StatelessWidget {
                 ),
               ),
               Container(
+                key: searchSettingsKey,
                 height: 125,
                 width: 1000,
                 decoration: BoxDecoration(
@@ -671,6 +676,7 @@ class SearchContainer extends StatelessWidget {
                         width: 30,
                       ),
                       SizedBox(
+                          key: buttonSearchKey,
                           width: 60,
                           height: 60,
                           child: SearchPageButton(

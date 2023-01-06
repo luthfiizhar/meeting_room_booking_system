@@ -12,6 +12,10 @@ import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
 import 'package:meeting_room_booking_system/widgets/amenities_container.dart';
 import 'package:meeting_room_booking_system/widgets/banner/landscape_white_banner.dart';
+import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
+import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/button/regular_button_white.dart';
+import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
@@ -147,39 +151,48 @@ class _SearchPageState extends State<SearchPage> {
   addTarget() {
     targets.add(
       TargetFocus(
-        identify: "Target 1",
-        keyTarget: key1,
+        identify: "Area Type",
+        keyTarget: meetingTypeKey,
         shape: ShapeLightFocus.RRect,
-        radius: 7,
+        radius: 10,
         contents: [
           TargetContent(
-              align: ContentAlign.bottom,
+              align: ContentAlign.right,
               // customPosition: CustomTargetContentPosition(top: 100, right: 200),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Home",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20.0),
-                  ),
-                  const Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      "Halaman utama user.",
-                      style: TextStyle(color: Colors.white),
+                  Text(
+                    "Area Type",
+                    style: helveticaText.copyWith(
+                      color: white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: ElevatedButton(
-                          onPressed: () {
-                            tutorialCoachMark.next();
-                          },
-                          child: Text('Next')))
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      "Choose between Meeting Room, Auditorium, and Social Hub.",
+                      style: helveticaText.copyWith(
+                        color: white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: WhiteRegularButton(
+                      disabled: false,
+                      onTap: () {
+                        tutorialCoachMark.next();
+                      },
+                      text: 'Next',
+                      padding: ButtonSize().smallSize(),
+                    ),
+                  )
                 ],
               ))
         ],
@@ -187,161 +200,125 @@ class _SearchPageState extends State<SearchPage> {
     );
     targets.add(
       TargetFocus(
-        identify: "Target 2",
-        keyTarget: key2,
+        identify: "Seaerch Setting",
+        keyTarget: searchContainerKey,
         shape: ShapeLightFocus.RRect,
+        radius: 10,
         contents: [
           TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Search Room",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Untuk mencari ruang meeting yang tersedia.",
-                    style: TextStyle(color: Colors.white),
+              align: ContentAlign.top,
+              // customPosition: CustomTargetContentPosition(top: 100, right: 200),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 1000,
+                    minWidth: 1000,
                   ),
-                )
-              ],
-            ),
-          ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Search Settings",
+                        style: helveticaText.copyWith(
+                          color: white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Text(
+                          "Search a room by Date, Time, Total Participant, and Room Facilities you need.",
+                          style: helveticaText.copyWith(
+                            color: white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: WhiteRegularButton(
+                          disabled: false,
+                          onTap: () {
+                            tutorialCoachMark.next();
+                          },
+                          text: 'Next',
+                          padding: ButtonSize().smallSize(),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ))
         ],
       ),
     );
     targets.add(
       TargetFocus(
-        identify: "Target 3",
-        keyTarget: key3,
+        identify: "Search Button",
+        keyTarget: buttonSearchKey,
         shape: ShapeLightFocus.RRect,
+        radius: 10,
         contents: [
           TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "My Bookings",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "List booking user.",
-                    style: TextStyle(color: Colors.white),
+              align: ContentAlign.top,
+              // customPosition: CustomTargetContentPosition(top: 100, right: 200),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 1000,
+                    minWidth: 1000,
                   ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "Target 4",
-        keyTarget: key4,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Calendar",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Calendar user (sync with Google Calendar).",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "Target 5",
-        keyTarget: key5,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Logout",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Logout mengakhiri sesi user.",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-    targets.add(
-      TargetFocus(
-        identify: "Target 6",
-        keyTarget: key6,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.left,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                Text(
-                  "Konten",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.0),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Konten.",
-                    style: TextStyle(color: Colors.white),
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Search Button",
+                              style: helveticaText.copyWith(
+                                color: white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Text(
+                                "Click button and choose the area you want.",
+                                style: helveticaText.copyWith(
+                                  color: white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: WhiteRegularButton(
+                            disabled: false,
+                            onTap: () {
+                              tutorialCoachMark.finish();
+                            },
+                            text: 'Done',
+                            padding: ButtonSize().smallSize(),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
+              ))
         ],
       ),
     );
@@ -412,7 +389,6 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-
     apiReq.getAreaList().then((value) {
       if (value['Status'].toString() == "200") {
         setState(() {
@@ -493,6 +469,7 @@ class _SearchPageState extends State<SearchPage> {
       );
     });
     initTime();
+    checkOnBoardingPage();
 
     scrollController.addListener(() {});
   }
@@ -507,11 +484,32 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   checkOnBoardingPage() async {
-    var box = await Hive.openBox('userLogin');
+    var box = await Hive.openBox('onBoarding');
 
-    var firstLogin = box.get('firstLogin') != "" ? false : true;
+    var firstLogin = box.get('firstLogin') ?? true;
 
-    showOnBoard = firstLogin;
+    showOnBoard = true;
+    if (showOnBoard) {
+      tutorialCoachMark = TutorialCoachMark(
+          targets: targets,
+          onFinish: () async {
+            print('finish tutorial');
+            var box = await Hive.openBox('onBoarding');
+            box.put("firstLogin", false);
+            showOnBoard = false;
+          },
+          skipWidget: WhiteRegularButton(
+            text: 'Skip',
+            disabled: false,
+            onTap: () {
+              tutorialCoachMark.skip();
+            },
+            padding: ButtonSize().smallSize(),
+          ));
+      addTarget();
+      tutorialCoachMark.show(context: context);
+    }
+
     setState(() {});
   }
 
@@ -545,6 +543,7 @@ class _SearchPageState extends State<SearchPage> {
   GlobalKey participantKey = GlobalKey();
   GlobalKey amenitiesKey = GlobalKey();
   GlobalKey meetingTypeKey = GlobalKey();
+  GlobalKey buttonSearchKey = GlobalKey();
 
   final dataKey = GlobalKey();
 
@@ -1237,7 +1236,10 @@ class _SearchPageState extends State<SearchPage> {
                                                 // setAmenitiesStatus(false);
                                               },
                                               child: SearchContainer(
-                                                key: searchContainerKey,
+                                                searchSettingsKey:
+                                                    searchContainerKey,
+                                                buttonSearchKey:
+                                                    buttonSearchKey,
                                                 dateNode: dateNode,
                                                 getPositionDatePicker:
                                                     getPositionDatePicker,
