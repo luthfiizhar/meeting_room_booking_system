@@ -235,6 +235,13 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    scrollController.removeListener(() {});
+    scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // double cellWidth = isShowDetail
     //     ? (MediaQuery.of(context).size.width - 400) / 7

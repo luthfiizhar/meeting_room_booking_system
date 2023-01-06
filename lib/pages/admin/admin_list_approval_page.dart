@@ -151,6 +151,14 @@ class _AdminListPageState extends State<AdminListPage> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    scrollController.removeListener(() {});
+    scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double paginationWidth = availablePage.length <= 5
         ? ((45 * (showedPage.length.toDouble())))

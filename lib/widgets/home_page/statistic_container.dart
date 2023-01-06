@@ -38,6 +38,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
   String averageTime = "";
   String mostUsedName = "";
   String mostUsedPhoto = "";
+  String topHundred = "";
 
   onFilterChange(String value) {
     bookingStatus.clear();
@@ -56,6 +57,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
           averageTime = result['AverageHours'].toString();
           mostUsedName = result['MostUsedRoom']['RoomName'];
           mostUsedPhoto = result['MostUsedRoom']['ImageURL'];
+          topHundred = result['TopHundredString'];
         });
         int i = 0;
         if (listBookStat.any((element) => element['Percentage'] != 0)) {
@@ -201,7 +203,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
           height: 12,
         ),
         Text(
-          '',
+          topHundred,
           style: helveticaText.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w300,

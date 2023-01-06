@@ -24,9 +24,11 @@ class _GreetingContainerState extends State<GreetingContainer> {
   }
 
   setGreeting(String value) {
-    setState(() {
-      greeting = value;
-    });
+    if (mounted) {
+      setState(() {
+        greeting = value;
+      });
+    }
   }
 
   @override

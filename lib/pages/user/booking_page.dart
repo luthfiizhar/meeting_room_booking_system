@@ -148,7 +148,12 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   DateRangePickerController repeatDatePickerControl =
       DateRangePickerController();
 
-  List<String>? repeatItems = ['NONE', 'DAILY', 'WEEKLY', 'MONTHLY'];
+  List? repeatItems = [
+    {'value': 'NONE', 'displayName': 'None'},
+    {'value': 'DAILY', 'displayName': 'Daily'},
+    {'value': 'WEEKLY', 'displayName': 'Weekly'},
+    {'value': 'MONTHLY', 'displayName': 'Monthly'}
+  ];
   String repeatEnd = "";
 
   List<RadioModel>? listEventType = [];
@@ -305,17 +310,17 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
   DateTime today = DateTime.now();
 
-  List<DropdownMenuItem<String>> addDividerItem(List<String> items) {
+  List<DropdownMenuItem<String>> addDividerItem(List items) {
     List<DropdownMenuItem<String>> _menuItems = [];
     for (var item in items) {
       _menuItems.addAll(
         [
           DropdownMenuItem<String>(
-            value: item,
+            value: item['value'],
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: Text(
-                item,
+                item['displayName'],
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w300,
@@ -704,12 +709,14 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           setState(() {
             isEdit = true;
             dynamic editData = widget.edit;
-            // print('bahan edit');
-            // print(editData);
+            dynamic guest = editData['guestInvited'];
+            print('bahan edit');
+            print(editData);
             _eventName.text = editData['summary'];
             _eventDesc.text = editData['description'];
             _additionalNote.text = editData['additionalNote'];
             repeatValue = editData['repeatType'];
+            invitedGuest = guest.toList();
             if (editData['bookingType'] == "RECURRENT") {
               _repeatEnd.text = DateFormat('d MMM yyyy')
                   .format(DateTime.parse(editData['repeatEndDate']));
