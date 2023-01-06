@@ -384,6 +384,8 @@ class _SearchPageState extends State<SearchPage> {
     _facilityController.dispose();
     _timeController.dispose();
     _participantController.dispose();
+    scrollController.removeListener(() {});
+    scrollController.dispose();
   }
 
   @override

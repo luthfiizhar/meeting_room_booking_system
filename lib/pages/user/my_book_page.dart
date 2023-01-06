@@ -197,6 +197,13 @@ class _MyBookingPageState extends State<MyBookingPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    scrollController.removeListener(() {});
+    scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double paginationWidth = availablePage.length <= 5
         ? ((45 * (showedPage.length.toDouble())))

@@ -251,6 +251,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _participantController.dispose();
     _timeController.dispose();
     _facilityController.dispose();
+    scrollController.removeListener(() {});
+    scrollController.dispose();
     // scrollController.dispose();
     super.dispose();
   }

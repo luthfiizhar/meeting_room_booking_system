@@ -158,6 +158,7 @@ class ProfileMenuSetting extends StatefulWidget {
 
 class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   ReqAPI apiReq = ReqAPI();
+  ScrollController scrollController = ScrollController();
   final TextEditingController _name = TextEditingController();
   final TextEditingController _nip = TextEditingController();
   final TextEditingController _email = TextEditingController();
@@ -277,6 +278,8 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
     avayaNode.dispose();
     phoneNode.dispose();
     phoneCodeNode.dispose();
+    scrollController.removeListener(() {});
+    scrollController.dispose();
   }
 
   googleLink() {

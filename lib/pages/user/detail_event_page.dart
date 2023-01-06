@@ -90,7 +90,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
     // TODO: implement initState
     super.initState();
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
-      // print(value['Data']);
+      print(value['Data']);
       if (value['Status'].toString() == "200") {
         setState(() {
           isInitLoading = false;
@@ -170,6 +170,13 @@ class _DetailEventPageState extends State<DetailEventPage> {
   }
 
   setDatePickerStatus(bool value) {}
+
+  @override
+  void dispose() {
+    super.dispose();
+    scrollController.removeListener(() {});
+    scrollController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -605,11 +612,36 @@ class _DetailEventPageState extends State<DetailEventPage> {
                             ),
                           ),
                         ),
-                        const Icon(
-                          Icons.check_circle_sharp,
-                          color: greenAcent,
-                          size: 18,
-                        )
+                        Builder(builder: (context) {
+                          switch (guestInvited[index]['ResponseStatus']) {
+                            case 'needsAction':
+                              return const ImageIcon(
+                                AssetImage(
+                                  'assets/icons/question_mark_icon.png',
+                                ),
+                              );
+                            case 'accepted':
+                              return const ImageIcon(
+                                AssetImage(
+                                  'assets/icons/check_icon.png',
+                                ),
+                                color: greenAcent,
+                              );
+                            case 'declined':
+                              return const ImageIcon(
+                                AssetImage(
+                                  'assets/icons/cancel_icon.png',
+                                ),
+                                color: orangeAccent,
+                              );
+                            default:
+                              return const ImageIcon(
+                                AssetImage(
+                                  'assets/icons/question_mark_icon.png',
+                                ),
+                              );
+                          }
+                        })
                       ],
                     ),
                     // child: ListTile(

@@ -342,6 +342,8 @@ class _RoomsPageState extends State<RoomsPage> {
     super.dispose();
     areaNode.removeListener(() {});
     areaNode.dispose();
+    scrollController.removeListener(() {});
+    scrollController.dispose();
   }
 
   // Future<dynamic> getBookingListRoom() async {
@@ -368,7 +370,7 @@ class _RoomsPageState extends State<RoomsPage> {
             capacity: 5,
             contactID: "1111",
             isAllDay: false,
-            eventName: eventRoom[j]['Summary'],
+            eventName: eventRoom[j]['Summary'] ?? "-",
             organizer: "",
             recurrenceRule: "NONE",
             endTimeZone: "",
@@ -411,7 +413,7 @@ class _RoomsPageState extends State<RoomsPage> {
     apiReq
         .getBookingListRoom(selectedArea!, date, _events!.appointments!)
         .then((value) {
-      // print(value);
+      print(value);
       if (value['Status'].toString() == "200") {
         assignDataToCalendar(value['Data']);
         setState(() {});
@@ -425,6 +427,7 @@ class _RoomsPageState extends State<RoomsPage> {
         );
       }
     }).onError((error, stackTrace) {
+      print(stackTrace);
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(

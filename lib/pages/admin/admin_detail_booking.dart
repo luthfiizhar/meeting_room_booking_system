@@ -156,6 +156,13 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
   setDatePickerStatus(bool value) {}
 
   @override
+  void dispose() {
+    super.dispose();
+    scrollController.removeListener(() {});
+    scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return LayoutPageWeb(
       index: 3,

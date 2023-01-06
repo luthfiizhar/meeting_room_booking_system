@@ -217,6 +217,8 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
     // _controller4.dispose();
     // scrollController.dispose();
     super.dispose();
+    scrollController.removeListener(() {});
+    scrollController.dispose();
   }
 
   Future animateIntroSection() async {
