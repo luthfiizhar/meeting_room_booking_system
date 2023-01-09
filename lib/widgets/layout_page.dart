@@ -71,14 +71,25 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
     setState(() {});
   }
 
-  updateAfterLogin(String name, String email) async {
+  updateAfterLogin(
+      String name, String email, String admin, String firstLogin) async {
     // print('updateLogin');
     var box = await Hive.openBox('userLogin');
+    var box2 = await Hive.openBox('onBoarding');
 
     box.put('name', name);
     setState(() {
       employeeName = name;
       employeeEmail = email;
+      if (admin == "1") {
+        isAdmin = true;
+      }
+      if (firstLogin == "1") {
+        // var firstLogin = box2.get('firstLogin') ?? true;
+        box2.put('firstLogin', true);
+      } else if (firstLogin == "0") {
+        box2.put('firstLogin', false);
+      }
     });
   }
 

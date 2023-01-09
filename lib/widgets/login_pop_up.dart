@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
@@ -48,6 +49,89 @@ class _LoginPopUpState extends State<LoginPopUp> {
   bool? isLoading = false;
 
   final _formKey = new GlobalKey<FormState>();
+
+  submitLogin() {
+    setState(() {
+      isLoading = true;
+    });
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      // loginCerberus(username!, password!, selectedUser)
+      apiReq
+          .loginDummy(
+        username!,
+        password!,
+      )
+          .then((value) {
+        print("login Dummy $value");
+        dynamic firstLogin = value['Data']['FirstLogin'];
+        setState(() {
+          isLoading = false;
+        });
+        if (value['Status'] == "200") {
+          apiReq.getUserProfile().then((value) async {
+            print("getUserProfile $value");
+            if (value['Status'] == "200") {
+              await widget.resetState!();
+              await widget.updateLogin!(
+                value['Data']['EmpName'],
+                value['Data']['Email'],
+                value['Data']['Admin'].toString(),
+                firstLogin.toString(),
+              );
+              var admin = value['Data']['Admin'].toString();
+              if (firstLogin.toString() == "1") {
+                context.goNamed('setting',
+                    params: {'isAdmin': admin == "1" ? "true" : "false"});
+                // Navigator.of(context).pop(true);
+              } else {
+                Navigator.of(context).pop(true);
+              }
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialogBlack(
+                  title: value['Title'],
+                  contentText: value['Message'],
+                  isSuccess: false,
+                ),
+              );
+            }
+          }).onError((error, stackTrace) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialogBlack(
+                title: 'Can\'t connect to API',
+                contentText: error.toString(),
+                isSuccess: false,
+              ),
+            );
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialogBlack(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
+        }
+      }).onError((error, stackTrace) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: 'Failed connect to API',
+            contentText: error.toString(),
+            isSuccess: false,
+          ),
+        );
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -161,8 +245,10 @@ class _LoginPopUpState extends State<LoginPopUp> {
                       BlackInputField(
                         controller: _username,
                         focusNode: _usernameNode,
+                        textInputAction: TextInputAction.next,
                         enabled: true,
                         obsecureText: false,
+                        maxLines: 1,
                         hintText: 'Your username here ...',
                         validator: (value) => _username.text == ""
                             ? 'This field is required'
@@ -197,12 +283,16 @@ class _LoginPopUpState extends State<LoginPopUp> {
                             child: BlackInputField(
                               controller: _password,
                               focusNode: _passwordNode,
+                              textInputAction: TextInputAction.done,
                               enabled: true,
                               maxLines: 1,
                               obsecureText: showPassword,
                               hintText: 'Your password here ...',
                               onSaved: (newValue) {
                                 password = newValue.toString();
+                              },
+                              onFieldSubmitted: (value) {
+                                submitLogin();
                               },
                               suffixIcon: _passwordNode.hasFocus
                                   ? IconButton(
@@ -298,75 +388,7 @@ class _LoginPopUpState extends State<LoginPopUp> {
                           disabled: false,
                           padding: ButtonSize().longSize(),
                           onTap: () {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            if (_formKey.currentState!.validate()) {
-                              _formKey.currentState!.save();
-                              // loginCerberus(username!, password!, selectedUser)
-                              apiReq
-                                  .loginDummy(
-                                username!,
-                                password!,
-                              )
-                                  .then((value) {
-                                print("login Dummy $value");
-                                setState(() {
-                                  isLoading = false;
-                                });
-                                if (value['Status'] == "200") {
-                                  apiReq.getUserProfile().then((value) async {
-                                    print("getUserProfile $value");
-                                    if (value['Status'] == "200") {
-                                      await widget.resetState!();
-                                      await widget.updateLogin!(
-                                          value['Data']['EmpName'],
-                                          value['Data']['Email']);
-                                      Navigator.of(context).pop(true);
-                                    } else {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialogBlack(
-                                          title: value['Title'],
-                                          contentText: value['Message'],
-                                          isSuccess: false,
-                                        ),
-                                      );
-                                    }
-                                  }).onError((error, stackTrace) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialogBlack(
-                                        title: 'Can\'t connect to API',
-                                        contentText: error.toString(),
-                                        isSuccess: false,
-                                      ),
-                                    );
-                                  });
-                                } else {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialogBlack(
-                                      title: value['Title'],
-                                      contentText: value['Message'],
-                                      isSuccess: false,
-                                    ),
-                                  );
-                                }
-                              }).onError((error, stackTrace) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogBlack(
-                                    title: 'Failed connect to API',
-                                    contentText: error.toString(),
-                                    isSuccess: false,
-                                  ),
-                                );
-                              });
-                            }
+                            submitLogin();
                           },
                         ),
                       )

@@ -12,10 +12,11 @@ class BlackInputField extends StatelessWidget {
     this.validator,
     required this.enabled,
     this.onTap,
-    this.maxLines,
+    this.maxLines = 1,
     this.prefixIcon,
     this.onFieldSubmitted,
     this.fontSize = 16,
+    this.textInputAction,
   });
 
   final TextEditingController controller;
@@ -30,6 +31,7 @@ class BlackInputField extends StatelessWidget {
   ValueChanged<String>? onFieldSubmitted;
   int? maxLines;
   Widget? prefixIcon;
+  TextInputAction? textInputAction;
   double fontSize;
 
   @override
@@ -50,6 +52,7 @@ class BlackInputField extends StatelessWidget {
             : null,
       ),
       child: TextFormField(
+        textInputAction: textInputAction,
         onFieldSubmitted: onFieldSubmitted,
         validator: validator,
         onSaved: onSaved,

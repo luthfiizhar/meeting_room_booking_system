@@ -80,7 +80,7 @@ class _SearchPageState extends State<SearchPage> {
   String roomName = "";
   String buildingName = "";
   List roomType = [];
-  String sort = "alphabetical";
+  String sort = "floor_lowest";
   dynamic resultArea;
 
   List<RadioModel> listSorting = [
@@ -121,32 +121,32 @@ class _SearchPageState extends State<SearchPage> {
     // );
   }
 
-  Future showTutorial() async {
-    tutorialCoachMark = TutorialCoachMark(
-      targets: targets, // List<TargetFocus>
-      // colorShadow: Colors.red, // DEFAULT Colors.black
-      // alignSkip: Alignment.bottomRight,
-      // textSkip: "SKIP",
-      // paddingFocus: 10,
-      // opacityShadow: 0.8,
-      onClickTarget: (target) {},
-      onClickTargetWithTapPosition: (target, tapDetails) {
-        print("target: $target");
-        print(
-            "clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
-      },
-      onClickOverlay: (target) {},
-      onSkip: () {
-        Provider.of<MainModel>(context, listen: false).onBoardDone();
-      },
-      onFinish: () {},
-    );
-    // TutorialCoachMark().show(context: context);
-    if (Provider.of<MainModel>(context, listen: false).firstLogin) {
-      tutorialCoachMark.show(context: context);
-    }
-    // return "";
-  }
+  // Future showTutorial() async {
+  //   tutorialCoachMark = TutorialCoachMark(
+  //     targets: targets, // List<TargetFocus>
+  //     // colorShadow: Colors.red, // DEFAULT Colors.black
+  //     // alignSkip: Alignment.bottomRight,
+  //     // textSkip: "SKIP",
+  //     // paddingFocus: 10,
+  //     // opacityShadow: 0.8,
+  //     onClickTarget: (target) {},
+  //     onClickTargetWithTapPosition: (target, tapDetails) {
+  //       print("target: $target");
+  //       print(
+  //           "clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
+  //     },
+  //     onClickOverlay: (target) {},
+  //     onSkip: () {
+  //       Provider.of<MainModel>(context, listen: false).onBoardDone();
+  //     },
+  //     onFinish: () {},
+  //   );
+  //   // TutorialCoachMark().show(context: context);
+  //   if (Provider.of<MainModel>(context, listen: false).firstLogin) {
+  //     tutorialCoachMark.show(context: context);
+  //   }
+  //   // return "";
+  // }
 
   addTarget() {
     targets.add(
@@ -490,7 +490,7 @@ class _SearchPageState extends State<SearchPage> {
 
     var firstLogin = box.get('firstLogin') ?? true;
 
-    showOnBoard = true;
+    showOnBoard = firstLogin;
     if (showOnBoard) {
       tutorialCoachMark = TutorialCoachMark(
           targets: targets,
