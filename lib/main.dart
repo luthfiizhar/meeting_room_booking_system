@@ -392,7 +392,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp.router(
-        title: 'MRBS',
+        title: 'Meeting Room Booking System',
         theme: ThemeData(
           fontFamily: 'Helvetica',
           unselectedWidgetColor: eerieBlack,

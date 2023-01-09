@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
@@ -63,6 +64,7 @@ class _LoginPopUpState extends State<LoginPopUp> {
       )
           .then((value) {
         print("login Dummy $value");
+        dynamic firstLogin = value['Data']['FirstLogin'];
         setState(() {
           isLoading = false;
         });
@@ -75,8 +77,16 @@ class _LoginPopUpState extends State<LoginPopUp> {
                 value['Data']['EmpName'],
                 value['Data']['Email'],
                 value['Data']['Admin'].toString(),
+                firstLogin.toString(),
               );
-              Navigator.of(context).pop(true);
+              var admin = value['Data']['Admin'].toString();
+              if (firstLogin.toString() == "1") {
+                context.goNamed('setting',
+                    params: {'isAdmin': admin == "1" ? "true" : "false"});
+                // Navigator.of(context).pop(true);
+              } else {
+                Navigator.of(context).pop(true);
+              }
             } else {
               showDialog(
                 context: context,
