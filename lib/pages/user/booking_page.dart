@@ -709,14 +709,22 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           setState(() {
             isEdit = true;
             dynamic editData = widget.edit;
+            // print(editData['guestInvited']);
+
             dynamic guest = editData['guestInvited'];
+            // print(guest);
             print('bahan edit');
             print(editData);
             _eventName.text = editData['summary'];
             _eventDesc.text = editData['description'];
             _additionalNote.text = editData['additionalNote'];
             repeatValue = editData['repeatType'];
-            invitedGuest = guest.toList();
+            List tempGuesList = json.decode(guest);
+            // print("Guest -> $tempGuesList");
+            for (var element in tempGuesList) {
+              invitedGuest.add(element);
+            }
+            // invitedGuest = guest.toList();
             if (editData['bookingType'] == "RECURRENT") {
               _repeatEnd.text = DateFormat('d MMM yyyy')
                   .format(DateTime.parse(editData['repeatEndDate']));

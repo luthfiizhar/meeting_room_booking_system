@@ -324,6 +324,12 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                             disabled: false,
                                             onTap: () {
                                               // print(roomId);
+                                              List guestInvited2 = [];
+                                              for (var element
+                                                  in guestInvited) {
+                                                guestInvited2.add(
+                                                    "\"${element['AttendantsEmail']}\"");
+                                              }
                                               context.goNamed(
                                                 'booking',
                                                 params: {
@@ -334,7 +340,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                   'endTime': endTime,
                                                   'participant': '1',
                                                   'facilities': '[]',
-                                                  'roomType': 'meeting_room',
+                                                  'roomType': roomType,
                                                   'isEdit': 'true'
                                                 },
                                                 queryParams: {
@@ -350,14 +356,14 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                   'facilities': '[]',
                                                   'bookingType': bookingType,
                                                   'guestInvited':
-                                                      guestInvited.toString(),
+                                                      guestInvited2.toString(),
                                                   'repeatEndDate':
                                                       repeatEndDate.toString(),
                                                   'days': days,
                                                   'montAbs': monthAbs,
                                                   'repeatType': repeatType,
                                                   'interval': interval,
-                                                  'roomType': 'MeetingRoom',
+                                                  'roomType': roomType,
                                                   'layoutName': layoutName,
                                                   'layoutImage': layoutImage,
                                                   'bookingId': widget.bookingId,
