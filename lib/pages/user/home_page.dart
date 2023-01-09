@@ -110,6 +110,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool meetingTypeContainerVisible = false;
   bool initLoading = true;
 
+  bool isAccSyncToGoogle = false;
+
   bool isUserAdmin = false;
 
   ScrollController scrollController = ScrollController();
@@ -220,6 +222,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         if (value['Data']['Admin'].toString() == "1") {
           setState(() {
             isUserAdmin = true;
+          });
+        }
+        if (value['Data']['GoogleAccountSync'].toString() == "1") {
+          setState(() {
+            isAccSyncToGoogle = true;
+          });
+        }
+        if (value['Data']['GoogleAccountSync'].toString() == "0") {
+          setState(() {
+            isAccSyncToGoogle = false;
           });
         }
       } else {
@@ -502,12 +514,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: jwtToken == "" || jwtToken == null
             ? const Align(
                 alignment: Alignment.center,
-                child: Text('Belum Login'),
+                child: Text(''),
               )
             : !isTokenValid
                 ? const Align(
                     alignment: Alignment.center,
-                    child: Text('Token tidak valid, login ulang!'),
+                    child: Text(''),
                   )
                 : Padding(
                     padding: const EdgeInsets.symmetric(
@@ -819,19 +831,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         const SizedBox(
           height: 30,
         ),
-        InkWell(
-          onTap: () {
-            context.go('/gws');
-          },
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 780,
-              minWidth: 780,
-            ),
-            child: const WhiteBannerLandscape(
-              title: 'Link your Google account',
-              subtitle: '& enjoy your benefits.',
-              imagePath: 'assets/banner_pict_google.png',
+        Visibility(
+          visible: isAccSyncToGoogle ? false : true,
+          child: InkWell(
+            onTap: () {
+              context.go('/gws');
+            },
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 780,
+                minWidth: 780,
+              ),
+              child: const WhiteBannerLandscape(
+                title: 'Link your Google account',
+                subtitle: '& enjoy your benefits.',
+                imagePath: 'assets/banner_pict_google.png',
+              ),
             ),
           ),
         ),

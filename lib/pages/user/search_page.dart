@@ -57,6 +57,8 @@ class _SearchPageState extends State<SearchPage> {
   TextEditingController _participantController = TextEditingController();
   DateRangePickerController datePickerControl = DateRangePickerController();
 
+  bool isAccSyncToGoogle = false;
+
   bool showOnBoard = false;
   bool opacityOn = false;
 
@@ -376,6 +378,37 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  initUserProfile() {
+    apiReq.getUserProfile().then((value) {
+      if (value['Status'].toString() == "200") {
+        // if (value['Data']['Admin'].toString() == "1") {
+        //   setState(() {
+        //     isUserAdmin = true;
+        //   });
+        // }
+        if (value['Data']['GoogleAccountSync'].toString() == "1") {
+          setState(() {
+            isAccSyncToGoogle = true;
+          });
+        }
+        if (value['Data']['GoogleAccountSync'].toString() == "0") {
+          setState(() {
+            isAccSyncToGoogle = false;
+          });
+        }
+      } else {
+        // showDialog(
+        //   context: context,
+        //   builder: (context) => AlertDialogBlack(
+        //     title: value['Title'],
+        //     contentText: value['Message'],
+        //     isSuccess: false,
+        //   ),
+        // );
+      }
+    }).onError((error, stackTrace) {});
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -391,6 +424,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
+    initUserProfile();
     apiReq.getAreaList().then((value) {
       if (value['Status'].toString() == "200") {
         setState(() {
@@ -829,6 +863,9 @@ class _SearchPageState extends State<SearchPage> {
           searchResult = value["Data"]["Room"];
         });
       } else {
+        setState(() {
+          isSearching = false;
+        });
         showDialog(
           context: context,
           builder: (context) => AlertDialogBlack(
@@ -884,6 +921,9 @@ class _SearchPageState extends State<SearchPage> {
           searchResult = value["Data"]["Room"];
         });
       } else {
+        setState(() {
+          isSearching = false;
+        });
         showDialog(
           context: context,
           builder: (context) => AlertDialogBlack(
@@ -975,6 +1015,9 @@ class _SearchPageState extends State<SearchPage> {
             searchResult = value["Data"]["Room"];
           });
         } else {
+          setState(() {
+            isSearching = false;
+          });
           showDialog(
             context: context,
             builder: (context) => AlertDialogBlack(
@@ -1041,12 +1084,16 @@ class _SearchPageState extends State<SearchPage> {
         sort,
       )
           .then((value) {
+        print(value);
         if (value['Status'].toString() == "200") {
           setState(() {
             isSearching = false;
             searchResult = value["Data"]["Room"];
           });
         } else {
+          setState(() {
+            isSearching = false;
+          });
           showDialog(
             context: context,
             builder: (context) => AlertDialogBlack(
@@ -1494,17 +1541,23 @@ class _SearchPageState extends State<SearchPage> {
                                               const SizedBox(
                                                 height: 35,
                                               ),
-                                              InkWell(
-                                                onTap: () {
-                                                  context.go('/gws');
-                                                },
-                                                child: WhiteBannerLandscape(
-                                                  title:
-                                                      'Link your Google account',
-                                                  subtitle:
-                                                      '& enjoy your benefits.',
-                                                  imagePath:
-                                                      'assets/banner_pict_google.png',
+                                              Visibility(
+                                                visible: isAccSyncToGoogle
+                                                    ? false
+                                                    : true,
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    context.go('/gws');
+                                                  },
+                                                  child:
+                                                      const WhiteBannerLandscape(
+                                                    title:
+                                                        'Link your Google account',
+                                                    subtitle:
+                                                        '& enjoy your benefits.',
+                                                    imagePath:
+                                                        'assets/banner_pict_google.png',
+                                                  ),
                                                 ),
                                               ),
                                               const SizedBox(
