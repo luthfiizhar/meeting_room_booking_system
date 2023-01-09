@@ -21,21 +21,20 @@ class ParticipantContainer extends StatelessWidget {
   // ];
   List? items = ['2', '3', '4', '5', '6', '7', '8', '9', '>10'];
 
+  ScrollController? participantScroll = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(
         minWidth: 80,
-        maxWidth: 150,
+        maxWidth: 90,
         maxHeight: 300,
       ),
       child: Container(
-        width: double.minPositive,
-        height: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 20,
-        ),
+        width: double.infinity,
+        // height: double.infinity,
+
         decoration: BoxDecoration(
           color: isDark ? eerieBlack : culturedWhite,
           borderRadius: BorderRadius.circular(10),
@@ -46,42 +45,61 @@ class ParticipantContainer extends StatelessWidget {
                   width: 1,
                 ),
         ),
-        child: ListView.builder(
-          itemCount: items!.length,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () {
-                onChangeParticipant!(items![index]);
-                setParticipantStatus!(false);
-              },
+        child: RawScrollbar(
+          controller: participantScroll,
+          thumbColor: platinum,
+          radius: const Radius.circular(10),
+          thickness: 10,
+          child: SingleChildScrollView(
+            controller: participantScroll,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 20,
+              ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                // mainAxisSize: MainAxisSize.min,
                 children: [
-                  index == 0 || index == items!.length
-                      ? const SizedBox()
-                      : Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                          ),
-                          child: Divider(
-                            color: isDark ? platinum : davysGray,
-                          ),
+                  ListView.builder(
+                    itemCount: items!.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          onChangeParticipant!(items![index]);
+                          setParticipantStatus!(false);
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          // mainAxisSize: MainAxisSize.min,
+                          children: [
+                            index == 0 || index == items!.length
+                                ? const SizedBox()
+                                : Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                    ),
+                                    child: Divider(
+                                      color: isDark ? platinum : davysGray,
+                                    ),
+                                  ),
+                            Text(
+                              items![index],
+                              style: TextStyle(
+                                color: isDark ? platinum : davysGray,
+                                fontSize: 16,
+                                height: 1.3,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ],
                         ),
-                  Text(
-                    items![index],
-                    style: TextStyle(
-                      color: isDark ? platinum : davysGray,
-                      fontSize: 16,
-                      height: 1.3,
-                      fontWeight: FontWeight.w300,
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );
