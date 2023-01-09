@@ -981,7 +981,7 @@ class _SearchPageState extends State<SearchPage> {
         }
       }
 
-      selectedDateFormatted = DateFormat('yyyy-M-dd').format(selectedDate);
+      selectedDateFormatted = DateFormat('yyyy-MM-dd').format(selectedDate);
       _dateController.text = DateFormat('dd MMM yyyy').format(selectedDate);
       // _facilityController.text = widget.queryParam['facility'];
       _timeController.text =
@@ -1056,7 +1056,7 @@ class _SearchPageState extends State<SearchPage> {
       setState(() {
         isSearching = true;
       });
-      selectedDateFormatted = DateFormat('yyyy-M-dd').format(selectedDate);
+      selectedDateFormatted = DateFormat('yyyy-MM-dd').format(selectedDate);
 
       if (submitFilter.isEmpty) {
         for (var element in listFilter!) {
