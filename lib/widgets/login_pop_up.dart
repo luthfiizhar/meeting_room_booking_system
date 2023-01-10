@@ -11,6 +11,7 @@ import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.da
 import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
+import 'dart:html' as html;
 
 class LoginPopUp extends StatefulWidget {
   LoginPopUp({
@@ -411,6 +412,197 @@ class _LoginPopUpState extends State<LoginPopUp> {
               //   ),
               // )
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class TemporaryLoginPopUp extends StatelessWidget {
+  TemporaryLoginPopUp({
+    super.key,
+    required this.resetState,
+    required this.updateAfterLogin,
+  });
+
+  Function? resetState;
+  Function? updateAfterLogin;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: culturedWhite,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minWidth: 465,
+          maxWidth: 465,
+          minHeight: 200,
+          maxHeight: 535,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            // shape: BoxShape.circle,
+            borderRadius: BorderRadius.circular(10),
+            color: culturedWhite,
+            boxShadow: const [
+              BoxShadow(
+                blurRadius: 40,
+                offset: Offset(0, 12),
+                color: Color.fromRGBO(
+                  29,
+                  29,
+                  29,
+                  0.2,
+                ),
+              ),
+              BoxShadow(
+                // blurRadius: 40,
+                offset: Offset(0, 8),
+                color: eerieBlack,
+              )
+            ],
+          ),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 40,
+              vertical: 50,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Login',
+                  style: helveticaText.copyWith(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w700,
+                    color: eerieBlack,
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  'Please login to use this system.',
+                  style: helveticaText.copyWith(
+                    fontSize: 18,
+                    height: 1.67,
+                    fontWeight: FontWeight.w300,
+                    color: davysGray,
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                // Text(
+                //   'Example: ',
+                //   style: helveticaText.copyWith(
+                //     fontSize: 18,
+                //     height: 1.67,
+                //     fontWeight: FontWeight.w300,
+                //     color: davysGray,
+                //   ),
+                // ),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Username: ',
+                        style: helveticaText.copyWith(
+                          fontSize: 18,
+                          height: 1.67,
+                          fontWeight: FontWeight.w300,
+                          color: davysGray,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'KLGROUP\\nip.name',
+                        style: helveticaText.copyWith(
+                          fontSize: 18,
+                          height: 1.67,
+                          fontWeight: FontWeight.w700,
+                          color: eerieBlack,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Password: ',
+                        style: helveticaText.copyWith(
+                          fontSize: 18,
+                          height: 1.67,
+                          fontWeight: FontWeight.w300,
+                          color: davysGray,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Your Windows / laptop password.',
+                        style: helveticaText.copyWith(
+                          fontSize: 18,
+                          height: 1.67,
+                          fontWeight: FontWeight.w700,
+                          color: eerieBlack,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: RegularButton(
+                    disabled: false,
+                    text: 'Login',
+                    onTap: () {
+                      html.WindowBase popUpWindow;
+                      popUpWindow = html.window.open(
+                        'http://portal-sandbox-cerberus.klgsys.com/sso/portal/',
+                        'Cerberus Login',
+                      );
+                      String code = "";
+                      html.window.onMessage.listen((event) async {
+                        print("listen");
+                        print(event.data.toString());
+                        if (event.data.toString().contains('token=')) {
+                          code = event.data.toString().split('?')[1];
+                          print("Callback -> $code");
+                        }
+                      });
+                    },
+                    padding: ButtonSize().longSize(),
+                  ),
+                ),
+                // Text(
+                //   'Username: KLGROUP\\nip.name',
+                //   style: helveticaText.copyWith(
+                //     fontSize: 18,
+                //     height: 1.67,
+                //     fontWeight: FontWeight.w300,
+                //     color: davysGray,
+                //   ),
+                // ),
+                // Text(
+                //   'Password: Windows / laptop password',
+                //   style: helveticaText.copyWith(
+                //     fontSize: 18,
+                //     height: 1.67,
+                //     fontWeight: FontWeight.w300,
+                //     color: davysGray,
+                //   ),
+                // ),
+              ],
+            ),
           ),
         ),
       ),

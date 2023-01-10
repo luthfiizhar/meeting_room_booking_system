@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
@@ -17,7 +18,7 @@ import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_ba
 import 'package:meeting_room_booking_system/widgets/pop_up_profile.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'dart:html';
+import 'dart:html' as html;
 
 class LayoutPageWeb extends StatefulWidget {
   LayoutPageWeb({
@@ -165,6 +166,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // checkToken();
     _scrollController = widget.scrollController;
     if (widget.model != null) {
       mainModel = widget.model!;
@@ -187,16 +189,34 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
         //     isSuccess: false,
         //   ),
         // );
+        // html.WindowBase popUpWindow;
+        // popUpWindow = html.window.open(
+        //   'http://portal-sandbox-cerberus.klgsys.com/sso/portal/',
+        //   'Cerberus Login',
+        // );
+        // String code = "";
+        // html.window.onMessage.listen((event) async {});
+        // showDialog(
+        //   context: context,
+        //   barrierDismissible: false,
+        //   builder: (context) => LoginPopUp(
+        //     resetState: resetState,
+        //     updateLogin: updateAfterLogin,
+        //   ),
+        // ).then((value) {
+        //   resetState();
+        // });
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (context) => LoginPopUp(
+          builder: (context) => TemporaryLoginPopUp(
             resetState: resetState,
-            updateLogin: updateAfterLogin,
+            updateAfterLogin: updateAfterLogin,
           ),
         ).then((value) {
           resetState();
         });
+        context.goNamed('home');
       }
     }).onError((error, stackTrace) {
       showDialog(
