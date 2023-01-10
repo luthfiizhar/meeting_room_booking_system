@@ -525,9 +525,9 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                                   context: context,
                                   barrierDismissible: false,
                                   builder: (context) {
-                                    return TemporaryLoginPopUp(
+                                    return LoginPopUp(
                                       resetState: widget.resetState,
-                                      updateAfterLogin: widget.updateLogin,
+                                      updateLogin: widget.updateLogin,
                                     );
                                   },
                                 ).then((value) {
