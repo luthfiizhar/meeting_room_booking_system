@@ -7,10 +7,11 @@ import 'package:http/http.dart' as http;
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page.dart';
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
+import 'api_url.dart';
 
 class ReqAPI {
   // static const apiUrlGlobal = 'fmklg.klgsys.com'; // Development
-  String apiUrlGlobal = 'fmklg-backend.klgsys.com'; // Production
+  // String apiUrlGlobal = 'fmklg-backend.klgsys.com'; // Production
 
   Future bookingRoom(Booking booking) async {
     // booking.toJson();
