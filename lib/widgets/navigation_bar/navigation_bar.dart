@@ -487,18 +487,25 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                                 //         value['Data']['Email']);
                                 //   });
                                 // });
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (context) {
-                                    return LoginPopUp(
-                                      resetState: widget.resetState,
-                                      updateLogin: widget.updateLogin,
-                                    );
-                                  },
-                                ).then((value) {
-                                  widget.resetState!;
-                                });
+                                html.WindowBase popUpWindow;
+                                popUpWindow = html.window.open(
+                                  'http://portal-sandbox-cerberus.klgsys.com/sso/portal/',
+                                  'Cerberus Login',
+                                );
+                                String code = "";
+                                html.window.onMessage.listen((event) async {});
+                                // showDialog(
+                                //   context: context,
+                                //   barrierDismissible: false,
+                                //   builder: (context) {
+                                //     return LoginPopUp(
+                                //       resetState: widget.resetState,
+                                //       updateLogin: widget.updateLogin,
+                                //     );
+                                //   },
+                                // ).then((value) {
+                                //   widget.resetState!;
+                                // });
                               },
                             )
                           // LogoutButton(
