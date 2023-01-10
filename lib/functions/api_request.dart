@@ -9,8 +9,8 @@ import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
 
 class ReqAPI {
-  static const apiUrlGlobal = 'fmklg.klgsys.com'; // Development
-  // String apiUrlGlobal = 'fmklg-backend.klgsys.com'; // Production
+  // static const apiUrlGlobal = 'fmklg.klgsys.com'; // Development
+  String apiUrlGlobal = 'fmklg-backend.klgsys.com'; // Production
 
   Future bookingRoom(Booking booking) async {
     // booking.toJson();
