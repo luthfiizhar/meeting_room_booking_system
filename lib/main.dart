@@ -13,6 +13,7 @@ import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/pages/admin/admin_detail_booking.dart';
 import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page.dart';
 import 'package:meeting_room_booking_system/pages/admin/admin_setting_page.dart';
+import 'package:meeting_room_booking_system/pages/loading_login.dart';
 import 'package:meeting_room_booking_system/pages/login_page.dart'
     deferred as loginPage;
 import 'package:meeting_room_booking_system/pages/user/calendar_view_page.dart'
@@ -341,6 +342,19 @@ class MyApp extends StatelessWidget {
               ),
             );
           }),
+      GoRoute(
+        name: 'login_auth',
+        path: '/login_auth',
+        pageBuilder: (context, state) {
+          dynamic param = state.queryParams;
+          return NoTransitionPage<void>(
+            key: state.pageKey,
+            child: LoginLoading(
+              queryParam: param,
+            ),
+          );
+        },
+      ),
     ],
     redirect: (context, state) {
       final goHome = state.subloc == '/home';

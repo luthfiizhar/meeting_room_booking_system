@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/constant/key.dart';
@@ -28,6 +29,7 @@ class NavigationBarWeb extends StatefulWidget {
     this.getProfile,
     this.resetState,
     this.updateLogin,
+    this.checkToken,
   });
 
   int? index;
@@ -36,6 +38,7 @@ class NavigationBarWeb extends StatefulWidget {
   Function? updateLogin;
   bool? popUpStatus;
   OverlayEntry? getProfile;
+  Function? checkToken;
   // GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
@@ -44,6 +47,8 @@ class NavigationBarWeb extends StatefulWidget {
 
 class _NavigationBarWebState extends State<NavigationBarWeb> {
   int? index;
+
+  ReqAPI reqApi = ReqAPI();
 
   bool profileVisible = false;
   GlobalKey keyButton = GlobalKey();
@@ -299,10 +304,32 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
     // );
   }
 
+  initToken() async {
+    var box = await Hive.openBox('userLogin');
+
+    jwtToken = box.get('jwtToken') != "" || box.get('jwtToken') != null
+        ? box.get('jwtToken')
+        : "";
+
+    // widget.resetState!();
+
+    reqApi.checkToken().then((value) {
+      print("OIIIIIIII $value");
+      if (value["Status"] == "200") {
+        isTokenValid = true;
+      } else {
+        isTokenValid = false;
+      }
+      widget.resetState!();
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    initToken();
+    setState(() {});
     index = widget.index;
 
     // print(Provider.of<MainModel>(context, listen: false).firstLogin);
@@ -498,9 +525,9 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                                   context: context,
                                   barrierDismissible: false,
                                   builder: (context) {
-                                    return LoginPopUp(
+                                    return TemporaryLoginPopUp(
                                       resetState: widget.resetState,
-                                      updateLogin: widget.updateLogin,
+                                      updateAfterLogin: widget.updateLogin,
                                     );
                                   },
                                 ).then((value) {
