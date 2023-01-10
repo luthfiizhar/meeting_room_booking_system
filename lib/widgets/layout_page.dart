@@ -196,26 +196,27 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
         // );
         // String code = "";
         // html.window.onMessage.listen((event) async {});
-        // showDialog(
-        //   context: context,
-        //   barrierDismissible: false,
-        //   builder: (context) => LoginPopUp(
-        //     resetState: resetState,
-        //     updateLogin: updateAfterLogin,
-        //   ),
-        // ).then((value) {
-        //   resetState();
-        // });
+        context.goNamed('home');
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (context) => TemporaryLoginPopUp(
+          builder: (context) => LoginPopUp(
             resetState: resetState,
-            updateAfterLogin: updateAfterLogin,
+            updateLogin: updateAfterLogin,
           ),
         ).then((value) {
           resetState();
         });
+        // showDialog(
+        //   context: context,
+        //   barrierDismissible: false,
+        //   builder: (context) => TemporaryLoginPopUp(
+        //     resetState: resetState,
+        //     updateAfterLogin: updateAfterLogin,
+        //   ),
+        // ).then((value) {
+        //   resetState();
+        // });
         context.goNamed('home');
       }
     }).onError((error, stackTrace) {

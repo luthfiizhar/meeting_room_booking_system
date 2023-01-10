@@ -116,6 +116,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   ScrollController scrollController = ScrollController();
 
+  setIsUserAdmin(bool value) {
+    setState(() {
+      isUserAdmin = false;
+    });
+  }
+
   scrollListener(ScrollController scrollInfo) {}
   initTime() {
     dynamic hour = TimeOfDay.now().hour;
@@ -863,7 +869,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ApprovalMessage(),
+              ApprovalMessage(setIsAdmin: setIsUserAdmin),
               const SizedBox(
                 height: 30,
               ),

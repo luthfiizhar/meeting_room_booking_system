@@ -141,17 +141,17 @@ class PopUpProfile extends StatelessWidget {
                   var jwt =
                       box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
                   jwtToken = "";
-                  await box.put('jwtToken', "");
-                  await box.delete('jwtToken');
-                  await box.delete('firstLogin');
+                  box.put('jwtToken', "");
+                  box.delete('jwtToken');
+                  box.delete('firstLogin');
                   resetState!;
                   context.go('/home');
                   showDialog(
                     barrierDismissible: false,
                     context: context,
-                    builder: (context) => TemporaryLoginPopUp(
+                    builder: (context) => LoginPopUp(
                       resetState: resetState,
-                      updateAfterLogin: updateLogin,
+                      updateLogin: updateLogin,
                     ),
                   );
 

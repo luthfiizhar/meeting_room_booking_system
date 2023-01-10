@@ -58,30 +58,32 @@ class _LoginPopUpState extends State<LoginPopUp> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       // loginCerberus(username!, password!, selectedUser)
+      // apiReq
+      //     .loginDummy(
+      //   username!,
+      //   password!,
+      // )
       apiReq
-          .loginDummy(
-        username!,
-        password!,
-      )
+          .loginHCSSO(username!.toString(), password!.toString())
           .then((value) {
         print("login Dummy $value");
-        dynamic firstLogin = value['Data']['FirstLogin'];
         setState(() {
           isLoading = false;
         });
-        if (value['Status'] == "200") {
+        if (value['Status'].toString() == "200") {
+          dynamic firstLogin = value['Data']['FirstLogin'].toString();
           apiReq.getUserProfile().then((value) async {
             print("getUserProfile $value");
-            if (value['Status'] == "200") {
+            if (value['Status'].toString() == "200") {
               await widget.resetState!();
               await widget.updateLogin!(
                 value['Data']['EmpName'],
                 value['Data']['Email'],
                 value['Data']['Admin'].toString(),
-                firstLogin.toString(),
+                firstLogin,
               );
               var admin = value['Data']['Admin'].toString();
-              if (firstLogin.toString() == "1") {
+              if (firstLogin == "1") {
                 context.goNamed('setting',
                     params: {'isAdmin': admin == "1" ? "true" : "false"});
                 // Navigator.of(context).pop(true);
@@ -216,7 +218,7 @@ class _LoginPopUpState extends State<LoginPopUp> {
                         height: 15,
                       ),
                       Text(
-                        'Please login using your Windows / laptop credential.',
+                        'Please login using your HC Plus Account.',
                         style: helveticaText.copyWith(
                           fontSize: 18,
                           height: 1.67,

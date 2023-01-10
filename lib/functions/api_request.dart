@@ -399,6 +399,44 @@ class ReqAPI {
     }
   }
 
+  Future loginHCSSO(String username, String password) async {
+    var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/login-hcsso');
+    Map<String, String> requestHeader = {
+      // 'Authorization': 'Bearer $tokenDummy',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+        "Username" : "$username",
+        "Password" : "$password"
+    }
+  """;
+
+    try {
+      var response =
+          await http.post(url, body: bodySend, headers: requestHeader);
+
+      var data = json.decode(response.body);
+      var box = await Hive.openBox('userLogin');
+      if (data['Status'].toString() == "200") {
+        box.put('jwtToken',
+            data['Data']['Token'] != null ? data['Data']['Token'] : "");
+        jwtToken = data['Data']['Token'];
+        isTokenValid = true;
+        if (data['Data']['Roles']['Admin'] == 1) {
+          isAdmin = true;
+        }
+        print("LOGIN HCSSO RESPONSE ----> $data");
+      }
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   Future loginCerberus(
       String username, String password, String selectedUser) async {
     String tempUsername;

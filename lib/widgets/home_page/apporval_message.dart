@@ -9,7 +9,12 @@ import 'package:meeting_room_booking_system/widgets/button/transparent_black_bor
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 
 class ApprovalMessage extends StatefulWidget {
-  ApprovalMessage({super.key});
+  ApprovalMessage({
+    super.key,
+    this.setIsAdmin,
+  });
+
+  Function? setIsAdmin;
 
   @override
   State<ApprovalMessage> createState() => _ApprovalMessageState();
@@ -28,6 +33,9 @@ class _ApprovalMessageState extends State<ApprovalMessage> {
         List result = value['Data'];
         result =
             result.where((element) => element['Title'] == 'Requested').toList();
+        if (result.first['Count'] == 0) {
+          widget.setIsAdmin!(false);
+        }
         setState(() {
           countApproval = result.first['Count'].toString();
         });
