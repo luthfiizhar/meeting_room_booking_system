@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
@@ -11,6 +12,7 @@ import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.d
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/search_input_field.dart';
+import 'package:shimmer/shimmer.dart';
 
 class AreaMenuPage extends StatefulWidget {
   AreaMenuPage({
@@ -87,22 +89,23 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
     areaList.clear();
     room.clear();
     apiReq.getRoomList(searchTerm).then((value) {
+      print(value);
       if (value['Status'].toString() == "200") {
         areaList = value['Data']['List'];
         for (var element in areaList) {
           room.add(Room(
-            roomId: element['RoomID'],
-            roomName: element['RoomName'],
-            roomType: element['RoomType'],
-            buildingName: element['SiteLocation'],
-            floorName: element['AreaName'],
+            roomId: element['RoomID'] ?? "",
+            roomName: element['RoomName'] ?? "",
+            roomType: element['RoomType'] ?? "",
+            buildingName: element['SiteLocation'] ?? "",
+            floorName: element['AreaName'] ?? "",
             minCapacity: element['MinCapacity'].toString(),
             maxCapacity: element['MaxCapacity'].toString(),
-            coverPhoto: element['CoverPhoto'],
-            maxBookingDuration: element['Duration'].toString(),
-            defaultFacilities: element['AvailableAmenities'],
-            prohibitedFacilities: element['ForbiddenAmenities'],
-            areaPhoto: element['RoomPhotos'],
+            coverPhoto: element['CoverPhoto'] ?? "",
+            maxBookingDuration: element['BookingDuration'].toString(),
+            defaultFacilities: element['AvailableAmenities'] ?? [],
+            prohibitedFacilities: element['ForbiddenAmenities'] ?? [],
+            areaPhoto: element['RoomPhotos'] ?? "",
             isCollapsed: false,
           ));
         }
@@ -133,52 +136,52 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    apiReq.getRoomList(searchTerm).then((value) {
-      if (value['Status'].toString() == "200") {
-        // print(value);
-        areaList = value['Data']['List'];
-        // for (var element in areaList) {
-        //   areaList.add({'isCollapsed': false});
-        // }
-        for (var element in areaList) {
-          room.add(Room(
-            roomId: element['RoomID'],
-            roomName: element['RoomName'],
-            roomType: element['RoomType'],
-            buildingName: element['SiteLocation'],
-            floorName: element['AreaName'],
-            minCapacity: element['MinCapacity'].toString(),
-            maxCapacity: element['MaxCapacity'].toString(),
-            coverPhoto: element['CoverPhoto'],
-            maxBookingDuration: element['Duration'].toString(),
-            defaultFacilities: element['AvailableAmenities'],
-            prohibitedFacilities: element['ForbiddenAmenities'],
-            areaPhoto: element['RoomPhotos'],
-            isCollapsed: false,
-          ));
-        }
-        countPagination(value['Data']['TotalRows']);
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialogBlack(
-            title: value['Title'],
-            contentText: value['Message'],
-            isSuccess: false,
-          ),
-        );
-      }
-    }).onError((error, stackTrace) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialogBlack(
-          title: 'Failed connect to API',
-          contentText: error.toString(),
-          isSuccess: false,
-        ),
-      );
-    });
+    updateList();
+    // apiReq.getRoomList(searchTerm).then((value) {
+    //   if (value['Status'].toString() == "200") {
+    //     print(value);
+    //     areaList = value['Data']['List'];
+    //     // for (var element in areaList) {
+    //     //   areaList.add({'isCollapsed': false});
+    //     // }
+    //     for (var element in areaList) {
+    //       room.add(Room(
+    //         roomId: element['RoomID']??"",
+    //         roomName: element['RoomName'],
+    //         roomType: element['RoomType'],
+    //         buildingName: element['SiteLocation'],
+    //         floorName: element['AreaName'],
+    //         minCapacity: element['MinCapacity'].toString(),
+    //         maxCapacity: element['MaxCapacity'].toString(),
+    //         coverPhoto: element['CoverPhoto'],
+    //         maxBookingDuration: element['Duration'].toString(),
+    //         defaultFacilities: element['AvailableAmenities'],
+    //         prohibitedFacilities: element['ForbiddenAmenities'],
+    //         areaPhoto: element['RoomPhotos'],
+    //         isCollapsed: false,
+    //       ));
+    //     }
+    //     countPagination(value['Data']['TotalRows']);
+    //   } else {
+    //     showDialog(
+    //       context: context,
+    //       builder: (context) => AlertDialogBlack(
+    //         title: value['Title'],
+    //         contentText: value['Message'],
+    //         isSuccess: false,
+    //       ),
+    //     );
+    //   }
+    // }).onError((error, stackTrace) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) => AlertDialogBlack(
+    //       title: 'Failed connect to API',
+    //       contentText: error.toString(),
+    //       isSuccess: false,
+    //     ),
+    //   );
+    // });
   }
 
   @override
@@ -661,10 +664,36 @@ class _AreaListContainerState extends State<AreaListContainer> {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                backgroundColor: blueAccent,
-                radius: 35,
-                // backgroundImage: NetworkImage(widget.coverPhoto),
+              // CircleAvatar(
+              //   backgroundColor: blueAccent,
+              //   radius: 35,
+              //   // backgroundImage: NetworkImage(widget.coverPhoto),
+              // ),
+              CachedNetworkImage(
+                imageUrl: widget.coverPhoto,
+                placeholder: (context, url) {
+                  return Shimmer(
+                    gradient: const LinearGradient(
+                      colors: [platinum, grayx11, davysGray],
+                    ),
+                    direction: ShimmerDirection.rtl,
+                    child: Container(
+                      width: 35,
+                      height: 35,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.transparent,
+                      ),
+                    ),
+                  );
+                },
+                imageBuilder: (context, imageProvider) {
+                  return CircleAvatar(
+                    backgroundColor: platinum,
+                    radius: 35,
+                    backgroundImage: imageProvider,
+                  );
+                },
               ),
               const SizedBox(
                 width: 30,
@@ -745,16 +774,41 @@ class _AreaListContainerState extends State<AreaListContainer> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           height: 190,
           width: 250,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: davysGray,
-            // image: DecorationImage(
-            //   image: Image.network(widget.coverPhoto).image,
-            //   fit: BoxFit.cover,
-            // ),
+          child: CachedNetworkImage(
+            imageUrl: widget.coverPhoto,
+            placeholder: (context, url) {
+              return Shimmer(
+                gradient: const LinearGradient(
+                  colors: [platinum, grayx11, davysGray],
+                ),
+                direction: ShimmerDirection.rtl,
+                child: Container(
+                  width: 190,
+                  height: 250,
+                  decoration: const BoxDecoration(
+                    // shape: BoxShape.circle,
+                    color: Colors.transparent,
+                  ),
+                ),
+              );
+            },
+            imageBuilder: (context, imageProvider) {
+              return Container(
+                height: 190,
+                width: 250,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: davysGray,
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              );
+            },
           ),
         ),
         const SizedBox(
