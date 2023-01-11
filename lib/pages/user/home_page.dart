@@ -95,6 +95,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   String roomTypeName = "Meeting Room";
   String roomTypeValue = "MeetingRoom";
   String roomTypeImage = "";
+  double participantValue = 2;
 
   List? upcomingData = [];
   String emptyMessage = "";
@@ -442,10 +443,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     setState(() {});
   }
 
-  onParticipanSelected(String value) {
+  onParticipanSelected(String value, double valueDouble) {
     participantSelected = value;
+    participantValue = valueDouble;
     _participantController.text = participantSelected;
-    setOpacityOn(false);
+    // setOpacityOn(false);
     setState(() {});
   }
 
@@ -719,6 +721,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             child: ParticipantContainer(
                               setParticipantStatus: setParticipantStatus,
                               onChangeParticipant: onParticipanSelected,
+                              participantValue: participantValue,
                             ),
                           ),
                         ),

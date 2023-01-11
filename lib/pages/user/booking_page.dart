@@ -115,6 +115,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   String startTime = "";
   String endTime = "";
   String totalParticipant = "";
+  double participantValue = 0;
   String additionalNote = "";
   String repeatInterval = "0";
   String repeatValue = 'NONE';
@@ -159,6 +160,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   List<RadioModel>? listEventType = [];
   String? selectedEventType = "";
   String? roomType = "MeetingRoom";
+
+  double participantMin = 0;
+  double participantMax = 5;
 
   List<Amenities> listAmenities = [];
   List<FoodAmenities> listFoods = [];
@@ -625,9 +629,12 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     }
     apiReq.getRoomDetail(widget.roomId!).then((value) {
       setState(() {
+        participantValue = double.parse(widget.participant!);
         pictureLoading = false;
         roomName = value['Data']['RoomName'];
         floor = value['Data']['AreaName'];
+        participantMax = value['Data']['MaxCapacity'];
+        participantMin = value['Data']['MinCapacity'];
         resultAmenities = value['Data']['Amenities'];
         for (var element in resultAmenities) {
           if (element['Default'] > 0) {
@@ -1091,36 +1098,57 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                   height: 20,
                                 ),
                                 inputField(
-                                  'Total Participant:',
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 100,
-                                        child: BlackInputField(
-                                          controller: _totalParticipant,
-                                          focusNode: totalParticipantNode,
-                                          onSaved: (newValue) {
-                                            totalParticipant = newValue!;
+                                    'Total Participant:',
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Slider(
+                                          thumbColor: davysGray,
+                                          value: participantValue,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              participantValue = value;
+                                            });
                                           },
-                                          enabled: true,
-                                          hintText: 'Total',
-                                          obsecureText: false,
+                                          min: 0,
+                                          max: participantMax,
+                                          divisions: participantMax.toInt(),
+                                          label: '$participantValue Person',
+                                          activeColor: eerieBlack,
+                                          inactiveColor: platinum,
+                                          // divisions: 1,
                                         ),
                                       ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      const Text(
-                                        'Person',
-                                        style: TextStyle(
-                                          fontFamily: 'Helvetica',
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
+                                    )
+                                    // Row(
+                                    //   children: [
+                                    //     SizedBox(
+                                    //       width: 100,
+                                    //       child: BlackInputField(
+                                    //         controller: _totalParticipant,
+                                    //         focusNode: totalParticipantNode,
+                                    //         onSaved: (newValue) {
+                                    //           totalParticipant = newValue!;
+                                    //         },
+                                    //         enabled: true,
+                                    //         hintText: 'Total',
+                                    //         obsecureText: false,
+                                    //       ),
+                                    //     ),
+                                    //     const SizedBox(
+                                    //       width: 10,
+                                    //     ),
+                                    //     const Text(
+                                    //       'Person',
+                                    //       style: TextStyle(
+                                    //         fontFamily: 'Helvetica',
+                                    //         fontSize: 18,
+                                    //         fontWeight: FontWeight.w300,
+                                    //       ),
+                                    //     )
+                                    //   ],
+                                    // ),
+                                    ),
                                 const SizedBox(
                                   height: 20,
                                 ),
