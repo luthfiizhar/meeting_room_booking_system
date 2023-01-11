@@ -3,14 +3,20 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
+import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
+import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
+import 'package:shimmer/shimmer.dart';
 
 class SelectLayoutDialog extends StatefulWidget {
   SelectLayoutDialog({
@@ -38,6 +44,9 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
 
   List layoutList = [];
 
+  String layoutName = "";
+  String layoutId = "";
+
   bool upButtonVisible = false;
   bool downButtonVisible = true;
   bool otherPict = false;
@@ -58,21 +67,26 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.imaegUrl != "" || widget.imageBytes!.isNotEmpty) {
+    if (widget.imaegUrl != "" || widget.imageBytes!.isEmpty) {
       setState(() {
-        emptyImage = false;
         if (widget.isUpload) {
+          emptyImage = false;
           otherPict = true;
           // webImage = widget.imageBytes;
           base64image = widget.layoutBase64;
         } else {
+          emptyImage = false;
           otherPict = false;
           urlImage = widget.imaegUrl;
         }
       });
+    } else {
+      setState(() {
+        emptyImage = true;
+      });
     }
     apiReq.getLayoutList().then((value) {
-      print(value);
+      print("layout api --> $value");
       if (value["Status"].toString() == "200") {
         setState(() {
           layoutList = value["Data"];
@@ -95,6 +109,7 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
         ),
       );
     });
+    print("empty image --> $emptyImage");
     _scrollController.addListener(() {
       scroll(_scrollController);
     });
@@ -163,7 +178,7 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
           minWidth: 750,
           maxWidth: 750,
           minHeight: 550,
-          maxHeight: 550,
+          maxHeight: 600,
         ),
         child: Container(
           padding: const EdgeInsets.symmetric(
@@ -175,6 +190,7 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
@@ -192,14 +208,21 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: davysGray,
+                      color: platinum,
                       borderRadius: BorderRadius.circular(7.5),
                     ),
                     height: 375,
                     width: 500,
                     child: Center(
                       child: emptyImage
-                          ? const SizedBox()
+                          ? Text(
+                              'No Layout Selected',
+                              style: helveticaText.copyWith(
+                                color: davysGray,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            )
                           : otherPict
                               ? Container(
                                   height: 375,
@@ -210,20 +233,57 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                         Base64Decoder().convert(
                                             base64image!.split(',').last),
                                       ),
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
                                 )
-                              : Container(
-                                  height: 375,
-                                  width: 500,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(urlImage),
-                                      fit: BoxFit.cover,
+                              // : Container(
+                              //     height: 375,
+                              //     width: 500,
+                              //     decoration: BoxDecoration(
+                              //       image: DecorationImage(
+                              //         image: NetworkImage(urlImage),
+                              //         fit: BoxFit.cover,
+                              //       ),
+                              //     ),
+                              //   ),
+                              : urlImage == ""
+                                  ? const SizedBox()
+                                  : CachedNetworkImage(
+                                      imageUrl: urlImage,
+                                      placeholder: (context, url) {
+                                        return Shimmer(
+                                          gradient: const LinearGradient(
+                                            colors: [
+                                              platinum,
+                                              grayx11,
+                                              davysGray
+                                            ],
+                                          ),
+                                          direction: ShimmerDirection.rtl,
+                                          child: Container(
+                                            height: 375,
+                                            width: 500,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(7.5),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      imageBuilder: (context, imageProvider) {
+                                        return Container(
+                                          height: 375,
+                                          width: 500,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                  ),
-                                ),
                     ),
                   ),
                   const SizedBox(
@@ -258,13 +318,16 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                             setState(() {
                                               otherPict = true;
                                               emptyImage = false;
-                                              widget.setLayout!(
-                                                "OTHERS",
-                                                "",
-                                                base64image,
-                                                "",
-                                                true,
-                                              );
+                                              layoutName = "OTHERS";
+                                              layoutId = "";
+                                              urlImage = "";
+                                              // widget.setLayout!(
+                                              //   "OTHERS",
+                                              //   "",
+                                              //   base64image,
+                                              //   "",
+                                              //   true,
+                                              // );
                                             });
                                           });
                                         },
@@ -292,7 +355,7 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                                     height: 10,
                                                   ),
                                                   const Text(
-                                                    'Add Facility',
+                                                    'Add Layout',
                                                     style: TextStyle(
                                                       fontFamily: 'Helvetica',
                                                       fontSize: 16,
@@ -327,14 +390,20 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                           otherPict = false;
                                           urlImage =
                                               layoutList[index]['LayoutImg'];
-                                          widget.setLayout!(
-                                            layoutList[index]['LayoutName'],
-                                            layoutList[index]['LayoutID']
-                                                .toString(),
-                                            "",
-                                            urlImage,
-                                            false,
-                                          );
+                                          layoutName =
+                                              layoutList[index]['LayoutName'];
+                                          layoutId = layoutList[index]
+                                                  ['LayoutID']
+                                              .toString();
+                                          base64image = "";
+                                          // widget.setLayout!(
+                                          //   layoutList[index]['LayoutName'],
+                                          //   layoutList[index]['LayoutID']
+                                          //       .toString(),
+                                          //   "",
+                                          //   urlImage,
+                                          //   false,
+                                          // );
                                         });
                                       },
                                       child: Container(
@@ -355,7 +424,7 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                               ),
                             ),
                           ),
-                          Container(
+                          SizedBox(
                             height: 375,
                             child: Stack(
                               children: [
@@ -425,6 +494,40 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                         ],
                       ),
                     ),
+                  )
+                ],
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TransparentButtonBlack(
+                    text: 'Cancel',
+                    disabled: false,
+                    padding: ButtonSize().smallSize(),
+                    onTap: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                  const SizedBox(
+                    width: 25,
+                  ),
+                  RegularButton(
+                    text: 'Confirm',
+                    disabled: false,
+                    padding: ButtonSize().smallSize(),
+                    onTap: () async {
+                      await widget.setLayout!(
+                        layoutName,
+                        layoutId,
+                        base64image,
+                        urlImage,
+                        otherPict,
+                      );
+                      Navigator.of(context).pop(true);
+                    },
                   )
                 ],
               )
