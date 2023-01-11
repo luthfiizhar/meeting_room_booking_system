@@ -20,6 +20,8 @@ class FilterSearchBarAdmin extends StatefulWidget {
     this.getRoomStatus,
     this.search,
     this.searchController,
+    this.filterList,
+    this.updateFilter,
   });
 
   int? index;
@@ -27,6 +29,8 @@ class FilterSearchBarAdmin extends StatefulWidget {
   Function? getRoomStatus;
   Function? search;
   TextEditingController? searchController;
+  List? filterList;
+  Function? updateFilter;
 
   @override
   State<FilterSearchBarAdmin> createState() => _FilterSearchBarAdminState();

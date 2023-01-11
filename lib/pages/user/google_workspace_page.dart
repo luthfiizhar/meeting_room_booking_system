@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
@@ -40,6 +41,8 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
 
   bool showOnBoard = false;
   bool opacityOn = false;
+
+  bool isAccLinked = false;
 
   bool profileVisible = false;
   // final loginInfo = MainModel();
@@ -261,6 +264,16 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
     // TODO: implement initState
     super.initState();
     // print("param-> ${widget.param}");
+    apiReq.getUserProfile().then((value) {
+      print(value);
+      if (value['Status'].toString() == "200") {
+        if (value['Data']['GoogleAccountSync'] == 1) {
+          setState(() {
+            isAccLinked = true;
+          });
+        }
+      }
+    });
     animateIntroSection();
     scrollController.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -558,6 +571,10 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
             });
             await Future.delayed(const Duration(seconds: 2), () async {
               popUpWindow.close();
+              html.window.removeEventListener("", (event) {
+                return "";
+              });
+              // html.window.close();
               setState(() {
                 isLoadingSync = false;
               });
@@ -570,7 +587,9 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                       contentText: value['Message'],
                       isSuccess: true,
                     ),
-                  );
+                  ).then((value) {
+                    context.goNamed('home');
+                  });
                 } else {
                   showDialog(
                     context: context,
@@ -594,6 +613,7 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
             });
           }
         });
+
         if (code != "") {}
       } else {
         showDialog(
@@ -722,14 +742,16 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                     ? const CircularProgressIndicator(
                         color: eerieBlack,
                       )
-                    : TransparentBorderedBlackButton(
-                        text: 'Link My Account',
-                        disabled: false,
-                        padding: ButtonSize().mediumSize(),
-                        onTap: () {
-                          googleLink();
-                        },
-                      ),
+                    : isAccLinked
+                        ? SizedBox()
+                        : TransparentBorderedBlackButton(
+                            text: 'Link My Account',
+                            disabled: false,
+                            padding: ButtonSize().mediumSize(),
+                            onTap: () {
+                              googleLink();
+                            },
+                          ),
               ),
             ],
           ),
@@ -1071,14 +1093,16 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                   const SizedBox(
                     height: 60,
                   ),
-                  TransparentBorderedWhiteButton(
-                    text: 'Link My Account',
-                    disabled: false,
-                    padding: ButtonSize().mediumSize(),
-                    onTap: () async {
-                      googleLink();
-                    },
-                  ),
+                  isAccLinked
+                      ? SizedBox()
+                      : TransparentBorderedWhiteButton(
+                          text: 'Link My Account',
+                          disabled: false,
+                          padding: ButtonSize().mediumSize(),
+                          onTap: () async {
+                            googleLink();
+                          },
+                        ),
                 ],
               ),
             ),
@@ -1119,6 +1143,7 @@ class _FaqContainerState extends State<FaqContainer> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     question = widget.question;
     answer = widget.answer;
     isCollapse = widget.isCollapse;
