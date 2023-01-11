@@ -4,6 +4,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
+import 'package:meeting_room_booking_system/pages/admin/admin_detail_booking.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 
 class ApprovalListContainer extends StatefulWidget {
@@ -16,6 +17,7 @@ class ApprovalListContainer extends StatefulWidget {
     this.time = "",
     this.status = "",
     this.bookingId = "",
+    this.updateList,
   });
 
   int index;
@@ -26,12 +28,81 @@ class ApprovalListContainer extends StatefulWidget {
   String status;
   String bookingId;
 
+  Function? updateList;
+
   @override
   State<ApprovalListContainer> createState() => _ApprovalListContainerState();
 }
 
 class _ApprovalListContainerState extends State<ApprovalListContainer> {
   ReqAPI apiReq = ReqAPI();
+
+  approveAudi(String notes) {
+    apiReq.rejectAuditorium(widget.bookingId, notes).then((value) {
+      if (value['Status'] == "200") {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: true,
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
+  rejectAudi(String notes) {
+    apiReq.approveAuditorium(widget.bookingId, notes).then((value) {
+      if (value['Status'] == "200") {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: true,
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -201,38 +272,16 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  apiReq
-                                      .approveAuditorium(widget.bookingId)
-                                      .then((value) {
-                                    if (value['Status'] == "200") {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialogBlack(
-                                          title: value['Title'],
-                                          contentText: value['Message'],
-                                          isSuccess: true,
-                                        ),
-                                      );
-                                    } else {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialogBlack(
-                                          title: value['Title'],
-                                          contentText: value['Message'],
-                                          isSuccess: false,
-                                        ),
-                                      );
-                                    }
-                                  }).onError((error, stackTrace) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialogBlack(
-                                        title: 'Failed connect to API',
-                                        contentText: error.toString(),
-                                        isSuccess: false,
-                                      ),
-                                    );
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        AuditoriumNotesApprovalDialog(
+                                      onConfirm: approveAudi,
+                                    ),
+                                  ).then((value) {
+                                    widget.updateList!();
                                   });
+                                  ;
                                 },
                                 child: const Icon(
                                   Icons.check_circle,
@@ -245,37 +294,14 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  apiReq
-                                      .rejectAuditorium(widget.bookingId)
-                                      .then((value) {
-                                    if (value['Status'] == "200") {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialogBlack(
-                                          title: value['Title'],
-                                          contentText: value['Message'],
-                                          isSuccess: true,
-                                        ),
-                                      );
-                                    } else {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialogBlack(
-                                          title: value['Title'],
-                                          contentText: value['Message'],
-                                          isSuccess: false,
-                                        ),
-                                      );
-                                    }
-                                  }).onError((error, stackTrace) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialogBlack(
-                                        title: 'Failed connect to API',
-                                        contentText: error.toString(),
-                                        isSuccess: false,
-                                      ),
-                                    );
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        AuditoriumNotesApprovalDialog(
+                                      onConfirm: rejectAudi,
+                                    ),
+                                  ).then((value) {
+                                    widget.updateList!();
                                   });
                                 },
                                 child: const Icon(

@@ -29,6 +29,8 @@ class _AdminListPageState extends State<AdminListPage> {
   List availablePage = [1];
   List showedPage = [1];
 
+  List filterList = [];
+
   countPagination(int totalRow) {
     setState(() {
       availablePage.clear();
@@ -107,6 +109,36 @@ class _AdminListPageState extends State<AdminListPage> {
   }
 
   setDatePickerStatus(bool value) {}
+
+  List updateFilter() {
+    apiReq.approvalListBookingCount().then((value) {
+      // print(value);
+      if (value['Status'] == "200") {
+        setState(() {
+          filterList = value['Data'];
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+    return filterList;
+  }
 
   updateList() {
     apiReq.getAuditoriumApprovalList(searchTerm).then((value) {
@@ -196,6 +228,8 @@ class _AdminListPageState extends State<AdminListPage> {
                 getRoomStatus: statusRoomChanged,
                 search: searchMyBook,
                 searchController: _search,
+                // filterList: filterList,
+                updateFilter: updateFilter,
               ),
               const SizedBox(
                 height: 30,
@@ -348,6 +382,7 @@ class _AdminListPageState extends State<AdminListPage> {
                           time: approvalList[index]['BookingTime'],
                           status: approvalList[index]['Status'],
                           bookingId: approvalList[index]['BookingID'],
+                          updateList: updateList,
                         );
                       },
                     ),

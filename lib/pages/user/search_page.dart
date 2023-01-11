@@ -1627,6 +1627,7 @@ class _SearchPageState extends State<SearchPage> {
                         changeDate: onDateChanged,
                         setPickerStatus: setDatePickerVisible,
                         currentDate: selectedDate,
+                        maxDate: selectedDate.add(const Duration(days: 30)),
                         canPickPastDay: false,
                       ),
                     ),
