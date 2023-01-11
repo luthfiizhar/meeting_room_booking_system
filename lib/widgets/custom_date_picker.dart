@@ -12,12 +12,14 @@ class CustomDatePicker extends StatelessWidget {
     this.currentDate,
     this.isDark = true,
     this.canPickPastDay = true,
+    this.maxDate,
   });
 
   DateRangePickerController? controller;
   Function? changeDate;
   Function? setPickerStatus;
   DateTime? currentDate;
+  DateTime? maxDate;
   bool isDark;
   bool canPickPastDay;
 
@@ -64,6 +66,7 @@ class CustomDatePicker extends StatelessWidget {
           controller: controller,
           initialSelectedDate: currentDate,
           minDate: canPickPastDay ? null : DateTime.now(),
+          maxDate: maxDate,
           showNavigationArrow: true,
           view: DateRangePickerView.month,
           selectionMode: DateRangePickerSelectionMode.single,

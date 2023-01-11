@@ -554,6 +554,8 @@ class _RoomsPageState extends State<RoomsPage> {
                             setPickerStatus: setVisible,
                             changeDate: setDate,
                             currentDate: selectedDate,
+                            maxDate:
+                                selectedDate!.add(const Duration(days: 30)),
                           ),
                           const SizedBox(
                             height: 20,

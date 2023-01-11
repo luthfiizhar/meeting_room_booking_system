@@ -1169,7 +1169,7 @@ class ReqAPI {
     }
   }
 
-  Future approveAuditorium(String bookingId) async {
+  Future approveAuditorium(String bookingId, String notes) async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -1180,8 +1180,15 @@ class ReqAPI {
       // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
       'Content-Type': 'application/json',
     };
+
+    var bodySend = """
+    {
+        "Notes" : "$notes"
+    }
+    """;
     try {
-      var response = await http.post(url, headers: requestHeader);
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
 
       var data = json.decode(response.body);
 
@@ -1191,7 +1198,7 @@ class ReqAPI {
     }
   }
 
-  Future rejectAuditorium(String bookingId) async {
+  Future rejectAuditorium(String bookingId, String notes) async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -1202,8 +1209,15 @@ class ReqAPI {
       // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
       'Content-Type': 'application/json',
     };
+
+    var bodySend = """
+    {
+        "Notes" : "$notes"
+    }
+    """;
     try {
-      var response = await http.post(url, headers: requestHeader);
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
 
       var data = json.decode(response.body);
 

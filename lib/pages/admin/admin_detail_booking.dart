@@ -11,6 +11,7 @@ import 'package:meeting_room_booking_system/widgets/detail_page/facility_item_de
 import 'package:meeting_room_booking_system/widgets/detail_page/food_item_detail.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
+import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 
 class AdminDetailBooking extends StatefulWidget {
@@ -26,6 +27,10 @@ class AdminDetailBooking extends StatefulWidget {
 
 class _AdminDetailBookingState extends State<AdminDetailBooking> {
   ReqAPI apiReq = ReqAPI();
+
+  TextEditingController _notes = TextEditingController();
+  FocusNode notesNode = FocusNode();
+
   String summary = "";
   String description = "";
   String roomType = "";
@@ -59,6 +64,8 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
   String hostEmail = "";
   String avaya = "";
 
+  int bookingStep = 0;
+
   List guestInvited = [];
   List amenities = [];
   List foodAmenities = [];
@@ -71,6 +78,74 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
   bool isInitLoading = true;
   bool isCancelLoading = false;
 
+  String approvalNotes = "";
+
+  approveAudi(String notes) {
+    apiReq.approveAuditorium(widget.bookingId!, notes).then((value) {
+      if (value['Status'] == "200") {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: true,
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
+  rejectAudi(String notes) {
+    apiReq.rejectAuditorium(widget.bookingId!, notes).then((value) {
+      if (value['Status'] == "200") {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: true,
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
   resetStatus(bool value) {}
 
   @override
@@ -78,6 +153,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
     // TODO: implement initState
     super.initState();
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
+      print(value);
       if (value['Status'].toString() == "200") {
         setState(() {
           isInitLoading = false;
@@ -103,6 +179,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           repeat = value['Data']['Repeat'];
 
           host = value['Data']['EmpName'];
+          bookingStep = value['Data']['BookingStep'];
 
           // layoutName = value['Data']['LayoutName'];
           // layoutImage = value['Data']['LayoutImg'];
@@ -265,95 +342,50 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                             const SizedBox(
                               height: 60,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                RegularButton(
-                                  text: 'Approve Event',
-                                  disabled: false,
-                                  onTap: () {
-                                    apiReq
-                                        .approveAuditorium(widget.bookingId!)
-                                        .then((value) {
-                                      if (value['Status'] == "200") {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              AlertDialogBlack(
-                                            title: value['Title'],
-                                            contentText: value['Message'],
-                                            isSuccess: true,
-                                          ),
-                                        );
-                                      } else {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              AlertDialogBlack(
-                                            title: value['Title'],
-                                            contentText: value['Message'],
-                                            isSuccess: false,
-                                          ),
-                                        );
-                                      }
-                                    }).onError((error, stackTrace) {
+                            Visibility(
+                              visible: bookingStep > 2 ? false : true,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  RegularButton(
+                                    text: 'Approve Event',
+                                    disabled: false,
+                                    onTap: () {
                                       showDialog(
                                         context: context,
-                                        builder: (context) => AlertDialogBlack(
-                                          title: 'Failed connect to API',
-                                          contentText: error.toString(),
-                                          isSuccess: false,
+                                        barrierDismissible: false,
+                                        builder: (context) =>
+                                            AuditoriumNotesApprovalDialog(
+                                          onConfirm: approveAudi,
                                         ),
-                                      );
-                                    });
-                                  },
-                                  padding: ButtonSize().mediumSize(),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                TransparentButtonBlack(
-                                  text: 'Decline Event',
-                                  disabled: false,
-                                  onTap: () {
-                                    apiReq
-                                        .rejectAuditorium(widget.bookingId!)
-                                        .then((value) {
-                                      if (value['Status'] == "200") {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              AlertDialogBlack(
-                                            title: value['Title'],
-                                            contentText: value['Message'],
-                                            isSuccess: true,
-                                          ),
-                                        );
-                                      } else {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              AlertDialogBlack(
-                                            title: value['Title'],
-                                            contentText: value['Message'],
-                                            isSuccess: false,
-                                          ),
-                                        );
-                                      }
-                                    }).onError((error, stackTrace) {
+                                      ).then((value) {
+                                        context.goNamed('admin_list');
+                                      });
+                                    },
+                                    padding: ButtonSize().mediumSize(),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  TransparentButtonBlack(
+                                    text: 'Decline Event',
+                                    disabled: false,
+                                    onTap: () {
                                       showDialog(
                                         context: context,
-                                        builder: (context) => AlertDialogBlack(
-                                          title: 'Failed connect to API',
-                                          contentText: error.toString(),
-                                          isSuccess: false,
+                                        barrierDismissible: false,
+                                        builder: (context) =>
+                                            AuditoriumNotesApprovalDialog(
+                                          onConfirm: rejectAudi,
                                         ),
-                                      );
-                                    });
-                                  },
-                                  padding: ButtonSize().mediumSize(),
-                                )
-                              ],
+                                      ).then((value) {
+                                        context.goNamed('admin_list');
+                                      });
+                                    },
+                                    padding: ButtonSize().mediumSize(),
+                                  )
+                                ],
+                              ),
                             )
                             // ConstrainedBox(
                             //   constraints: const BoxConstraints(
@@ -963,6 +995,145 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class AuditoriumNotesApprovalDialog extends StatefulWidget {
+  AuditoriumNotesApprovalDialog({
+    super.key,
+    this.onConfirm,
+    this.resetState,
+    this.notes,
+  });
+
+  Function? onConfirm;
+  Function? resetState;
+  String? notes;
+
+  @override
+  State<AuditoriumNotesApprovalDialog> createState() =>
+      _AuditoriumNotesApprovalDialogState();
+}
+
+class _AuditoriumNotesApprovalDialogState
+    extends State<AuditoriumNotesApprovalDialog> {
+  TextEditingController _notes = TextEditingController();
+  FocusNode notesNode = FocusNode();
+
+  String notes = "";
+
+  final formKey = GlobalKey<FormState>();
+
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    notesNode.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _notes.dispose();
+    notesNode.removeListener(() {});
+    notesNode.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: culturedWhite,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 560,
+          minWidth: 385,
+          minHeight: 200,
+          maxHeight: double.infinity,
+        ),
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 30,
+              horizontal: 20,
+            ),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Notes',
+                    style: titlePage.copyWith(
+                      color: eerieBlack,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  BlackInputField(
+                    controller: _notes,
+                    focusNode: notesNode,
+                    enabled: true,
+                    maxLines: 4,
+                    obsecureText: false,
+                    hintText: 'Notes here ...',
+                    onSaved: (newValue) {
+                      notes = newValue.toString();
+                    },
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TransparentButtonBlack(
+                        text: 'Cancel',
+                        disabled: false,
+                        onTap: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        padding: ButtonSize().smallSize(),
+                      ),
+                      const SizedBox(
+                        width: 25,
+                      ),
+                      isLoading
+                          ? const CircularProgressIndicator(
+                              color: eerieBlack,
+                            )
+                          : RegularButton(
+                              text: 'Confirm',
+                              disabled: false,
+                              onTap: () async {
+                                if (formKey.currentState!.validate()) {
+                                  formKey.currentState!.save();
+
+                                  await widget.onConfirm!(notes);
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              padding: ButtonSize().smallSize(),
+                            ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
