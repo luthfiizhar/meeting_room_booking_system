@@ -191,7 +191,7 @@ class _ScheduleContainerState extends State<ScheduleContainer> {
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              'You don\'t have schedule for this Day.',
+                              'You don\'t have schedule for this day',
                               textAlign: TextAlign.center,
                               style: helveticaText.copyWith(
                                 fontSize: 18,

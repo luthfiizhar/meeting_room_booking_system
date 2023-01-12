@@ -672,6 +672,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         _endTime.text = widget.endTime!;
         _repeatEnd.text = DateFormat('d MMM yyyy').format(DateTime.now());
         _totalParticipant.text = widget.participant!;
+        if (widget.participant == "25") {
+          _totalParticipant.text = "";
+        }
         if (roomType != 'MeetingRoom') {
           _totalParticipant.text = "";
           layoutSectionVisible = true;

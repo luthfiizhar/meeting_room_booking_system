@@ -31,7 +31,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
 
   int selectedIndexArea = 0;
 
-  List<User> adminList = [];
+  List<UserAdmin> adminList = [];
   // User userAdmin
   // List<Amenities> facilities = [];
 
@@ -88,7 +88,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
       if (value['Status'] == '200') {
         List result = value['Data']['List'];
         for (var element in result) {
-          adminList.add(User(
+          adminList.add(UserAdmin(
             name: element['EmpName'],
             nip: element['EmpNIP'],
             role: element['Name'],
@@ -666,7 +666,7 @@ class UserAdminListContainer extends StatefulWidget {
   });
 
   // bool isCollapsed;
-  User? user;
+  UserAdmin? user;
   Function? onClose;
   Function? onClick;
   int? index;
@@ -891,8 +891,8 @@ class _UserAdminListContainerState extends State<UserAdminListContainer> {
   }
 }
 
-class User {
-  User({
+class UserAdmin {
+  UserAdmin({
     this.username = "",
     this.name = "",
     this.nip = "",
