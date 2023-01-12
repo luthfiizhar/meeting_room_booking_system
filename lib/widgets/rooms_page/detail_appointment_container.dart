@@ -43,6 +43,11 @@ class _DetailAppointmentContainerState
   String attendantsNumber = "";
   String bookingType = "";
   String bookingStep = "";
+  String phoneNumber = "";
+
+  String userNip = "";
+  bool isAdmin = false;
+  bool isPhonNumberShowed = false;
 
   @override
   void initState() {
@@ -73,6 +78,29 @@ class _DetailAppointmentContainerState
     email = widget.bookingDetail!.email;
     avaya = widget.bookingDetail!.avaya;
     bookingStep = widget.bookingDetail!.stepBooking;
+    phoneNumber = widget.bookingDetail!.phoneNumber;
+    apiReq.getUserProfile().then((value) {
+      if (value['Status'].toString() == "200") {
+        if (value['Data']['Admin'].toString() == "1") {
+          userNip = value['Data']['EmpNIP'];
+          setState(() {
+            if (userNip == widget.bookingDetail!.empNip) {
+              isPhonNumberShowed = true;
+            }
+            isAdmin = true;
+          });
+        }
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Error for getUserProfile()',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
   }
 
   @override
@@ -217,6 +245,32 @@ class _DetailAppointmentContainerState
                       'Avaya',
                       avaya,
                     ),
+                    Visibility(
+                      visible: isAdmin
+                          ? true
+                          : isPhonNumberShowed
+                              ? true
+                              : false,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 7,
+                            ),
+                            child: Divider(
+                              color: lightGray,
+                              thickness: 0.5,
+                            ),
+                          ),
+                          rowDetail(
+                            'Phone',
+                            phoneNumber,
+                          ),
+                        ],
+                      ),
+                    ),
+
                     const SizedBox(
                       height: 40,
                     ),

@@ -115,6 +115,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   String startTime = "";
   String endTime = "";
   String totalParticipant = "";
+  double participantValue = 1;
   String additionalNote = "";
   String repeatInterval = "0";
   String repeatValue = 'NONE';
@@ -159,6 +160,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   List<RadioModel>? listEventType = [];
   String? selectedEventType = "";
   String? roomType = "MeetingRoom";
+
+  double participantMin = 0;
+  double participantMax = 5;
 
   List<Amenities> listAmenities = [];
   List<FoodAmenities> listFoods = [];
@@ -504,7 +508,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   }
 
   initContactList() {
-    apiReq.getContactList().then((value) {
+    apiReq.getContactList(_email.text).then((value) {
+      print(value);
       emailSuggestionVisible = true;
       if (value['Status'].toString() == "200") {
         if (value['Data'].toString() == "[]") {
@@ -625,9 +630,12 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     }
     apiReq.getRoomDetail(widget.roomId!).then((value) {
       setState(() {
+        participantValue = double.parse(widget.participant!);
         pictureLoading = false;
         roomName = value['Data']['RoomName'];
         floor = value['Data']['AreaName'];
+        participantMax = value['Data']['MaxCapacity'];
+        participantMin = value['Data']['MinCapacity'];
         resultAmenities = value['Data']['Amenities'];
         for (var element in resultAmenities) {
           if (element['Default'] > 0) {
@@ -752,16 +760,18 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     });
 
     _email.addListener(() {
-      // filterContact = _email.text;
+      filterContact = _email.text;
       if (_email.text != "") {
         // filterContactList.clear();
         setState(() {
-          filterContactList = contactList
-              .where((element) => element['Name']
-                  .toString()
-                  .toLowerCase()
-                  .contains(_email.text.toLowerCase()))
-              .toList();
+          // filterContactList = contactList
+          //     .where((element) => element['Name']
+          //         .toString()
+          //         .toLowerCase()
+          //         .contains(_email.text.toLowerCase()))
+          //     .toList();
+
+          initContactList();
         });
 
         // for (var element in contactList) {
@@ -777,7 +787,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       }
       if (_email.text == "") {
         setState(() {
-          filterContactList = contactList;
+          // filterContactList = contactList;
+          // initContactList();
+          emailSuggestionVisible = false;
+          isContactEmpty = true;
         });
       }
     });
@@ -826,32 +839,39 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         if (emailNode.hasFocus) {
           // _overlayEntry = emailOverlay();
           // Overlay.of(context)!.insert(_overlayEntry!);
-          if (_email.text == "") {
-            if (contactList.isEmpty) {
-              initContactList();
-            } else {
-              setState(() {
-                isContactEmpty = false;
-                emailSuggestionVisible = true;
-                filterContactList = contactList;
-              });
-            }
+          if (_email.text != "") {
+            initContactList();
+            // if (contactList.isEmpty) {
+            //   initContactList();
+            // } else {
+            //   setState(() {
+            //     isContactEmpty = false;
+            //     emailSuggestionVisible = true;
+            //     filterContactList = contactList;
+            //   });
+            // }
           } else {
-            if (contactList == []) {
-              initContactList();
-            } else {
-              setState(() {
-                isContactEmpty = false;
-                emailSuggestionVisible = true;
-                filterContactList = contactList
-                    .where((element) => element['Name']
-                        .toString()
-                        .toLowerCase()
-                        .contains(_email.text.toLowerCase()))
-                    .toList();
-              });
-            }
+            setState(() {
+              isContactEmpty = true;
+              emailSuggestionVisible = false;
+            });
           }
+          // else {
+          //   if (contactList == []) {
+          //     initContactList();
+          //   } else {
+          //     setState(() {
+          //       isContactEmpty = false;
+          //       emailSuggestionVisible = true;
+          //       // filterContactList = contactList
+          //       //     .where((element) => element['Name']
+          //       //         .toString()
+          //       //         .toLowerCase()
+          //       //         .contains(_email.text.toLowerCase()))
+          //       //     .toList();
+          //     });
+          //   }
+          // }
         } else {
           // emailSuggestionVisible = false;
           // _overlayEntry!.remove();
@@ -1091,36 +1111,62 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                   height: 20,
                                 ),
                                 inputField(
-                                  'Total Participant:',
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 100,
-                                        child: BlackInputField(
-                                          controller: _totalParticipant,
-                                          focusNode: totalParticipantNode,
-                                          onSaved: (newValue) {
-                                            totalParticipant = newValue!;
+                                    'Total Participant:',
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Slider(
+                                          thumbColor: davysGray,
+                                          value: participantValue,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              participantValue = value;
+                                              participantValue =
+                                                  participantValue
+                                                      .round()
+                                                      .toDouble();
+                                            });
                                           },
-                                          enabled: true,
-                                          hintText: 'Total',
-                                          obsecureText: false,
+                                          min: 1,
+                                          max: participantMax,
+                                          divisions: participantMax.toInt(),
+                                          label:
+                                              '${participantValue.round()} Person',
+                                          activeColor: eerieBlack,
+                                          inactiveColor: platinum,
+                                          // divisions: 1,
                                         ),
                                       ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      const Text(
-                                        'Person',
-                                        style: TextStyle(
-                                          fontFamily: 'Helvetica',
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
+                                    )
+                                    // Row(
+                                    //   children: [
+                                    //     SizedBox(
+                                    //       width: 100,
+                                    //       child: BlackInputField(
+                                    //         controller: _totalParticipant,
+                                    //         focusNode: totalParticipantNode,
+                                    //         onSaved: (newValue) {
+                                    //           totalParticipant = newValue!;
+                                    //         },
+                                    //         enabled: true,
+                                    //         hintText: 'Total',
+                                    //         obsecureText: false,
+                                    //       ),
+                                    //     ),
+                                    //     const SizedBox(
+                                    //       width: 10,
+                                    //     ),
+                                    //     const Text(
+                                    //       'Person',
+                                    //       style: TextStyle(
+                                    //         fontFamily: 'Helvetica',
+                                    //         fontSize: 18,
+                                    //         fontWeight: FontWeight.w300,
+                                    //       ),
+                                    //     )
+                                    //   ],
+                                    // ),
+                                    ),
                                 const SizedBox(
                                   height: 20,
                                 ),
@@ -1725,6 +1771,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                               tempGuest.add('"$element"');
                                             }
 
+                                            totalParticipant =
+                                                participantValue.toString();
                                             booking.amenities = tempAmen;
                                             booking.foodAmenities = tempFood;
                                             booking.recursive = repeatValue;
@@ -2017,7 +2065,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                         top: 475,
                         right: 0,
                         child: EmailSuggestionContainer(
-                          contactList: filterContactList,
+                          contactList: contactList,
                           emptyMessage: messageEmptyContact,
                           isEmpty: isContactEmpty,
                           filter: filterContact,
@@ -2035,6 +2083,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                           currentDate: selectedDate,
                           changeDate: setDate,
                           setPickerStatus: setDatePickerVisible,
+                          maxDate: DateTime.now().add(const Duration(days: 30)),
                         ),
                       ),
                     ),

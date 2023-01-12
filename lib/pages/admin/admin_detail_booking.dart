@@ -39,6 +39,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
   String coverURL = "";
 
   String roomId = "";
+  String bookingNip = "";
   String location = "";
   String floor = "";
   String eventDate = "";
@@ -63,6 +64,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
   String host = "";
   String hostEmail = "";
   String avaya = "";
+  String phoneNumber = "";
 
   int bookingStep = 0;
 
@@ -77,6 +79,8 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
 
   bool isInitLoading = true;
   bool isCancelLoading = false;
+  bool isAdmin = false;
+  bool isPhoneShowed = false;
 
   String approvalNotes = "";
 
@@ -158,6 +162,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
         setState(() {
           isInitLoading = false;
           roomId = value['Data']['RoomID'];
+          bookingNip = value['Data']['EmpNIP'];
           coverURL = value['Data']['RoomPhotos'];
           summary = value['Data']['Summary'];
           description = value['Data']['Description'];
@@ -213,6 +218,27 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           ),
         );
       }
+      apiReq.getUserProfile().then((value) {
+        if (value["Status"].toString() == "200") {
+          if (value["Data"]["Admin"].toString() == "1") {
+            setState(() {
+              isAdmin = true;
+              if (bookingNip == value["Data"]["EmpNIP"]) {
+                isPhoneShowed = true;
+              }
+            });
+          }
+        }
+      }).onError((error, stackTrace) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: 'Error for getUserProfile()',
+            contentText: error.toString(),
+            isSuccess: false,
+          ),
+        );
+      });
     }).onError((error, stackTrace) {
       showDialog(
         context: context,
@@ -630,6 +656,19 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
         detailContent('Email', hostEmail),
         divider2(),
         detailContent('Avaya', avaya),
+        Visibility(
+          visible: isAdmin
+              ? true
+              : isPhoneShowed
+                  ? true
+                  : false,
+          child: Column(
+            children: [
+              divider2(),
+              detailContent('Phone', phoneNumber),
+            ],
+          ),
+        ),
         const SizedBox(
           height: 30,
         ),

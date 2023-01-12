@@ -84,6 +84,7 @@ class _SearchPageState extends State<SearchPage> {
   List roomType = [];
   String sort = "floor_lowest";
   dynamic resultArea;
+  double participantValue = 2;
 
   List<RadioModel> listSorting = [
     RadioModel(isSelected: false, text: 'Lowest Floor', value: 'floor_lowest'),
@@ -711,10 +712,11 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {});
   }
 
-  onParticipanSelected(String value) {
+  onParticipanSelected(String value, double valueDouble) {
     participantSelected = value;
+    participantValue = valueDouble;
     _participantController.text = "$participantSelected Person";
-    setOpacityOn(false);
+    // setOpacityOn(false);
     setState(() {});
   }
 
@@ -1513,6 +1515,8 @@ class _SearchPageState extends State<SearchPage> {
                                                                           startTime,
                                                                       selectedEndTime:
                                                                           endTime,
+                                                                      participantSelected:
+                                                                          '$participantValue',
                                                                     );
                                                                   },
                                                                 ),
@@ -1627,7 +1631,7 @@ class _SearchPageState extends State<SearchPage> {
                         changeDate: onDateChanged,
                         setPickerStatus: setDatePickerVisible,
                         currentDate: selectedDate,
-                        maxDate: selectedDate.add(const Duration(days: 30)),
+                        maxDate: DateTime.now().add(const Duration(days: 30)),
                         canPickPastDay: false,
                       ),
                     ),
@@ -1692,10 +1696,11 @@ class _SearchPageState extends State<SearchPage> {
                     visible: participantContainerVisible,
                     child: Positioned(
                       top: 485,
-                      right: 575,
+                      right: 475,
                       child: ParticipantContainer(
                         setParticipantStatus: setParticipantStatus,
                         onChangeParticipant: onParticipanSelected,
+                        participantValue: participantValue,
                       ),
                     ),
                   ),
