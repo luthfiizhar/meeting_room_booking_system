@@ -657,7 +657,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               changeDate: onDateChanged,
                               currentDate: selectedDate,
                               maxDate:
-                                  selectedDate.add(const Duration(days: 30)),
+                                  DateTime.now().add(const Duration(days: 30)),
                               setPickerStatus: setDatePickerVisible,
                               canPickPastDay: false,
                             ),

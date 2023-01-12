@@ -1126,7 +1126,7 @@ class ReqAPI {
     }
   }
 
-  Future getContactList() async {
+  Future getContactList(String keyword) async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -1137,8 +1137,15 @@ class ReqAPI {
       // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
       'Content-Type': 'application/json',
     };
+
+    var bodySend = """
+    {
+        "Keyword" : "$keyword"
+    }
+    """;
     try {
-      var response = await http.post(url, headers: requestHeader);
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
 
       var data = json.decode(response.body);
 

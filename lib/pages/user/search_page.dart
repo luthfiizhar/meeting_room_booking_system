@@ -1515,6 +1515,8 @@ class _SearchPageState extends State<SearchPage> {
                                                                           startTime,
                                                                       selectedEndTime:
                                                                           endTime,
+                                                                      participantSelected:
+                                                                          '$participantValue',
                                                                     );
                                                                   },
                                                                 ),
@@ -1629,7 +1631,7 @@ class _SearchPageState extends State<SearchPage> {
                         changeDate: onDateChanged,
                         setPickerStatus: setDatePickerVisible,
                         currentDate: selectedDate,
-                        maxDate: selectedDate.add(const Duration(days: 30)),
+                        maxDate: DateTime.now().add(const Duration(days: 30)),
                         canPickPastDay: false,
                       ),
                     ),

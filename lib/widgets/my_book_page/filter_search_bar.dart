@@ -201,7 +201,10 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
                       hintText: 'Search here...',
                       onFieldSubmitted: (value) => widget.search!(),
                       prefixIcon: const ImageIcon(
-                        AssetImage('assets/icons/search_icon.png'),
+                        AssetImage(
+                          'assets/icons/search_icon.png',
+                        ),
+                        color: davysGray,
                       ),
                     ),
                   )

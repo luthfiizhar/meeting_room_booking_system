@@ -555,7 +555,7 @@ class _RoomsPageState extends State<RoomsPage> {
                             changeDate: setDate,
                             currentDate: selectedDate,
                             maxDate:
-                                selectedDate!.add(const Duration(days: 30)),
+                                DateTime.now().add(const Duration(days: 30)),
                           ),
                           const SizedBox(
                             height: 20,
@@ -660,14 +660,21 @@ class _RoomsPageState extends State<RoomsPage> {
             ),
             IconButton(
               onPressed: () {
+                // getBookingListRoom(
+                //     selectedArea!, selectedDate!.toString());
                 setState(() {
                   selectedDate = calendarControl!.displayDate!
                       .add(const Duration(days: 1));
                 });
-                // getBookingListRoom(
-                //     selectedArea!, selectedDate!.toString());
+                print(calendarControl!.displayDate!);
                 datePickerControl.selectedDate = selectedDate;
                 calendarControl!.displayDate = selectedDate;
+                print(selectedDate!.isAfter(calendarControl!.displayDate!));
+                if (selectedDate!.isAfter(calendarControl!.displayDate!)) {
+                  setState(() {
+                    selectedDate = calendarControl!.displayDate!;
+                  });
+                } else {}
               },
               splashRadius: 20,
               icon: const Icon(
@@ -745,6 +752,7 @@ class _RoomsPageState extends State<RoomsPage> {
           // height: MediaQuery.of(context).size.height - 60,
           height: dataRoom.isNotEmpty ? (100 * dataRoom.length) + 30 : 500,
           child: SfCalendar(
+            maxDate: DateTime.now().add(const Duration(days: 30)),
             onViewChanged: (viewChangedDetails) {
               selectedDate = viewChangedDetails.visibleDates.first;
               if (dataRoom == []) {
@@ -792,6 +800,9 @@ class _RoomsPageState extends State<RoomsPage> {
                         setState(() {
                           // print(value);
                           detailEvent.bookingId = value['Data']['BookingID'];
+                          detailEvent.empNip = value['Data']['EmpNIP'];
+                          detailEvent.phoneNumber =
+                              value['Data']['PhoneNumber'];
                           detailEvent.location = value['Data']['RoomName'];
                           detailEvent.summary = value['Data']['Summary'];
                           detailEvent.description =
@@ -1233,6 +1244,7 @@ class Area {
 class BookingDetail {
   BookingDetail({
     this.bookingId = "",
+    this.empNip = "",
     this.location = "",
     this.floor = "",
     this.eventTime = "",
@@ -1246,8 +1258,10 @@ class BookingDetail {
     this.attendatsNumber = "",
     this.status = "",
     this.stepBooking = "",
+    this.phoneNumber = "",
   });
   String bookingId;
+  String empNip;
   String location;
   String floor;
   String eventTime;
@@ -1260,6 +1274,7 @@ class BookingDetail {
   String host;
   String email;
   String avaya;
+  String phoneNumber;
 
   String status;
   String stepBooking;
