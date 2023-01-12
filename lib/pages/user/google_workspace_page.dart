@@ -228,7 +228,7 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
     _controller.forward(from: 0);
     Future.delayed(
       const Duration(
-        milliseconds: 250,
+        milliseconds: 100,
       ),
       () {
         _controller2.forward(from: 0);
@@ -236,7 +236,7 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
     );
     Future.delayed(
       const Duration(
-        milliseconds: 750,
+        milliseconds: 250,
       ),
       () {
         _controller3.forward(from: 0);
@@ -244,7 +244,7 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
     );
     Future.delayed(
       const Duration(
-        milliseconds: 1000,
+        milliseconds: 400,
       ),
       () {
         _controller4.forward(from: 0);
@@ -743,7 +743,25 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                         color: eerieBlack,
                       )
                     : isAccLinked
-                        ? SizedBox()
+                        ? Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.end,
+                            children: [
+                              const ImageIcon(
+                                AssetImage(
+                                  'assets/icons/check_icon.png',
+                                ),
+                                color: greenAcent,
+                              ),
+                              Text(
+                                'Your account already linked.',
+                                style: helveticaText.copyWith(
+                                  fontSize: 18,
+                                  color: davysGray,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              )
+                            ],
+                          )
                         : TransparentBorderedBlackButton(
                             text: 'Link My Account',
                             disabled: false,
@@ -1094,7 +1112,25 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                     height: 60,
                   ),
                   isAccLinked
-                      ? SizedBox()
+                      ? Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.end,
+                          children: [
+                            const ImageIcon(
+                              AssetImage(
+                                'assets/icons/check_icon.png',
+                              ),
+                              color: greenAcent,
+                            ),
+                            Text(
+                              'Your account already linked.',
+                              style: helveticaText.copyWith(
+                                fontSize: 18,
+                                color: culturedWhite,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ],
+                        )
                       : TransparentBorderedWhiteButton(
                           text: 'Link My Account',
                           disabled: false,
