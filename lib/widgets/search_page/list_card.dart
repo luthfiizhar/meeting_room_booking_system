@@ -24,6 +24,7 @@ class ListRoomContainer extends StatelessWidget {
     this.roomID,
     this.roomType,
     this.floor = "",
+    this.participantSelected = "2",
   });
 
   String? roomID;
@@ -40,6 +41,7 @@ class ListRoomContainer extends StatelessWidget {
   String? date;
   String? roomType;
   String? floor;
+  String? participantSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -285,7 +287,7 @@ class ListRoomContainer extends StatelessWidget {
                       'date': '$date',
                       'startTime': '$selectedStartTime',
                       'endTime': '$selectedEndTime',
-                      'participant': '$maxCapacity',
+                      'participant': '$participantSelected',
                       'facilities': '$amenities',
                       'roomType': '$roomType',
                       'isEdit': 'false'

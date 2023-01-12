@@ -44,6 +44,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
   String coverURL = "";
 
   String roomId = "";
+  String bookingNip = "";
   String location = "";
   String floor = "";
   String eventDate = "";
@@ -69,6 +70,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
   String host = "";
   String hostEmail = "";
   String avaya = "";
+  String phoneNumber = "";
 
   List guestInvited = [];
   List amenities = [];
@@ -81,6 +83,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
 
   bool isInitLoading = true;
   bool isCancelLoading = false;
+  bool isAdmin = false;
+  bool isPhoneShowed = false;
 
   int bookingStep = 0;
   resetStatus(bool value) {}
@@ -95,6 +99,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
         setState(() {
           isInitLoading = false;
           roomId = value['Data']['RoomID'];
+          bookingNip = value['Data']['EmpNIP'];
           coverURL = value['Data']['RoomPhotos'];
           summary = value['Data']['Summary'];
           description = value['Data']['Description'] ?? "";
@@ -120,6 +125,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
           host = value['Data']['EmpName'];
           meetUrl = value['Data']['GoogleMeetLink'];
           avaya = value['Data']['AvayaNumber'];
+          phoneNumber = value['Data']['PhoneNumber'];
           hostEmail = value['Data']['Email'];
           // layoutName = value['Data']['LayoutName'];
           // layoutImage = value['Data']['LayoutImg'];
@@ -152,6 +158,27 @@ class _DetailEventPageState extends State<DetailEventPage> {
           ),
         );
       }
+      apiReq.getUserProfile().then((value) {
+        if (value["Status"].toString() == "200") {
+          if (value["Data"]["Admin"].toString() == "1") {
+            setState(() {
+              isAdmin = true;
+              if (bookingNip == value["Data"]["EmpNIP"]) {
+                isPhoneShowed = true;
+              }
+            });
+          }
+        }
+      }).onError((error, stackTrace) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: 'Error for getUserProfile()',
+            contentText: error.toString(),
+            isSuccess: false,
+          ),
+        );
+      });
     }).onError((error, stackTrace) {
       showDialog(
         context: context,
@@ -576,6 +603,19 @@ class _DetailEventPageState extends State<DetailEventPage> {
         detailContent('Email', hostEmail),
         divider2(),
         detailContent('Avaya', avaya),
+        Visibility(
+          visible: isAdmin
+              ? true
+              : isPhoneShowed
+                  ? true
+                  : false,
+          child: Column(
+            children: [
+              divider2(),
+              detailContent('Phone', phoneNumber),
+            ],
+          ),
+        ),
         const SizedBox(
           height: 30,
         ),

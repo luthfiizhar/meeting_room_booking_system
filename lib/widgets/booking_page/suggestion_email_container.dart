@@ -50,7 +50,7 @@ class _EmailSuggestionContainerState extends State<EmailSuggestionContainer> {
                   width: double.infinity,
                   child: Center(
                     child: Text(
-                      'Empty',
+                      'Name / Email not found.',
                       style: helveticaText.copyWith(
                         color: white,
                       ),
@@ -70,7 +70,7 @@ class _EmailSuggestionContainerState extends State<EmailSuggestionContainer> {
                                 widget.contactList![index]['Email']);
                           },
                           child: EmailSuggestionListBody(
-                            name: widget.contactList![index]['Name'],
+                            name: widget.contactList![index]['FullName'],
                             email: widget.contactList![index]['Email'],
                           ),
                         ),
