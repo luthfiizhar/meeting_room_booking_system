@@ -37,7 +37,7 @@ class ApprovalListContainer extends StatefulWidget {
 class _ApprovalListContainerState extends State<ApprovalListContainer> {
   ReqAPI apiReq = ReqAPI();
 
-  approveAudi(String notes) {
+  rejectAudi(String notes) {
     apiReq.rejectAuditorium(widget.bookingId, notes).then((value) {
       if (value['Status'] == "200") {
         showDialog(
@@ -70,7 +70,7 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
     });
   }
 
-  rejectAudi(String notes) {
+  approveAudi(String notes) {
     apiReq.approveAuditorium(widget.bookingId, notes).then((value) {
       if (value['Status'] == "200") {
         showDialog(
