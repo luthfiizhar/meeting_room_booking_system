@@ -673,6 +673,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         _repeatEnd.text = DateFormat('d MMM yyyy').format(DateTime.now());
         _totalParticipant.text = widget.participant!;
         if (roomType != 'MeetingRoom') {
+          _totalParticipant.text = "";
           layoutSectionVisible = true;
           repeatSectionVisible = false;
         }
@@ -1111,62 +1112,62 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                   height: 20,
                                 ),
                                 inputField(
-                                    'Total Participant:',
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Slider(
-                                          thumbColor: davysGray,
-                                          value: participantValue,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              participantValue = value;
-                                              participantValue =
-                                                  participantValue
-                                                      .round()
-                                                      .toDouble();
-                                            });
+                                  'Total Participant:',
+                                  // Expanded(
+                                  //   child: Align(
+                                  //     alignment: Alignment.centerLeft,
+                                  //     child: Slider(
+                                  //       thumbColor: davysGray,
+                                  //       value: participantValue,
+                                  //       onChanged: (value) {
+                                  //         setState(() {
+                                  //           participantValue = value;
+                                  //           participantValue =
+                                  //               participantValue
+                                  //                   .round()
+                                  //                   .toDouble();
+                                  //         });
+                                  //       },
+                                  //       min: 1,
+                                  //       max: participantMax,
+                                  //       divisions: participantMax.toInt(),
+                                  //       label:
+                                  //           '${participantValue.round()} Person',
+                                  //       activeColor: eerieBlack,
+                                  //       inactiveColor: platinum,
+                                  //       // divisions: 1,
+                                  //     ),
+                                  //   ),
+                                  // )
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 100,
+                                        child: BlackInputField(
+                                          controller: _totalParticipant,
+                                          focusNode: totalParticipantNode,
+                                          onSaved: (newValue) {
+                                            totalParticipant = newValue!;
                                           },
-                                          min: 1,
-                                          max: participantMax,
-                                          divisions: participantMax.toInt(),
-                                          label:
-                                              '${participantValue.round()} Person',
-                                          activeColor: eerieBlack,
-                                          inactiveColor: platinum,
-                                          // divisions: 1,
+                                          enabled: true,
+                                          hintText: 'Total',
+                                          obsecureText: false,
                                         ),
                                       ),
-                                    )
-                                    // Row(
-                                    //   children: [
-                                    //     SizedBox(
-                                    //       width: 100,
-                                    //       child: BlackInputField(
-                                    //         controller: _totalParticipant,
-                                    //         focusNode: totalParticipantNode,
-                                    //         onSaved: (newValue) {
-                                    //           totalParticipant = newValue!;
-                                    //         },
-                                    //         enabled: true,
-                                    //         hintText: 'Total',
-                                    //         obsecureText: false,
-                                    //       ),
-                                    //     ),
-                                    //     const SizedBox(
-                                    //       width: 10,
-                                    //     ),
-                                    //     const Text(
-                                    //       'Person',
-                                    //       style: TextStyle(
-                                    //         fontFamily: 'Helvetica',
-                                    //         fontSize: 18,
-                                    //         fontWeight: FontWeight.w300,
-                                    //       ),
-                                    //     )
-                                    //   ],
-                                    // ),
-                                    ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      const Text(
+                                        'Person',
+                                        style: TextStyle(
+                                          fontFamily: 'Helvetica',
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
                                 const SizedBox(
                                   height: 20,
                                 ),

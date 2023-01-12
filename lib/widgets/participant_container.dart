@@ -69,20 +69,20 @@ class _ParticipantContainerState extends State<ParticipantContainer> {
                 participantValue = value;
               });
               String stringValue = "";
-              if (participantValue == 10) {
-                stringValue = '>$participantValue';
+              if (participantValue == 25) {
+                stringValue = '${participantValue.round()}+';
               } else {
-                stringValue = '$participantValue';
+                stringValue = '${participantValue.round()}';
               }
-              widget.onChangeParticipant!(stringValue, value);
+              widget.onChangeParticipant!(stringValue, value.round());
             },
             value: participantValue,
-            min: 0,
-            max: 10,
-            divisions: 10,
-            label: participantValue == 10
-                ? '>$participantValue'
-                : '$participantValue',
+            min: 1,
+            max: 25,
+            divisions: 25,
+            label: participantValue == 25
+                ? '${participantValue.round()}+'
+                : '${participantValue.round()}',
           ),
         ),
         // child: RawScrollbar(
