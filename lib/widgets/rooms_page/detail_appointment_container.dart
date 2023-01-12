@@ -48,6 +48,7 @@ class _DetailAppointmentContainerState
   String userNip = "";
   bool isAdmin = false;
   bool isPhonNumberShowed = false;
+  bool isOwner = false;
 
   @override
   void initState() {
@@ -86,6 +87,7 @@ class _DetailAppointmentContainerState
           setState(() {
             if (userNip == widget.bookingDetail!.empNip) {
               isPhonNumberShowed = true;
+              isOwner = true;
             }
             isAdmin = true;
           });
@@ -311,9 +313,11 @@ class _DetailAppointmentContainerState
                           //   tooltip: 'Trade',
                           // ),
                           Visibility(
-                            visible: bookingStep == "3" || bookingStep == "4"
+                            visible: !isOwner
                                 ? false
-                                : true,
+                                : int.parse(bookingStep) > 1
+                                    ? false
+                                    : true,
                             child: IconButton(
                               icon: const Icon(
                                 MdiIcons.closeCircleOutline,
