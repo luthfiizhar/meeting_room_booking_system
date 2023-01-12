@@ -1182,6 +1182,8 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                     detailEvent.host = value['Data']['EmpName'];
                     detailEvent.attendatsNumber =
                         value['Data']['AttendantsNumber'].toString();
+                    detailEvent.phoneNumber = value['Data']['PhoneNumber'];
+                    detailEvent.empNip = value['Data']['EmpNIP'];
                     if (!isShowDetail) {
                       isShowDetail = true;
                     }
