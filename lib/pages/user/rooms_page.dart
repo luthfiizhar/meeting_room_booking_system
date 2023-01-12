@@ -376,6 +376,8 @@ class _RoomsPageState extends State<RoomsPage> {
             endTimeZone: "",
             startTimeZone: "",
             bookingID: eventRoom[j]['BookingID'],
+            type: eventRoom[j]['Type'],
+            googleID: eventRoom[j]['GoogleCalendarEventID'],
           ),
         );
         // Provider.of<MainModel>(context, listen: false).events.appointments!.add(
