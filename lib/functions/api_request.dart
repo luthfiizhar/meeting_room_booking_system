@@ -5,6 +5,7 @@ import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/model/booking_class.dart';
 import 'package:http/http.dart' as http;
 import 'package:meeting_room_booking_system/model/search_term.dart';
+import 'package:meeting_room_booking_system/model/user.dart';
 import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page.dart';
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
 import 'api_url.dart';
@@ -1165,6 +1166,37 @@ class ReqAPI {
       // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
       'Content-Type': 'application/json',
     };
+    try {
+      var response = await http.get(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future updateUserProfile(User user) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/user/update');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+        "FullName" : "${user.name}",
+        "Email" : "${user.email}",
+        "Avaya" : "${user.avaya}",
+        "CountryCode" : "${user.phoneCode}",
+        "PhoneNumber" : "${user.phoneNumber}"
+    }
+    """;
     try {
       var response = await http.get(url, headers: requestHeader);
 
