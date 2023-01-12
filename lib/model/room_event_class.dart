@@ -16,6 +16,8 @@ class RoomEvent {
     this.resourceIds,
     this.isDark = true,
     this.bookingID = "",
+    this.type = "",
+    this.googleID = "",
   });
 
   String? eventName;
@@ -32,6 +34,8 @@ class RoomEvent {
   List<String>? resourceIds;
   bool isDark;
   String? bookingID;
+  String? type;
+  String? googleID;
 
   @override
   String toString() {
