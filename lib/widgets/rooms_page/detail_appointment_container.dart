@@ -9,6 +9,7 @@ import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/pages/user/rooms_page.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
+import 'dart:html' as html;
 
 class DetailAppointmentContainer extends StatefulWidget {
   DetailAppointmentContainer({
@@ -288,9 +289,17 @@ class _DetailAppointmentContainerState
                               size: 26,
                             ),
                             onPressed: () {
-                              context.goNamed('detail_event', params: {
-                                'eventId': widget.bookingDetail!.bookingId,
-                              });
+                              if (widget.bookingDetail!.type == "MRBS") {
+                                context.goNamed('detail_event', params: {
+                                  'eventId': widget.bookingDetail!.bookingId,
+                                });
+                              } else {
+                                html.window
+                                    .open('http://calendar.google.com', '');
+                              }
+                              // context.goNamed('detail_event', params: {
+                              //   'eventId': widget.bookingDetail!.bookingId,
+                              // });
                             },
                             tooltip: 'Detail Info',
                           ),

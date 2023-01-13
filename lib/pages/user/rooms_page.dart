@@ -159,6 +159,108 @@ class _RoomsPageState extends State<RoomsPage> {
     // print(_events!.resources!);
   }
 
+  getMrbsBookingDetail() {
+    apiReq.getBookingDetail(selectedEvent!.bookingID!).then((value) {
+      if (value['Status'] == "200") {
+        setState(() {
+          // print(value);
+          detailEvent.bookingId = value['Data']['BookingID'];
+          detailEvent.empNip = value['Data']['EmpNIP'];
+          detailEvent.phoneNumber = value['Data']['PhoneNumber'];
+          detailEvent.location = value['Data']['RoomName'];
+          detailEvent.summary = value['Data']['Summary'];
+          detailEvent.description = value['Data']['Description'] ?? "";
+          detailEvent.eventDate = value['Data']['BookingDate'];
+          detailEvent.eventTime = value['Data']['BookingStartTime'] +
+              " - " +
+              value['Data']['BookingEndTime'];
+          detailEvent.duration = value['Data']['Duration'];
+          detailEvent.floor = value['Data']['AreaName'];
+          detailEvent.email = value['Data']['Email'];
+          detailEvent.avaya = value['Data']['AvayaNumber'];
+          detailEvent.host = value['Data']['EmpName'];
+          detailEvent.attendatsNumber =
+              value['Data']['AttendantsNumber'].toString();
+          detailEvent.status = value['Data']['Status'];
+          detailEvent.stepBooking = value['Data']['BookingStep'].toString();
+          detailEvent.type = "MRBS";
+          if (!isShowDetail) {
+            isShowDetail = true;
+          }
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
+  getGoogleBookingDetail() {
+    apiReq.getGoogleRoomDetail(selectedEvent!.googleID!).then((value) {
+      if (value['Status'] == "200") {
+        setState(() {
+          // print(value);
+          detailEvent.bookingId = selectedEvent!.googleID!;
+          detailEvent.empNip = "";
+          detailEvent.phoneNumber = "-";
+          detailEvent.location = value['Data']['RoomName'];
+          detailEvent.summary = value['Data']['Summary'] ?? "";
+          detailEvent.description = value['Data']['Description'] ?? "";
+          detailEvent.eventDate = value['Data']['BookingDate'];
+          detailEvent.eventTime = value['Data']['BookingStart'] +
+              " - " +
+              value['Data']['BookingEnd'];
+          detailEvent.duration = value['Data']['Duration'];
+          detailEvent.floor = value['Data']['AreaName'];
+          detailEvent.email = value['Data']['Email'];
+          detailEvent.avaya = value['Data']['AvayaNumber'] ?? "-";
+          detailEvent.host = value['Data']['EmpName'];
+          detailEvent.attendatsNumber =
+              value['Data']['AttendantsNumber'].toString();
+          detailEvent.status = value['Data']['Status'];
+          detailEvent.stepBooking = value['Data']['BookingStep'].toString();
+          detailEvent.type = "GOOGLE";
+          if (!isShowDetail) {
+            isShowDetail = true;
+          }
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect to API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
   setDatePickerStatus(bool value) {
     // setState(() {
     //   isShowDetail = false;
@@ -794,60 +896,12 @@ class _RoomsPageState extends State<RoomsPage> {
                     if (isShowDetail) {
                       isShowDetail = false;
                     }
-
-                    apiReq
-                        .getBookingDetail(selectedEvent!.bookingID!)
-                        .then((value) {
-                      if (value['Status'] == "200") {
-                        setState(() {
-                          // print(value);
-                          detailEvent.bookingId = value['Data']['BookingID'];
-                          detailEvent.empNip = value['Data']['EmpNIP'];
-                          detailEvent.phoneNumber =
-                              value['Data']['PhoneNumber'];
-                          detailEvent.location = value['Data']['RoomName'];
-                          detailEvent.summary = value['Data']['Summary'];
-                          detailEvent.description =
-                              value['Data']['Description'] ?? "";
-                          detailEvent.eventDate = value['Data']['BookingDate'];
-                          detailEvent.eventTime = value['Data']
-                                  ['BookingStartTime'] +
-                              " - " +
-                              value['Data']['BookingEndTime'];
-                          detailEvent.duration = value['Data']['Duration'];
-                          detailEvent.floor = value['Data']['AreaName'];
-                          detailEvent.email = value['Data']['Email'];
-                          detailEvent.avaya = value['Data']['AvayaNumber'];
-                          detailEvent.host = value['Data']['EmpName'];
-                          detailEvent.attendatsNumber =
-                              value['Data']['AttendantsNumber'].toString();
-                          detailEvent.status = value['Data']['Status'];
-                          detailEvent.stepBooking =
-                              value['Data']['BookingStep'].toString();
-                          if (!isShowDetail) {
-                            isShowDetail = true;
-                          }
-                        });
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialogBlack(
-                            title: value['Title'],
-                            contentText: value['Message'],
-                            isSuccess: false,
-                          ),
-                        );
-                      }
-                    }).onError((error, stackTrace) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialogBlack(
-                          title: 'Failed connect to API',
-                          contentText: error.toString(),
-                          isSuccess: false,
-                        ),
-                      );
-                    });
+                    if (list.type == "MRBS") {
+                      getMrbsBookingDetail();
+                    }
+                    if (list.type == "GOOGLE") {
+                      getGoogleBookingDetail();
+                    }
                   });
                 } else {
                   showDialog(
@@ -1261,6 +1315,7 @@ class BookingDetail {
     this.status = "",
     this.stepBooking = "",
     this.phoneNumber = "",
+    this.type = "",
   });
   String bookingId;
   String empNip;
@@ -1280,4 +1335,6 @@ class BookingDetail {
 
   String status;
   String stepBooking;
+
+  String type;
 }

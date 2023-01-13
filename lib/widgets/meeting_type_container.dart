@@ -27,7 +27,8 @@ class MeetingTypeContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        maxHeight: 180,
+        maxHeight: 250,
+        minHeight: 180,
         maxWidth: 160,
       ),
       child: Container(
@@ -39,46 +40,96 @@ class MeetingTypeContainer extends StatelessWidget {
           color: eerieBlack,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: ListView.builder(
-          itemCount: meetingType!.length,
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () {
-                setMeetingType!(
-                    meetingType![index]['Value'],
-                    meetingType![index]['Name'],
-                    meetingType![index]['Image'],
-                    meetingType![index]['RoomName'],
-                    meetingType![index]['BuildingName'] ?? "Head Office");
-                setMeetingTypeStatus!(false);
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  index == 0 || index == meetingType!.length
-                      ? const SizedBox()
-                      : const Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 10,
-                          ),
-                          child: Divider(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: meetingType!
+              .asMap()
+              .map(
+                (index, value) => MapEntry(
+                  index,
+                  InkWell(
+                    onTap: () {
+                      setMeetingType!(
+                          meetingType![index]['Value'],
+                          meetingType![index]['Name'],
+                          meetingType![index]['Image'],
+                          meetingType![index]['RoomName'],
+                          meetingType![index]['BuildingName'] ?? "Head Office");
+                      setMeetingTypeStatus!(false);
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        index == 0 || index == meetingType!.length
+                            ? const SizedBox()
+                            : const Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 10,
+                                ),
+                                child: Divider(
+                                  color: culturedWhite,
+                                ),
+                              ),
+                        Text(
+                          meetingType![index]['Name'],
+                          style: const TextStyle(
                             color: culturedWhite,
+                            fontFamily: 'Helvetica',
+                            fontSize: 16,
+                            height: 1.3,
+                            fontWeight: FontWeight.w300,
                           ),
                         ),
-                  Text(
-                    meetingType![index]['Name'],
-                    style: const TextStyle(
-                      color: culturedWhite,
-                      fontFamily: 'Helvetica',
-                      fontSize: 16,
-                      height: 1.3,
-                      fontWeight: FontWeight.w300,
+                      ],
                     ),
                   ),
-                ],
-              ),
-            );
-          },
+                ),
+              )
+              .values
+              .toList(),
+          // children: [
+          //   ListView.builder(
+          //     itemCount: meetingType!.length,
+          //     itemBuilder: (context, index) {
+          //       return InkWell(
+          //         onTap: () {
+          //           setMeetingType!(
+          //               meetingType![index]['Value'],
+          //               meetingType![index]['Name'],
+          //               meetingType![index]['Image'],
+          //               meetingType![index]['RoomName'],
+          //               meetingType![index]['BuildingName'] ?? "Head Office");
+          //           setMeetingTypeStatus!(false);
+          //         },
+          //         child: Column(
+          //           mainAxisAlignment: MainAxisAlignment.center,
+          //           children: [
+          //             index == 0 || index == meetingType!.length
+          //                 ? const SizedBox()
+          //                 : const Padding(
+          //                     padding: EdgeInsets.symmetric(
+          //                       vertical: 10,
+          //                     ),
+          //                     child: Divider(
+          //                       color: culturedWhite,
+          //                     ),
+          //                   ),
+          //             Text(
+          //               meetingType![index]['Name'],
+          //               style: const TextStyle(
+          //                 color: culturedWhite,
+          //                 fontFamily: 'Helvetica',
+          //                 fontSize: 16,
+          //                 height: 1.3,
+          //                 fontWeight: FontWeight.w300,
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       );
+          //     },
+          //   ),
+          // ],
         ),
       ),
     );
