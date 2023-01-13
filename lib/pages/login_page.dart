@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
           isLoading = false;
         });
         if (value['Status'].toString() == "200") {
-          dynamic firstLogin = value['Data']['FirstLogin'].toString();
+          dynamic firstLogin = value['Data']['LoginCount'].toString();
           apiReq.getUserProfile().then((value) async {
             print("getUserProfile $value");
             if (value['Status'].toString() == "200") {
