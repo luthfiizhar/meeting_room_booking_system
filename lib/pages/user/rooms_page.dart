@@ -214,7 +214,9 @@ class _RoomsPageState extends State<RoomsPage> {
   }
 
   getGoogleBookingDetail() {
-    apiReq.getGoogleRoomDetail(selectedEvent!.googleID!).then((value) {
+    apiReq
+        .getGoogleRoomDetail(selectedEvent!.googleID!, selectedEvent!.roomId!)
+        .then((value) {
       if (value['Status'] == "200") {
         setState(() {
           // print(value);
@@ -484,6 +486,7 @@ class _RoomsPageState extends State<RoomsPage> {
             bookingID: eventRoom[j]['BookingID'],
             type: eventRoom[j]['Type'],
             googleID: eventRoom[j]['GoogleCalendarEventID'],
+            roomId: dataRoom[i]['RoomID'],
           ),
         );
         // Provider.of<MainModel>(context, listen: false).events.appointments!.add(

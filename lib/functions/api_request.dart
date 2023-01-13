@@ -626,7 +626,7 @@ class ReqAPI {
     }
   }
 
-  Future getGoogleRoomDetail(String googleId) async {
+  Future getGoogleRoomDetail(String googleId, String roomId) async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -637,8 +637,14 @@ class ReqAPI {
       // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
       'Content-Type': 'application/json',
     };
+
+    var bodySend = """
+    {
+        "RoomID" : "$roomId"
+    }
+    """;
     try {
-      var response = await http.get(url, headers: requestHeader);
+      var response = await http.post(url, headers: requestHeader);
 
       var data = json.decode(response.body);
 
