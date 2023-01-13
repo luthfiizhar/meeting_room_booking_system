@@ -184,6 +184,7 @@ class _RoomsPageState extends State<RoomsPage> {
           detailEvent.status = value['Data']['Status'];
           detailEvent.stepBooking = value['Data']['BookingStep'].toString();
           detailEvent.type = "MRBS";
+          detailEvent.bookingType = value['Data']['BookingType'] ?? "";
           if (!isShowDetail) {
             isShowDetail = true;
           }
@@ -235,6 +236,7 @@ class _RoomsPageState extends State<RoomsPage> {
           detailEvent.status = value['Data']['Status'];
           detailEvent.stepBooking = value['Data']['BookingStep'].toString();
           detailEvent.type = "GOOGLE";
+          detailEvent.bookingType = value['Data']['BookingType'] ?? "";
           if (!isShowDetail) {
             isShowDetail = true;
           }
@@ -711,6 +713,8 @@ class _RoomsPageState extends State<RoomsPage> {
                                   // event: selectedEvent,
                                   closeDetail: closeDetail,
                                   bookingDetail: detailEvent,
+                                  updateCalendar: updateCalendar,
+                                  selectedDate: selectedDate,
                                 ),
                               ),
                             )
@@ -1316,6 +1320,7 @@ class BookingDetail {
     this.stepBooking = "",
     this.phoneNumber = "",
     this.type = "",
+    this.bookingType = "",
   });
   String bookingId;
   String empNip;
@@ -1335,6 +1340,7 @@ class BookingDetail {
 
   String status;
   String stepBooking;
+  String bookingType;
 
   String type;
 }
