@@ -74,7 +74,7 @@ class _FoodAmenitiesItemDetailState extends State<FoodAmenitiesItemDetail> {
                           ),
                         ),
                         Text(
-                          "${widget.result!['Amount']!} Unit",
+                          "${widget.result!['Amount']!} Pax",
                           style: helveticaText.copyWith(
                             fontSize: 14,
                             color: davysGray,

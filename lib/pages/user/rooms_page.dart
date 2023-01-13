@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -40,6 +41,7 @@ class RoomsPage extends StatefulWidget {
 
 class _RoomsPageState extends State<RoomsPage> {
   ReqAPI apiReq = ReqAPI();
+  CalendarView? calendarView = CalendarView.timelineDay;
   DateTime? selectedDate = DateTime.now();
   CalendarController? calendarControl = CalendarController();
   DateRangePickerController datePickerControl = DateRangePickerController();
@@ -516,6 +518,13 @@ class _RoomsPageState extends State<RoomsPage> {
   }
 
   updateCalendar(String date) {
+    SchedulerBinding.instance.addPostFrameCallback((duration) {
+      // setState(() {});
+      setState(() {
+        loadingGetCalendar = true;
+      });
+    });
+
     apiReq
         .getBookingListRoom(selectedArea!, date, _events!.appointments!)
         .then((value) {
@@ -860,6 +869,8 @@ class _RoomsPageState extends State<RoomsPage> {
           // height: MediaQuery.of(context).size.height - 60,
           height: dataRoom.isNotEmpty ? (100 * dataRoom.length) + 30 : 500,
           child: SfCalendar(
+            key: const ValueKey(CalendarView.timelineDay),
+            view: CalendarView.timelineDay,
             maxDate: DateTime.now().add(const Duration(days: 30)),
             onViewChanged: (viewChangedDetails) {
               selectedDate = viewChangedDetails.visibleDates.first;
@@ -869,6 +880,7 @@ class _RoomsPageState extends State<RoomsPage> {
                 // setState(() {
                 //   loadingGetCalendar = true;
                 // });
+
                 updateCalendar(viewChangedDetails.visibleDates[0].toString());
               }
             },
@@ -1120,7 +1132,6 @@ class _RoomsPageState extends State<RoomsPage> {
             showDatePickerButton: true,
             showNavigationArrow: true,
             appointmentBuilder: appointmentBuilder,
-            view: CalendarView.timelineDay,
             controller: calendarControl,
             timeSlotViewSettings: const TimeSlotViewSettings(
               timeIntervalHeight: -1,
