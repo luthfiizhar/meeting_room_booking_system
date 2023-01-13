@@ -521,6 +521,7 @@ class _RoomsPageState extends State<RoomsPage> {
     SchedulerBinding.instance.addPostFrameCallback((duration) {
       // setState(() {});
       setState(() {
+        isShowDetail = false;
         loadingGetCalendar = true;
       });
     });
