@@ -42,7 +42,7 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
   ReqAPI apiReq = ReqAPI();
   List? availableLayout = ['1', '2', '3'];
 
-  List layoutList = [];
+  List<Layout> layoutList = [];
 
   String layoutName = "";
   String layoutId = "";
@@ -51,6 +51,8 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
   bool downButtonVisible = true;
   bool otherPict = false;
   ScrollController _scrollController = ScrollController();
+
+  int selectedLayout = 9999;
 
   String urlImage = "";
   bool emptyImage = true;
@@ -89,7 +91,15 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
       print("layout api --> $value");
       if (value["Status"].toString() == "200") {
         setState(() {
-          layoutList = value["Data"];
+          List result = value["Data"];
+          for (var element in result) {
+            layoutList.add(Layout(
+              imageUrl: element['LayoutImg'],
+              layoutId: element['LayoutID'],
+              layoutName: element['LayoutName'],
+              isSelected: false,
+            ));
+          }
         });
       } else {
         showDialog(
@@ -316,6 +326,7 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                         onTap: () {
                                           getImage().then((value) {
                                             setState(() {
+                                              selectedLayout = 9999;
                                               otherPict = true;
                                               emptyImage = false;
                                               layoutName = "OTHERS";
@@ -386,14 +397,15 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                           // final Uint8List bytes =
                                           //     imageData.buffer.asUint8List();
                                           // print(bytes);
+                                          selectedLayout =
+                                              layoutList[index].layoutId;
                                           emptyImage = false;
                                           otherPict = false;
-                                          urlImage =
-                                              layoutList[index]['LayoutImg'];
+                                          urlImage = layoutList[index].imageUrl;
                                           layoutName =
-                                              layoutList[index]['LayoutName'];
+                                              layoutList[index].layoutName;
                                           layoutId = layoutList[index]
-                                                  ['LayoutID']
+                                              .layoutId
                                               .toString();
                                           base64image = "";
                                           // widget.setLayout!(
@@ -410,9 +422,18 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                         height: 100,
                                         // color: Colors.amber,
                                         decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: selectedLayout ==
+                                                  layoutList[index].layoutId
+                                              ? Border.all(
+                                                  color: greenAcent,
+                                                  width: 1,
+                                                )
+                                              : null,
                                           image: DecorationImage(
                                             image: NetworkImage(
-                                              layoutList[index]['LayoutImg'],
+                                              layoutList[index].imageUrl,
                                             ),
                                             fit: BoxFit.cover,
                                           ),
@@ -435,7 +456,7 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                     child: InkWell(
                                       onTap: () {
                                         _scrollController.animateTo(
-                                            _scrollController.offset - 50,
+                                            _scrollController.offset - 125,
                                             duration: const Duration(
                                                 milliseconds: 200),
                                             curve: Curves.easeInToLinear);
@@ -465,7 +486,7 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
                                     child: InkWell(
                                       onTap: () {
                                         _scrollController.animateTo(
-                                            _scrollController.offset + 50,
+                                            _scrollController.offset + 125,
                                             duration: const Duration(
                                                 milliseconds: 500),
                                             curve: Curves.ease);
@@ -537,4 +558,18 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
       ),
     );
   }
+}
+
+class Layout {
+  Layout({
+    this.layoutName = "",
+    this.layoutId = 0,
+    this.imageUrl = "",
+    this.isSelected = false,
+  });
+
+  String layoutName;
+  int layoutId;
+  String imageUrl;
+  bool isSelected;
 }
