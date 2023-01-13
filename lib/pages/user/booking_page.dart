@@ -1775,8 +1775,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                               tempGuest.add('"$element"');
                                             }
 
-                                            totalParticipant =
-                                                participantValue.toString();
+                                            // totalParticipant =
+                                            //     participantValue.toString();
                                             booking.amenities = tempAmen;
                                             booking.foodAmenities = tempFood;
                                             booking.recursive = repeatValue;

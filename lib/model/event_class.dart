@@ -15,6 +15,8 @@ class Event {
     this.endTimeZone = "",
     this.recurrenceRule = "",
     this.bookingId = "",
+    this.googleId = "",
+    this.type = "",
   });
 
   //required for calendar -> from & to
@@ -33,6 +35,7 @@ class Event {
   String? recurrenceRule;
 
   String? bookingId;
+  String? googleId;
   String? roomID;
   String? icalUID;
   String? employeeNip;
@@ -41,6 +44,8 @@ class Event {
   String? description;
   String? bookingType;
   String? meetingType;
+
+  String? type;
 
   //audi
   int? attendantsNumber;

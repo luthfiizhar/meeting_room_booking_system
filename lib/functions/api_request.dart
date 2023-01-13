@@ -623,6 +623,50 @@ class ReqAPI {
     }
   }
 
+  Future getGoogleRoomDetail(String googleId) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(apiUrlGlobal,
+        '/MRBS_Backend/public/api/user/google/rooms/detail/$googleId');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future getGoogleCalendarUserDetail(String googleId) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(apiUrlGlobal,
+        '/MRBS_Backend/public/api/user/google/event/detail/$googleId');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   Future deleteBooking(String bookingId) async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
