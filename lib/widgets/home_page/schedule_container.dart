@@ -106,7 +106,7 @@ class _ScheduleContainerState extends State<ScheduleContainer> {
       constraints: const BoxConstraints(
         minHeight: 200,
         minWidth: 350,
-        maxHeight: 2000,
+        maxHeight: 750,
       ),
       child: SingleChildScrollView(
         child: Container(

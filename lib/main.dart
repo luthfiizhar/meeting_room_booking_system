@@ -14,8 +14,7 @@ import 'package:meeting_room_booking_system/pages/admin/admin_detail_booking.dar
 import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page.dart';
 import 'package:meeting_room_booking_system/pages/admin/admin_setting_page.dart';
 import 'package:meeting_room_booking_system/pages/loading_login.dart';
-import 'package:meeting_room_booking_system/pages/login_page.dart'
-    deferred as loginPage;
+import 'package:meeting_room_booking_system/pages/login_page.dart';
 import 'package:meeting_room_booking_system/pages/user/calendar_view_page.dart'
     deferred as calendarViewPage;
 import 'package:meeting_room_booking_system/pages/user/google_workspace_page.dart';
@@ -93,6 +92,14 @@ class MyApp extends StatelessWidget {
   late final _router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     routes: [
+      GoRoute(
+        path: '/login',
+        name: 'login',
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: LoginPage(),
+        ),
+      ),
       GoRoute(
           name: 'home',
           path: '/home',
@@ -361,6 +368,11 @@ class MyApp extends StatelessWidget {
       final roomPage = state.location == '/rooms';
       final search = state.name == '/search';
 
+      final login = state.subloc == '/login';
+
+      if (jwtToken == null || jwtToken == "" || !isTokenValid) {
+        return login ? null : '/login';
+      }
       // if (!roomPage) {
       //   if (jwtToken == null || jwtToken == "") {
       //     return goHome ? null : '/home';
