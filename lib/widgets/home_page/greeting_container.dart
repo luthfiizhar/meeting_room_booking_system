@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 
 class GreetingContainer extends StatefulWidget {
   const GreetingContainer({super.key});
@@ -14,13 +15,21 @@ class GreetingContainer extends StatefulWidget {
 }
 
 class _GreetingContainerState extends State<GreetingContainer> {
+  ReqAPI apiReq = ReqAPI();
   String name = "";
   String greeting = "";
   checkData() async {
-    var box = await Hive.openBox('userLogin');
+    // var box = await Hive.openBox('userLogin');
 
-    name = box.get('name');
-    setState(() {});
+    // name = box.get('name');
+    // setState(() {});
+    apiReq.getUserProfile().then((value) {
+      if (value["Status"].toString() == "200") {
+        setState(() {
+          name = value['Data']['EmpName'];
+        });
+      }
+    });
   }
 
   setGreeting(String value) {
