@@ -601,8 +601,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
         detailContent('Participant', '$participantTotal Person'),
         divider2(),
         detailContent('Event Type', eventType),
-        divider2(),
-        detailContent('Repeat', repeat),
+        // divider2(),
+        // detailContent('Repeat', repeat),
         Visibility(
           visible: isOwner ? true : false,
           child: Column(
