@@ -628,6 +628,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     if (widget.roomId!.startsWith('MR')) {
       roomType = "MeetingRoom";
     }
+    selectedDate = DateTime.parse(widget.date!);
     apiReq.getRoomDetail(widget.roomId!).then((value) {
       setState(() {
         participantValue = double.parse(widget.participant!);
@@ -722,7 +723,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             isEdit = true;
             dynamic editData = widget.edit;
             // print(editData['guestInvited']);
-
+            // selectedDate = DateTime.parse(widget.date!);
             dynamic guest = editData['guestInvited'];
             // print(guest);
             print('bahan edit');
@@ -1750,9 +1751,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             booking.additionalNote =
                                                 additionalNote;
                                             booking.startDate = DateTime.parse(
-                                                "${widget.date} $startTime:00");
+                                                "${DateFormat('yyyy-MM-dd').format(selectedDate!)} $startTime:00");
                                             booking.endDate = DateTime.parse(
-                                                "${widget.date} $endTime:00");
+                                                "${DateFormat('yyyy-MM-dd').format(selectedDate!)} $endTime:00");
                                             List tempAmen = [];
                                             for (var element in listAmenities) {
                                               tempAmen.add({
@@ -1966,7 +1967,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                               }
                                             }
                                             //BOOKING AUDI
-                                            if (roomType == "Auditorium") {
+                                            else {
                                               booking.layoutId = layoutId;
                                               booking.layoutName = layoutName;
                                               booking.layoutImage = "";
