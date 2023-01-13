@@ -89,7 +89,7 @@ class _FoodItemState extends State<FoodItem> {
                             ),
                           ),
                           Text(
-                            "${widget.listFood!.qty!.toString()} Unit",
+                            "${widget.listFood!.qty!.toString()} Pax",
                             style: helveticaText.copyWith(
                               fontSize: 14,
                               color: davysGray,

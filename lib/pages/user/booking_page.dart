@@ -555,6 +555,22 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     });
   }
 
+  checkEndTime() {
+    int hour = int.parse(widget.endTime!.toString().split(":")[0].toString());
+    int minute = int.parse(widget.endTime!.toString().split(":")[1].toString());
+
+    if (hour >= 19) {
+      endTime = '19:00';
+      if (minute != 00) {
+        endTime = '19:00';
+      }
+    } else {
+      endTime = widget.endTime!;
+    }
+
+    _endTime.text = endTime;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -668,9 +684,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             DateFormat('d MMM yyyy').format(DateTime.parse(widget.date!));
         _date.text = formattedDate;
         startTime = widget.startTime!;
-        endTime = widget.endTime!;
+        checkEndTime();
+        // endTime = widget.endTime!;
         _startTime.text = widget.startTime!;
-        _endTime.text = widget.endTime!;
+        // _endTime.text = widget.endTime!;
         _repeatEnd.text = DateFormat('d MMM yyyy').format(DateTime.now());
         _totalParticipant.text = widget.participant!;
         if (widget.participant == "25") {
@@ -2600,6 +2617,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                 imaegUrl: layoutImageUrl,
                 imageBytes: layoutImageBytes,
                 isUpload: layoutFromupload,
+                roomId: widget.roomId!,
               ),
             );
           },

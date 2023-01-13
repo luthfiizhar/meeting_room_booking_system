@@ -902,11 +902,11 @@ class ReqAPI {
     }
   }
 
-  Future getLayoutList() async {
+  Future getLayoutList(String roomId) async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
     var url =
-        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/room/layout/list');
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/room/layout/$roomId');
     Map<String, String> requestHeader = {
       'Authorization': 'Bearer $jwt',
       'Content-Type': 'application/json',

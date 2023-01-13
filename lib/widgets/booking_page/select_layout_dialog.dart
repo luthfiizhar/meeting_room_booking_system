@@ -26,6 +26,7 @@ class SelectLayoutDialog extends StatefulWidget {
     this.imageBytes,
     this.isUpload = false,
     this.layoutBase64 = "",
+    this.roomId = "",
   });
 
   Function? setLayout;
@@ -33,6 +34,7 @@ class SelectLayoutDialog extends StatefulWidget {
   Uint8List? imageBytes;
   String layoutBase64;
   bool isUpload;
+  String roomId;
 
   @override
   State<SelectLayoutDialog> createState() => _SelectLayoutDialogState();
@@ -87,7 +89,7 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
         emptyImage = true;
       });
     }
-    apiReq.getLayoutList().then((value) {
+    apiReq.getLayoutList(widget.roomId).then((value) {
       print("layout api --> $value");
       if (value["Status"].toString() == "200") {
         setState(() {

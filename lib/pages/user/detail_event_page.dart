@@ -128,8 +128,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
           avaya = value['Data']['AvayaNumber'];
           phoneNumber = value['Data']['PhoneNumber'];
           hostEmail = value['Data']['Email'];
-          // layoutName = value['Data']['LayoutName'];
-          // layoutImage = value['Data']['LayoutImg'];
+          layoutName = value['Data']['LayoutName'] ?? "";
+          layoutImage = value['Data']['LayoutImg'] ?? "";
           amenities = value['Data']['Amenities'];
           foodAmenities = value['Data']['FoodAmenities'];
           guestInvited = value['Data']['Attendants'];
@@ -1018,7 +1018,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 80,
+            width: 125,
             child: Text(
               status,
               style: helveticaText.copyWith(
@@ -1026,6 +1026,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                 fontWeight: FontWeight.w300,
                 color: sonicSilver,
               ),
+              textAlign: TextAlign.end,
             ),
           ),
           const SizedBox(
@@ -1042,6 +1043,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                     fontWeight: FontWeight.w700,
                     color: davysGray,
                   ),
+                  textAlign: TextAlign.end,
                 ),
                 const SizedBox(
                   height: 3,

@@ -186,8 +186,8 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           host = value['Data']['EmpName'];
           bookingStep = value['Data']['BookingStep'];
 
-          // layoutName = value['Data']['LayoutName'];
-          // layoutImage = value['Data']['LayoutImg'];
+          layoutName = value['Data']['LayoutName'] ?? "";
+          layoutImage = value['Data']['LayoutImg'] ?? "";
 
           amenities = value['Data']['Amenities'];
           foodAmenities = value['Data']['FoodAmenities'];
@@ -997,7 +997,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 120,
+            width: 125,
             child: Text(
               status,
               style: helveticaText.copyWith(
@@ -1018,6 +1018,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                     fontWeight: FontWeight.w700,
                     color: davysGray,
                   ),
+                  textAlign: TextAlign.end,
                 ),
                 const SizedBox(
                   height: 3,
@@ -1029,6 +1030,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                     fontWeight: FontWeight.w300,
                     color: davysGray,
                   ),
+                  textAlign: TextAlign.end,
                 ),
               ],
             ),

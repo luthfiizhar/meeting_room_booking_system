@@ -1150,7 +1150,13 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
           endDate = viewChangedDetails.visibleDates.last;
 
           // print(_calendar.view.toString());
-
+          SchedulerBinding.instance.addPostFrameCallback((duration) {
+            // setState(() {});
+            setState(() {
+              isShowDetail = false;
+              isLoadingGetCalendar2 = true;
+            });
+          });
           apiReq
               .getUserCalendar(startDate.toString(), endDate.toString())
               .then((value) {
