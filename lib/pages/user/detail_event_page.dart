@@ -444,14 +444,10 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                 showDialog(
                                                   context: context,
                                                   builder: (context) =>
-                                                      ConfirmDialogBlack(
+                                                      const ConfirmDialogBlack(
                                                     title: 'Cancel Booking',
                                                     contentText:
                                                         'Are you sure want cancel this booking?',
-                                                    onTapConfirm: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
                                                   ),
                                                 ).then((value) {
                                                   setState(() {
