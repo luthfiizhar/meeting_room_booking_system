@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
@@ -17,12 +18,17 @@ class DetailAppointmentContainer extends StatefulWidget {
     this.event,
     this.closeDetail,
     this.bookingDetail,
+    this.updateCalendar,
+    this.selectedDate,
   });
 
   RoomEvent? event;
   String? floor;
   Function? closeDetail;
   BookingDetail? bookingDetail;
+
+  Function? updateCalendar;
+  DateTime? selectedDate;
 
   @override
   State<DetailAppointmentContainer> createState() =>
@@ -81,6 +87,7 @@ class _DetailAppointmentContainerState
     avaya = widget.bookingDetail!.avaya;
     bookingStep = widget.bookingDetail!.stepBooking;
     phoneNumber = widget.bookingDetail!.phoneNumber;
+    bookingType = widget.bookingDetail!.bookingType;
     apiReq.getUserProfile().then((value) {
       if (value['Status'].toString() == "200") {
         if (value['Data']['Admin'].toString() == "1") {
@@ -343,6 +350,7 @@ class _DetailAppointmentContainerState
                                         'Are you sure want cancel this booking?',
                                   ),
                                 ).then((value) {
+                                  // print("BOOKING TYPE $bookingType");
                                   setState(() {
                                     // isCancelLoading = true;
                                   });
@@ -350,7 +358,7 @@ class _DetailAppointmentContainerState
                                     if (bookingType == "SINGLE") {
                                       apiReq
                                           .deleteBooking(
-                                              widget.event!.bookingID!)
+                                              widget.bookingDetail!.bookingId)
                                           .then((value) {
                                         // print(value);
                                         setState(() {
@@ -365,7 +373,10 @@ class _DetailAppointmentContainerState
                                               contentText: value['Message'],
                                             ),
                                           ).then((value) {
-                                            context.go('/rooms');
+                                            // context.go('/rooms');
+                                            widget.updateCalendar!(
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    widget.selectedDate!));
                                           });
                                         }
                                       }).onError((error, stackTrace) {
@@ -383,7 +394,7 @@ class _DetailAppointmentContainerState
                                     if (bookingType == "RECURRENT") {
                                       apiReq
                                           .deleteBookingRecurrent(
-                                              widget.event!.bookingID!)
+                                              widget.bookingDetail!.bookingId)
                                           .then((value) {
                                         // print(value);
                                         if (value['Status'] == "200") {

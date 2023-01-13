@@ -246,6 +246,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
           detailEvent.status = value['Data']['Status'];
           detailEvent.stepBooking = value['Data']['BookingStep'].toString();
           detailEvent.type = "MRBS";
+          detailEvent.bookingType = value['Data']['BookingType'] ?? "";
           if (!isShowDetail) {
             isShowDetail = true;
           }
@@ -299,6 +300,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
               value['Data']['AttendantsNumber'].toString();
           detailEvent.phoneNumber = value['Data']['PhoneNumber'] ?? "-";
           detailEvent.empNip = value['Data']['EmpNIP'] ?? "-";
+          detailEvent.bookingType = value['Data']['BookingType'] ?? "";
           if (!isShowDetail) {
             isShowDetail = true;
           }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
@@ -314,11 +315,12 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
     // widget.resetState!();
 
     reqApi.checkToken().then((value) {
-      print("OIIIIIIII $value");
+      // print("OIIIIIIII $value");
       if (value["Status"] == "200") {
         isTokenValid = true;
       } else {
         isTokenValid = false;
+        context.goNamed('login');
       }
       widget.resetState!();
     });
