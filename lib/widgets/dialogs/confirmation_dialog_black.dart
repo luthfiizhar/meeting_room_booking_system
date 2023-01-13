@@ -121,7 +121,9 @@ class ConfirmDialogBlack extends StatelessWidget {
                     ),
                     WhiteRegularButton(
                       text: 'Confirm',
-                      onTap: onTapConfirm,
+                      onTap: () {
+                        Navigator.of(context).pop(true);
+                      },
                       padding: ButtonSize().mediumSize(),
                       disabled: false,
                     ),
