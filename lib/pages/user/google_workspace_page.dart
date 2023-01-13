@@ -131,19 +131,19 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
   ScrollController scrollController = ScrollController();
 
   late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 2),
+    duration: const Duration(milliseconds: 1000),
     vsync: this,
   );
   late final AnimationController _controller2 = AnimationController(
-    duration: const Duration(seconds: 2),
+    duration: const Duration(milliseconds: 1000),
     vsync: this,
   );
   late final AnimationController _controller3 = AnimationController(
-    duration: const Duration(seconds: 2),
+    duration: const Duration(milliseconds: 1000),
     vsync: this,
   );
   late final AnimationController _controller4 = AnimationController(
-    duration: const Duration(seconds: 2),
+    duration: const Duration(milliseconds: 1000),
     vsync: this,
   );
   late final Animation<double> _animation1 = CurvedAnimation(
@@ -785,15 +785,20 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
           child: ConstrainedBox(
             constraints: BoxConstraints(
               minWidth: MediaQuery.of(context).size.width,
-              maxHeight: 850,
+              minHeight: 200,
+              maxHeight: 540,
             ),
             child: Container(
               key: featureSectionKey,
               // color: Colors.amber,
-              child: Center(
+              child: Align(
+                alignment: Alignment.center,
                 child: Container(
                   width: 1100,
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    // mainAxisAlignment: MainAxisAlignment.start,
+                    // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       LeftFeatureContainer(
                         icon: Image.asset('assets/google_calendar_icon.png'),
@@ -812,17 +817,17 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                             'Generate Google Meet URL when you create an event, so you can attend while offline or online. Also synced with Google Meet Hardware in several rooms, to give you a brand new experience in attending a meeting.',
                         backgroundImage: Image.asset('assets/man.jpg'),
                       ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      LeftFeatureContainer(
-                        icon: Image.asset('assets/google_contact_icon.png'),
-                        title: 'Google Contact',
-                        content:
-                            'Get your email & contact list straight from your Google account. You can invite people to your event at ease. Just type the email & it will be listed for you.',
-                        backgroundColor: eerieBlack,
-                        backgroundImage: Image.asset('assets/phone.jpg'),
-                      ),
+                      // const SizedBox(
+                      //   height: 40,
+                      // ),
+                      // LeftFeatureContainer(
+                      //   icon: Image.asset('assets/google_contact_icon.png'),
+                      //   title: 'Google Contact',
+                      //   content:
+                      //       'Get your email & contact list straight from your Google account. You can invite people to your event at ease. Just type the email & it will be listed for you.',
+                      //   backgroundColor: eerieBlack,
+                      //   backgroundImage: Image.asset('assets/phone.jpg'),
+                      // ),
                     ],
                   ),
                 ),
@@ -832,13 +837,13 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
         ),
         Positioned(
           left: 20,
-          bottom: 0,
+          bottom: 30,
           child: RotatedBox(
             quarterTurns: 1,
             child: Text(
               'Features',
               style: helveticaBlackText.copyWith(
-                fontSize: 150,
+                fontSize: 100,
                 // backgroundColor: violetAccent,
                 fontWeight: FontWeight.w400,
                 foreground: Paint()
@@ -851,13 +856,13 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
         ),
         Positioned(
           right: 20,
-          top: 0,
+          top: 30,
           child: RotatedBox(
             quarterTurns: 3,
             child: Text(
               'Features',
               style: helveticaBlackText.copyWith(
-                fontSize: 150,
+                fontSize: 100,
                 // backgroundColor: violetAccent,
                 fontWeight: FontWeight.w400,
                 foreground: Paint()
