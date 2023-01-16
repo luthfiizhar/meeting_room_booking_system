@@ -99,6 +99,10 @@ class _FilterSearchBarState extends State<FilterSearchBar> {
         changeHighlight("SocialHub");
         widget.getRoomType!(type);
         break;
+      case "Canteen":
+        changeHighlight("Canteen");
+        widget.getRoomType!(type);
+        break;
     }
   }
 

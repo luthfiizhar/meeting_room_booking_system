@@ -7,6 +7,7 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
+import 'dart:html' as html;
 
 class UpcomingEventContainer extends StatefulWidget {
   UpcomingEventContainer({super.key});
@@ -37,7 +38,6 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
     super.initState();
     apiReq.getUpcomingEvent().then((value) {
       print("Upcoming Result $value");
-
       if (value['Status'].toString() == "200") {
         if (value['Data'].toString() == "[]") {
           print('if upcoming kosong');
@@ -95,44 +95,54 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
       child: Stack(
         children: [
           isEmpty
-              ? SizedBox()
-              : Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    height: 200,
-                    width: double.infinity,
-                    child: CachedNetworkImage(
-                      imageUrl: roomPhoto,
-                      errorWidget: (context, url, error) {
-                        return Text(error.toString());
-                      },
-                      imageBuilder: (context, imageProvider) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: imageProvider,
-                              opacity: isEmpty ? 1 : 0.5,
-                              fit: BoxFit.cover,
-                            ),
-                            color: isEmpty ? white : eerieBlack,
-                            borderRadius: BorderRadius.circular(10),
-                            border: isEmpty
-                                ? Border.all(color: platinum, width: 1)
-                                : null,
-                          ),
-                        );
-                      },
+              ? const SizedBox()
+              : bookingId == "-"
+                  ? const SizedBox()
+                  : Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: 200,
+                        width: double.infinity,
+                        child: CachedNetworkImage(
+                          imageUrl: roomPhoto,
+                          errorWidget: (context, url, error) {
+                            return Text(error.toString());
+                          },
+                          imageBuilder: (context, imageProvider) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  opacity: isEmpty ? 1 : 0.5,
+                                  fit: BoxFit.cover,
+                                ),
+                                color: isEmpty ? white : eerieBlack,
+                                borderRadius: BorderRadius.circular(10),
+                                border: isEmpty
+                                    ? Border.all(color: platinum, width: 1)
+                                    : null,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                ),
           Container(
             height: isEmpty ? 200 : null,
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 22.5, horizontal: 35),
             decoration: BoxDecoration(
-              color: isEmpty ? white : Colors.transparent,
+              color: isEmpty
+                  ? white
+                  : bookingId == "-"
+                      ? white
+                      : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
-              border: isEmpty ? Border.all(color: platinum, width: 1) : null,
+              border: isEmpty
+                  ? Border.all(color: platinum, width: 1)
+                  : bookingId == "-"
+                      ? Border.all(color: platinum, width: 1)
+                      : null,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +152,11 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                   style: helveticaText.copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w300,
-                    color: upcomingData.isEmpty ? eerieBlack : white,
+                    color: upcomingData.isEmpty
+                        ? eerieBlack
+                        : bookingId == "-"
+                            ? eerieBlack
+                            : white,
                   ),
                 ),
                 const SizedBox(
@@ -173,7 +187,9 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                                     style: helveticaText.copyWith(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w300,
-                                      color: culturedWhite,
+                                      color: bookingId == "-"
+                                          ? eerieBlack
+                                          : culturedWhite,
                                     ),
                                   ),
                                   const SizedBox(
@@ -188,7 +204,9 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                                     style: helveticaText.copyWith(
                                       fontSize: 24,
                                       fontWeight: FontWeight.w300,
-                                      color: culturedWhite,
+                                      color: bookingId == "-"
+                                          ? eerieBlack
+                                          : culturedWhite,
                                     ),
                                   ),
                                 ],
@@ -196,11 +214,13 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                               const SizedBox(
                                 width: 13,
                               ),
-                              const SizedBox(
+                              SizedBox(
                                 height: 50,
                                 child: VerticalDivider(
                                   thickness: 1,
-                                  color: culturedWhite,
+                                  color: bookingId == "-"
+                                      ? eerieBlack
+                                      : culturedWhite,
                                 ),
                               ),
                               const SizedBox(
@@ -211,7 +231,9 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                                 style: helveticaText.copyWith(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w700,
-                                  color: culturedWhite,
+                                  color: bookingId == "-"
+                                      ? orangeAccent
+                                      : culturedWhite,
                                 ),
                               )
                             ],
@@ -223,23 +245,69 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                '$roomName at $duration WIB',
-                                style: helveticaText.copyWith(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w300,
-                                  color: culturedWhite,
-                                ),
-                              ),
-                              TransparentBorderedWhiteButton(
-                                disabled: false,
-                                onTap: () {
-                                  context.goNamed('detail_event',
-                                      params: {'eventId': bookingId});
-                                },
-                                text: 'See Details',
-                                padding: ButtonSize().mediumSize(),
-                              )
+                              bookingId != "-"
+                                  ? Text(
+                                      bookingId == "-"
+                                          ? '$duration WIB'
+                                          : '$roomName at $duration WIB',
+                                      style: helveticaText.copyWith(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w300,
+                                        color: bookingId == "-"
+                                            ? eerieBlack
+                                            : culturedWhite,
+                                      ),
+                                    )
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          bookingId == "-"
+                                              ? '$duration WIB'
+                                              : '$roomName at $duration WIB',
+                                          style: helveticaText.copyWith(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w300,
+                                            color: bookingId == "-"
+                                                ? eerieBlack
+                                                : culturedWhite,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          'Event from Google Calendar',
+                                          style: helveticaText.copyWith(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w300,
+                                            color: bookingId == "-"
+                                                ? eerieBlack
+                                                : culturedWhite,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                              bookingId == "-"
+                                  ? TransparentBorderedBlackButton(
+                                      disabled: false,
+                                      onTap: () {
+                                        html.window.open(
+                                            'http://calendar.google.com', '');
+                                      },
+                                      text: 'See Details',
+                                      padding: ButtonSize().mediumSize(),
+                                    )
+                                  : TransparentBorderedWhiteButton(
+                                      disabled: false,
+                                      onTap: () {
+                                        context.goNamed('detail_event',
+                                            params: {'eventId': bookingId});
+                                      },
+                                      text: 'See Details',
+                                      padding: ButtonSize().mediumSize(),
+                                    )
                             ],
                           ),
                         ],
