@@ -20,9 +20,14 @@ import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'dart:html' as html;
 
 class AdminSettingPage extends StatefulWidget {
-  AdminSettingPage({super.key, this.isAdmin = "false"});
+  AdminSettingPage({
+    super.key,
+    this.isAdmin = "false",
+    this.firstMenu = "Profile",
+  });
 
   String? isAdmin;
+  String? firstMenu;
   @override
   State<AdminSettingPage> createState() => _AdminSettingPageState();
 }
@@ -46,6 +51,13 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
     // print("isAdmin-->>  ${widget.isAdmin}");
     if (widget.isAdmin == "true") {
       isAdmin = true;
+    }
+    if (widget.firstMenu == "admin_setting") {
+      setState(() {
+        // menu = "Floor";
+        onChangedMenu("Floor");
+        index = 1;
+      });
     }
   }
 
