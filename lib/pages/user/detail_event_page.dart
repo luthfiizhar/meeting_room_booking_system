@@ -61,11 +61,14 @@ class _DetailEventPageState extends State<DetailEventPage> {
   String interval = "";
   String layoutName = "";
   String layoutImage = "";
+  String approvalComment = "";
   dynamic days;
   DateTime repeatEndDate = DateTime.now();
   String meetUrl = "";
 
   String selectedDate = "";
+
+  DateTime? bookingDate;
 
   String host = "";
   String hostEmail = "";
@@ -86,6 +89,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
   bool isAdmin = false;
   bool isPhoneShowed = false;
   bool isOwner = false;
+  bool isButtonShowed = true;
 
   int bookingStep = 0;
   resetStatus(bool value) {}
@@ -121,12 +125,12 @@ class _DetailEventPageState extends State<DetailEventPage> {
           duration = value['Data']['Duration'];
           participantTotal = value['Data']['AttendantsNumber'].toString();
           eventType = value['Data']['MeetingType'];
-          repeat = value['Data']['Repeat'];
+          repeat = value['Data']['Repeat'] ?? "";
 
           host = value['Data']['EmpName'];
-          meetUrl = value['Data']['GoogleMeetLink'];
-          avaya = value['Data']['AvayaNumber'];
-          phoneNumber = value['Data']['PhoneNumber'];
+          meetUrl = value['Data']['GoogleMeetLink'] ?? "";
+          avaya = value['Data']['AvayaNumber'] ?? "";
+          phoneNumber = value['Data']['PhoneNumber'] ?? "";
           hostEmail = value['Data']['Email'];
           layoutName = value['Data']['LayoutName'] ?? "";
           layoutImage = value['Data']['LayoutImg'] ?? "";
@@ -144,7 +148,18 @@ class _DetailEventPageState extends State<DetailEventPage> {
           }
           formattedDate = DateFormat('yyyy-mm-dd')
               .format(DateTime.parse(value['Data']['BookingDateOriginal']));
+
+          bookingDate = DateTime.parse(value['Data']['BookingDateOriginal']);
+
           selectedDate = value['Data']['BookingDateOriginal'];
+          for (var element in bookingHistory) {
+            // if (bookingStep > 2) {
+            if (element['Status'] == "APPROVED" ||
+                element['Status'] == "DECLINED") {
+              approvalComment = element['Description'];
+            }
+            // }
+          }
         });
       } else {
         setState(() {
@@ -164,11 +179,24 @@ class _DetailEventPageState extends State<DetailEventPage> {
           if (value["Data"]["Admin"].toString() == "1") {
             setState(() {
               isAdmin = true;
-              if (bookingNip == value["Data"]["EmpNIP"]) {
-                isPhoneShowed = true;
-                isOwner = true;
+              isPhoneShowed = true;
+              isButtonShowed = true;
+              if (bookingDate!.day < DateTime.now().day) {
+                isButtonShowed = false;
               }
             });
+          } else {
+            if (bookingNip == value["Data"]["EmpNIP"]) {
+              setState(() {
+                isPhoneShowed = true;
+                isOwner = true;
+                isButtonShowed = true;
+
+                if (bookingDate!.day < DateTime.now().day) {
+                  isButtonShowed = false;
+                }
+              });
+            }
           }
         }
       }).onError((error, stackTrace) {
@@ -182,10 +210,12 @@ class _DetailEventPageState extends State<DetailEventPage> {
         );
       });
     }).onError((error, stackTrace) {
+      print(error);
+      print(stackTrace);
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
-          title: 'Failed connect to API',
+          title: 'Failed getDetail',
           contentText: error.toString(),
           isSuccess: false,
         ),
@@ -223,7 +253,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
             )
           : ConstrainedBox(
               constraints: pageConstraints.copyWith(
-                maxHeight: 1700,
+                maxHeight: roomType == "MeetingRoom" ? 1700 : 2500,
+                minHeight: 1500,
               ),
               child: Stack(
                 children: [
@@ -268,6 +299,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                           vertical: 40,
                         ),
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -309,268 +341,248 @@ class _DetailEventPageState extends State<DetailEventPage> {
                             const SizedBox(
                               height: 40,
                             ),
-                            bookingStep > 1
-                                ? const SizedBox()
-                                : Visibility(
-                                    visible: isOwner ? true : false,
-                                    child: ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                        minHeight: 65,
-                                        maxHeight: 65,
-                                        minWidth: 400,
-                                        maxWidth: 850,
-                                      ),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 5,
-                                          vertical: 10,
-                                        ),
-                                        // width: 800,
-                                        height: 65,
-                                        decoration: BoxDecoration(
-                                          color: platinum,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            // TransparentButtonBlack(
-                                            //   text: 'Email to User',
-                                            //   disabled: false,
-                                            //   onTap: () {},
-                                            //   padding: ButtonSize().mediumSize(),
-                                            // ),
-                                            // verticalDivider(),
-                                            // TransparentButtonBlack(
-                                            //   text: 'Trade',
-                                            //   disabled: false,
-                                            //   onTap: () {},
-                                            //   padding: ButtonSize().mediumSize(),
-                                            // ),
-                                            // verticalDivider(),
-                                            TransparentButtonBlack(
-                                              text: 'Edit Event',
-                                              disabled: false,
-                                              onTap: () {
-                                                // print(roomId);
-                                                List guestInvited2 = [];
-                                                for (var element
-                                                    in guestInvited) {
-                                                  guestInvited2.add(
-                                                      "\"${element['AttendantsEmail']}\"");
-                                                }
-                                                context.goNamed(
-                                                  'booking',
-                                                  params: {
-                                                    "roomId": roomId,
-                                                    'date':
-                                                        selectedDate.toString(),
-                                                    'startTime': startTime,
-                                                    'endTime': endTime,
-                                                    'participant': '1',
-                                                    'facilities': '[]',
-                                                    'roomType': roomType,
-                                                    'isEdit': 'true'
-                                                  },
-                                                  queryParams: {
-                                                    'date':
-                                                        selectedDate.toString(),
-                                                    'startTime': startTime,
-                                                    'endTime': endTime,
-                                                    'summary': summary,
-                                                    'description': description,
-                                                    'additionalNote':
-                                                        additionalNotes,
-                                                    'participant': '1',
-                                                    'facilities': '[]',
-                                                    'bookingType': bookingType,
-                                                    'guestInvited':
-                                                        guestInvited2
-                                                            .toString(),
-                                                    'repeatEndDate':
-                                                        repeatEndDate
-                                                            .toString(),
-                                                    'days': days,
-                                                    'montAbs': monthAbs,
-                                                    'repeatType': repeatType,
-                                                    'interval': interval,
-                                                    'roomType': roomType,
-                                                    'layoutName': layoutName,
-                                                    'layoutImage': layoutImage,
-                                                    'bookingId':
-                                                        widget.bookingId,
-                                                  },
-                                                );
-                                                // showDialog(
-                                                //   context: context,
-                                                //   builder: (context) =>
-                                                //       BookingRoomPageDialog(
-                                                //     summary: summary,
-                                                //     description: description,
-                                                //     additionalNote: additionalNotes,
-                                                //     invitedGuest: guestInvited,
-                                                //     totalParticipant: participantTotal,
-                                                //     roomId: roomId,
-                                                //     date: formattedDate,
-                                                //     startTime: startTime,
-                                                //     endTime: endTime,
-                                                //     facilities: amenities,
-                                                //     foodAmenities: foodAmenities,
-                                                //     participant: participantTotal,
-                                                //     roomType: roomType,
-                                                //     recurrent: [
-                                                //       {
-                                                //         'repeatEndDate': repeatEndDate,
-                                                //         'days': days,
-                                                //         'montAbs': monthAbs,
-                                                //         'repeatType': repeatType,
-                                                //         'interval': interval
-                                                //       }
-                                                //     ],
-                                                //   ),
-                                                // );
-                                              },
-                                              padding:
-                                                  ButtonSize().mediumSize(),
-                                            ),
-                                            verticalDivider(),
-                                            TransparentButtonBlack(
-                                              text: 'Cancel Event',
-                                              disabled: false,
-                                              onTap: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      const ConfirmDialogBlack(
-                                                    title: 'Cancel Booking',
-                                                    contentText:
-                                                        'Are you sure want cancel this booking?',
-                                                  ),
-                                                ).then((value) {
-                                                  setState(() {
-                                                    isCancelLoading = true;
-                                                  });
-                                                  if (value) {
-                                                    if (bookingType ==
-                                                        "SINGLE") {
-                                                      apiReq
-                                                          .deleteBooking(
-                                                              widget.bookingId!)
-                                                          .then((value) {
-                                                        // print(value);
-                                                        setState(() {
-                                                          isCancelLoading =
-                                                              false;
-                                                        });
-                                                        if (value['Status']
-                                                                .toString() ==
-                                                            "200") {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                AlertDialogBlack(
-                                                              title: value[
-                                                                  'Title'],
-                                                              contentText: value[
-                                                                  'Message'],
-                                                            ),
-                                                          ).then((value) {
-                                                            context
-                                                                .go('/rooms');
-                                                          });
-                                                        } else {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                AlertDialogBlack(
-                                                              title: value[
-                                                                  'Title'],
-                                                              contentText: value[
-                                                                  'Message'],
-                                                              isSuccess: false,
-                                                            ),
-                                                          );
-                                                        }
-                                                      }).onError((error,
-                                                              stackTrace) {
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (context) =>
-                                                              AlertDialogBlack(
-                                                            title:
-                                                                'Failed connect to API',
-                                                            contentText: error
-                                                                .toString(),
-                                                            isSuccess: false,
-                                                          ),
-                                                        );
-                                                      });
-                                                    }
-                                                    if (bookingType ==
-                                                        "RECURRENT") {
-                                                      apiReq
-                                                          .deleteBookingRecurrent(
-                                                              widget.bookingId!)
-                                                          .then((value) {
-                                                        // print(value);
-                                                        if (value['Status']
-                                                                .toString() ==
-                                                            "200") {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                AlertDialogBlack(
-                                                              title: value[
-                                                                  'Title'],
-                                                              contentText: value[
-                                                                  'Message'],
-                                                            ),
-                                                          ).then((value) {
-                                                            context
-                                                                .go('/rooms');
-                                                          });
-                                                        } else {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                AlertDialogBlack(
-                                                              title: value[
-                                                                  'Title'],
-                                                              contentText: value[
-                                                                  'Message'],
-                                                              isSuccess: false,
-                                                            ),
-                                                          );
-                                                        }
-                                                      }).onError((error,
-                                                              stackTrace) {
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (context) =>
-                                                              AlertDialogBlack(
-                                                            title:
-                                                                'Failed connect to API',
-                                                            contentText: error
-                                                                .toString(),
-                                                            isSuccess: false,
-                                                          ),
-                                                        );
-                                                      });
-                                                    }
-                                                  }
-                                                });
-                                              },
-                                              padding:
-                                                  ButtonSize().mediumSize(),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                            // bookingStep > 0
+                            //     ? const SizedBox()
+                            //     :
+                            Visibility(
+                              visible: isButtonShowed ? true : false,
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  minHeight: 65,
+                                  maxHeight: 65,
+                                  minWidth: 400,
+                                  maxWidth: 850,
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 5,
+                                    vertical: 10,
                                   ),
+                                  // width: 800,
+                                  height: 65,
+                                  decoration: BoxDecoration(
+                                    color: platinum,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // TransparentButtonBlack(
+                                      //   text: 'Email to User',
+                                      //   disabled: false,
+                                      //   onTap: () {},
+                                      //   padding: ButtonSize().mediumSize(),
+                                      // ),
+                                      // verticalDivider(),
+                                      // TransparentButtonBlack(
+                                      //   text: 'Trade',
+                                      //   disabled: false,
+                                      //   onTap: () {},
+                                      //   padding: ButtonSize().mediumSize(),
+                                      // ),
+                                      // verticalDivider(),
+                                      TransparentButtonBlack(
+                                        text: 'Edit Event',
+                                        disabled: false,
+                                        onTap: () {
+                                          // print(roomId);
+                                          List guestInvited2 = [];
+                                          for (var element in guestInvited) {
+                                            guestInvited2.add(
+                                                "\"${element['AttendantsEmail']}\"");
+                                          }
+                                          context.goNamed(
+                                            'booking',
+                                            params: {
+                                              "roomId": roomId,
+                                              'date': selectedDate.toString(),
+                                              'startTime': startTime,
+                                              'endTime': endTime,
+                                              'participant': '1',
+                                              'facilities': '[]',
+                                              'roomType': roomType,
+                                              'isEdit': 'true'
+                                            },
+                                            queryParams: {
+                                              'date': selectedDate.toString(),
+                                              'startTime': startTime,
+                                              'endTime': endTime,
+                                              'summary': summary,
+                                              'description': description,
+                                              'additionalNote': additionalNotes,
+                                              'participant': '1',
+                                              'facilities': '[]',
+                                              'bookingType': bookingType,
+                                              'guestInvited':
+                                                  guestInvited2.toString(),
+                                              'repeatEndDate':
+                                                  repeatEndDate.toString(),
+                                              'days': days,
+                                              'montAbs': monthAbs,
+                                              'repeatType': repeatType,
+                                              'interval': interval,
+                                              'roomType': roomType,
+                                              'layoutName': layoutName,
+                                              'layoutImage': layoutImage,
+                                              'bookingId': widget.bookingId,
+                                            },
+                                          );
+                                          // showDialog(
+                                          //   context: context,
+                                          //   builder: (context) =>
+                                          //       BookingRoomPageDialog(
+                                          //     summary: summary,
+                                          //     description: description,
+                                          //     additionalNote: additionalNotes,
+                                          //     invitedGuest: guestInvited,
+                                          //     totalParticipant: participantTotal,
+                                          //     roomId: roomId,
+                                          //     date: formattedDate,
+                                          //     startTime: startTime,
+                                          //     endTime: endTime,
+                                          //     facilities: amenities,
+                                          //     foodAmenities: foodAmenities,
+                                          //     participant: participantTotal,
+                                          //     roomType: roomType,
+                                          //     recurrent: [
+                                          //       {
+                                          //         'repeatEndDate': repeatEndDate,
+                                          //         'days': days,
+                                          //         'montAbs': monthAbs,
+                                          //         'repeatType': repeatType,
+                                          //         'interval': interval
+                                          //       }
+                                          //     ],
+                                          //   ),
+                                          // );
+                                        },
+                                        padding: ButtonSize().mediumSize(),
+                                      ),
+                                      verticalDivider(),
+                                      TransparentButtonBlack(
+                                        text: 'Cancel Event',
+                                        disabled: false,
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                const ConfirmDialogBlack(
+                                              title: 'Cancel Booking',
+                                              contentText:
+                                                  'Are you sure want cancel this booking?',
+                                            ),
+                                          ).then((value) {
+                                            setState(() {
+                                              isCancelLoading = true;
+                                            });
+                                            if (value) {
+                                              if (bookingType == "SINGLE") {
+                                                apiReq
+                                                    .deleteBooking(
+                                                        widget.bookingId!)
+                                                    .then((value) {
+                                                  // print(value);
+                                                  setState(() {
+                                                    isCancelLoading = false;
+                                                  });
+                                                  if (value['Status']
+                                                          .toString() ==
+                                                      "200") {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                        title: value['Title'],
+                                                        contentText:
+                                                            value['Message'],
+                                                      ),
+                                                    ).then((value) {
+                                                      context.go('/rooms');
+                                                    });
+                                                  } else {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                        title: value['Title'],
+                                                        contentText:
+                                                            value['Message'],
+                                                        isSuccess: false,
+                                                      ),
+                                                    );
+                                                  }
+                                                }).onError((error, stackTrace) {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialogBlack(
+                                                      title:
+                                                          'Failed connect to API',
+                                                      contentText:
+                                                          error.toString(),
+                                                      isSuccess: false,
+                                                    ),
+                                                  );
+                                                });
+                                              }
+                                              if (bookingType == "RECURRENT") {
+                                                apiReq
+                                                    .deleteBookingRecurrent(
+                                                        widget.bookingId!)
+                                                    .then((value) {
+                                                  // print(value);
+                                                  if (value['Status']
+                                                          .toString() ==
+                                                      "200") {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                        title: value['Title'],
+                                                        contentText:
+                                                            value['Message'],
+                                                      ),
+                                                    ).then((value) {
+                                                      context.go('/rooms');
+                                                    });
+                                                  } else {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                        title: value['Title'],
+                                                        contentText:
+                                                            value['Message'],
+                                                        isSuccess: false,
+                                                      ),
+                                                    );
+                                                  }
+                                                }).onError((error, stackTrace) {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialogBlack(
+                                                      title:
+                                                          'Failed connect to API',
+                                                      contentText:
+                                                          error.toString(),
+                                                      isSuccess: false,
+                                                    ),
+                                                  );
+                                                });
+                                              }
+                                            }
+                                          });
+                                        },
+                                        padding: ButtonSize().mediumSize(),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -895,6 +907,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                               bookingHistory[index]['EmpNIP'],
                           bookingHistory[index]['Status'],
                           bookingHistory[index]['LogDate'],
+                          bookingHistory[index]['Description'],
                         ),
                       ),
                       index == bookingHistory.length - 1
@@ -907,6 +920,20 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   );
                 },
               ),
+        // Visibility(
+        //   visible: roomType == "MeetingRoom" ? false : true,
+        //   child: Column(
+        //     crossAxisAlignment: CrossAxisAlignment.start,
+        //     children: [
+        //       detailTitle('Comments'),
+        //       divider(),
+        //       detailContent('Comments', approvalComment),
+        //       const SizedBox(
+        //         height: 30,
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }
@@ -1011,7 +1038,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
     );
   }
 
-  Widget bookingDetail(String name, String status, String logDate) {
+  Widget bookingDetail(
+      String name, String status, String logDate, String comments) {
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1026,7 +1054,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                 fontWeight: FontWeight.w300,
                 color: sonicSilver,
               ),
-              textAlign: TextAlign.end,
+              textAlign: TextAlign.start,
             ),
           ),
           const SizedBox(
@@ -1041,6 +1069,18 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   style: helveticaText.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
+                    color: davysGray,
+                  ),
+                  textAlign: TextAlign.end,
+                ),
+                const SizedBox(
+                  height: 3,
+                ),
+                Text(
+                  comments,
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
                     color: davysGray,
                   ),
                   textAlign: TextAlign.end,
