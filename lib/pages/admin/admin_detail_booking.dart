@@ -60,6 +60,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
   DateTime repeatEndDate = DateTime.now();
 
   String selectedDate = "";
+  DateTime? bookingDate;
 
   String host = "";
   String hostEmail = "";
@@ -81,6 +82,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
   bool isCancelLoading = false;
   bool isAdmin = false;
   bool isPhoneShowed = false;
+  bool isButtonShowed = true;
 
   String approvalNotes = "";
 
@@ -157,7 +159,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
     // TODO: implement initState
     super.initState();
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
-      // print(value);
+      print(value);
       if (value['Status'].toString() == "200") {
         setState(() {
           isInitLoading = false;
@@ -207,6 +209,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           formattedDate = DateFormat('yyyy-mm-dd')
               .format(DateTime.parse(value['Data']['BookingDateOriginal']));
           selectedDate = value['Data']['BookingDateOriginal'];
+          bookingDate = DateTime.parse(value['Data']['BookingDateOriginal']);
         });
       } else {
         showDialog(
@@ -223,11 +226,27 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           if (value["Data"]["Admin"].toString() == "1") {
             setState(() {
               isAdmin = true;
+              isPhoneShowed = true;
+              isButtonShowed = true;
+              if (bookingDate!.day < DateTime.now().day) {
+                isButtonShowed = false;
+              }
+            });
+          } else {
+            setState(() {
               if (bookingNip == value["Data"]["EmpNIP"]) {
                 isPhoneShowed = true;
+                isButtonShowed = true;
+                if (bookingDate!.day < DateTime.now().day) {
+                  isButtonShowed = false;
+                }
               }
             });
           }
+          print('isButton Showed $isButtonShowed');
+          print(bookingDate!.isBefore(DateTime.now()));
+          print(bookingDate);
+          print(DateTime.now());
         }
       }).onError((error, stackTrace) {
         showDialog(
@@ -281,7 +300,8 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
             )
           : ConstrainedBox(
               constraints: pageConstraints.copyWith(
-                maxHeight: 2000,
+                maxHeight: 2300,
+                // minHeight: 1500,
               ),
               child: Stack(
                 children: [
@@ -326,6 +346,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                           vertical: 40,
                         ),
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -369,7 +390,8 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                               height: 60,
                             ),
                             Visibility(
-                              visible: bookingStep > 2 ? false : true,
+                              // visible: bookingStep > 1 ? false : true,
+                              visible: isButtonShowed ? true : false,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -1004,6 +1026,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
               fontWeight: FontWeight.w300,
               color: sonicSilver,
             ),
+            textAlign: TextAlign.start,
           ),
         ),
         Expanded(
@@ -1069,7 +1092,6 @@ class _AuditoriumNotesApprovalDialogState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     notesNode.addListener(() {
       setState(() {});

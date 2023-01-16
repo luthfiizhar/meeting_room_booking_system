@@ -155,6 +155,55 @@ class ReqAPI {
     }
   }
 
+  Future updateBookingAudi(Booking booking) async {
+    // booking.toJson();
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(
+        apiUrlGlobal, '/MRBS_Backend/public/api/user/booking/approval/edit');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+
+    // dynamic bodySend = booking.toJson();
+    var bodySend = """
+  {
+      "BookingID": "${booking.bookingId}",
+      "RoomID": "${booking.roomId}",
+      "Summary": "${booking.summary}",
+      "AdditionalNotes" : "${booking.additionalNote}",
+      "Description": "${booking.description}",
+      "StartDate": "${booking.startDate.toString().substring(0, 19)}",
+      "EndDate": "${booking.endDate.toString().substring(0, 19)}",
+      "Recursive": "${booking.recursive}",
+      "MonthAbsolute": ${booking.monthAbs},
+      "RepeatInterval" : ${booking.repeatInterval},
+      "Days" : ${booking.daysWeek},
+      "RepeatEndDate": "${booking.repeatEndDate}",
+      "MeetingType": "Internal",
+      "AttendantsNumber": ${booking.attendantsNumber},
+      "LayoutID" : "${booking.layoutId}",
+      "LayoutName" : "${booking.layoutName}",
+      "LayoutImage" : "${booking.layoutImage}",
+      "Amenities": ${booking.amenities},
+      "Attendants": ${booking.attendants},
+      "FoodAmenities": ${booking.foodAmenities}
+  }
+  """;
+    try {
+      var response =
+          await http.put(url, body: bodySend, headers: requestHeader);
+
+      var data = json.decode(response.body);
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   Future searchRoomApi(
       String date,
       String startTime,

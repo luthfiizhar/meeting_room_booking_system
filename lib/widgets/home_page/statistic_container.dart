@@ -152,24 +152,24 @@ class _StatisticContainerState extends State<StatisticContainer> {
                 mostUsedLocation(),
               ],
             ),
-            const SizedBox(
-              height: 18,
-            ),
-            const Divider(
-              color: lightGray,
-              thickness: 0.5,
-            ),
-            const SizedBox(
-              height: 18,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                bookingStatusContainer(),
-                eventCreationContainer(),
-              ],
-            ),
+            // const SizedBox(
+            //   height: 18,
+            // ),
+            // const Divider(
+            //   color: lightGray,
+            //   thickness: 0.5,
+            // ),
+            // const SizedBox(
+            //   height: 18,
+            // ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     bookingStatusContainer(),
+            //     eventCreationContainer(),
+            //   ],
+            // ),
           ],
         ),
       ),
