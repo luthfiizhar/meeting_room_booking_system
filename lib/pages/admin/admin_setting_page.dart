@@ -314,7 +314,11 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
             isLoadingSync = true;
           });
           await Future.delayed(const Duration(seconds: 2), () async {
+            // popUpWindow.close();
             popUpWindow.close();
+            html.window.removeEventListener("", (event) {
+              return "";
+            });
             setState(() {
               isLoadingSync = false;
             });
