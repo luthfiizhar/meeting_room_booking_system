@@ -119,8 +119,10 @@ class PopUpProfile extends StatelessWidget {
                     ),
               TextButton(
                 onPressed: () {
-                  context.goNamed('setting',
-                      params: {'isAdmin': isAdmin.toString()});
+                  context.goNamed('setting', params: {
+                    'isAdmin': isAdmin.toString(),
+                    'menu': 'Profile'
+                  });
                 },
                 child: Text(
                   'My Profile',
@@ -131,6 +133,27 @@ class PopUpProfile extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(
+                height: 15,
+              ),
+              !isAdmin
+                  ? const SizedBox()
+                  : TextButton(
+                      onPressed: () {
+                        context.goNamed('setting', params: {
+                          'isAdmin': isAdmin.toString(),
+                          'menu': 'admin_setting'
+                        });
+                      },
+                      child: Text(
+                        'Settings',
+                        style: helveticaText.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w300,
+                          color: davysGray,
+                        ),
+                      ),
+                    ),
               const SizedBox(
                 height: 15,
               ),

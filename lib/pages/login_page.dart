@@ -1,22 +1,14 @@
 // import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive/hive.dart';
-import 'package:introduction_screen/introduction_screen.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
-import 'package:meeting_room_booking_system/main.dart';
-import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
-import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -27,11 +19,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   ReqAPI apiReq = ReqAPI();
-  TextEditingController _username = TextEditingController();
-  TextEditingController _password = TextEditingController();
+  final TextEditingController _username = TextEditingController();
+  final TextEditingController _password = TextEditingController();
 
-  FocusNode _usernameNode = FocusNode();
-  FocusNode _passwordNode = FocusNode();
+  final FocusNode _usernameNode = FocusNode();
+  final FocusNode _passwordNode = FocusNode();
 
   String? username = "";
   String? password = "";
@@ -42,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool? isLoading = false;
 
-  final _formKey = new GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   submitLogin() {
     setState(() {
@@ -59,14 +51,14 @@ class _LoginPageState extends State<LoginPage> {
       apiReq
           .loginHCSSO(username!.toString(), password!.toString())
           .then((value) {
-        print("login Dummy $value");
+        // print("login Dummy $value");
         setState(() {
           isLoading = false;
         });
         if (value['Status'].toString() == "200") {
           dynamic firstLogin = value['Data']['LoginCount'].toString();
           apiReq.getUserProfile().then((value) async {
-            print("getUserProfile $value");
+            // print("getUserProfile $value");
             if (value['Status'].toString() == "200") {
               // await widget.resetState!();
               // await widget.updateLogin!(
@@ -131,7 +123,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _usernameNode.addListener(() {
       setState(() {});
@@ -143,7 +134,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _password.dispose();
     _username.dispose();
@@ -192,47 +182,44 @@ class _LoginPageState extends State<LoginPage> {
                     Positioned(
                       top: 20,
                       left: 0,
-                      child: Container(
-                        // height: 70,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            // vertical: 16,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: Image.asset('assets/navbarlogo.png')
-                                        .image,
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                                height: 50,
-                                width: 155,
-                              ),
-                              const SizedBox(
-                                height: 32,
-                                child: VerticalDivider(
-                                  color: davysGray,
-                                  thickness: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          // vertical: 16,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: Image.asset('assets/navbarlogo.png')
+                                      .image,
+                                  fit: BoxFit.fill,
                                 ),
                               ),
-                              const SizedBox(
-                                width: 13,
+                              height: 50,
+                              width: 155,
+                            ),
+                            const SizedBox(
+                              height: 32,
+                              child: VerticalDivider(
+                                color: davysGray,
+                                thickness: 1,
                               ),
-                              Text(
-                                'Meeting Room Booking System',
-                                style: helveticaText.copyWith(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: davysGray,
-                                ),
+                            ),
+                            const SizedBox(
+                              width: 13,
+                            ),
+                            Text(
+                              'Meeting Room Booking System',
+                              style: helveticaText.copyWith(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: davysGray,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -365,7 +352,7 @@ class _LoginPageState extends State<LoginPage> {
                                                       size: 18,
                                                     ),
                                             )
-                                          : SizedBox(),
+                                          : const SizedBox(),
                                       // suffixIcon: ,
                                     ),
                                   ),

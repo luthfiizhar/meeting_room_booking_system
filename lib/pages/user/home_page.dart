@@ -1,35 +1,16 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:introduction_screen/introduction_screen.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
-import 'package:meeting_room_booking_system/constant/key.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
-import 'package:meeting_room_booking_system/model/main_model.dart';
-import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
 import 'package:meeting_room_booking_system/widgets/amenities_container.dart';
 import 'package:meeting_room_booking_system/widgets/banner/landscape_white_banner.dart';
-import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
-import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
-import 'package:meeting_room_booking_system/widgets/button/regular_button_white.dart';
-import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
-import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
-import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
-import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/end_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/apporval_message.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/available_room_offer_container.dart';
-import 'package:meeting_room_booking_system/widgets/home_page/feature_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/greeting_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/home_search_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/room_type_home_container.dart';
@@ -37,25 +18,11 @@ import 'package:meeting_room_booking_system/widgets/home_page/schedule_container
 import 'package:meeting_room_booking_system/widgets/home_page/statistic_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/upcoming_event_container.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
-import 'package:meeting_room_booking_system/widgets/meeting_type_container.dart';
-import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:meeting_room_booking_system/widgets/participant_container.dart';
-import 'package:meeting_room_booking_system/widgets/pop_up_profile.dart';
-import 'package:meeting_room_booking_system/widgets/search_container.dart';
-import 'package:meeting_room_booking_system/widgets/search_page/filter_container.dart';
-import 'package:meeting_room_booking_system/widgets/search_page/list_card.dart';
-import 'package:meeting_room_booking_system/widgets/search_page/sorting_container.dart';
 import 'package:meeting_room_booking_system/widgets/start_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/time_picker_container.dart';
-import 'package:provider/provider.dart';
-import 'package:responsive_framework/responsive_row_column.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-import 'dart:js' as js;
 import 'dart:html' as html;
-
-import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, this.index = 0}) : super(key: key);
@@ -68,11 +35,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ReqAPI apiReq = ReqAPI();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _facilityController = TextEditingController();
-  TextEditingController _timeController = TextEditingController();
-  TextEditingController _participantController = TextEditingController();
-  DateRangePickerController datePickerControl = DateRangePickerController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _facilityController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _participantController = TextEditingController();
+  final DateRangePickerController datePickerControl =
+      DateRangePickerController();
 
   bool showOnBoard = false;
   bool opacityOn = false;

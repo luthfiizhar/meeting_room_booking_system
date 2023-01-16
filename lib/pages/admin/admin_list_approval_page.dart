@@ -196,7 +196,7 @@ class _AdminListPageState extends State<AdminListPage> {
         ? ((45 * (showedPage.length.toDouble())))
         : ((55 * (showedPage.length.toDouble())));
     return LayoutPageWeb(
-      index: 0,
+      index: 2,
       setDatePickerStatus: setDatePickerStatus,
       resetState: resetState,
       scrollController: scrollController,
