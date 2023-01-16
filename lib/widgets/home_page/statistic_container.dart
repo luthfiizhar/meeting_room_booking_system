@@ -390,7 +390,7 @@ class _StatisticContainerState extends State<StatisticContainer> {
                                       index,
                                       Builder(builder: (context) {
                                         double widthPercent =
-                                            399 * (value.percentage / 100);
+                                            400 * (value.percentage / 100);
                                         return Container(
                                           width: widthPercent,
                                           height: 20,
@@ -485,54 +485,68 @@ class _StatisticContainerState extends State<StatisticContainer> {
                                           Builder(builder: (context) {
                                             if (index ==
                                                 bookingStatus.length - 1) {
-                                              return Container(
-                                                // color: blueAccent,
-                                                width: 400.0 *
-                                                    (value.percentage / 100),
-                                                child: Text(
-                                                  "${value.percentage}%",
-                                                  textAlign: index ==
-                                                          bookingStatus.length -
-                                                              1
-                                                      ? TextAlign.end
-                                                      : null,
-                                                  style: helveticaText.copyWith(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w300,
-                                                    color: bookingStatus[index]
-                                                        .color,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.visible,
-                                                  softWrap: false,
-                                                ),
-                                              );
+                                              return value.percentage == 0
+                                                  ? const SizedBox()
+                                                  : SizedBox(
+                                                      // color: blueAccent,
+                                                      width: 400.0 *
+                                                          (value.percentage /
+                                                              100),
+                                                      child: Text(
+                                                        "${value.percentage}%",
+                                                        textAlign: index ==
+                                                                bookingStatus
+                                                                        .length -
+                                                                    1
+                                                            ? TextAlign.end
+                                                            : null,
+                                                        style: helveticaText
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w300,
+                                                          color: bookingStatus[
+                                                                  index]
+                                                              .color,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .visible,
+                                                        softWrap: false,
+                                                      ),
+                                                    );
                                             } else {
-                                              return Container(
-                                                // color: blueAccent,
-                                                width: 400.0 *
-                                                    (value.percentage / 100),
-                                                child: Text(
-                                                  "${value.percentage}%",
-                                                  textAlign: index ==
-                                                          bookingStatus.length -
-                                                              1
-                                                      ? TextAlign.end
-                                                      : null,
-                                                  style: helveticaText.copyWith(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w300,
-                                                    color: bookingStatus[index]
-                                                        .color,
-                                                    // backgroundColor:
-                                                    //     bookingStatus[index]
-                                                    //         .color,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.visible,
-                                                  softWrap: false,
-                                                ),
-                                              );
+                                              return value.percentage == 0
+                                                  ? const SizedBox()
+                                                  : SizedBox(
+                                                      // color: blueAccent,
+                                                      width: 400.0 *
+                                                          (value.percentage /
+                                                              100),
+                                                      child: Text(
+                                                        "${value.percentage}%",
+                                                        textAlign: index ==
+                                                                bookingStatus
+                                                                        .length -
+                                                                    1
+                                                            ? TextAlign.end
+                                                            : null,
+                                                        style: helveticaText
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w300,
+                                                          color: bookingStatus[
+                                                                  index]
+                                                              .color,
+                                                          // backgroundColor:
+                                                          //     bookingStatus[index]
+                                                          //         .color,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .visible,
+                                                        softWrap: false,
+                                                      ),
+                                                    );
                                             }
                                           }),
                                         ),

@@ -387,8 +387,7 @@ class ReqAPI {
 
       var data = json.decode(response.body);
       var box = await Hive.openBox('userLogin');
-      box.put('jwtToken',
-          data['Data']['Token'] != null ? data['Data']['Token'] : "");
+      box.put('jwtToken', data['Data']['Token'] ?? "");
       jwtToken = data['Data']['Token'];
       isTokenValid = true;
       if (data['Data']['Roles']['Admin'] == 1) {
@@ -422,14 +421,13 @@ class ReqAPI {
       var data = json.decode(response.body);
       var box = await Hive.openBox('userLogin');
       if (data['Status'].toString() == "200") {
-        box.put('jwtToken',
-            data['Data']['Token'] != null ? data['Data']['Token'] : "");
+        box.put('jwtToken', data['Data']['Token'] ?? "");
         jwtToken = data['Data']['Token'];
         isTokenValid = true;
         if (data['Data']['Roles']['Admin'] == 1) {
           isAdmin = true;
         }
-        print("LOGIN HCSSO RESPONSE ----> $data");
+        // print("LOGIN HCSSO RESPONSE ----> $data");
       }
 
       return data;

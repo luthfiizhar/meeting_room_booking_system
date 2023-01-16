@@ -10,7 +10,7 @@ import 'package:meeting_room_booking_system/widgets/button/transparent_button_bl
 import 'package:meeting_room_booking_system/widgets/detail_page/facility_item_detail.dart';
 import 'package:meeting_room_booking_system/widgets/detail_page/food_item_detail.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
-import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
+// import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 
@@ -157,7 +157,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
     // TODO: implement initState
     super.initState();
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
-      print(value);
+      // print(value);
       if (value['Status'].toString() == "200") {
         setState(() {
           isInitLoading = false;
@@ -991,52 +991,50 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
   }
 
   Widget bookingDetail(String name, String status, String logDate) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 125,
-            child: Text(
-              status,
-              style: helveticaText.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: sonicSilver,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 125,
+          child: Text(
+            status,
+            style: helveticaText.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              color: sonicSilver,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                name,
+                style: helveticaText.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: davysGray,
+                ),
+                textAlign: TextAlign.end,
               ),
-            ),
+              const SizedBox(
+                height: 3,
+              ),
+              Text(
+                logDate,
+                style: helveticaText.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
+                  color: davysGray,
+                ),
+                textAlign: TextAlign.end,
+              ),
+            ],
           ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  name,
-                  style: helveticaText.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: davysGray,
-                  ),
-                  textAlign: TextAlign.end,
-                ),
-                const SizedBox(
-                  height: 3,
-                ),
-                Text(
-                  logDate,
-                  style: helveticaText.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w300,
-                    color: davysGray,
-                  ),
-                  textAlign: TextAlign.end,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
