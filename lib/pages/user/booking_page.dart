@@ -1824,8 +1824,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                               booking.monthAbs =
                                                   int.parse(monthAbsolute);
                                             }
-                                            debugPrint(
-                                                booking.toJson().toString());
+                                            // debugPrint(
+                                            //     booking.toJson().toString());
                                             // print(booking.toJson());
                                             // context.pop();
                                             // showDialog(
@@ -1918,7 +1918,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                 });
                                                 //END BOOOKING FUNCTION
                                               } else {
-                                                //UPDATE BOOKING FUNCTION
+                                                //EDIT BOOKING FUNCTION
                                                 apiReq
                                                     .updateBooking(booking)
                                                     .then((value) {
@@ -1980,7 +1980,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                     // context.go('/rooms');
                                                   });
                                                 });
-                                                //END UPDATE BOOOKING FUNCTION
+                                                //END EDIT BOOOKING FUNCTION
                                               }
                                             }
                                             //BOOKING AUDI
@@ -1993,39 +1993,60 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                     layoutBase64;
                                               }
                                               // print(booking.toJson());
-                                              //BOOKING AUDI FUNCTION
-                                              apiReq
-                                                  .bookingAudi(booking)
-                                                  .then((value) {
-                                                // print(value);
-                                                if (value['Status'] == "200") {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        AlertDialogBlack(
-                                                            title:
-                                                                value['Title'],
-                                                            contentText: value[
-                                                                'Message']),
-                                                  ).then((value) {
-                                                    setState(() {
-                                                      isSubmitLoading = false;
+                                              if (!isEdit) {
+                                                //BOOKING AUDI FUNCTION
+                                                apiReq
+                                                    .bookingAudi(booking)
+                                                    .then((value) {
+                                                  // print(value);
+                                                  if (value['Status'] ==
+                                                      "200") {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                              title: value[
+                                                                  'Title'],
+                                                              contentText: value[
+                                                                  'Message']),
+                                                    ).then((value) {
+                                                      setState(() {
+                                                        isSubmitLoading = false;
+                                                      });
+                                                      // updateEvent(model).then((value) {
+                                                      //   context.go('/rooms');
+                                                      // });
+                                                      context.go('/rooms');
+                                                      // context.pop();
+                                                      // Navigator.of(context).pop();
                                                     });
-                                                    // updateEvent(model).then((value) {
-                                                    //   context.go('/rooms');
-                                                    // });
-                                                    context.go('/rooms');
-                                                    // context.pop();
-                                                    // Navigator.of(context).pop();
-                                                  });
-                                                } else {
+                                                  } else {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                        title: value['Title'],
+                                                        contentText:
+                                                            value['Message'],
+                                                        isSuccess: false,
+                                                      ),
+                                                    ).then((value) {
+                                                      setState(() {
+                                                        isSubmitLoading = false;
+                                                      });
+                                                      // context.go('/rooms');
+                                                    });
+                                                  }
+                                                  // context.pop();
+                                                }).onError((error, stackTrace) {
+                                                  // print(error);
                                                   showDialog(
                                                     context: context,
                                                     builder: (context) =>
                                                         AlertDialogBlack(
-                                                      title: value['Title'],
+                                                      title: 'Failed',
                                                       contentText:
-                                                          value['Message'],
+                                                          error.toString(),
                                                       isSuccess: false,
                                                     ),
                                                   ).then((value) {
@@ -2034,27 +2055,73 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                     });
                                                     // context.go('/rooms');
                                                   });
-                                                }
-                                                // context.pop();
-                                              }).onError((error, stackTrace) {
-                                                // print(error);
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      AlertDialogBlack(
-                                                    title: 'Failed',
-                                                    contentText:
-                                                        error.toString(),
-                                                    isSuccess: false,
-                                                  ),
-                                                ).then((value) {
-                                                  setState(() {
-                                                    isSubmitLoading = false;
-                                                  });
-                                                  // context.go('/rooms');
                                                 });
-                                              });
-                                              //END BOOKING AUDI FUNCTION
+                                                //END BOOKING AUDI FUNCTION
+                                              } else {
+                                                //EDIT AUDI FUNCTION
+                                                apiReq
+                                                    .updateBookingAudi(booking)
+                                                    .then((value) {
+                                                  // print(value);
+                                                  if (value['Status'] ==
+                                                      "200") {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                              title: value[
+                                                                  'Title'],
+                                                              contentText: value[
+                                                                  'Message']),
+                                                    ).then((value) {
+                                                      setState(() {
+                                                        isSubmitLoading = false;
+                                                      });
+                                                      // updateEvent(model).then((value) {
+                                                      //   context.go('/rooms');
+                                                      // });
+                                                      context.go('/rooms');
+                                                      // context.pop();
+                                                      // Navigator.of(context).pop();
+                                                    });
+                                                  } else {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialogBlack(
+                                                        title: value['Title'],
+                                                        contentText:
+                                                            value['Message'],
+                                                        isSuccess: false,
+                                                      ),
+                                                    ).then((value) {
+                                                      setState(() {
+                                                        isSubmitLoading = false;
+                                                      });
+                                                      // context.go('/rooms');
+                                                    });
+                                                  }
+                                                  // context.pop();
+                                                }).onError((error, stackTrace) {
+                                                  // print(error);
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialogBlack(
+                                                      title: 'Failed',
+                                                      contentText:
+                                                          error.toString(),
+                                                      isSuccess: false,
+                                                    ),
+                                                  ).then((value) {
+                                                    setState(() {
+                                                      isSubmitLoading = false;
+                                                    });
+                                                    // context.go('/rooms');
+                                                  });
+                                                });
+                                                //END EDIT AUDI FUNCTION
+                                              }
                                             }
 
                                             // debugPrint("""
