@@ -119,7 +119,7 @@ class SearchInputField extends StatelessWidget {
           contentPadding: const EdgeInsets.only(
             right: 15,
             left: 15,
-            top: 18,
+            top: 17,
             bottom: 15,
           ),
           suffixIcon: suffixIcon,
