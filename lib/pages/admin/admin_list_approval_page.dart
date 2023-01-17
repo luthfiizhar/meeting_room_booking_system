@@ -144,6 +144,7 @@ class _AdminListPageState extends State<AdminListPage> {
 
   updateList() {
     apiReq.getAuditoriumApprovalList(searchTerm).then((value) {
+      print(value);
       if (value['Status'].toString() == "200") {
         setState(() {
           approvalList = value['Data']['List'];
@@ -317,7 +318,9 @@ class _AdminListPageState extends State<AdminListPage> {
                       ),
                     ),
                   ),
-                  Expanded(
+                  SizedBox(
+                    width: 125,
+                    // flex: 1,
                     child: InkWell(
                       onTap: () {
                         onTapHeader("BookingTime");
@@ -342,7 +345,8 @@ class _AdminListPageState extends State<AdminListPage> {
                       ),
                     ),
                   ),
-                  const Expanded(
+                  const SizedBox(
+                    width: 225,
                     child: SizedBox(),
                   ),
                   const SizedBox(
@@ -381,7 +385,7 @@ class _AdminListPageState extends State<AdminListPage> {
                           index: index,
                           eventName: approvalList[index]['Summary'],
                           date: approvalList[index]['BookingDate'],
-                          location: approvalList[index]['RoomName'],
+                          location: approvalList[index]['RoomName'] ?? "",
                           time: approvalList[index]['BookingTime'],
                           status: approvalList[index]['Status'],
                           bookingId: approvalList[index]['BookingID'],
