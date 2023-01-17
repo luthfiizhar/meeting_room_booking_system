@@ -107,6 +107,7 @@ class BlackInputField extends StatelessWidget {
             color: orangeAccent,
             fontSize: 14,
             fontWeight: FontWeight.w300,
+            // overflow: TextOverflow.,
           ),
           fillColor: enabled!
               ? focusNode!.hasFocus
