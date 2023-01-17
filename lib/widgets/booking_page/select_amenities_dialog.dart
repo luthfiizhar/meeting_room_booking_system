@@ -15,7 +15,7 @@ class SelectAmenitiesDialog extends StatefulWidget {
 
   Function? setListAmenities;
   String? roomId;
-  List? listAmen;
+  List<Amenities>? listAmen;
 
   @override
   State<SelectAmenitiesDialog> createState() => _SelectAmenitiesDialogState();
@@ -35,11 +35,16 @@ class _SelectAmenitiesDialogState extends State<SelectAmenitiesDialog> {
     for (var element in widget.listAmen!) {
       amenities.add(
         Amenities(
-            amenitiesId: element['AmenitiesID'] ?? element.amenitiesId,
-            amenitiesName: element['AmenitiesName'] ?? element.amenitiesName,
-            qty: element['Default'] ?? element.qty,
-            photo: element['ImageURL'] ?? element.photo,
-            defaultAmount: element['Default'] ?? element.defaultAmount),
+            // amenitiesId: element['AmenitiesID'] ?? element.amenitiesId,
+            // amenitiesName: element['AmenitiesName'] ?? element.amenitiesName,
+            // qty: element['Default'] ?? element.qty,
+            // photo: element['ImageURL'] ?? element.photo,
+            // defaultAmount: element['Default'] ?? element.defaultAmount),
+            amenitiesId: element.amenitiesId,
+            amenitiesName: element.amenitiesName,
+            qty: element.qty,
+            photo: element.photo,
+            defaultAmount: element.defaultAmount),
       );
     }
   }

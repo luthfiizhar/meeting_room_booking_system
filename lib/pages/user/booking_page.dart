@@ -169,7 +169,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   List<FoodAmenities> listFoods = [];
   List roomDetail = [];
   List resultPicture = [];
-  List resultAmenities = [];
+  List<Amenities> resultAmenities = [];
   List resultFoodAmenities = [];
 
   bool timeContainerActive = false;
@@ -440,18 +440,22 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
   setListFacility(List<Amenities> value) {
     // print('value');
-    // print(value);
-    setState(() {
-      for (var i = 0; i < resultAmenities.length; i++) {
-        for (var j = 0; j < value.length; j++) {
-          if (resultAmenities[i]['AmenitiesID'] == value[j].amenitiesId) {
-            resultAmenities[i]['Amount'] = value[j].qty;
-            resultAmenities[i]['Default'] = value[j].defaultAmount;
-          }
+    print(value);
+    // setState(() {
+    for (var i = 0; i < resultAmenities.length; i++) {
+      for (var j = 0; j < value.length; j++) {
+        if (resultAmenities[i].amenitiesId == value[j].amenitiesId) {
+          print('cocok');
+          setState(() {
+            resultAmenities[i].qty = value[j].qty;
+            resultAmenities[i].defaultAmount = value[j].defaultAmount;
+          });
         }
       }
-      listAmenities = value;
-    });
+    }
+    listAmenities = value;
+    // });
+    print("resultAmenities ---> $resultAmenities");
   }
 
   setListFood(List<FoodAmenities> value) {
@@ -654,8 +658,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         floor = value['Data']['AreaName'];
         participantMax = value['Data']['MaxCapacity'];
         participantMin = value['Data']['MinCapacity'];
-        resultAmenities = value['Data']['Amenities'];
-        for (var element in resultAmenities) {
+        List tempResultAmenities = value['Data']['Amenities'];
+        for (var element in tempResultAmenities) {
           if (element['Default'] > 0) {
             listAmenities.add(
               Amenities(
@@ -667,6 +671,15 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
               ),
             );
           }
+          resultAmenities.add(
+            Amenities(
+              amenitiesId: element['AmenitiesID'],
+              amenitiesName: element['AmenitiesName'],
+              photo: element['ImageURL'],
+              qty: element['Amount'],
+              defaultAmount: element['Default'],
+            ),
+          );
         }
         resultFoodAmenities = value['Data']['FoodAmenities'];
         if (value['Data']['Photos'] != []) {
@@ -693,6 +706,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         _totalParticipant.text = widget.participant!;
         if (widget.participant == "25") {
           _totalParticipant.text = "";
+        }
+        if (widget.participant == "0") {
+          _totalParticipant.text = value['Data']['MinCapacity'].toString();
         }
         if (roomType != 'MeetingRoom') {
           _totalParticipant.text = "";
@@ -759,15 +775,16 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             }
             // invitedGuest = guest.toList();
             List tempAmenities = json.decode(amenities);
-            // for (var element in tempAmenities) {
-            //   listAmenities.add(Amenities(
-            //     amenitiesId: element['AmenitiesID'],
-            //     amenitiesName: element['AmenitiesName'],
-            //     defaultAmount: int.parse(element['DefaultAmount']),
-            //     qty: int.parse(element['Amount']),
-            //     photo: element['ImageURL'],
-            //   ));
-            // }
+            listAmenities.clear();
+            for (var element in tempAmenities) {
+              listAmenities.add(Amenities(
+                amenitiesId: element['AmenitiesID'],
+                amenitiesName: element['AmenitiesName'],
+                defaultAmount: int.parse(element['DefaultAmount']),
+                qty: int.parse(element['Amount']),
+                photo: element['ImageURL'],
+              ));
+            }
             if (editData['bookingType'] == "RECURRENT") {
               _repeatEnd.text = DateFormat('d MMM yyyy')
                   .format(DateTime.parse(editData['repeatEndDate']));
@@ -2546,9 +2563,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                   var tempID = listAmenities[index].amenitiesId;
                   // print(tempID);
                   for (var i = 0; i < resultAmenities.length; i++) {
-                    if (resultAmenities[i]['AmenitiesID'] ==
+                    if (resultAmenities[i].amenitiesId ==
                         listAmenities[index].amenitiesId) {
-                      resultAmenities[i]['Amount'] = 0;
+                      resultAmenities[i].qty = 0;
                     }
                   }
                   listAmenities.removeAt(index);
