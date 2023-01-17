@@ -92,10 +92,13 @@ class _DetailAppointmentContainerState
     phoneNumber = widget.bookingDetail!.phoneNumber;
     bookingType = widget.bookingDetail!.bookingType;
     startTime = widget.bookingDetail!.startTime;
+    if (bookingType == "GOOGLE") {
+    } else {}
 
     DateFormat formatDate = DateFormat('yyyy-MM-dd hh:mm:ss');
     date = formatDate
         .parse("${widget.bookingDetail!.originalBookingDate} $startTime:00");
+    print(date);
     apiReq.getUserProfile().then((value) {
       if (value['Status'].toString() == "200") {
         if (value['Data']['Admin'].toString() == "1") {
@@ -354,101 +357,101 @@ class _DetailAppointmentContainerState
                           //   onPressed: () {},
                           //   tooltip: 'Trade',
                           // ),
-                          Visibility(
-                            visible: isButtonCancelShowed,
-                            child: IconButton(
-                              icon: const Icon(
-                                MdiIcons.closeCircleOutline,
-                                color: blueAccent,
-                                size: 26,
-                              ),
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      const ConfirmDialogBlack(
-                                    title: 'Cancel Booking',
-                                    contentText:
-                                        'Are you sure want cancel this booking?',
-                                  ),
-                                ).then((value) {
-                                  // print("BOOKING TYPE $bookingType");
-                                  setState(() {
-                                    // isCancelLoading = true;
-                                  });
-                                  if (value) {
-                                    if (bookingType == "SINGLE") {
-                                      apiReq
-                                          .deleteBooking(
-                                              widget.bookingDetail!.bookingId)
-                                          .then((value) {
-                                        // print(value);
-                                        setState(() {
-                                          // isCancelLoading = false;
-                                        });
-                                        if (value['Status'] == "200") {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                AlertDialogBlack(
-                                              title: value['Title'],
-                                              contentText: value['Message'],
-                                            ),
-                                          ).then((value) {
-                                            // context.go('/rooms');
-                                            widget.updateCalendar!(
-                                                DateFormat('yyyy-MM-dd').format(
-                                                    widget.selectedDate!));
-                                          });
-                                        }
-                                      }).onError((error, stackTrace) {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              AlertDialogBlack(
-                                            title: 'Failed connect to API',
-                                            contentText: error.toString(),
-                                            isSuccess: false,
-                                          ),
-                                        );
-                                      });
-                                    }
-                                    if (bookingType == "RECURRENT") {
-                                      apiReq
-                                          .deleteBookingRecurrent(
-                                              widget.bookingDetail!.bookingId)
-                                          .then((value) {
-                                        // print(value);
-                                        if (value['Status'] == "200") {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                AlertDialogBlack(
-                                              title: value['Title'],
-                                              contentText: value['Message'],
-                                            ),
-                                          ).then((value) {
-                                            context.go('/rooms');
-                                          });
-                                        }
-                                      }).onError((error, stackTrace) {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              AlertDialogBlack(
-                                            title: 'Failed connect to API',
-                                            contentText: error.toString(),
-                                            isSuccess: false,
-                                          ),
-                                        );
-                                      });
-                                    }
-                                  }
-                                });
-                              },
-                              tooltip: 'Cancel',
-                            ),
-                          ),
+                          // Visibility(
+                          //   visible: isButtonCancelShowed,
+                          //   child: IconButton(
+                          //     icon: const Icon(
+                          //       MdiIcons.closeCircleOutline,
+                          //       color: blueAccent,
+                          //       size: 26,
+                          //     ),
+                          //     onPressed: () {
+                          //       showDialog(
+                          //         context: context,
+                          //         builder: (context) =>
+                          //             const ConfirmDialogBlack(
+                          //           title: 'Cancel Booking',
+                          //           contentText:
+                          //               'Are you sure want cancel this booking?',
+                          //         ),
+                          //       ).then((value) {
+                          //         // print("BOOKING TYPE $bookingType");
+                          //         setState(() {
+                          //           // isCancelLoading = true;
+                          //         });
+                          //         if (value) {
+                          //           if (bookingType == "SINGLE") {
+                          //             apiReq
+                          //                 .deleteBooking(
+                          //                     widget.bookingDetail!.bookingId)
+                          //                 .then((value) {
+                          //               // print(value);
+                          //               setState(() {
+                          //                 // isCancelLoading = false;
+                          //               });
+                          //               if (value['Status'] == "200") {
+                          //                 showDialog(
+                          //                   context: context,
+                          //                   builder: (context) =>
+                          //                       AlertDialogBlack(
+                          //                     title: value['Title'],
+                          //                     contentText: value['Message'],
+                          //                   ),
+                          //                 ).then((value) {
+                          //                   // context.go('/rooms');
+                          //                   widget.updateCalendar!(
+                          //                       DateFormat('yyyy-MM-dd').format(
+                          //                           widget.selectedDate!));
+                          //                 });
+                          //               }
+                          //             }).onError((error, stackTrace) {
+                          //               showDialog(
+                          //                 context: context,
+                          //                 builder: (context) =>
+                          //                     AlertDialogBlack(
+                          //                   title: 'Failed connect to API',
+                          //                   contentText: error.toString(),
+                          //                   isSuccess: false,
+                          //                 ),
+                          //               );
+                          //             });
+                          //           }
+                          //           if (bookingType == "RECURRENT") {
+                          //             apiReq
+                          //                 .deleteBookingRecurrent(
+                          //                     widget.bookingDetail!.bookingId)
+                          //                 .then((value) {
+                          //               // print(value);
+                          //               if (value['Status'] == "200") {
+                          //                 showDialog(
+                          //                   context: context,
+                          //                   builder: (context) =>
+                          //                       AlertDialogBlack(
+                          //                     title: value['Title'],
+                          //                     contentText: value['Message'],
+                          //                   ),
+                          //                 ).then((value) {
+                          //                   context.go('/rooms');
+                          //                 });
+                          //               }
+                          //             }).onError((error, stackTrace) {
+                          //               showDialog(
+                          //                 context: context,
+                          //                 builder: (context) =>
+                          //                     AlertDialogBlack(
+                          //                   title: 'Failed connect to API',
+                          //                   contentText: error.toString(),
+                          //                   isSuccess: false,
+                          //                 ),
+                          //               );
+                          //             });
+                          //           }
+                          //         }
+                          //       });
+                          //     },
+                          //     tooltip: 'Cancel',
+                          //   ),
+                          // ),
                         ],
                       ),
                     )

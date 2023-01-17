@@ -179,38 +179,51 @@ class _DetailEventPageState extends State<DetailEventPage> {
       }
       apiReq.getUserProfile().then((value) {
         if (value["Status"].toString() == "200") {
-          if (value["Data"]["Admin"].toString() == "1") {
+          if (bookingDate!.isBefore(DateTime.now())) {
             setState(() {
-              isAdmin = true;
-              isPhoneShowed = true;
-              isButtonShowed = true;
-              if (bookingDate!.isBefore(DateTime.now())) {
-                isButtonShowed = false;
-              }
-              if (bookingStatus == "DECLINED") {
-                isButtonShowed = false;
+              isButtonShowed = false;
+              if (value["Data"]["Admin"].toString() == "1") {
+                isAdmin = true;
+                isPhoneShowed = true;
+              } else {
+                if (bookingNip == value["Data"]["EmpNIP"]) {
+                  setState(() {
+                    isOwner = true;
+                    isPhoneShowed = true;
+                  });
+                }
               }
             });
           } else {
-            if (bookingNip == value["Data"]["EmpNIP"]) {
-              setState(() {
-                isPhoneShowed = true;
-                isOwner = true;
-                isButtonShowed = true;
-
-                if (bookingDate!.isBefore(DateTime.now())) {
-                  isButtonShowed = false;
+            setState(() {
+              isButtonShowed = true;
+              if (value["Data"]["Admin"].toString() == "1") {
+                setState(() {
+                  isAdmin = true;
+                  isPhoneShowed = true;
+                  isOwner = false;
+                  isButtonShowed = true;
+                  if (bookingStatus == "DECLINED") {
+                    isButtonShowed = false;
+                  }
+                });
+              } else {
+                if (bookingNip == value["Data"]["EmpNIP"]) {
+                  setState(() {
+                    isPhoneShowed = true;
+                    isOwner = true;
+                    isButtonShowed = true;
+                    if (bookingStatus == "DECLINED") {
+                      isButtonShowed = false;
+                    }
+                  });
+                } else {
+                  setState(() {
+                    isButtonShowed = false;
+                  });
                 }
-
-                if (bookingStatus == "DECLINED") {
-                  isButtonShowed = false;
-                }
-              });
-            } else {
-              setState(() {
-                isButtonShowed = false;
-              });
-            }
+              }
+            });
           }
         }
       }).onError((error, stackTrace) {
