@@ -65,89 +65,89 @@ class _LoginPageState extends State<LoginPage> {
       //   password!,
       // )
       // for (var element in whiteList!) {
-      if (whiteList!.contains(username)) {
-        apiReq
-            .loginHCSSO(username!.toString(), password!.toString())
-            .then((value) {
-          // print("login Dummy $value");
-          setState(() {
-            isLoading = false;
-          });
-          if (value['Status'].toString() == "200") {
-            dynamic firstLogin = value['Data']['LoginCount'].toString();
-            apiReq.getUserProfile().then((value) async {
-              // print("getUserProfile $value");
-              if (value['Status'].toString() == "200") {
-                // await widget.resetState!();
-                // await widget.updateLogin!(
-                //   value['Data']['EmpName'],
-                //   value['Data']['Email'],
-                //   value['Data']['Admin'].toString(),
-                //   firstLogin,
-                // );
-                var admin = value['Data']['Admin'].toString();
-                if (firstLogin == "1") {
-                  context.goNamed('setting',
-                      params: {'isAdmin': admin == "1" ? "true" : "false"});
-                  // Navigator.of(context).pop(true);
-                } else {
-                  context.goNamed('home');
-                }
+      // if (whiteList!.contains(username)) {
+      apiReq
+          .loginHCSSO(username!.toString(), password!.toString())
+          .then((value) {
+        // print("login Dummy $value");
+        setState(() {
+          isLoading = false;
+        });
+        if (value['Status'].toString() == "200") {
+          dynamic firstLogin = value['Data']['LoginCount'].toString();
+          apiReq.getUserProfile().then((value) async {
+            // print("getUserProfile $value");
+            if (value['Status'].toString() == "200") {
+              // await widget.resetState!();
+              // await widget.updateLogin!(
+              //   value['Data']['EmpName'],
+              //   value['Data']['Email'],
+              //   value['Data']['Admin'].toString(),
+              //   firstLogin,
+              // );
+              var admin = value['Data']['Admin'].toString();
+              if (firstLogin == "1") {
+                context.goNamed('setting',
+                    params: {'isAdmin': admin == "1" ? "true" : "false"});
+                // Navigator.of(context).pop(true);
               } else {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialogBlack(
-                    title: value['Title'],
-                    contentText: value['Message'],
-                    isSuccess: false,
-                  ),
-                );
+                context.goNamed('home');
               }
-            }).onError((error, stackTrace) {
+            } else {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialogBlack(
-                  title: 'Can\'t connect to API',
-                  contentText: error.toString(),
+                  title: value['Title'],
+                  contentText: value['Message'],
                   isSuccess: false,
                 ),
               );
-            });
-          } else {
-            setState(() {
-              isLoading = false;
-            });
+            }
+          }).onError((error, stackTrace) {
             showDialog(
               context: context,
               builder: (context) => AlertDialogBlack(
-                title: value['Title'],
-                contentText: value['Message'],
+                title: 'Can\'t connect to API',
+                contentText: error.toString(),
                 isSuccess: false,
               ),
             );
-          }
-        }).onError((error, stackTrace) {
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
           showDialog(
             context: context,
             builder: (context) => AlertDialogBlack(
-              title: 'Failed connect to API',
-              contentText: error.toString(),
+              title: value['Title'],
+              contentText: value['Message'],
               isSuccess: false,
             ),
           );
-        });
-      } else {
+        }
+      }).onError((error, stackTrace) {
         showDialog(
           context: context,
-          builder: (context) => const AlertDialogBlack(
-            title: 'Sorry',
-            contentText:
-                'Sistem ini baru dapat digunakan tanggal 18 Januari 2023.',
+          builder: (context) => AlertDialogBlack(
+            title: 'Failed connect to API',
+            contentText: error.toString(),
             isSuccess: false,
           ),
         );
-        // }
-      }
+      });
+      // } else {
+      //   showDialog(
+      //     context: context,
+      //     builder: (context) => const AlertDialogBlack(
+      //       title: 'Sorry',
+      //       contentText:
+      //           'Sistem ini baru dapat digunakan tanggal 18 Januari 2023.',
+      //       isSuccess: false,
+      //     ),
+      //   );
+      //   // }
+      // }
     }
   }
 
