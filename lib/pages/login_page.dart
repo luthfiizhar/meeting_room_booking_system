@@ -28,6 +28,12 @@ class _LoginPageState extends State<LoginPage> {
   String? username = "";
   String? password = "";
 
+  List? whiteList = [
+    '151839',
+    '164369',
+    '169742',
+  ];
+
   bool? showPassword = true;
 
   bool? rememberMe = false;
@@ -35,6 +41,16 @@ class _LoginPageState extends State<LoginPage> {
   bool? isLoading = false;
 
   final _formKey = GlobalKey<FormState>();
+
+  Future checkWhiteList(String username) async {
+    for (var element in whiteList!) {
+      if (whiteList!.contains(username)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
 
   submitLogin() {
     setState(() {
@@ -48,34 +64,59 @@ class _LoginPageState extends State<LoginPage> {
       //   username!,
       //   password!,
       // )
-      apiReq
-          .loginHCSSO(username!.toString(), password!.toString())
-          .then((value) {
-        // print("login Dummy $value");
-        setState(() {
-          isLoading = false;
-        });
-        if (value['Status'].toString() == "200") {
-          dynamic firstLogin = value['Data']['LoginCount'].toString();
-          apiReq.getUserProfile().then((value) async {
-            // print("getUserProfile $value");
+      for (var element in whiteList!) {
+        if (whiteList!.contains(username)) {
+          apiReq
+              .loginHCSSO(username!.toString(), password!.toString())
+              .then((value) {
+            // print("login Dummy $value");
+            setState(() {
+              isLoading = false;
+            });
             if (value['Status'].toString() == "200") {
-              // await widget.resetState!();
-              // await widget.updateLogin!(
-              //   value['Data']['EmpName'],
-              //   value['Data']['Email'],
-              //   value['Data']['Admin'].toString(),
-              //   firstLogin,
-              // );
-              var admin = value['Data']['Admin'].toString();
-              if (firstLogin == "1") {
-                context.goNamed('setting',
-                    params: {'isAdmin': admin == "1" ? "true" : "false"});
-                // Navigator.of(context).pop(true);
-              } else {
-                context.goNamed('home');
-              }
+              dynamic firstLogin = value['Data']['LoginCount'].toString();
+              apiReq.getUserProfile().then((value) async {
+                // print("getUserProfile $value");
+                if (value['Status'].toString() == "200") {
+                  // await widget.resetState!();
+                  // await widget.updateLogin!(
+                  //   value['Data']['EmpName'],
+                  //   value['Data']['Email'],
+                  //   value['Data']['Admin'].toString(),
+                  //   firstLogin,
+                  // );
+                  var admin = value['Data']['Admin'].toString();
+                  if (firstLogin == "1") {
+                    context.goNamed('setting',
+                        params: {'isAdmin': admin == "1" ? "true" : "false"});
+                    // Navigator.of(context).pop(true);
+                  } else {
+                    context.goNamed('home');
+                  }
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialogBlack(
+                      title: value['Title'],
+                      contentText: value['Message'],
+                      isSuccess: false,
+                    ),
+                  );
+                }
+              }).onError((error, stackTrace) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialogBlack(
+                    title: 'Can\'t connect to API',
+                    contentText: error.toString(),
+                    isSuccess: false,
+                  ),
+                );
+              });
             } else {
+              setState(() {
+                isLoading = false;
+              });
               showDialog(
                 context: context,
                 builder: (context) => AlertDialogBlack(
@@ -89,35 +130,23 @@ class _LoginPageState extends State<LoginPage> {
             showDialog(
               context: context,
               builder: (context) => AlertDialogBlack(
-                title: 'Can\'t connect to API',
+                title: 'Failed connect to API',
                 contentText: error.toString(),
                 isSuccess: false,
               ),
             );
           });
         } else {
-          setState(() {
-            isLoading = false;
-          });
           showDialog(
             context: context,
-            builder: (context) => AlertDialogBlack(
-              title: value['Title'],
-              contentText: value['Message'],
+            builder: (context) => const AlertDialogBlack(
+              title: 'Sorry',
+              contentText: 'This system ready on 18 January 2023',
               isSuccess: false,
             ),
           );
         }
-      }).onError((error, stackTrace) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialogBlack(
-            title: 'Failed connect to API',
-            contentText: error.toString(),
-            isSuccess: false,
-          ),
-        );
-      });
+      }
     }
   }
 
