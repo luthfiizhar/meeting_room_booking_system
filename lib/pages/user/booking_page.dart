@@ -650,7 +650,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     if (widget.roomId!.startsWith('MR')) {
       roomType = "MeetingRoom";
     }
-    if (widget.roomId!.startsWith('C')) {
+    if (widget.roomId!.startsWith('CA')) {
       roomType = "Canteen";
     }
     selectedDate = DateTime.parse(widget.date!);
