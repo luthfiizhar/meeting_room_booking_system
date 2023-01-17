@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -165,7 +166,7 @@ class _RoomsPageState extends State<RoomsPage> {
     apiReq.getBookingDetail(selectedEvent!.bookingID!).then((value) {
       if (value['Status'] == "200") {
         setState(() {
-          // print(value);
+          print('BookingDetail $value');
           detailEvent.bookingId = value['Data']['BookingID'];
           detailEvent.empNip = value['Data']['EmpNIP'];
           detailEvent.phoneNumber = value['Data']['PhoneNumber'];
@@ -176,6 +177,7 @@ class _RoomsPageState extends State<RoomsPage> {
           detailEvent.eventTime = value['Data']['BookingStartTime'] +
               " - " +
               value['Data']['BookingEndTime'];
+          detailEvent.startTime = value['Data']['BookingStartTime'];
           detailEvent.duration = value['Data']['Duration'];
           detailEvent.floor = value['Data']['AreaName'];
           detailEvent.email = value['Data']['Email'];
@@ -187,6 +189,8 @@ class _RoomsPageState extends State<RoomsPage> {
           detailEvent.stepBooking = value['Data']['BookingStep'].toString();
           detailEvent.type = "MRBS";
           detailEvent.bookingType = value['Data']['BookingType'] ?? "";
+          detailEvent.originalBookingDate =
+              value['Data']['BookingDateOriginal'];
           if (!isShowDetail) {
             isShowDetail = true;
           }
@@ -1336,6 +1340,8 @@ class BookingDetail {
     this.phoneNumber = "",
     this.type = "",
     this.bookingType = "",
+    this.startTime = "",
+    this.originalBookingDate = "",
   });
   String bookingId;
   String empNip;
@@ -1348,6 +1354,8 @@ class BookingDetail {
   String description;
   String attendatsNumber;
 
+  String startTime;
+
   String host;
   String email;
   String avaya;
@@ -1358,4 +1366,5 @@ class BookingDetail {
   String bookingType;
 
   String type;
+  String originalBookingDate;
 }

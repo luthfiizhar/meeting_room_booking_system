@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
@@ -742,9 +743,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             // print(editData['guestInvited']);
             // selectedDate = DateTime.parse(widget.date!);
             dynamic guest = editData['guestInvited'];
+            dynamic amenities = editData['facilities'];
+
             // print(guest);
             print('bahan edit');
-            print(editData);
+            print(amenities);
             _eventName.text = editData['summary'];
             _eventDesc.text = editData['description'];
             _additionalNote.text = editData['additionalNote'];
@@ -755,6 +758,16 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
               invitedGuest.add(element);
             }
             // invitedGuest = guest.toList();
+            List tempAmenities = json.decode(amenities);
+            // for (var element in tempAmenities) {
+            //   listAmenities.add(Amenities(
+            //     amenitiesId: element['AmenitiesID'],
+            //     amenitiesName: element['AmenitiesName'],
+            //     defaultAmount: int.parse(element['DefaultAmount']),
+            //     qty: int.parse(element['Amount']),
+            //     photo: element['ImageURL'],
+            //   ));
+            // }
             if (editData['bookingType'] == "RECURRENT") {
               _repeatEnd.text = DateFormat('d MMM yyyy')
                   .format(DateTime.parse(editData['repeatEndDate']));
@@ -1166,6 +1179,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                         width: 100,
                                         child: BlackInputField(
                                           controller: _totalParticipant,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly
+                                          ],
                                           focusNode: totalParticipantNode,
                                           onSaved: (newValue) {
                                             totalParticipant = newValue!;
@@ -2136,6 +2153,12 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             //     Food = ${listFoods.toString()},
                                             //   }
                                             // """);
+                                          } //END IF VALIDATE
+                                          else {
+                                            scrollController.animateTo(0,
+                                                duration: const Duration(
+                                                    milliseconds: 500),
+                                                curve: Curves.linear);
                                           }
                                         },
                                       ),
@@ -2172,6 +2195,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                           currentDate: selectedDate,
                           changeDate: setDate,
                           setPickerStatus: setDatePickerVisible,
+                          canPickPastDay: false,
                           maxDate: DateTime.now().add(const Duration(days: 30)),
                         ),
                       ),
@@ -2185,6 +2209,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                           controller: repeatDatePickerControl,
                           currentDate: selectedRepeatDate,
                           changeDate: setRepeatDate,
+                          canPickPastDay: false,
                           setPickerStatus: setDatePickerRepeatVisible,
                         ),
                       ),

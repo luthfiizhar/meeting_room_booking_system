@@ -247,6 +247,9 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
           detailEvent.stepBooking = value['Data']['BookingStep'].toString();
           detailEvent.type = "MRBS";
           detailEvent.bookingType = value['Data']['BookingType'] ?? "";
+          detailEvent.originalBookingDate =
+              value['Data']['BookingDateOriginal'];
+          detailEvent.startTime = value['Data']['BookingStartTime'];
           if (!isShowDetail) {
             isShowDetail = true;
           }
