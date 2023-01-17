@@ -767,7 +767,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
             // print(guest);
             print('bahan edit');
-            print(amenities);
+            print(editData);
             _eventName.text = editData['summary'];
             _eventDesc.text = editData['description'];
             _additionalNote.text = editData['additionalNote'];
@@ -797,8 +797,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             }
             layoutImageUrl = editData['layoutImage'];
             layoutName = editData['layoutName'];
+            layoutId = editData['layoutId'];
             layoutFromupload = false;
             emptyLayout = false;
+            participantValue = double.parse(editData['participant'].toString());
+            _totalParticipant.text = participantValue.toString();
           });
         } else {
           isEdit = false;
@@ -2036,10 +2039,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                 ),
                                               ).then((value) {
                                                 if (value) {
-                                                  booking.layoutId = layoutId;
+                                                  // booking.layoutId = layoutId;
                                                   booking.layoutName =
                                                       layoutName;
-                                                  booking.layoutImage = "";
+                                                  booking.layoutImage =
+                                                      layoutImageUrl;
                                                   if (layoutFromupload) {
                                                     booking.layoutImage =
                                                         layoutBase64;
