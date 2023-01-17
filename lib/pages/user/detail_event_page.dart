@@ -540,10 +540,10 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                   'Are you sure want cancel this booking?',
                                             ),
                                           ).then((value) {
-                                            setState(() {
-                                              isCancelLoading = true;
-                                            });
                                             if (value) {
+                                              setState(() {
+                                                isCancelLoading = true;
+                                              });
                                               if (bookingType == "SINGLE") {
                                                 apiReq
                                                     .deleteBooking(
@@ -639,6 +639,10 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                   );
                                                 });
                                               }
+                                            } else {
+                                              setState(() {
+                                                isCancelLoading = false;
+                                              });
                                             }
                                           });
                                         },
