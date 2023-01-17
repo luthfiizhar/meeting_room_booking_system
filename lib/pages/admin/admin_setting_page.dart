@@ -112,7 +112,9 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
                     child: Builder(builder: (context) {
                       switch (menu) {
                         case "Profile":
-                          return const ProfileMenuSetting();
+                          return ProfileMenuSetting(
+                            scrollController: scrollController,
+                          );
                         case "Floor":
                           return const FloorMenuSettingPage();
                         case "Area":
@@ -163,7 +165,12 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
 }
 
 class ProfileMenuSetting extends StatefulWidget {
-  const ProfileMenuSetting({super.key});
+  ProfileMenuSetting({
+    super.key,
+    this.scrollController,
+  });
+
+  ScrollController? scrollController;
 
   @override
   State<ProfileMenuSetting> createState() => _ProfileMenuSettingState();
@@ -172,7 +179,7 @@ class ProfileMenuSetting extends StatefulWidget {
 class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   ReqAPI apiReq = ReqAPI();
   final formKey = GlobalKey<FormState>();
-  ScrollController scrollController = ScrollController();
+  ScrollController? scrollController;
   final TextEditingController _name = TextEditingController();
   final TextEditingController _nip = TextEditingController();
   final TextEditingController _email = TextEditingController();
@@ -248,6 +255,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   @override
   void initState() {
     super.initState();
+    scrollController = widget.scrollController;
     initGetUserProfile();
     nameNode.addListener(() {
       setState(() {});
@@ -292,8 +300,8 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
     avayaNode.dispose();
     phoneNode.dispose();
     phoneCodeNode.dispose();
-    scrollController.removeListener(() {});
-    scrollController.dispose();
+    scrollController!.removeListener(() {});
+    scrollController!.dispose();
   }
 
   googleLink() {
@@ -488,6 +496,8 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                     onSaved: (newValue) {
                       phoneCode = newValue.toString();
                     },
+                    validator: (value) =>
+                        _phone.text == "" || value == "" ? "" : null,
                     // hintText: 'Email here ...',
                   ),
                 ),
@@ -505,6 +515,9 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                     onSaved: (newValue) {
                       phone = newValue.toString();
                     },
+                    validator: (value) => value == "" || _phoneCode.text == ""
+                        ? "This field is required"
+                        : null,
                   ),
                 ),
               ],
@@ -663,6 +676,14 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                         ),
                       );
                     });
+                  } else {
+                    scrollController!.animateTo(
+                      0,
+                      duration: const Duration(
+                        milliseconds: 500,
+                      ),
+                      curve: Curves.linear,
+                    );
                   }
                 },
                 padding: ButtonSize().mediumSize(),

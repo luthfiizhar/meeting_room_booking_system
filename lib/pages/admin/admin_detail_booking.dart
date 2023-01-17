@@ -238,24 +238,25 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
               isAdmin = true;
               isPhoneShowed = true;
               isButtonShowed = true;
-              if (bookingStatus == "APPROVED") {
+              if (bookingStatus == "APPROVED" || bookingStatus == "DECLINED") {
                 isButtonShowed = false;
               }
-              if (bookingDate!.isBefore(DateTime.now())) {
-                isButtonShowed = false;
-              }
+              // if (bookingDate!.isBefore(DateTime.now())) {
+              //   isButtonShowed = false;
+              // }
             });
           } else {
             setState(() {
               if (bookingNip == value["Data"]["EmpNIP"]) {
                 isPhoneShowed = true;
                 isButtonShowed = true;
-                if (bookingStatus == "APPROVED") {
+                if (bookingStatus == "APPROVED" ||
+                    bookingStatus == "DECLINED") {
                   isButtonShowed = false;
                 }
-                if (bookingDate!.isBefore(DateTime.now())) {
-                  isButtonShowed = false;
-                }
+                // if (bookingDate!.isBefore(DateTime.now())) {
+                //   isButtonShowed = false;
+                // }
               }
             });
           }

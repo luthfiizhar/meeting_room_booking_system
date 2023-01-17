@@ -238,7 +238,7 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                                       size: 16,
                                       color: yellow,
                                     );
-                                  case 'Waiting For Approval':
+                                  case 'Waiting Approval':
                                     return const Icon(
                                       MdiIcons.alertCircleOutline,
                                       size: 16,
