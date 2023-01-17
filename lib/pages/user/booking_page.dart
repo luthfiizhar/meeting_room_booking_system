@@ -2030,9 +2030,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                 context: context,
                                                 builder: (context) =>
                                                     const ConfirmDialogBlack(
-                                                  title: "Information",
+                                                  title: "Confirm Booking?",
                                                   contentText:
-                                                      "Please contact\nTest\n085625510948109 \nfor approval.",
+                                                      "After this, your event needs to be approved by admin. (Admin: Ridwan / +62 812-9430-5206)",
                                                 ),
                                               ).then((value) {
                                                 if (value) {
@@ -2187,6 +2187,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                     });
                                                     //END EDIT AUDI FUNCTION
                                                   }
+                                                } else {
+                                                  setState(() {
+                                                    isSubmitLoading = false;
+                                                  });
                                                 }
                                               });
                                               print('selain meeting room');
