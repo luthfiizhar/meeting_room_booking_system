@@ -37,6 +37,9 @@ class _RoomFacilityItemState extends State<RoomFacilityItem> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.result!.defaultAmount! > 0) {
+      isHovered = false;
+    }
     return MouseRegion(
       onHover: widget.result!.defaultAmount! > 0
           ? null

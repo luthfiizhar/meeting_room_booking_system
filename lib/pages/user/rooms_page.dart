@@ -164,6 +164,7 @@ class _RoomsPageState extends State<RoomsPage> {
 
   getMrbsBookingDetail() {
     apiReq.getBookingDetail(selectedEvent!.bookingID!).then((value) {
+      print("MRBS ---> $value");
       if (value['Status'] == "200") {
         setState(() {
           print('BookingDetail $value');
@@ -221,6 +222,7 @@ class _RoomsPageState extends State<RoomsPage> {
     apiReq
         .getGoogleRoomDetail(selectedEvent!.googleID!, selectedEvent!.roomId!)
         .then((value) {
+      print("GOOGLE ---> $value");
       if (value['Status'] == "200") {
         setState(() {
           // print(value);
@@ -245,6 +247,9 @@ class _RoomsPageState extends State<RoomsPage> {
           detailEvent.stepBooking = value['Data']['BookingStep'].toString();
           detailEvent.type = "GOOGLE";
           detailEvent.bookingType = value['Data']['BookingType'] ?? "";
+          detailEvent.startTime = value['Data']['BookingStart'];
+          detailEvent.originalBookingDate =
+              value['Data']['BookingDateOriginal'] ?? "";
           if (!isShowDetail) {
             isShowDetail = true;
           }
@@ -1032,7 +1037,7 @@ class _RoomsPageState extends State<RoomsPage> {
                             .add(const Duration(hours: 1))
                             .toString()
                             .substring(11, 16),
-                        'participant': '1',
+                        'participant': '0',
                         'facilities': '[]',
                         'roomType': 'MeetingRoom',
                         'isEdit': 'false'
