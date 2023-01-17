@@ -216,7 +216,7 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
                                 'date': today,
                                 'startTime': startTimeBook,
                                 'endTime': endTimeBook,
-                                'participant': '2',
+                                'participant': '0',
                                 'facilities': '[]',
                                 'roomType': roomType,
                                 'isEdit': 'false',
