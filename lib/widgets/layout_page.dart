@@ -162,6 +162,12 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
     );
   }
 
+  List? whiteList = [
+    '151839',
+    '164369',
+    '169742',
+  ];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -180,6 +186,29 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
             isAdmin = true;
           }
         });
+
+        //TEMP LOGOUT
+        String nip = value['Data']['EmpNIP'];
+        if (!whiteList!.contains(nip)) {
+          showDialog(
+            context: context,
+            builder: (context) => const AlertDialogBlack(
+              title: 'Sorry',
+              contentText:
+                  'Sistem ini baru bisa digunakan tanggal 18 Januari 2023.',
+              isSuccess: false,
+            ),
+          ).then((value) async {
+            var box = await Hive.openBox('userLogin');
+            var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+            jwtToken = "";
+            isTokenValid = false;
+            box.put('jwtToken', "");
+            box.delete('jwtToken');
+            box.delete('firstLogin');
+            context.go('/login');
+          });
+        }
       } else {
         // showDialog(
         //   context: context,
