@@ -133,26 +133,30 @@ class PopUpProfile extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 15,
-              ),
               !isAdmin
                   ? const SizedBox()
-                  : TextButton(
-                      onPressed: () {
-                        context.goNamed('setting', params: {
-                          'isAdmin': isAdmin.toString(),
-                          'menu': 'admin_setting'
-                        });
-                      },
-                      child: Text(
-                        'Settings',
-                        style: helveticaText.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300,
-                          color: davysGray,
+                  : Column(
+                      children: [
+                        const SizedBox(
+                          height: 15,
                         ),
-                      ),
+                        TextButton(
+                          onPressed: () {
+                            context.goNamed('setting', params: {
+                              'isAdmin': isAdmin.toString(),
+                              'menu': 'admin_setting'
+                            });
+                          },
+                          child: Text(
+                            'Settings',
+                            style: helveticaText.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: davysGray,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
               const SizedBox(
                 height: 15,

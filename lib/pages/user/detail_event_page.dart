@@ -65,6 +65,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
   dynamic days;
   DateTime repeatEndDate = DateTime.now();
   String meetUrl = "";
+  String bookingStatus = "";
 
   String selectedDate = "";
 
@@ -113,6 +114,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
           bookingType = value['Data']['BookingType'];
 
           bookingStep = value['Data']['BookingStep'];
+          bookingStatus = value['Data']['Status'];
 
           startTime = value['Data']['BookingStartTime'];
           endTime = value['Data']['BookingEndTime'];
@@ -148,8 +150,9 @@ class _DetailEventPageState extends State<DetailEventPage> {
           }
           formattedDate = DateFormat('yyyy-mm-dd')
               .format(DateTime.parse(value['Data']['BookingDateOriginal']));
-
-          bookingDate = DateTime.parse(value['Data']['BookingDateOriginal']);
+          DateFormat format = DateFormat("yyyy-MM-dd hh:mm:ss");
+          bookingDate = format.parse(
+              "${value['Data']['BookingDateOriginal']} ${value['Data']['BookingStartTime']}:00");
 
           selectedDate = value['Data']['BookingDateOriginal'];
           for (var element in bookingHistory) {
@@ -181,7 +184,10 @@ class _DetailEventPageState extends State<DetailEventPage> {
               isAdmin = true;
               isPhoneShowed = true;
               isButtonShowed = true;
-              if (bookingDate!.day < DateTime.now().day) {
+              if (bookingDate!.isBefore(DateTime.now())) {
+                isButtonShowed = false;
+              }
+              if (bookingStatus == "DECLINED") {
                 isButtonShowed = false;
               }
             });
@@ -192,9 +198,17 @@ class _DetailEventPageState extends State<DetailEventPage> {
                 isOwner = true;
                 isButtonShowed = true;
 
-                if (bookingDate!.day < DateTime.now().day) {
+                if (bookingDate!.isBefore(DateTime.now())) {
                   isButtonShowed = false;
                 }
+
+                if (bookingStatus == "DECLINED") {
+                  isButtonShowed = false;
+                }
+              });
+            } else {
+              setState(() {
+                isButtonShowed = false;
               });
             }
           }
@@ -345,7 +359,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                             //     ? const SizedBox()
                             //     :
                             Visibility(
-                              visible: isButtonShowed ? true : false,
+                              visible: isButtonShowed,
                               child: ConstrainedBox(
                                 constraints: const BoxConstraints(
                                   minHeight: 65,
@@ -393,6 +407,38 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                             guestInvited2.add(
                                                 "\"${element['AttendantsEmail']}\"");
                                           }
+                                          List<Amenities> tempAmenities = [];
+                                          List<FoodAmenities>
+                                              tempFoodAmenities = [];
+                                          for (var element in amenities) {
+                                            tempAmenities.add(
+                                              Amenities(
+                                                amenitiesId:
+                                                    element['AmenitiesID'],
+                                                amenitiesName:
+                                                    element['AmenitiesName'],
+                                                qty: element['Amount'],
+                                                defaultAmount:
+                                                    element['DefaultAmount'],
+                                                photo: element['ImageURL'],
+                                              ),
+                                            );
+                                          }
+
+                                          for (var element in foodAmenities) {
+                                            tempFoodAmenities.add(
+                                              FoodAmenities(
+                                                amenitiesId:
+                                                    element['AmenitiesID'],
+                                                amenitiesName:
+                                                    element['AmenitiesName'],
+                                                qty: element['Amount'],
+                                                photo: element['ImageURL'],
+                                              ),
+                                            );
+                                          }
+                                          print(
+                                              "tempAmen ${tempAmenities.toString()}");
                                           context.goNamed(
                                             'booking',
                                             params: {
@@ -400,8 +446,9 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                               'date': selectedDate.toString(),
                                               'startTime': startTime,
                                               'endTime': endTime,
-                                              'participant': '1',
-                                              'facilities': '[]',
+                                              'participant': participantTotal,
+                                              'facilities': "[]",
+                                              //tempAmenities.toString(),
                                               'roomType': roomType,
                                               'isEdit': 'true'
                                             },
@@ -412,8 +459,11 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                               'summary': summary,
                                               'description': description,
                                               'additionalNote': additionalNotes,
-                                              'participant': '1',
-                                              'facilities': '[]',
+                                              'participant': participantTotal,
+                                              'facilities':
+                                                  tempAmenities.toString(),
+                                              'food':
+                                                  tempFoodAmenities.toString(),
                                               'bookingType': bookingType,
                                               'guestInvited':
                                                   guestInvited2.toString(),

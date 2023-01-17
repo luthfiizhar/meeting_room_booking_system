@@ -164,7 +164,7 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                 ),
                 isEmpty
                     ? Text(
-                        emptyMessage,
+                        "No Upcoming Event.",
                         style: helveticaText.copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,

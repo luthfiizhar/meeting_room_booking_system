@@ -1301,7 +1301,11 @@ class ReqAPI {
     }
     """;
     try {
-      var response = await http.get(url, headers: requestHeader);
+      var response = await http.post(
+        url,
+        headers: requestHeader,
+        body: bodySend,
+      );
 
       var data = json.decode(response.body);
 

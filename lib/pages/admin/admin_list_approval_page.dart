@@ -111,6 +111,8 @@ class _AdminListPageState extends State<AdminListPage> {
   setDatePickerStatus(bool value) {}
 
   List updateFilter() {
+    // setState(() {});
+    // updateList();
     apiReq.approvalListBookingCount().then((value) {
       // print(value);
       if (value['Status'] == "200") {
@@ -168,6 +170,7 @@ class _AdminListPageState extends State<AdminListPage> {
         ),
       );
     });
+    setState(() {});
   }
 
   @override

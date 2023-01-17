@@ -56,6 +56,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
   String interval = "";
   String layoutName = "";
   String layoutImage = "";
+  String bookingStatus = "";
   dynamic days;
   DateTime repeatEndDate = DateTime.now();
 
@@ -159,7 +160,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
     // TODO: implement initState
     super.initState();
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
-      print(value);
+      print("BookingDetail --> $value");
       if (value['Status'].toString() == "200") {
         setState(() {
           isInitLoading = false;
@@ -169,7 +170,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           summary = value['Data']['Summary'];
           description = value['Data']['Description'];
           roomType = value['Data']['RoomType'];
-
+          bookingStatus = value['Data']['Status'];
           bookingType = value['Data']['BookingType'];
 
           startTime = value['Data']['BookingStartTime'];
@@ -177,6 +178,9 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           location = value['Data']['RoomName'];
           floor = value['Data']['AreaName'];
           eventDate = value['Data']['BookingDate'];
+          hostEmail = value['Data']['Email'];
+          phoneNumber = value['Data']['PhoneNumber'];
+          avaya = value['Data']['AvayaNumber'] ?? "";
 
           eventTime =
               "${value['Data']['BookingStartTime']} - ${value['Data']['BookingEndTime']} WIB";
@@ -209,7 +213,13 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           formattedDate = DateFormat('yyyy-mm-dd')
               .format(DateTime.parse(value['Data']['BookingDateOriginal']));
           selectedDate = value['Data']['BookingDateOriginal'];
-          bookingDate = DateTime.parse(value['Data']['BookingDateOriginal']);
+          DateFormat format = DateFormat("yyyy-MM-dd hh:mm:ss");
+          bookingDate = format.parse(
+              "${value['Data']['BookingDateOriginal']} ${value['Data']['BookingStartTime']}:00");
+          // bookingDate = DateTime.parse(value['Data']['BookingDateOriginal']);
+          // if (bookingStatus == "APPROVED") {
+          //   isButtonShowed = false;
+          // }
         });
       } else {
         showDialog(
@@ -228,7 +238,10 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
               isAdmin = true;
               isPhoneShowed = true;
               isButtonShowed = true;
-              if (bookingDate!.day < DateTime.now().day) {
+              if (bookingStatus == "APPROVED") {
+                isButtonShowed = false;
+              }
+              if (bookingDate!.isBefore(DateTime.now())) {
                 isButtonShowed = false;
               }
             });
@@ -237,7 +250,10 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
               if (bookingNip == value["Data"]["EmpNIP"]) {
                 isPhoneShowed = true;
                 isButtonShowed = true;
-                if (bookingDate!.day < DateTime.now().day) {
+                if (bookingStatus == "APPROVED") {
+                  isButtonShowed = false;
+                }
+                if (bookingDate!.isBefore(DateTime.now())) {
                   isButtonShowed = false;
                 }
               }
@@ -350,7 +366,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '$summary ($participantTotal Person)',
+                              summary,
                               style: const TextStyle(
                                 fontFamily: 'Helvetica',
                                 fontSize: 24,
@@ -925,6 +941,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                               bookingHistory[index]['EmpNIP'],
                           bookingHistory[index]['Status'],
                           bookingHistory[index]['LogDate'],
+                          bookingHistory[index]['Description'],
                         ),
                       ),
                       index == bookingHistory.length - 1
@@ -1012,7 +1029,8 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
     );
   }
 
-  Widget bookingDetail(String name, String status, String logDate) {
+  Widget bookingDetail(
+      String name, String status, String logDate, String desc) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1038,6 +1056,18 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                 style: helveticaText.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
+                  color: davysGray,
+                ),
+                textAlign: TextAlign.end,
+              ),
+              const SizedBox(
+                height: 3,
+              ),
+              Text(
+                desc,
+                style: helveticaText.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
                   color: davysGray,
                 ),
                 textAlign: TextAlign.end,
@@ -1183,7 +1213,7 @@ class _AuditoriumNotesApprovalDialogState
                                   formKey.currentState!.save();
 
                                   await widget.onConfirm!(notes);
-                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop(true);
                                 }
                               },
                               padding: ButtonSize().smallSize(),

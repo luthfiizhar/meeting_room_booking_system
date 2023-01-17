@@ -51,11 +51,14 @@ class _DetailAppointmentContainerState
   String bookingType = "";
   String bookingStep = "";
   String phoneNumber = "";
+  String startTime = "";
 
   String userNip = "";
   bool isAdmin = false;
   bool isPhonNumberShowed = false;
+  bool isButtonCancelShowed = true;
   bool isOwner = false;
+  late DateTime date;
 
   @override
   void initState() {
@@ -88,17 +91,40 @@ class _DetailAppointmentContainerState
     bookingStep = widget.bookingDetail!.stepBooking;
     phoneNumber = widget.bookingDetail!.phoneNumber;
     bookingType = widget.bookingDetail!.bookingType;
+    startTime = widget.bookingDetail!.startTime;
+
+    DateFormat formatDate = DateFormat('yyyy-MM-dd hh:mm:ss');
+    date = formatDate
+        .parse("${widget.bookingDetail!.originalBookingDate} $startTime:00");
     apiReq.getUserProfile().then((value) {
       if (value['Status'].toString() == "200") {
         if (value['Data']['Admin'].toString() == "1") {
           userNip = value['Data']['EmpNIP'];
           setState(() {
-            if (userNip == widget.bookingDetail!.empNip) {
+            isAdmin = true;
+            isPhonNumberShowed = true;
+            if (date.isBefore(DateTime.now())) {
+              isButtonCancelShowed = false;
+            }
+          });
+        } else {
+          if (userNip == widget.bookingDetail!.empNip) {
+            setState(() {
               isPhonNumberShowed = true;
               isOwner = true;
-            }
-            isAdmin = true;
-          });
+              if (date.isBefore(DateTime.now())) {
+                isButtonCancelShowed = false;
+              }
+            });
+          } else {
+            setState(() {
+              isPhonNumberShowed = false;
+              isOwner = false;
+              if (date.isBefore(DateTime.now())) {
+                isButtonCancelShowed = false;
+              }
+            });
+          }
         }
       }
     }).onError((error, stackTrace) {
@@ -329,11 +355,7 @@ class _DetailAppointmentContainerState
                           //   tooltip: 'Trade',
                           // ),
                           Visibility(
-                            visible: !isOwner
-                                ? false
-                                : int.parse(bookingStep) > 1
-                                    ? false
-                                    : true,
+                            visible: isButtonCancelShowed,
                             child: IconButton(
                               icon: const Icon(
                                 MdiIcons.closeCircleOutline,

@@ -281,7 +281,6 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                                   ).then((value) {
                                     widget.updateList!();
                                   });
-                                  ;
                                 },
                                 child: const Icon(
                                   Icons.check_circle,

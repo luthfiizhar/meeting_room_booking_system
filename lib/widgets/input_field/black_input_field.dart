@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 
 class BlackInputField extends StatelessWidget {
@@ -17,6 +18,7 @@ class BlackInputField extends StatelessWidget {
     this.onFieldSubmitted,
     this.fontSize = 16,
     this.textInputAction,
+    this.inputFormatters,
   });
 
   final TextEditingController controller;
@@ -33,6 +35,7 @@ class BlackInputField extends StatelessWidget {
   Widget? prefixIcon;
   TextInputAction? textInputAction;
   double fontSize;
+  List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +65,7 @@ class BlackInputField extends StatelessWidget {
         obscureText: obsecureText!,
         cursorColor: eerieBlack,
         maxLines: maxLines,
+        inputFormatters: inputFormatters,
         onTap: onTap,
         decoration: InputDecoration(
           border: OutlineInputBorder(
