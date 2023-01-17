@@ -69,6 +69,7 @@ class ConfirmDialogBlack extends StatelessWidget {
                           style: bodyText.copyWith(
                             color: culturedWhite,
                             fontWeight: FontWeight.w300,
+                            height: 1.3,
                           ),
                           textAlign: TextAlign.left,
                         ),
