@@ -61,6 +61,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
   String interval = "";
   String layoutName = "";
   String layoutImage = "";
+  String layoutId = "";
   String approvalComment = "";
   dynamic days;
   DateTime repeatEndDate = DateTime.now();
@@ -136,6 +137,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
           hostEmail = value['Data']['Email'];
           layoutName = value['Data']['LayoutName'] ?? "";
           layoutImage = value['Data']['LayoutImg'] ?? "";
+          layoutId = value['Data']['LayoutID'] ?? "";
           amenities = value['Data']['Amenities'];
           foodAmenities = value['Data']['FoodAmenities'];
           guestInvited = value['Data']['Attendants'];
@@ -489,6 +491,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                               'roomType': roomType,
                                               'layoutName': layoutName,
                                               'layoutImage': layoutImage,
+                                              'layoutId': layoutId,
                                               'bookingId': widget.bookingId,
                                             },
                                           );

@@ -156,7 +156,7 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                               size: 16,
                               color: orangeAccent,
                             );
-                          case 'Waiting':
+                          case 'Waiting Approval':
                             return const Icon(
                               MdiIcons.alertCircleOutline,
                               size: 16,
