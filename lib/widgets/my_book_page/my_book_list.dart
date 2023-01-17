@@ -90,7 +90,8 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                   ),
                 ),
                 //TIME
-                Expanded(
+                SizedBox(
+                  width: 125,
                   child: Text(
                     widget.time,
                     style: helveticaText.copyWith(
@@ -102,7 +103,8 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                   ),
                 ),
                 //STATUS
-                Expanded(
+                SizedBox(
+                  width: 225,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [

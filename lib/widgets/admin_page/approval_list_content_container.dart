@@ -166,7 +166,8 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                     ),
                   ),
                   //TIME
-                  Expanded(
+                  SizedBox(
+                    width: 125,
                     child: Text(
                       widget.time,
                       style: helveticaText.copyWith(
@@ -177,7 +178,8 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                     ),
                   ),
                   //STATUS
-                  Expanded(
+                  SizedBox(
+                    width: 225,
                     child: widget.status != "Approval"
                         ? Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
