@@ -195,7 +195,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
             builder: (context) => const AlertDialogBlack(
               title: 'Sorry',
               contentText:
-                  'Sistem ini baru bisa digunakan tanggal 18 Januari 2023.',
+                  'Sistem ini baru dapat digunakan tanggal 18 Januari 2023.',
               isSuccess: false,
             ),
           ).then((value) async {
