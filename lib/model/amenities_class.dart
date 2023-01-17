@@ -20,15 +20,16 @@ class Amenities {
         amenitiesId = json['AmenitisID'];
 
   Map<String, dynamic> toJson() => {
-        'AmenitiesID': amenitiesId ?? "",
-        // 'AmenitiesName': amenitiesName ?? "",
-        'Amount': qty
+        '"AmenitiesID"': '"$amenitiesId"',
+        '"AmenitiesName"': '"$amenitiesName"',
+        '"Amount"': '"$qty"',
+        '"ImageURL"': '"$photo"',
+        '"DefaultAmount"': '"$defaultAmount"'
       };
 
   @override
   String toString() {
-    // TODO: implement toString
-    return "{AmenitiesID : $amenitiesId, AmenitiesName : $amenitiesName, Qty : $qty, ImageURL : $photo, isProhibited: $isProhibited, default: $defaultAmount}";
+    return toJson().toString();
   }
 }
 
@@ -50,14 +51,14 @@ class FoodAmenities {
         amenitiesId = json['FoodAmenitisID'];
 
   Map<String, dynamic> toJson() => {
-        'FoodAmenitiesID': amenitiesId ?? "",
-        // 'AmenitiesName': amenitiesName ?? "",
-        'Amount': qty
+        '"FoodAmenitiesID"': '"$amenitiesId"',
+        '"AmenitiesName"': '"$amenitiesName"',
+        // '"DefaultAmount"': '"0"',
+        '"Amount"': '"$qty"'
       };
 
   @override
   String toString() {
-    // TODO: implement toString
-    return "{FoodAmenitiesId : $amenitiesId, FoodAmenitiesName : $amenitiesName, Amount : $qty, Photo : $photo}";
+    return toJson().toString();
   }
 }

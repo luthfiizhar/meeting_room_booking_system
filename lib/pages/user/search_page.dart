@@ -676,7 +676,7 @@ class _SearchPageState extends State<SearchPage> {
     if (DateFormat('yyyy-MM-dd').format(date) !=
         DateFormat('yyyy-MM-dd').format(DateTime.now())) {
       startTime = '07:00';
-      endTime = '07:15';
+      endTime = '08:00';
     } else {
       dynamic hour = TimeOfDay.now().hour;
       dynamic minute = TimeOfDay.now().minute;
@@ -692,7 +692,9 @@ class _SearchPageState extends State<SearchPage> {
         minute = TimeOfDay.now().replacing(minute: 0).minute;
         hour = hour + 1;
       }
-      endMinute = minute + 15;
+      // endMinute = minute + 15;
+      endHour = hour + 1;
+      endMinute = minute;
       if (endMinute == 60) {
         endHour = hour;
         endMinute = 0;
@@ -983,13 +985,14 @@ class _SearchPageState extends State<SearchPage> {
         }
       }
 
-      selectedDateFormatted = DateFormat('yyyy-MM-dd').format(selectedDate);
-      _dateController.text = DateFormat('dd MMM yyyy').format(selectedDate);
+      selectedDateFormatted = DateFormat('yyyy-MM-dd').format(date);
+      _dateController.text = DateFormat('dd MMM yyyy').format(date);
       // _facilityController.text = widget.queryParam['facility'];
       _timeController.text =
           widget.queryParam['startTime'] + ' - ' + widget.queryParam['endTime'];
       _participantController.text =
           widget.queryParam['participant'] + " Person";
+      participantValue = double.parse(widget.queryParam['participant']);
       selectedDate = date;
       startTime = widget.queryParam['startTime'];
       endTime = widget.queryParam['endTime'];

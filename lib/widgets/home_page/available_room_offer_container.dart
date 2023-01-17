@@ -29,6 +29,7 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
   String photoUrl = "";
   String roomType = "";
   bool isEmpty = true;
+  late DateTime availableDate;
 
   String startTimeBook = "";
   String endTimeBook = "";
@@ -84,6 +85,9 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
             endTime = value['Data']['End'];
             photoUrl = value['Data']['RoomImage'];
             roomType = value['Data']['RoomType'];
+            DateFormat format = DateFormat("dd MMMM yyyy");
+            availableDate = format.parse(value['Data']['Date']);
+            // print(availableDate);
           }
         });
       } else {
@@ -165,7 +169,9 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Currently Available',
+                          availableDate.isAfter(DateTime.now())
+                              ? "Available Tomorrow"
+                              : 'Currently Available',
                           style: helveticaText.copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.w300,
