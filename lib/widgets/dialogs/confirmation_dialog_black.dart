@@ -76,7 +76,7 @@ class ConfirmDialogBlack extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(
-                      height: 40,
+                      height: 50,
                     ),
                     // Row(
                     //   mainAxisAlignment: MainAxisAlignment.end,
