@@ -326,7 +326,8 @@ class _MyBookingPageState extends State<MyBookingPage> {
                         ),
                       ),
                     ),
-                    Expanded(
+                    SizedBox(
+                      width: 125,
                       child: InkWell(
                         onTap: () {
                           onTapHeader("BookingTime");
@@ -351,7 +352,8 @@ class _MyBookingPageState extends State<MyBookingPage> {
                         ),
                       ),
                     ),
-                    Expanded(
+                    SizedBox(
+                      width: 225,
                       child: InkWell(
                         onTap: () {
                           onTapHeader("Status");
