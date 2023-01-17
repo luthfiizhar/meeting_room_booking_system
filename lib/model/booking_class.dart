@@ -22,6 +22,7 @@ class Booking {
     this.layoutImage = "",
     this.layoutName = "",
     this.monthAbs,
+    this.roomType = "MeetingRoom",
   });
 
   String? bookingId;
@@ -44,6 +45,7 @@ class Booking {
   List? attendants;
   List? foodAmenities;
   List? daysWeek;
+  String? roomType;
 
   // Booking.fromJSon(Map<String, dynamic> json)
   //     : roomId = json['RoomID'],

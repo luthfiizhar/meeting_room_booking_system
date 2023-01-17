@@ -108,6 +108,12 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                     children: [
                       Builder(builder: (context) {
                         switch (widget.status) {
+                          case 'Event Created':
+                            return const Icon(
+                              Icons.check_circle,
+                              size: 16,
+                              color: greenAcent,
+                            );
                           case 'Checked In':
                             return const Icon(
                               Icons.check_circle,
