@@ -238,7 +238,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
               isAdmin = true;
               isPhoneShowed = true;
               isButtonShowed = true;
-              if (bookingStatus == "APPROVED" || bookingStatus == "DECLINED") {
+              if (bookingStatus != "WAITING APPROVAL") {
                 isButtonShowed = false;
               }
               // if (bookingDate!.isBefore(DateTime.now())) {
