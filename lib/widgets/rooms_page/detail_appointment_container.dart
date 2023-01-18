@@ -95,7 +95,7 @@ class _DetailAppointmentContainerState
     if (bookingType == "GOOGLE") {
     } else {}
 
-    DateFormat formatDate = DateFormat('yyyy-MM-dd hh:mm:ss');
+    DateFormat formatDate = DateFormat('yyyy-MM-dd HH:mm:ss');
     date = formatDate
         .parse("${widget.bookingDetail!.originalBookingDate} $startTime:00");
     print(date);
