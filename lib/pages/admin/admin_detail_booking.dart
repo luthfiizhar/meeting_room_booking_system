@@ -250,8 +250,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
               if (bookingNip == value["Data"]["EmpNIP"]) {
                 isPhoneShowed = true;
                 isButtonShowed = true;
-                if (bookingStatus == "APPROVED" ||
-                    bookingStatus == "DECLINED") {
+                if (bookingStatus != "WAITING APPROVAL") {
                   isButtonShowed = false;
                 }
                 // if (bookingDate!.isBefore(DateTime.now())) {
