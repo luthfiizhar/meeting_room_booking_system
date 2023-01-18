@@ -180,6 +180,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   bool repeatSectionVisible = true;
   bool layoutFromupload = false;
   bool emailSuggestionVisible = false;
+  bool isAdditionalNotesVisible = true;
   late bool isEdit;
 
   bool isPictEmpty = true;
@@ -441,12 +442,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
   setListFacility(List<Amenities> value) {
     // print('value');
-    print(value);
+    // print(value);
     // setState(() {
     for (var i = 0; i < resultAmenities.length; i++) {
       for (var j = 0; j < value.length; j++) {
         if (resultAmenities[i].amenitiesId == value[j].amenitiesId) {
-          print('cocok');
           setState(() {
             resultAmenities[i].qty = value[j].qty;
             resultAmenities[i].defaultAmount = value[j].defaultAmount;
@@ -456,7 +456,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     }
     listAmenities = value;
     // });
-    print("resultAmenities ---> $resultAmenities");
+    // print("resultAmenities ---> $resultAmenities");
   }
 
   setListFood(List<FoodAmenities> value) {
@@ -515,7 +515,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
   initContactList() {
     apiReq.getContactList(_email.text).then((value) {
-      print(value);
+      // print(value);
       emailSuggestionVisible = true;
       if (value['Status'].toString() == "200") {
         if (value['Data'].toString() == "[]") {
@@ -579,7 +579,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
 
@@ -649,6 +648,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     }
     if (widget.roomId!.startsWith('MR')) {
       roomType = "MeetingRoom";
+      setState(() {
+        isAdditionalNotesVisible = false;
+      });
     }
     if (widget.roomId!.startsWith('CA')) {
       roomType = "Canteen";
@@ -766,8 +768,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             dynamic amenities = editData['facilities'];
 
             // print(guest);
-            print('bahan edit');
-            print(editData);
+            // print('bahan edit');
+            // print(editData);
             _eventName.text = editData['summary'];
             _eventDesc.text = editData['description'];
             _additionalNote.text = editData['additionalNote'];
@@ -939,6 +941,15 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     });
     additionalNoteNode.addListener(() {
       setState(() {});
+    });
+    scrollController.addListener(() {
+      // print('test');
+      // if (roomType != "MeetingRoom") {
+      if (scrollController.offset >
+          scrollController.position.maxScrollExtent - 50) {
+        scrollController.jumpTo(scrollController.position.maxScrollExtent - 50);
+      }
+      // }
     });
   }
 
@@ -1767,17 +1778,26 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 20,
+                                Visibility(
+                                  visible: isAdditionalNotesVisible,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      const Divider(
+                                        color: spanishGray,
+                                        thickness: 0.5,
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      additionalNoteSection(),
+                                    ],
+                                  ),
                                 ),
-                                const Divider(
-                                  color: spanishGray,
-                                  thickness: 0.5,
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                additionalNoteSection(),
                                 const SizedBox(
                                   height: 40,
                                 ),
@@ -2039,7 +2059,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                 ),
                                               ).then((value) {
                                                 if (value) {
-                                                  // booking.layoutId = layoutId;
+                                                  booking.layoutId = layoutId;
                                                   booking.layoutName =
                                                       layoutName;
                                                   booking.layoutImage =
@@ -2197,8 +2217,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                   });
                                                 }
                                               });
-                                              print('selain meeting room');
-                                              print(roomType);
+                                              // print('selain meeting room');
+                                              // print(roomType);
                                             }
 
                                             // debugPrint("""
