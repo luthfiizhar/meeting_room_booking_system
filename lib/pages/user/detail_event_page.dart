@@ -101,7 +101,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
     // TODO: implement initState
     super.initState();
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
-      print(value['Data']);
+      // print(value['Data']);
       if (value['Status'].toString() == "200") {
         setState(() {
           isInitLoading = false;
@@ -152,7 +152,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
           }
           formattedDate = DateFormat('yyyy-mm-dd')
               .format(DateTime.parse(value['Data']['BookingDateOriginal']));
-          DateFormat format = DateFormat("yyyy-MM-dd hh:mm:ss");
+          DateFormat format = DateFormat("yyyy-MM-dd HH:mm:ss");
           bookingDate = format.parse(
               "${value['Data']['BookingDateOriginal']} ${value['Data']['BookingStartTime']}:00");
 
@@ -183,6 +183,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
         if (value["Status"].toString() == "200") {
           if (bookingDate!.isBefore(DateTime.now())) {
             setState(() {
+              print('sudah lewat event nya');
               isButtonShowed = false;
               if (value["Data"]["Admin"].toString() == "1") {
                 isAdmin = true;
@@ -206,6 +207,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   isOwner = false;
                   isButtonShowed = true;
                   if (bookingStatus == "DECLINED") {
+                    print('if declined');
                     isButtonShowed = false;
                   }
                 });
@@ -216,10 +218,12 @@ class _DetailEventPageState extends State<DetailEventPage> {
                     isOwner = true;
                     isButtonShowed = true;
                     if (bookingStatus == "DECLINED") {
+                      print('if declined');
                       isButtonShowed = false;
                     }
                   });
                 } else {
+                  print('else nip tidak cocok');
                   setState(() {
                     isButtonShowed = false;
                   });
@@ -239,8 +243,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
         );
       });
     }).onError((error, stackTrace) {
-      print(error);
-      print(stackTrace);
+      // print(error);
+      // print(stackTrace);
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
@@ -452,8 +456,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                               ),
                                             );
                                           }
-                                          print(
-                                              "tempAmen ${tempAmenities.toString()}");
+                                          // print(
+                                          //     "tempAmen ${tempAmenities.toString()}");
                                           context.goNamed(
                                             'booking',
                                             params: {

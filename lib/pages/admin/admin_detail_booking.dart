@@ -160,7 +160,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
     // TODO: implement initState
     super.initState();
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
-      print("BookingDetail --> $value");
+      // print("BookingDetail --> $value");
       if (value['Status'].toString() == "200") {
         setState(() {
           isInitLoading = false;
@@ -213,7 +213,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           formattedDate = DateFormat('yyyy-mm-dd')
               .format(DateTime.parse(value['Data']['BookingDateOriginal']));
           selectedDate = value['Data']['BookingDateOriginal'];
-          DateFormat format = DateFormat("yyyy-MM-dd hh:mm:ss");
+          DateFormat format = DateFormat("yyyy-MM-dd HH:mm:ss");
           bookingDate = format.parse(
               "${value['Data']['BookingDateOriginal']} ${value['Data']['BookingStartTime']}:00");
           // bookingDate = DateTime.parse(value['Data']['BookingDateOriginal']);
@@ -260,10 +260,10 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
               }
             });
           }
-          print('isButton Showed $isButtonShowed');
-          print(bookingDate!.isBefore(DateTime.now()));
-          print(bookingDate);
-          print(DateTime.now());
+          // print('isButton Showed $isButtonShowed');
+          // print(bookingDate!.isBefore(DateTime.now()));
+          // print(bookingDate);
+          // print(DateTime.now());
         }
       }).onError((error, stackTrace) {
         showDialog(
