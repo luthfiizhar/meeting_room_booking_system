@@ -31,6 +31,8 @@ class _AdminListPageState extends State<AdminListPage> {
 
   List filterList = [];
 
+  int resultRows = 0;
+
   countPagination(int totalRow) {
     setState(() {
       availablePage.clear();
@@ -43,8 +45,9 @@ class _AdminListPageState extends State<AdminListPage> {
       for (var i = 0; i < totalPage.ceil(); i++) {
         availablePage.add(i + 1);
       }
-      // print(availablePage);
-      // print(showedPage);
+      // showedPage = availablePage.take(5).toList();
+      print(availablePage);
+      print(showedPage);
     });
   }
 
@@ -54,7 +57,11 @@ class _AdminListPageState extends State<AdminListPage> {
       searchTerm.pageNumber = currentPaginatedPage.toString();
       searchTerm.statusRoom = value;
       statusApproval = value;
-      updateList();
+      updateList().then((value) {
+        countPagination(resultRows);
+        showedPage = availablePage.take(5).toList();
+      });
+
       // getAuditoriumApprovalList(searchTerm).then((value) {
       //   myBookList = value['Data']['List'];
       //   countPagination(value['Data']['TotalRows']);
@@ -65,11 +72,15 @@ class _AdminListPageState extends State<AdminListPage> {
   }
 
   searchMyBook() {
-    setState(() {
+    setState(() async {
       currentPaginatedPage = 1;
       searchTerm.keyWords = _search.text;
       searchTerm.pageNumber = currentPaginatedPage.toString();
-      updateList();
+      updateList().then((value) {
+        countPagination(resultRows);
+        showedPage = availablePage.take(5).toList();
+      });
+
       // getMyBookingList(searchTerm).then((value) {
       //   print(value);
       //   myBookList = value['Data']['List'];
@@ -80,7 +91,7 @@ class _AdminListPageState extends State<AdminListPage> {
   }
 
   onTapHeader(String orderBy) {
-    setState(() {
+    setState(() async {
       if (searchTerm.orderBy == orderBy) {
         switch (searchTerm.orderDir) {
           case "ASC":
@@ -93,7 +104,10 @@ class _AdminListPageState extends State<AdminListPage> {
         }
       }
       searchTerm.orderBy = orderBy;
-      updateList();
+      updateList().then((value) {
+        // showedPage = availablePage.take(5).toList();
+      });
+
       // getMyBookingList(searchTerm).then((value) {
       //   setState(() {
       //     myBookList = value['Data']['List'];
@@ -101,7 +115,7 @@ class _AdminListPageState extends State<AdminListPage> {
       //   });
       // });
     });
-    print("Order By ${searchTerm.orderBy} ${searchTerm.orderDir}");
+    // print("Order By ${searchTerm.orderBy} ${searchTerm.orderDir}");
   }
 
   resetState() {
@@ -142,14 +156,14 @@ class _AdminListPageState extends State<AdminListPage> {
     return filterList;
   }
 
-  updateList() {
-    apiReq.getAuditoriumApprovalList(searchTerm).then((value) {
-      print(value);
+  Future updateList() {
+    return apiReq.getAuditoriumApprovalList(searchTerm).then((value) {
+      // print(value);
       if (value['Status'].toString() == "200") {
         setState(() {
           approvalList = value['Data']['List'];
           countPagination(value['Data']['TotalRows']);
-          showedPage = availablePage.take(5).toList();
+          // showedPage = availablePage.take(5).toList();
         });
       } else {
         showDialog(
@@ -176,9 +190,12 @@ class _AdminListPageState extends State<AdminListPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    updateList();
+    updateList().then((value) {
+      countPagination(resultRows);
+      showedPage = availablePage.take(5).toList();
+    });
+
     // apiReq.getAuditoriumApprovalList(searchTerm).then((value) {
     //   approvalList = value['Data']['List'];
     //   countPagination(value['Data']['TotalRows']);
@@ -421,7 +438,9 @@ class _AdminListPageState extends State<AdminListPage> {
                             onChanged: (value) {
                               setState(() {
                                 searchTerm.max = value!.toString();
-                                updateList();
+                                updateList().then((value) {
+                                  // showedPage = availablePage.take(5).toList();
+                                });
                                 // getMyBookingList(searchTerm).then((value) {
                                 //   myBookList = value['Data']['List'];
                                 //   countPagination(value['Data']['TotalRows']);

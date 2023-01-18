@@ -89,6 +89,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
   bool isInitLoading = true;
   bool isCancelLoading = false;
   bool isAdmin = false;
+  bool isPic = false;
   bool isPhoneShowed = false;
   bool isOwner = false;
   bool isButtonShowed = true;
@@ -101,7 +102,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
     // TODO: implement initState
     super.initState();
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
-      // print(value['Data']);
+      print(value);
       if (value['Status'].toString() == "200") {
         setState(() {
           isInitLoading = false;
@@ -180,6 +181,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
         );
       }
       apiReq.getUserProfile().then((value) {
+        print(value);
         if (value["Status"].toString() == "200") {
           if (bookingDate!.isBefore(DateTime.now())) {
             setState(() {
@@ -210,6 +212,11 @@ class _DetailEventPageState extends State<DetailEventPage> {
                     print('if declined');
                     isButtonShowed = false;
                   }
+                });
+              } else if (value["Data"]["Pic"].toString() == "1") {
+                setState(() {
+                  isPic = true;
+                  isPhoneShowed = true;
                 });
               } else {
                 if (bookingNip == value["Data"]["EmpNIP"]) {
@@ -712,9 +719,11 @@ class _DetailEventPageState extends State<DetailEventPage> {
         Visibility(
           visible: isAdmin
               ? true
-              : isOwner
+              : isPic
                   ? true
-                  : false,
+                  : isOwner
+                      ? true
+                      : false,
           child: Column(
             children: [
               divider2(),

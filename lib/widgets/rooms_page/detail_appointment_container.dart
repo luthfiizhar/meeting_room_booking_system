@@ -110,6 +110,10 @@ class _DetailAppointmentContainerState
               isButtonCancelShowed = false;
             }
           });
+        } else if (value['Data']['Pic'].toString() == "1") {
+          setState(() {
+            isPhonNumberShowed = true;
+          });
         } else {
           if (userNip == widget.bookingDetail!.empNip) {
             setState(() {

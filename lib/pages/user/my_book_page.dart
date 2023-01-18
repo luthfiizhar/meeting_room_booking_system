@@ -57,6 +57,7 @@ class _MyBookingPageState extends State<MyBookingPage> {
   // List<MyBook> myBookList = <MyBook>[];
   List myBookList = [];
   List showPerPageList = ["5", "10", "20", "50", "100"];
+  int resultRows = 0;
 
   bool sort = true;
   List? filterData = [
@@ -92,15 +93,15 @@ class _MyBookingPageState extends State<MyBookingPage> {
     });
   }
 
-  updateList() {
-    apiReq.getMyBookingList(searchTerm).then((value) {
+  Future updateList() {
+    return apiReq.getMyBookingList(searchTerm).then((value) {
       // print(value);
       setState(() {
         if (value['Status'] == "200") {
           myBookList = value['Data']['List'];
-
-          countPagination(value['Data']['TotalRows']);
-          showedPage = availablePage.take(5).toList();
+          resultRows = value['Data']['TotalRows'];
+          // countPagination(value['Data']['TotalRows']);
+          // showedPage = availablePage.take(5).toList();
         } else {
           showDialog(
             context: context,
@@ -126,12 +127,13 @@ class _MyBookingPageState extends State<MyBookingPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // myBookList = getMyBookList();
-
     // sourceData = MyBookTableSource(myBook: myBookList);
-    updateList();
+    updateList().then((value) {
+      countPagination(resultRows);
+      showedPage = availablePage.take(5).toList();
+    });
   }
 
   roomTypeChanged(String value) {
@@ -145,7 +147,11 @@ class _MyBookingPageState extends State<MyBookingPage> {
       //   countPagination(value['Data']['TotalRows']);
       //   showedPage = availablePage.take(5).toList();
       // });
-      updateList();
+      updateList().then((value) {
+        countPagination(resultRows);
+        showedPage = availablePage.take(5).toList();
+      });
+
       // print(searchTerm.roomType);
     });
   }
@@ -170,7 +176,10 @@ class _MyBookingPageState extends State<MyBookingPage> {
       //     countPagination(value['Data']['TotalRows']);
       //   });
       // });
-      updateList();
+      updateList().then((value) {
+        countPagination(resultRows);
+        // showedPage = availablePage.take(5).toList();
+      });
     });
     // print("Order By ${searchTerm.orderBy} ${searchTerm.orderDir}");
   }
@@ -186,7 +195,10 @@ class _MyBookingPageState extends State<MyBookingPage> {
       //   countPagination(value['Data']['TotalRows']);
       //   showedPage = availablePage.take(5).toList();
       // });
-      updateList();
+      updateList().then((value) {
+        countPagination(resultRows);
+        showedPage = availablePage.take(5).toList();
+      });
     });
   }
 
