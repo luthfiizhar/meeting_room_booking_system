@@ -51,13 +51,14 @@ class _GreetingContainerState extends State<GreetingContainer> {
 
   initGreeting() {
     final DateTime now = DateTime.now();
+    print(now.hour);
     if (now.hour >= 5 && now.hour < 12) {
       setGreeting('Good Morning');
     } else if (now.hour >= 12 && now.hour < 17) {
       setGreeting('Good Afternoon');
     } else if (now.hour >= 17 && now.hour < 21) {
       setGreeting('Good Evening');
-    } else if (now.hour >= 21 && now.hour < 5) {
+    } else if (now.hour >= 21 || now.hour < 5) {
       setGreeting('Good Night');
     }
   }

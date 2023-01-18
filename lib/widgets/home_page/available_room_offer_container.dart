@@ -73,20 +73,26 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
     // TODO: implement initState
     super.initState();
     apiReq.getSuggestAvailableRoom().then((value) {
-      // print(value);
+      print(value);
       if (value['Status'].toString() == "200") {
         setState(() {
           if (value['Data'] != []) {
-            isEmpty = false;
-            roomId = value['Data']['RoomID'];
-            roomName = value['Data']['RoomName'];
-            floor = value['Data']['AreaName'];
-            startTime = value['Data']['Start'];
-            endTime = value['Data']['End'];
-            photoUrl = value['Data']['RoomImage'];
-            roomType = value['Data']['RoomType'];
-            DateFormat format = DateFormat("dd MMMM yyyy");
-            availableDate = format.parse(value['Data']['Date']);
+            if (value['Data']['RoomID'].toString() == "") {
+              isEmpty = true;
+              photoUrl = value['Data']['RoomImage'];
+            } else {
+              isEmpty = false;
+              roomId = value['Data']['RoomID'];
+              roomName = value['Data']['RoomName'];
+              floor = value['Data']['AreaName'];
+              startTime = value['Data']['Start'];
+              endTime = value['Data']['End'];
+              photoUrl = value['Data']['RoomImage'];
+              roomType = value['Data']['RoomType'];
+              DateFormat format = DateFormat("dd MMMM yyyy");
+              availableDate = format.parse(value['Data']['Date']);
+            }
+
             // print(availableDate);
           }
         });
@@ -164,7 +170,30 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
             child: Align(
               alignment: Alignment.bottomLeft,
               child: isEmpty
-                  ? const SizedBox()
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Rooms Currently Not Available",
+                          style: helveticaText.copyWith(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700,
+                            color: white,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          'Please check back later.',
+                          style: helveticaText.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w300,
+                            color: white,
+                          ),
+                        ),
+                      ],
+                    )
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
