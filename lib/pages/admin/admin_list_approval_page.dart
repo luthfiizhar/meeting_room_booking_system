@@ -158,11 +158,12 @@ class _AdminListPageState extends State<AdminListPage> {
 
   Future updateList() {
     return apiReq.getAuditoriumApprovalList(searchTerm).then((value) {
-      // print(value);
+      print(value);
       if (value['Status'].toString() == "200") {
         setState(() {
           approvalList = value['Data']['List'];
-          countPagination(value['Data']['TotalRows']);
+          resultRows = value['Data']['TotalRows'];
+          // countPagination(value['Data']['TotalRows']);
           // showedPage = availablePage.take(5).toList();
         });
       } else {
