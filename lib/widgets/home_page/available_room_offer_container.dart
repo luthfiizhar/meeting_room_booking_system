@@ -13,7 +13,10 @@ import 'package:shimmer/shimmer.dart';
 class AvailableRoomContainer extends StatefulWidget {
   AvailableRoomContainer({
     super.key,
+    this.height = 375,
   });
+
+  final double height;
 
   @override
   State<AvailableRoomContainer> createState() => _AvailableRoomContainerState();
@@ -121,25 +124,40 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
     return Stack(
       children: [
         photoUrl == ""
-            ? const Shimmer(
-                gradient: LinearGradient(
-                  colors: [platinum, grayx11, davysGray],
+            ? Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: white,
                 ),
-                direction: ShimmerDirection.rtl,
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 375,
+                width: double.infinity,
+                height: widget.height,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: eerieBlack,
+                  ),
                 ),
               )
             : SizedBox(
                 width: double.infinity,
-                height: 375,
+                height: widget.height,
                 child: CachedNetworkImage(
                   imageUrl: photoUrl,
+                  // placeholder: (context, url) {
+                  //   return Shimmer(
+                  //     gradient: const LinearGradient(
+                  //       colors: [platinum, grayx11, davysGray],
+                  //     ),
+                  //     direction: ShimmerDirection.rtl,
+                  //     child: Container(
+                  //       width: double.infinity,
+                  //       height: 375,
+                  //     ),
+                  //   );
+                  // },
                   imageBuilder: (context, imageProvider) {
                     return Container(
                       width: double.infinity,
-                      height: 375,
+                      height: widget.height,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: imageProvider, fit: BoxFit.cover,
@@ -153,8 +171,8 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
                 ),
               ),
         ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: 375,
+          constraints: BoxConstraints(
+            minHeight: widget.height,
           ),
           child: Container(
             padding: const EdgeInsets.only(
@@ -164,100 +182,108 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
               top: 25,
             ),
             decoration: BoxDecoration(
-              color: eerieBlack.withOpacity(0.4),
+              color: isEmpty ? white : eerieBlack.withOpacity(0.4),
               borderRadius: BorderRadius.circular(10),
+              border: isEmpty ? Border.all(color: platinum, width: 1) : null,
             ),
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: isEmpty
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Rooms Currently Not Available",
-                          style: helveticaText.copyWith(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w700,
-                            color: white,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'Please check back later.',
-                          style: helveticaText.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w300,
-                            color: white,
-                          ),
-                        ),
-                      ],
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          availableDate.isAfter(DateTime.now())
-                              ? "Available Tomorrow"
-                              : 'Currently Available',
-                          style: helveticaText.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w300,
-                            color: white,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          roomName,
-                          style: helveticaText.copyWith(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w700,
-                            color: white,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          '$floor, $startTime - $endTime WIB',
-                          style: helveticaText.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w300,
-                            color: white,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        TransparentBorderedWhiteButton(
-                          text: 'Book Now',
-                          onTap: () {
-                            String today =
-                                DateFormat('yyyy-MM-dd').format(DateTime.now());
-                            initTime();
-                            context.goNamed(
-                              'booking_rooms',
-                              params: {
-                                'roomId': roomId,
-                                'date': today,
-                                'startTime': startTimeBook,
-                                'endTime': endTimeBook,
-                                'participant': '0',
-                                'facilities': '[]',
-                                'roomType': roomType,
-                                'isEdit': 'false',
-                              },
-                              queryParams: {},
-                            );
-                          },
-                          padding: ButtonSize().smallSize(),
-                        )
-                      ],
+            child: isEmpty
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: eerieBlack,
                     ),
-            ),
+                  )
+                : Align(
+                    alignment: Alignment.bottomLeft,
+                    child: isEmpty
+                        ? const SizedBox()
+                        // Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Text(
+                        //         "Rooms Currently Not Available",
+                        //         style: helveticaText.copyWith(
+                        //           fontSize: 32,
+                        //           fontWeight: FontWeight.w700,
+                        //           color: white,
+                        //         ),
+                        //       ),
+                        //       const SizedBox(
+                        //         height: 10,
+                        //       ),
+                        //       Text(
+                        //         'Please check back later.',
+                        //         style: helveticaText.copyWith(
+                        //           fontSize: 18,
+                        //           fontWeight: FontWeight.w300,
+                        //           color: white,
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                availableDate.isAfter(DateTime.now())
+                                    ? "Available Tomorrow"
+                                    : 'Available for Today',
+                                style: helveticaText.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w300,
+                                  color: white,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                roomName,
+                                style: helveticaText.copyWith(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w700,
+                                  color: white,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                '$floor, $startTime - $endTime WIB',
+                                style: helveticaText.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w300,
+                                  color: white,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              TransparentBorderedWhiteButton(
+                                text: 'Book Now',
+                                onTap: () {
+                                  String today = DateFormat('yyyy-MM-dd')
+                                      .format(DateTime.now());
+                                  initTime();
+                                  context.goNamed(
+                                    'booking_rooms',
+                                    params: {
+                                      'roomId': roomId,
+                                      'date': today,
+                                      'startTime': startTimeBook,
+                                      'endTime': endTimeBook,
+                                      'participant': '0',
+                                      'facilities': '[]',
+                                      'roomType': roomType,
+                                      'isEdit': 'false',
+                                    },
+                                    queryParams: {},
+                                  );
+                                },
+                                padding: ButtonSize().smallSize(),
+                              )
+                            ],
+                          ),
+                  ),
           ),
         ),
       ],
