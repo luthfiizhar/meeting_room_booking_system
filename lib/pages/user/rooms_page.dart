@@ -732,7 +732,7 @@ class _RoomsPageState extends State<RoomsPage> {
                                     : MediaQuery.of(context).size.width > 1366
                                         ? MediaQuery.of(context).size.height -
                                             180
-                                        : 735,
+                                        : 785,
                                 child: DetailAppointmentContainer(
                                   // event: selectedEvent,
                                   closeDetail: closeDetail,
