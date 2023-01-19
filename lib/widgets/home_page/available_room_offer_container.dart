@@ -131,7 +131,7 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
                 ),
                 width: double.infinity,
                 height: widget.height,
-                child: Center(
+                child: const Center(
                   child: CircularProgressIndicator(
                     color: eerieBlack,
                   ),
@@ -220,69 +220,94 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
                         //       ),
                         //     ],
                         //   )
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                availableDate.isAfter(DateTime.now())
-                                    ? "Available Tomorrow"
-                                    : 'Available for Today',
-                                style: helveticaText.copyWith(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w300,
-                                  color: white,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                roomName,
-                                style: helveticaText.copyWith(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.w700,
-                                  color: white,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                '$floor, $startTime - $endTime WIB',
-                                style: helveticaText.copyWith(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w300,
-                                  color: white,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              TransparentBorderedWhiteButton(
-                                text: 'Book Now',
-                                onTap: () {
-                                  String today = DateFormat('yyyy-MM-dd')
-                                      .format(DateTime.now());
-                                  initTime();
-                                  context.goNamed(
-                                    'booking_rooms',
-                                    params: {
-                                      'roomId': roomId,
-                                      'date': today,
-                                      'startTime': startTimeBook,
-                                      'endTime': endTimeBook,
-                                      'participant': '0',
-                                      'facilities': '[]',
-                                      'roomType': roomType,
-                                      'isEdit': 'false',
-                                    },
-                                    queryParams: {},
-                                  );
-                                },
-                                padding: ButtonSize().smallSize(),
+                        : roomId == ""
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Rooms Currently Not Available",
+                                    style: helveticaText.copyWith(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w700,
+                                      color: white,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Please check back later.',
+                                    style: helveticaText.copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w300,
+                                      color: white,
+                                    ),
+                                  ),
+                                ],
                               )
-                            ],
-                          ),
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    availableDate.isAfter(DateTime.now())
+                                        ? "Available Tomorrow"
+                                        : 'Available for Today',
+                                    style: helveticaText.copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w300,
+                                      color: white,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    roomName,
+                                    style: helveticaText.copyWith(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w700,
+                                      color: white,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    '$floor, $startTime - $endTime WIB',
+                                    style: helveticaText.copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w300,
+                                      color: white,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  TransparentBorderedWhiteButton(
+                                    text: 'Book Now',
+                                    onTap: () {
+                                      String today = DateFormat('yyyy-MM-dd')
+                                          .format(DateTime.now());
+                                      initTime();
+                                      context.goNamed(
+                                        'booking_rooms',
+                                        params: {
+                                          'roomId': roomId,
+                                          'date': today,
+                                          'startTime': startTimeBook,
+                                          'endTime': endTimeBook,
+                                          'participant': '0',
+                                          'facilities': '[]',
+                                          'roomType': roomType,
+                                          'isEdit': 'false',
+                                        },
+                                        queryParams: {},
+                                      );
+                                    },
+                                    padding: ButtonSize().smallSize(),
+                                  )
+                                ],
+                              ),
                   ),
           ),
         ),
