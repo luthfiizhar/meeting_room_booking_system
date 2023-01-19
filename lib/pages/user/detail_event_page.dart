@@ -93,6 +93,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
   bool isPhoneShowed = false;
   bool isOwner = false;
   bool isButtonShowed = true;
+  bool isGoogleMeetShowed = false;
 
   int bookingStep = 0;
   resetStatus(bool value) {}
@@ -190,10 +191,12 @@ class _DetailEventPageState extends State<DetailEventPage> {
               if (value["Data"]["Admin"].toString() == "1") {
                 isAdmin = true;
                 isPhoneShowed = true;
+                isGoogleMeetShowed = true;
               } else {
                 if (bookingNip == value["Data"]["EmpNIP"]) {
                   setState(() {
                     isOwner = true;
+                    isGoogleMeetShowed = true;
                     isPhoneShowed = true;
                   });
                 }
@@ -206,7 +209,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
                 setState(() {
                   isAdmin = true;
                   isPhoneShowed = true;
-                  isOwner = false;
+                  // isOwner = false;
+                  isGoogleMeetShowed = true;
                   isButtonShowed = true;
                   if (bookingStatus == "DECLINED") {
                     print('if declined');
@@ -218,23 +222,23 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   isPic = true;
                   isPhoneShowed = true;
                 });
-              } else {
-                if (bookingNip == value["Data"]["EmpNIP"]) {
-                  setState(() {
-                    isPhoneShowed = true;
-                    isOwner = true;
-                    isButtonShowed = true;
-                    if (bookingStatus == "DECLINED") {
-                      print('if declined');
-                      isButtonShowed = false;
-                    }
-                  });
-                } else {
-                  print('else nip tidak cocok');
-                  setState(() {
+              }
+              if (bookingNip == value["Data"]["EmpNIP"]) {
+                setState(() {
+                  isPhoneShowed = true;
+                  isOwner = true;
+                  isButtonShowed = true;
+                  isGoogleMeetShowed = true;
+                  if (bookingStatus == "DECLINED") {
+                    print('if declined');
                     isButtonShowed = false;
-                  });
-                }
+                  }
+                });
+              } else {
+                print('else nip tidak cocok');
+                setState(() {
+                  isButtonShowed = false;
+                });
               }
             });
           }
@@ -697,7 +701,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
         // divider2(),
         // detailContent('Repeat', repeat),
         Visibility(
-          visible: isOwner ? true : false,
+          visible: isGoogleMeetShowed,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
