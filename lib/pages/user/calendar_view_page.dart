@@ -304,6 +304,9 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
           detailEvent.phoneNumber = value['Data']['PhoneNumber'] ?? "-";
           detailEvent.empNip = value['Data']['EmpNIP'] ?? "-";
           detailEvent.bookingType = value['Data']['BookingType'] ?? "";
+          detailEvent.originalBookingDate =
+              value['Data']['BookingDateOriginal'];
+          detailEvent.startTime = value['Data']['BookingStart'];
           if (!isShowDetail) {
             isShowDetail = true;
           }
