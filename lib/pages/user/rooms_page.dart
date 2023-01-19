@@ -164,10 +164,10 @@ class _RoomsPageState extends State<RoomsPage> {
 
   getMrbsBookingDetail() {
     apiReq.getBookingDetail(selectedEvent!.bookingID!).then((value) {
-      print("MRBS ---> $value");
+      // print("MRBS ---> $value");
       if (value['Status'] == "200") {
         setState(() {
-          print('BookingDetail $value');
+          // print('BookingDetail $value');
           detailEvent.bookingId = value['Data']['BookingID'];
           detailEvent.empNip = value['Data']['EmpNIP'];
           detailEvent.phoneNumber = value['Data']['PhoneNumber'];
@@ -222,7 +222,7 @@ class _RoomsPageState extends State<RoomsPage> {
     apiReq
         .getGoogleRoomDetail(selectedEvent!.googleID!, selectedEvent!.roomId!)
         .then((value) {
-      print("GOOGLE ---> $value");
+      // print("GOOGLE ---> $value");
       if (value['Status'] == "200") {
         setState(() {
           // print(value);
@@ -541,7 +541,7 @@ class _RoomsPageState extends State<RoomsPage> {
     apiReq
         .getBookingListRoom(selectedArea!, date, _events!.appointments!)
         .then((value) {
-      print(value);
+      // print(value);
       if (value['Status'].toString() == "200") {
         assignDataToCalendar(value['Data']);
         setState(() {});
@@ -555,7 +555,7 @@ class _RoomsPageState extends State<RoomsPage> {
         );
       }
     }).onError((error, stackTrace) {
-      print(stackTrace);
+      // print(stackTrace);
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
@@ -688,7 +688,9 @@ class _RoomsPageState extends State<RoomsPage> {
                           const SizedBox(
                             height: 20,
                           ),
-                          AvailableRoomContainer(),
+                          AvailableRoomContainer(
+                            height: 425,
+                          ),
                           const SizedBox(
                             height: 20,
                           )
@@ -780,6 +782,7 @@ class _RoomsPageState extends State<RoomsPage> {
                       .subtract(const Duration(days: 1));
                 });
                 datePickerControl.selectedDate = selectedDate;
+                datePickerControl.displayDate = selectedDate;
                 calendarControl!.displayDate = selectedDate;
               },
               splashRadius: 20,
@@ -796,10 +799,11 @@ class _RoomsPageState extends State<RoomsPage> {
                   selectedDate = calendarControl!.displayDate!
                       .add(const Duration(days: 1));
                 });
-                print(calendarControl!.displayDate!);
+                // print(calendarControl!.displayDate!);
                 datePickerControl.selectedDate = selectedDate;
                 calendarControl!.displayDate = selectedDate;
-                print(selectedDate!.isAfter(calendarControl!.displayDate!));
+                datePickerControl.displayDate = selectedDate;
+                // print(selectedDate!.isAfter(calendarControl!.displayDate!));
                 if (selectedDate!.isAfter(calendarControl!.displayDate!)) {
                   setState(() {
                     selectedDate = calendarControl!.displayDate!;
@@ -884,7 +888,9 @@ class _RoomsPageState extends State<RoomsPage> {
           child: SfCalendar(
             key: const ValueKey(CalendarView.timelineDay),
             view: CalendarView.timelineDay,
-            maxDate: DateTime.now().add(const Duration(days: 30)),
+            maxDate: DateTime(DateTime.now().year, DateTime.now().month,
+                    DateTime.now().day)
+                .add(const Duration(days: 30)),
             onViewChanged: (viewChangedDetails) {
               selectedDate = viewChangedDetails.visibleDates.first;
               if (dataRoom == []) {
