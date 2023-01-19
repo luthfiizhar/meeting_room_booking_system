@@ -114,7 +114,7 @@ class _RoomScheduleState extends State<RoomSchedule> {
   void initState() {
     super.initState();
     var todayDateTime = DateTime.now();
-    today = DateFormat('EEEE, d MMMM y').format(todayDateTime);
+    today = DateFormat('EEEE, d MMMM y').format(widget.selectedDate!);
     initGetSchedule();
   }
 
@@ -181,7 +181,10 @@ class _RoomScheduleState extends State<RoomSchedule> {
                 },
                 appointmentBuilder: appointmentBuilder,
                 view: CalendarView.day,
-                initialDisplayDate: widget.selectedDate,
+                initialDisplayDate:
+                    widget.selectedDate!.day == DateTime.now().day
+                        ? DateTime.now().subtract(const Duration(minutes: 30))
+                        : widget.selectedDate,
                 dataSource: events,
                 timeSlotViewSettings: TimeSlotViewSettings(
                   timeFormat: 'H:mm',
