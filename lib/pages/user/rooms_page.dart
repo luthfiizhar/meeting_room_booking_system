@@ -165,6 +165,7 @@ class _RoomsPageState extends State<RoomsPage> {
   getMrbsBookingDetail() {
     apiReq.getBookingDetail(selectedEvent!.bookingID!).then((value) {
       // print("MRBS ---> $value");
+      String status = value['Status'].toString();
       if (value['Status'] == "200") {
         setState(() {
           // print('BookingDetail $value');
@@ -204,7 +205,11 @@ class _RoomsPageState extends State<RoomsPage> {
             contentText: value['Message'],
             isSuccess: false,
           ),
-        );
+        ).then((value) {
+          if (status == "401") {
+            context.go('/login');
+          }
+        });
       }
     }).onError((error, stackTrace) {
       showDialog(
