@@ -195,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage(
-                          'assets/kursi_meja.jpg',
+                          'assets/cover_login.png',
                         ),
                         fit: BoxFit.cover),
                   ),
