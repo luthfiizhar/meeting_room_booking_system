@@ -193,6 +193,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   initGetUserProfile() {
     apiReq.getUserProfile().then((value) {
+      String status = value['Status'].toString();
       if (value['Status'].toString() == "200") {
         if (value['Data']['Admin'].toString() == "1") {
           setState(() {
@@ -210,6 +211,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           });
         }
       } else {
+        if (status == "401") {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialogBlack(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          ).then((value) {
+            context.go('/login');
+          });
+        }
         // showDialog(
         //   context: context,
         //   builder: (context) => AlertDialogBlack(

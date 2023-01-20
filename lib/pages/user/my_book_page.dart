@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
@@ -96,6 +97,7 @@ class _MyBookingPageState extends State<MyBookingPage> {
   Future updateList() {
     return apiReq.getMyBookingList(searchTerm).then((value) {
       // print(value);
+      String status = value['Status'].toString();
       setState(() {
         if (value['Status'] == "200") {
           myBookList = value['Data']['List'];
@@ -110,7 +112,11 @@ class _MyBookingPageState extends State<MyBookingPage> {
               contentText: value['Message'],
               isSuccess: false,
             ),
-          );
+          ).then((value) {
+            if (status == "401") {
+              context.go('/login');
+            }
+          });
         }
       });
     }).onError((error, stackTrace) {

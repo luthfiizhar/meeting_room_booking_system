@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
@@ -1170,6 +1171,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
               isLoadingGetCalendar2 = false;
             });
             // print(value);
+            String status = value['Status'].toString();
             if (value['Status'].toString() == "200") {
               assignDataToCalendar(value['Data']);
             } else {
@@ -1180,7 +1182,11 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                   contentText: value['Message'],
                   isSuccess: false,
                 ),
-              );
+              ).then((value) {
+                if (status == "401") {
+                  context.go('/login');
+                }
+              });
             }
           }).onError((error, stackTrace) {
             setState(() {
