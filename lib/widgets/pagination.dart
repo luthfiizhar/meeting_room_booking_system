@@ -225,9 +225,9 @@ class _ListPaginationState extends State<ListPagination> {
                                     //             ['TotalRows']);
                                     //   });
                                     // });
-                                    print(showedPage);
-                                    print(
-                                        'current ${widget.searchTerm!.pageNumber}');
+                                    // print(showedPage);
+                                    // print(
+                                    //     'current ${widget.searchTerm!.pageNumber}');
                                   },
                             child: Container(
                               width: 35,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -664,6 +665,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         floor = value['Data']['AreaName'];
         participantMax = value['Data']['MaxCapacity'];
         participantMin = value['Data']['MinCapacity'];
+
         List tempResultAmenities = value['Data']['Amenities'];
         for (var element in tempResultAmenities) {
           if (element['Default'] > 0) {
@@ -710,16 +712,18 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         // _endTime.text = widget.endTime!;
         _repeatEnd.text = DateFormat('d MMM yyyy').format(DateTime.now());
         _totalParticipant.text = widget.participant!;
-        if (widget.participant == "25") {
-          _totalParticipant.text = "";
+        if (widget.participant == "25" || widget.participant == "0") {
+          _totalParticipant.text = participantMin.toString();
         }
-        if (widget.participant == "0") {
-          _totalParticipant.text = value['Data']['MinCapacity'].toString();
-        }
+
+        // if (widget.participant == "0") {
+        //   _totalParticipant.text = participantMin.toString();
+        // }
         if (roomType != 'MeetingRoom') {
           _totalParticipant.text = "";
           layoutSectionVisible = true;
           repeatSectionVisible = false;
+          _totalParticipant.text = participantMin.toString();
         }
         _repeatOnMonthly.text = selectedDate!.day.toString();
         apiReq.getMeetingType().then((value) {
@@ -878,6 +882,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     totalParticipantNode.addListener(
       () {
         setState(() {});
+        if (!totalParticipantNode.hasFocus) {
+          if (int.parse(_totalParticipant.text) < participantMin) {
+            _totalParticipant.text = participantMin.toString();
+          }
+        }
       },
     );
     dateNode.addListener(
@@ -951,6 +960,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       }
       // }
     });
+    // _totalParticipant.addListener(() {
+    //   if (int.parse(_totalParticipant.text) < participantMin) {
+    //     _totalParticipant.text = participantMin.toString();
+    //   }
+    // });
   }
 
   @override
@@ -1224,6 +1238,14 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                           onSaved: (newValue) {
                                             totalParticipant = newValue!;
                                           },
+                                          onEditingComplete: () {
+                                            if (int.parse(
+                                                    _totalParticipant.text) <
+                                                participantMin) {
+                                              _totalParticipant.text =
+                                                  participantMin.toString();
+                                            }
+                                          },
                                           enabled: true,
                                           hintText: 'Total',
                                           obsecureText: false,
@@ -1264,9 +1286,24 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                               onFieldSubmitted: (x) {
                                                 if (_email.text != "") {
                                                   setState(() {
-                                                    invitedGuest
-                                                        .add(_email.text);
-                                                    _email.text = "";
+                                                    if (EmailValidator.validate(
+                                                        x)) {
+                                                      invitedGuest
+                                                          .add(_email.text);
+                                                      _email.text = "";
+                                                    } else {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            const AlertDialogBlack(
+                                                          title:
+                                                              'Email not valid',
+                                                          contentText:
+                                                              "Please check the email address.",
+                                                          isSuccess: false,
+                                                        ),
+                                                      );
+                                                    }
                                                   });
                                                 }
                                               },

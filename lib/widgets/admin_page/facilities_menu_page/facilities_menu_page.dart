@@ -29,17 +29,19 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
 
   int selectedIndexArea = 0;
 
+  int totalResult = 0;
+
   List facilitiesList = [];
   List<Amenities> facilities = [];
 
   List showPerPageList = ["5", "10", "20", "50", "100"];
 
   int currentPaginatedPage = 1;
-  List availablePage = [1, 2, 3, 4, 5];
-  List showedPage = [1, 2, 3, 4, 5];
+  List availablePage = [1];
+  List showedPage = [1];
 
   countPagination(int totalRow) {
-    print('total row -> $totalRow');
+    // print('total row -> $totalRow');
     setState(() {
       availablePage.clear();
       if (totalRow == 0) {
@@ -59,13 +61,14 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
 
   onTapHeader(String orderBy) {}
 
-  updateList() {
-    facilitiesList.clear();
-    apiReq.getFacilitiesTableList(searchTerm).then((value) {
+  Future updateList() {
+    // return facilitiesList.clear();
+    return apiReq.getFacilitiesTableList(searchTerm).then((value) {
       if (value['Status'] == '200') {
         print(value);
         facilitiesList = value['Data']['List'];
-        countPagination(value['Data']['TotalRows']);
+        totalResult = value['Data']['TotalRows'];
+        // countPagination(value['Data']['TotalRows']);
       } else {
         showDialog(
           context: context,
@@ -89,7 +92,9 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
   @override
   void initState() {
     super.initState();
-    updateList();
+    updateList().then((value) {
+      countPagination(totalResult);
+    });
   }
 
   @override
@@ -99,6 +104,9 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
 
   @override
   Widget build(BuildContext context) {
+    double paginationWidth = availablePage.length <= 5
+        ? ((45 * (showedPage.length.toDouble())))
+        : ((55 * (showedPage.length.toDouble())));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -169,7 +177,7 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                   print('submit');
                   setState(() {
                     searchTerm.keyWords = value;
-                    updateList();
+                    updateList().then((value) {});
                   });
                 },
               ),
@@ -279,8 +287,13 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                       focusNode: showPerRowsNode,
                       onChanged: (value) {
                         setState(() {
+                          currentPaginatedPage = 1;
+                          searchTerm.pageNumber =
+                              currentPaginatedPage.toString();
                           searchTerm.max = value!.toString();
-                          updateList();
+                          updateList().then((value) {
+                            countPagination(totalResult);
+                          });
                           // getMyBookingList(searchTerm).then((value) {
                           //   myBookList = value['Data']['List'];
                           //   countPagination(value['Data']['TotalRows']);
@@ -365,7 +378,7 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                     width: 5,
                   ),
                   SizedBox(
-                    width: 275,
+                    width: paginationWidth,
                     height: 35,
                     child: Row(
                       children: [
@@ -443,11 +456,8 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                             );
                           },
                         ),
-                        const SizedBox(
-                          width: 5,
-                        ),
                         Visibility(
-                          visible: availablePage.length < 5 ||
+                          visible: availablePage.length <= 5 ||
                                   currentPaginatedPage == availablePage.last
                               ? false
                               : true,

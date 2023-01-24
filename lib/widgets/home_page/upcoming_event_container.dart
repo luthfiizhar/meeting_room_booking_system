@@ -34,19 +34,18 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     apiReq.getUpcomingEvent().then((value) {
-      print("Upcoming Result $value");
+      // print("Upcoming Result $value");
       if (value['Status'].toString() == "200") {
         if (value['Data'].toString() == "[]") {
-          print('if upcoming kosong');
+          // print('if upcoming kosong');
           setState(() {
             isEmpty = true;
             emptyMessage = value['Message'];
           });
         } else {
-          print('if upcoming ada');
+          // print('if upcoming ada');
           setState(() {
             isEmpty = false;
             upcomingData = [value['Data']];
