@@ -5,8 +5,10 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/floor_menu_page/add_floor_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
+import 'package:meeting_room_booking_system/widgets/input_field/search_input_field.dart';
 
 class FloorMenuSettingPage extends StatefulWidget {
   const FloorMenuSettingPage({super.key});
@@ -23,16 +25,17 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
 
   SearchTerm searchTerm = SearchTerm();
 
+  int totalResult = 0;
+
   List florList = [];
 
   List showPerPageList = ["5", "10", "20", "50", "100"];
 
   int currentPaginatedPage = 1;
-  List availablePage = [1, 2, 3, 4, 5];
-  List showedPage = [1, 2, 3, 4, 5];
+  List availablePage = [1];
+  List showedPage = [1];
 
   countPagination(int totalRow) {
-    print('total row -> $totalRow');
     setState(() {
       availablePage.clear();
       if (totalRow == 0) {
@@ -44,21 +47,38 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
       for (var i = 0; i < totalPage.ceil(); i++) {
         availablePage.add(i + 1);
       }
-      print(availablePage);
+      showedPage = availablePage.take(5).toList();
+      // print(availablePage);
       // print(showedPage);
     });
   }
 
-  onTapHeader(String orderBy) {}
+  onTapHeader(String orderBy) {
+    updateList().then((value) {
+      // countPagination(totalResult);
+      // showedPage = availablePage.take(5).toList();
+    });
+  }
 
-  updateList() {
-    apiReq.getFloorList(searchTerm).then((value) {
+  searchList() {
+    currentPaginatedPage = 1;
+    searchTerm.keyWords = _search.text;
+    searchTerm.pageNumber = currentPaginatedPage.toString();
+    updateList().then((value) {
+      countPagination(totalResult);
+      showedPage = availablePage.take(5).toList();
+    });
+  }
+
+  Future updateList() {
+    return apiReq.getFloorList(searchTerm).then((value) {
       if (value['Status'] == "200") {
         setState(() {
           // print(value);
           florList = value['Data']['List'];
-          countPagination(value['Data']['TotalRows']);
-          showedPage = availablePage.take(5).toList();
+          totalResult = value['Data']['TotalRows'];
+          // countPagination(value['Data']['TotalRows']);
+          // showedPage = availablePage.take(5).toList();
         });
       } else {
         showDialog(
@@ -82,12 +102,49 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
     });
   }
 
+  removeFloor(String floorId) async {
+    await apiReq.deleteFloor(floorId).then((value) {
+      if (value['Status'].toString() == "200") {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: true,
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: "Error deleteFloor",
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+
+    updateList();
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     searchTerm.orderBy = "FloorName";
-    updateList();
+    updateList().then((value) {
+      countPagination(totalResult);
+      showedPage = availablePage.take(5).toList();
+    });
     searchNode.addListener(() {
       setState(() {});
     });
@@ -104,6 +161,9 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    double paginationWidth = availablePage.length <= 5
+        ? ((45 * (showedPage.length.toDouble())))
+        : ((55 * (showedPage.length.toDouble())));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -125,7 +185,9 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                 showDialog(
                   context: context,
                   builder: (context) => AddNewFloorDialog(),
-                );
+                ).then((value) {
+                  updateList();
+                });
               },
               child: SizedBox(
                 child: Row(
@@ -157,13 +219,17 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
             ),
             SizedBox(
               width: 220,
-              child: BlackInputField(
+              child: SearchInputField(
                 controller: _search,
                 enabled: true,
                 obsecureText: false,
                 prefixIcon: Icon(Icons.search),
                 hintText: 'Search here',
                 focusNode: searchNode,
+                maxLines: 1,
+                onFieldSubmitted: (value) {
+                  searchList();
+                },
               ),
             ),
           ],
@@ -247,6 +313,7 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
               buildingName: florList[index]['BuildingName'],
               floorId: florList[index]['AreaID'].toString(),
               floorName: florList[index]['AreaName'],
+              onRemove: removeFloor,
             );
           },
         ),
@@ -287,6 +354,7 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                           //   });
                           // });
                           updateList();
+                          countPagination(totalResult);
                         });
                       },
                       value: searchTerm.max,
@@ -369,7 +437,7 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                     width: 5,
                   ),
                   SizedBox(
-                    width: 275,
+                    width: paginationWidth, // 275,
                     height: 35,
                     child: Row(
                       children: [
@@ -459,11 +527,8 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                             );
                           },
                         ),
-                        const SizedBox(
-                          width: 5,
-                        ),
                         Visibility(
-                          visible: availablePage.length < 5 ||
+                          visible: availablePage.length <= 5 ||
                                   currentPaginatedPage == availablePage.last
                               ? false
                               : true,
@@ -641,12 +706,27 @@ class FloorListContainer extends StatelessWidget {
                   buildingName,
                 ),
               ),
-              const SizedBox(
+              SizedBox(
                 width: 20,
-                child: Icon(
-                  Icons.close,
-                  size: 18,
-                  color: davysGray,
+                child: InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const ConfirmDialogBlack(
+                        title: 'Confirmation',
+                        contentText: 'Are you sure want to delete this floor?',
+                      ),
+                    ).then((value) {
+                      if (value) {
+                        onRemove!(floorId);
+                      }
+                    });
+                  },
+                  child: const Icon(
+                    Icons.close,
+                    size: 18,
+                    color: davysGray,
+                  ),
                 ),
               )
             ],

@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/model/booking_class.dart';
 import 'package:http/http.dart' as http;
+import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/model/user.dart';
 import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page.dart';
@@ -236,6 +237,7 @@ class ReqAPI {
     }
   """;
 
+    print(bodySend);
     try {
       var response =
           await http.post(url, body: bodySend, headers: requestHeader);
@@ -691,7 +693,7 @@ class ReqAPI {
     }
     """;
 
-    print(bodySend);
+    // print(bodySend);
     try {
       var response =
           await http.post(url, headers: requestHeader, body: bodySend);
@@ -1560,6 +1562,174 @@ class ReqAPI {
       return e;
     }
   }
+
+  Future addNewRoom(Room room) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/room');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+    var bodySend = """
+  {
+    "RoomName": "${room.roomName}",
+    "RoomType": "${room.roomType}",
+    "RoomAlias": "${room.roomAlias}",
+    "Status": "${room.availability}",
+    "AreaID": "${room.floorId}",
+    "MinCapacity": ${room.minCapacity},
+    "MaxCapacity": ${room.maxCapacity},
+    "BookingDuration": ${room.maxBookingDuration},
+    "DefaultAmenities": ${room.defaultFacilities},
+    "ProhibitedFacilites": ${room.prohibitedFacilities},
+    "Photos": ${room.areaPhoto},
+    "CoverPhoto": "${room.coverPhoto}"
+  }
+  """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future editRoom(Room room) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/room');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+    var bodySend = """
+  {
+    "RoomID": "${room.roomId}",
+    "RoomName": "${room.roomName}",
+    "RoomType": "${room.roomType}",
+    "RoomAlias": "${room.roomAlias}",
+    "Status": "${room.availability}",
+    "AreaID": "${room.floorId}",
+    "MinCapacity": ${room.minCapacity},
+    "MaxCapacity": ${room.maxCapacity},
+    "BookingDuration": ${room.maxBookingDuration},
+    "DefaultAmenities": ${room.defaultFacilities},
+    "ProhibitedFacilites": ${room.prohibitedFacilities},
+    "Photos": ${room.areaPhoto},
+    "CoverPhoto": "${room.coverPhoto}"
+  }
+  """;
+    try {
+      var response =
+          await http.put(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future adminRoomDetail(String roomId) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/room/$roomId');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      var response = await http.get(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future addFloor(String areaName, String buildingId) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/area');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+    var bodySend = """
+  {
+    "AreaName" : "$areaName",
+    "BuildingID" : "$buildingId"
+  }
+  """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future deleteRoom(String roomId) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/room/$roomId');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.delete(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future deleteFloor(String floorId) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/area/$floorId');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.delete(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  //END CLASS REQ API
 }
 
 // String apiUrlGlobal = 'fmklg.klgsys.com'; // Development

@@ -170,7 +170,6 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // checkToken();
     _scrollController = widget.scrollController;

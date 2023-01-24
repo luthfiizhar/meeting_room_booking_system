@@ -228,11 +228,10 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // print("param-> ${widget.param}");
     apiReq.getUserProfile().then((value) {
-      print(value);
+      // print(value);
       if (value['Status'].toString() == "200") {
         if (value['Data']['GoogleAccountSync'] == 1) {
           setState(() {

@@ -7,11 +7,15 @@ import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
-import 'package:meeting_room_booking_system/widgets/dropdown/white_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 
 class AddNewFloorDialog extends StatefulWidget {
-  const AddNewFloorDialog({super.key});
+  const AddNewFloorDialog({
+    super.key,
+    this.isEdit = false,
+  });
+
+  final bool isEdit;
 
   @override
   State<AddNewFloorDialog> createState() => _AddNewFloorDialogState();
@@ -20,8 +24,10 @@ class AddNewFloorDialog extends StatefulWidget {
 class _AddNewFloorDialogState extends State<AddNewFloorDialog> {
   ReqAPI apiReq = ReqAPI();
   TextEditingController _floorName = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
   String selectedBuilding = "";
+  String floorName = "";
   List buildingList = [];
   FocusNode floorNameNode = FocusNode();
   FocusNode buildingNode = FocusNode();
@@ -130,70 +136,118 @@ class _AddNewFloorDialogState extends State<AddNewFloorDialog> {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Add New Floor',
-                style: helveticaText.copyWith(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: eerieBlack,
-                ),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              inputField(
-                'Floor Name',
-                BlackInputField(
-                  controller: _floorName,
-                  enabled: true,
-                  focusNode: floorNameNode,
-                  obsecureText: false,
-                  hintText: 'Name here ...',
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              inputField(
-                'Building',
-                BlackDropdown(
-                  focusNode: buildingNode,
-                  customHeights: _getCustomItemsHeights(buildingList),
-                  items: addDividerItem(buildingList),
-                  enabled: true,
-                  hintText: 'Choose Building',
-                  onChanged: (value) {},
-                ),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TransparentButtonBlack(
-                    text: 'Cancel',
-                    disabled: false,
-                    onTap: () {},
-                    padding: ButtonSize().mediumSize(),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Add New Floor',
+                  style: helveticaText.copyWith(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: eerieBlack,
                   ),
-                  const SizedBox(
-                    width: 10,
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                inputField(
+                  'Floor Name',
+                  BlackInputField(
+                    controller: _floorName,
+                    enabled: true,
+                    focusNode: floorNameNode,
+                    obsecureText: false,
+                    hintText: 'Name here ...',
+                    onSaved: (newValue) {
+                      floorName = newValue.toString();
+                    },
+                    validator: (value) =>
+                        value == "" ? "Floor name is required" : null,
                   ),
-                  RegularButton(
-                    text: 'Confirm',
-                    disabled: false,
-                    onTap: () {},
-                    padding: ButtonSize().mediumSize(),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                inputField(
+                  'Building',
+                  BlackDropdown(
+                    focusNode: buildingNode,
+                    customHeights: _getCustomItemsHeights(buildingList),
+                    items: addDividerItem(buildingList),
+                    enabled: true,
+                    hintText: 'Choose Building',
+                    onChanged: (value) {
+                      selectedBuilding = value;
+                    },
                   ),
-                ],
-              )
-            ],
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TransparentButtonBlack(
+                      text: 'Cancel',
+                      disabled: false,
+                      onTap: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      padding: ButtonSize().mediumSize(),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    RegularButton(
+                      text: 'Confirm',
+                      disabled: false,
+                      onTap: () {
+                        if (formKey.currentState!.validate()) {
+                          formKey.currentState!.save();
+                          apiReq
+                              .addFloor(floorName, selectedBuilding)
+                              .then((value) {
+                            if (value['Status'].toString() == "200") {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialogBlack(
+                                    title: value['Title'],
+                                    contentText: value['Message']),
+                              ).then((value) {
+                                Navigator.of(context).pop(true);
+                              });
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialogBlack(
+                                  title: value['Title'],
+                                  contentText: value['Message'],
+                                  isSuccess: false,
+                                ),
+                              );
+                            }
+                          }).onError((error, stackTrace) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialogBlack(
+                                title: "Error addFloor",
+                                contentText: error.toString(),
+                                isSuccess: false,
+                              ),
+                            );
+                          });
+                        }
+                      },
+                      padding: ButtonSize().mediumSize(),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
