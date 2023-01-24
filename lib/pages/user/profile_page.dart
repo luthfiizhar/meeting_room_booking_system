@@ -62,7 +62,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
           name = value['Data']['EmpName'];
           nip = value['Data']['EmpNIP'];
           email = value['Data']['Email'];
-          avaya = value['AvayaNumber'] ?? "";
+          avaya = value['AvayaNumber'] ?? "-";
           phoneCode = value['Data']['CountryCode'];
           phone = value['Data']['PhoneNumber'];
           int gooleSync = value['Data']['GoogleAccountSync'];
@@ -291,7 +291,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
               width: 400,
               child: BlackInputField(
                 controller: _email,
-                enabled: true,
+                enabled: false,
                 focusNode: emailNode,
                 obsecureText: false,
                 hintText: 'Email here ...',
