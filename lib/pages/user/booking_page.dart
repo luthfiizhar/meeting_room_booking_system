@@ -721,9 +721,12 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         // }
         if (roomType != 'MeetingRoom') {
           _totalParticipant.text = "";
-          layoutSectionVisible = true;
+          // layoutSectionVisible = true;
           repeatSectionVisible = false;
           _totalParticipant.text = participantMin.toString();
+        }
+        if (roomType == "Auditorium") {
+          layoutSectionVisible = true;
         }
         _repeatOnMonthly.text = selectedDate!.day.toString();
         apiReq.getMeetingType().then((value) {
