@@ -28,7 +28,7 @@ class _ApprovalMessageState extends State<ApprovalMessage> {
   void initState() {
     super.initState();
     apiReq.approvalListBookingCount().then((value) {
-      print(value);
+      // print(value);
       if (value['Status'].toString() == "200") {
         List result = value['Data'];
         result =

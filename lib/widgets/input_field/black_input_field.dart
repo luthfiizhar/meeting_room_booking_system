@@ -19,6 +19,8 @@ class BlackInputField extends StatelessWidget {
     this.fontSize = 16,
     this.textInputAction,
     this.inputFormatters,
+    this.onEditingComplete,
+    this.onChanged,
   });
 
   final TextEditingController controller;
@@ -31,8 +33,10 @@ class BlackInputField extends StatelessWidget {
   final bool? enabled;
   final VoidCallback? onTap;
   ValueChanged<String>? onFieldSubmitted;
+  ValueChanged<String>? onChanged;
   int? maxLines;
   Widget? prefixIcon;
+  VoidCallback? onEditingComplete;
   TextInputAction? textInputAction;
   double fontSize;
   List<TextInputFormatter>? inputFormatters;
@@ -57,6 +61,8 @@ class BlackInputField extends StatelessWidget {
       child: TextFormField(
         textInputAction: textInputAction,
         onFieldSubmitted: onFieldSubmitted,
+        onEditingComplete: onEditingComplete,
+        onChanged: onChanged,
         validator: validator,
         onSaved: onSaved,
         enabled: enabled,
@@ -107,7 +113,7 @@ class BlackInputField extends StatelessWidget {
             color: orangeAccent,
             fontSize: 14,
             fontWeight: FontWeight.w300,
-            // overflow: TextOverflow.,
+            overflow: TextOverflow.clip,
           ),
           fillColor: enabled!
               ? focusNode!.hasFocus

@@ -12,4 +12,9 @@ class SearchTerm {
   String pageNumber;
   String orderBy;
   String orderDir;
+
+  @override
+  String toString() {
+    return "{keywords:$keyWords, max:$max, pageNumber:$pageNumber, orderBy:$orderBy, orderDir:$orderDir}";
+  }
 }

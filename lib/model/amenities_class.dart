@@ -6,6 +6,7 @@ class Amenities {
     this.photo = "",
     this.isProhibited = false,
     this.defaultAmount = 0,
+    this.roomAmenitiesId = "",
   });
 
   String? amenitiesId;
@@ -14,6 +15,7 @@ class Amenities {
   int? qty;
   bool? isProhibited;
   int? defaultAmount;
+  String? roomAmenitiesId;
 
   Amenities.fromJSon(Map<String, dynamic> json)
       : amenitiesName = json['AmenitiesName'],
@@ -24,7 +26,9 @@ class Amenities {
         '"AmenitiesName"': '"$amenitiesName"',
         '"Amount"': '"$qty"',
         '"ImageURL"': '"$photo"',
-        '"DefaultAmount"': '"$defaultAmount"'
+        '"DefaultAmount"': '"$defaultAmount"',
+        '"isProhibited"': '$isProhibited',
+        '"RoomAmenitiesID"': '"$roomAmenitiesId"'
       };
 
   @override

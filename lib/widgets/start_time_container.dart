@@ -100,7 +100,7 @@ class StartTimeContainer extends StatelessWidget {
 
     final times = getTimes(startTime, endTime, step).map((tod) => tod).toList();
 
-    print(times);
+    // print(times);
   }
 
   @override
@@ -144,7 +144,7 @@ class StartTimeContainer extends StatelessWidget {
                     setStartTimeStatus!(false);
                     setStartTime!(items![index]);
                     setInitialEndTime!(items![index + 4]);
-                    print(items![index + 4]);
+                    // print(items![index + 4]);
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

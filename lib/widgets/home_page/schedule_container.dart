@@ -60,7 +60,7 @@ class _ScheduleContainerState extends State<ScheduleContainer> {
     // });
     String formattedDate = DateFormat('dd-MM-yyyy').format(date);
     apiReq.getSchedule(formattedDate).then((value) {
-      print("Schedule Result $value");
+      // print("Schedule Result $value");
       if (value['Status'].toString() == "200") {
         setState(() {
           isLoading = false;

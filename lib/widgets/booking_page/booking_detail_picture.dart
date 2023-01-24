@@ -36,13 +36,14 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
         minHeight: 450,
         minWidth: 500,
         maxWidth: 500,
-        maxHeight: 450,
+        maxHeight: 470,
       ),
       child: Material(
         color: Colors.transparent,
         child: Container(
           height: MediaQuery.of(context).size.height,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
@@ -187,7 +188,9 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                   fontFamily: 'Helvetica',
                   fontSize: 32,
                   fontWeight: FontWeight.w700,
+                  // overflow: TextOverflow.ellipsis,
                 ),
+                // softWrap: true,
               ),
               const SizedBox(
                 height: 10,

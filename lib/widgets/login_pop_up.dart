@@ -66,14 +66,14 @@ class _LoginPopUpState extends State<LoginPopUp> {
       apiReq
           .loginHCSSO(username!.toString(), password!.toString())
           .then((value) {
-        print("login Dummy $value");
+        // print("login Dummy $value");
         setState(() {
           isLoading = false;
         });
         if (value['Status'].toString() == "200") {
           dynamic firstLogin = value['Data']['FirstLogin'].toString();
           apiReq.getUserProfile().then((value) async {
-            print("getUserProfile $value");
+            // print("getUserProfile $value");
             if (value['Status'].toString() == "200") {
               await widget.resetState!();
               await widget.updateLogin!(
@@ -574,11 +574,11 @@ class TemporaryLoginPopUp extends StatelessWidget {
                       );
                       String code = "";
                       html.window.onMessage.listen((event) async {
-                        print("listen");
-                        print(event.data.toString());
+                        // print("listen");
+                        // print(event.data.toString());
                         if (event.data.toString().contains('token=')) {
                           code = event.data.toString().split('?')[1];
-                          print("Callback -> $code");
+                          // print("Callback -> $code");
                         }
                       });
                     },

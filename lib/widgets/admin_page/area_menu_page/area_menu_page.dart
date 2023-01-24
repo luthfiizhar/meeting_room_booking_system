@@ -9,6 +9,7 @@ import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/area_menu_page/new_area_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/search_input_field.dart';
@@ -33,17 +34,19 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
 
   int selectedIndexArea = 0;
 
+  int totalResult = 0;
+
   List areaList = [];
   List<Room> room = [];
 
   List showPerPageList = ["5", "10", "20", "50", "100"];
 
   int currentPaginatedPage = 1;
-  List availablePage = [1, 2, 3, 4, 5];
-  List showedPage = [1, 2, 3, 4, 5];
+  List availablePage = [1];
+  List showedPage = [1];
 
   countPagination(int totalRow) {
-    print('total row -> $totalRow');
+    // print('total row -> $totalRow');
     setState(() {
       availablePage.clear();
       if (totalRow == 0) {
@@ -55,7 +58,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
       for (var i = 0; i < totalPage.ceil(); i++) {
         availablePage.add(i + 1);
       }
-      print(availablePage);
+      // print(availablePage);
       // print(showedPage);
       showedPage = availablePage.take(5).toList();
     });
@@ -85,11 +88,29 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
     });
   }
 
-  updateList() {
-    areaList.clear();
+  searchRoom() {
     room.clear();
-    apiReq.getRoomList(searchTerm).then((value) {
-      print(value);
+    currentPaginatedPage = 1;
+    searchTerm.keyWords = _search.text;
+    searchTerm.pageNumber = currentPaginatedPage.toString();
+    // print(searchTerm);
+    setState(() {});
+    updateList().then((value) {
+      countPagination(totalResult);
+    });
+  }
+
+  resetState() {
+    print("RESET STATE");
+    updateList().then((value) {
+      countPagination(totalResult);
+    });
+    setState(() {});
+  }
+
+  Future updateList() {
+    return apiReq.getRoomList(searchTerm).then((value) {
+      room.clear();
       if (value['Status'].toString() == "200") {
         areaList = value['Data']['List'];
         for (var element in areaList) {
@@ -106,10 +127,13 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
             defaultFacilities: element['AvailableAmenities'] ?? [],
             prohibitedFacilities: element['ForbiddenAmenities'] ?? [],
             areaPhoto: element['RoomPhotos'] ?? "",
+            availability: element['Status'],
             isCollapsed: false,
           ));
         }
-        countPagination(value['Data']['TotalRows']);
+        // countPagination(value['Data']['TotalRows']);
+        totalResult = value['Data']['TotalRows'];
+        setState(() {});
       } else {
         showDialog(
           context: context,
@@ -136,7 +160,10 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    updateList();
+    // room.clear();
+    updateList().then((value) {
+      countPagination(totalResult);
+    });
     // apiReq.getRoomList(searchTerm).then((value) {
     //   if (value['Status'].toString() == "200") {
     //     print(value);
@@ -186,6 +213,9 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
 
   @override
   Widget build(BuildContext context) {
+    double paginationWidth = availablePage.length <= 5
+        ? ((45 * (showedPage.length.toDouble())))
+        : ((55 * (showedPage.length.toDouble())));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -206,6 +236,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                 context: context,
                 builder: (context) => NewAreaDialog(
                   isEdit: false,
+                  resetState: resetState,
                 ),
               );
             },
@@ -246,6 +277,10 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
               prefixIcon: Icon(Icons.search),
               hintText: 'Search here',
               focusNode: searchNode,
+              maxLines: 1,
+              onFieldSubmitted: (value) {
+                searchRoom();
+              },
             ),
           ),
         ],
@@ -262,6 +297,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
             isCollapse: room[index].isCollapsed,
             onTap: onTapListArea,
             close: closeDetail,
+            resetState: resetState,
             idRoom: room[index].roomId,
             roomName: room[index].roomName,
             roomType: room[index].roomType,
@@ -274,6 +310,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
             facility: room[index].defaultFacilities,
             prohibitedFacility: room[index].prohibitedFacilities,
             photoList: room[index].areaPhoto,
+            availability: room[index].availability,
           );
         },
       ),
@@ -306,7 +343,10 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                     onChanged: (value) {
                       setState(() {
                         searchTerm.max = value!.toString();
-                        updateList();
+                        room.clear();
+                        updateList().then((value) {
+                          countPagination(totalResult);
+                        });
                         // getMyBookingList(searchTerm).then((value) {
                         //   myBookList = value['Data']['List'];
                         //   countPagination(value['Data']['TotalRows']);
@@ -360,7 +400,8 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                             }
                             searchTerm.pageNumber =
                                 currentPaginatedPage.toString();
-                            updateList();
+                            room.clear();
+                            updateList().then((value) {});
                             // getMyBookingList(searchTerm)
                             //     .then((value) {
                             //   myBookList = value['Data']['List'];
@@ -391,7 +432,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                   width: 5,
                 ),
                 SizedBox(
-                  width: 275,
+                  width: paginationWidth,
                   height: 35,
                   child: Row(
                     children: [
@@ -430,9 +471,8 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                                       });
                                       searchTerm.pageNumber =
                                           currentPaginatedPage.toString();
-                                      updateList();
-                                      print(showedPage);
-                                      print('current ${searchTerm.pageNumber}');
+                                      room.clear();
+                                      updateList().then((value) {});
                                     },
                               child: Container(
                                 width: 35,
@@ -468,11 +508,8 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                           );
                         },
                       ),
-                      const SizedBox(
-                        width: 5,
-                      ),
                       Visibility(
-                        visible: availablePage.length < 5 ||
+                        visible: availablePage.length <= 5 ||
                                 currentPaginatedPage == availablePage.last
                             ? false
                             : true,
@@ -518,7 +555,8 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                             }
                             searchTerm.pageNumber =
                                 currentPaginatedPage.toString();
-                            updateList();
+                            room.clear();
+                            updateList().then((value) {});
                             // getMyBookingList(searchTerm)
                             //     .then((value) {
                             //   myBookList = value['Data']['List'];
@@ -571,6 +609,8 @@ class AreaListContainer extends StatefulWidget {
     this.isCollapse = false,
     this.index,
     this.close,
+    this.resetState,
+    this.availability = "",
   });
 
   String idRoom;
@@ -582,6 +622,7 @@ class AreaListContainer extends StatefulWidget {
   String maxCapacity;
   String maxDuration;
   String coverPhoto;
+  String availability;
 
   List? facility;
   List? prohibitedFacility;
@@ -593,13 +634,20 @@ class AreaListContainer extends StatefulWidget {
   Function? onTap;
   Function? close;
 
+  Function? resetState;
+
   @override
   State<AreaListContainer> createState() => _AreaListContainerState();
 }
 
 class _AreaListContainerState extends State<AreaListContainer> {
+  ReqAPI apiReq = ReqAPI();
   ScrollController facilityScrollController = ScrollController();
   ScrollController prohibitedScrollController = ScrollController();
+
+  resetState() {
+    widget.resetState!();
+  }
 
   @override
   void initState() {
@@ -660,7 +708,7 @@ class _AreaListContainerState extends State<AreaListContainer> {
   Widget summary() {
     return Container(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -698,66 +746,74 @@ class _AreaListContainerState extends State<AreaListContainer> {
               const SizedBox(
                 width: 30,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.roomName,
-                    style: helveticaText.copyWith(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                      color: davysGray,
+              SizedBox(
+                width: 250,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.roomName,
+                      style: helveticaText.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                        color: davysGray,
+                      ),
                     ),
-                  ),
-                  Text(
-                    widget.roomType,
-                    style: helveticaText.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      color: davysGray,
+                    Text(
+                      widget.roomType,
+                      style: helveticaText.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                        color: davysGray,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              const Icon(
-                Icons.home,
-                color: orangeAccent,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                '${widget.floor}, ${widget.building}',
-                style: helveticaText.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w300,
-                  color: davysGray,
+                  ],
                 ),
               ),
             ],
           ),
-          Row(
-            children: [
-              const Icon(
-                Icons.people,
-                color: orangeAccent,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                '${widget.minCapacity}-${widget.maxCapacity}',
-                style: helveticaText.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w300,
-                  color: davysGray,
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.home,
+                  color: orangeAccent,
                 ),
-              )
-            ],
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  '${widget.floor}, ${widget.building}',
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                    color: davysGray,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.people,
+                  color: orangeAccent,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  '${widget.minCapacity}-${widget.maxCapacity}',
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                    color: davysGray,
+                  ),
+                )
+              ],
+            ),
           ),
           widget.isCollapse
               ? const Icon(Icons.keyboard_arrow_down_sharp)
@@ -841,6 +897,7 @@ class _AreaListContainerState extends State<AreaListContainer> {
                       detailInfo('Min Capacity: ', widget.minCapacity),
                       detailInfo('Max Capacity: ', widget.maxCapacity),
                       detailInfo('Max Book Duration: ', '$duration Hours'),
+                      detailInfo('Status: ', widget.availability),
                     ],
                   ),
                 ],
@@ -941,7 +998,16 @@ class _AreaListContainerState extends State<AreaListContainer> {
                       child: Row(
                         children: [
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => NewAreaDialog(
+                                  resetState: widget.resetState!,
+                                  roomId: widget.idRoom,
+                                  isEdit: true,
+                                ),
+                              );
+                            },
                             child: const Icon(
                               Icons.edit,
                               color: orangeAccent,
@@ -952,7 +1018,55 @@ class _AreaListContainerState extends State<AreaListContainer> {
                             width: 10,
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => const ConfirmDialogBlack(
+                                  title: 'Confirmation',
+                                  contentText:
+                                      'Are you sure want to delete this room?',
+                                ),
+                              ).then((value) {
+                                if (value) {
+                                  widget.isCollapse = false;
+                                  apiReq
+                                      .deleteRoom(widget.idRoom)
+                                      .then((value) {
+                                    if (value['Status'].toString() == "200") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: value['Title'],
+                                          contentText: value['Message'],
+                                          isSuccess: true,
+                                        ),
+                                      ).then((value) {
+                                        widget.resetState!();
+                                      });
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: value['Title'],
+                                          contentText: value['Message'],
+                                          isSuccess: false,
+                                        ),
+                                      );
+                                    }
+                                  }).onError((error, stackTrace) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogBlack(
+                                        title: 'Error deleteRoom',
+                                        contentText: error.toString(),
+                                        isSuccess: false,
+                                      ),
+                                    );
+                                  });
+                                  setState(() {});
+                                }
+                              });
+                            },
                             child: const Icon(
                               Icons.delete_outline_sharp,
                               color: orangeAccent,

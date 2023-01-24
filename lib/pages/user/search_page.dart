@@ -381,6 +381,7 @@ class _SearchPageState extends State<SearchPage> {
 
   initUserProfile() {
     apiReq.getUserProfile().then((value) {
+      String status = value['Status'].toString();
       if (value['Status'].toString() == "200") {
         // if (value['Data']['Admin'].toString() == "1") {
         //   setState(() {
@@ -398,6 +399,18 @@ class _SearchPageState extends State<SearchPage> {
           });
         }
       } else {
+        if (status == "401") {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialogBlack(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          ).then((value) {
+            context.go('/login');
+          });
+        }
         // showDialog(
         //   context: context,
         //   builder: (context) => AlertDialogBlack(
@@ -530,7 +543,7 @@ class _SearchPageState extends State<SearchPage> {
       tutorialCoachMark = TutorialCoachMark(
           targets: targets,
           onFinish: () async {
-            print('finish tutorial');
+            // print('finish tutorial');
             var box = await Hive.openBox('onBoarding');
             box.put("firstLogin", false);
             showOnBoard = false;
@@ -1474,14 +1487,12 @@ class _SearchPageState extends State<SearchPage> {
                                                                       (context,
                                                                           index) {
                                                                     return ListRoomContainer(
-                                                                      roomID: searchResult[
-                                                                              index]
-                                                                          [
-                                                                          'RoomID'],
+                                                                      roomID:
+                                                                          searchResult[index]['RoomID'] ??
+                                                                              "",
                                                                       roomName:
-                                                                          searchResult[index]
-                                                                              [
-                                                                              'RoomName'],
+                                                                          searchResult[index]['RoomName'] ??
+                                                                              "",
                                                                       duration:
                                                                           searchResult[index]
                                                                               [

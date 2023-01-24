@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:meeting_room_booking_system/model/amenities_class.dart';
-
 class Room {
   Room({
     this.roomId = "",
@@ -15,6 +12,7 @@ class Room {
     this.maxCapacity = "",
     this.maxBookingDuration = "",
     this.coverPhoto = "",
+    this.availability = "INACTIVE",
     this.areaPhoto,
     this.defaultFacilities,
     this.prohibitedFacilities,
@@ -33,6 +31,7 @@ class Room {
   String maxCapacity;
   String maxBookingDuration;
   String coverPhoto;
+  String availability;
   List? areaPhoto;
   List? defaultFacilities;
   List? prohibitedFacilities;
