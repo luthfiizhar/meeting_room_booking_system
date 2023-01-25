@@ -488,7 +488,7 @@ class _RoomsPageState extends State<RoomsPage> {
             resourceIds: [dataRoom[i]['RoomID']],
             from: DateTime.parse(eventRoom[j]['StartDateTime']),
             to: DateTime.parse(eventRoom[j]['EndDateTime']),
-            background: eventRoom[i]['MeetingType'] == "EXTERNAL"
+            background: eventRoom[j]['MeetingType'] == "EXTERNAL"
                 ? yellowAccent
                 : davysGray,
             capacity: 5,
@@ -503,7 +503,7 @@ class _RoomsPageState extends State<RoomsPage> {
             type: eventRoom[j]['Type'],
             googleID: eventRoom[j]['GoogleCalendarEventID'],
             roomId: dataRoom[i]['RoomID'],
-            meetingType: eventRoom[i]['MeetingType'],
+            meetingType: eventRoom[j]['MeetingType'],
           ),
         );
         // Provider.of<MainModel>(context, listen: false).events.appointments!.add(
@@ -563,7 +563,7 @@ class _RoomsPageState extends State<RoomsPage> {
         );
       }
     }).onError((error, stackTrace) {
-      // print(stackTrace);
+      print(stackTrace);
       loadingGetCalendar = false;
       setState(() {});
       showDialog(
