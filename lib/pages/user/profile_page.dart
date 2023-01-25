@@ -128,7 +128,6 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
 
     _name.dispose();
@@ -292,7 +291,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
               width: 400,
               child: BlackInputField(
                 controller: _email,
-                enabled: true,
+                enabled: false,
                 focusNode: emailNode,
                 obsecureText: false,
                 hintText: 'Email here ...',

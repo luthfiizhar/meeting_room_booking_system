@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/constant.dart';
 
 class FooterWeb extends StatelessWidget {
   const FooterWeb({Key? key}) : super(key: key);
@@ -75,6 +76,78 @@ class FooterWeb extends StatelessWidget {
               ),
             ),
           )
+        ],
+      ),
+    );
+  }
+}
+
+class FooterWebMobile extends StatelessWidget {
+  const FooterWebMobile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      height: 182,
+      width: double.infinity,
+      color: platinum,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 60,
+            width: 185.6,
+            child: Image.asset('assets/navbarlogo.png'),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            width: 220,
+            child: Text(
+              '@Copyright Kawan Lama Group 2022.',
+              style: helveticaText.copyWith(
+                fontWeight: FontWeight.w300,
+                fontSize: 12,
+                color: davysGray,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            width: 220,
+            child: Text(
+              'All Rights Reserved.',
+              style: helveticaText.copyWith(
+                fontWeight: FontWeight.w300,
+                fontSize: 12,
+                color: davysGray,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: 240,
+            child: Text(
+              'Facility Management. 2022.',
+              style: helveticaText.copyWith(
+                fontWeight: FontWeight.w300,
+                fontSize: 12,
+                color: davysGray,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ],
       ),
     );

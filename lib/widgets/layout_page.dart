@@ -507,3 +507,98 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
     return entry;
   }
 }
+
+class LayoutPageWebMobile extends StatefulWidget {
+  LayoutPageWebMobile({
+    super.key,
+    required this.child,
+    this.index,
+    this.setDatePickerStatus,
+    required this.scrollController,
+    this.resetState,
+    this.model,
+    this.topButtonVisible = true,
+  });
+
+  Widget? child;
+  int? index;
+  Function? setDatePickerStatus;
+  final ScrollController? scrollController;
+  Function? resetState;
+  MainModel? model;
+  bool? topButtonVisible;
+
+  @override
+  State<LayoutPageWebMobile> createState() => _LayoutPageWebMobileState();
+}
+
+class _LayoutPageWebMobileState extends State<LayoutPageWebMobile> {
+  ReqAPI apiReq = ReqAPI();
+  ScrollController? _scrollController;
+  MainModel mainModel = MainModel();
+  bool profileVisible = false;
+  bool opacityOn = false;
+  // bool upBottonVisible = false;
+  String employeeName = "";
+  String employeeEmail = "";
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool isAdmin = false;
+
+  resetState() {
+    print('resetStateLayout');
+    widget.resetState!();
+    setState(() {
+      // print(jwtToken);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    // print(screenWidth);
+    return ChangeNotifierProvider.value(
+      value: mainModel,
+      child: Consumer<MainModel>(
+        builder: (context, value, child) {
+          return Scaffold(
+            endDrawer: const Drawer(
+              backgroundColor: white,
+              child: Text('Drawer'),
+            ),
+            body: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const NavigationBarWebMobile(),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: screenWidth,
+                      maxWidth: screenWidth,
+                      minHeight: screenHeight - 75,
+                    ),
+                    child: widget.child!,
+                  ),
+                  const FooterWebMobile(),
+                  // const NavigationBarWebMobile(),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
