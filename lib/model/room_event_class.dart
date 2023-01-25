@@ -19,6 +19,7 @@ class RoomEvent {
     this.type = "",
     this.googleID = "",
     this.roomId = "",
+    this.meetingType = "",
   });
 
   String? eventName;
@@ -38,6 +39,7 @@ class RoomEvent {
   String? type;
   String? googleID;
   String? roomId;
+  String? meetingType;
 
   @override
   String toString() {
