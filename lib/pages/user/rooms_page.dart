@@ -889,7 +889,7 @@ class _RoomsPageState extends State<RoomsPage> {
         Container(
           // color: Colors.amber,
           // height: MediaQuery.of(context).size.height - 60,
-          height: dataRoom.isNotEmpty ? (100 * dataRoom.length) + 30 : 500,
+          height: dataRoom.isNotEmpty ? (150 * dataRoom.length) + 30 : 500,
           child: SfCalendar(
             key: const ValueKey(CalendarView.timelineDay),
             view: CalendarView.timelineDay,
@@ -1161,7 +1161,7 @@ class _RoomsPageState extends State<RoomsPage> {
               timeIntervalHeight: -1,
               timeIntervalWidth: 50,
               timeInterval: Duration(minutes: 15),
-              timelineAppointmentHeight: 120,
+              timelineAppointmentHeight: 170,
               // dateFormat: 'd',
               // dayFormat: 'EEE',
               timeTextStyle: TextStyle(
@@ -1207,7 +1207,7 @@ class _RoomsPageState extends State<RoomsPage> {
               height: 30,
             ),
             SizedBox(
-              height: dataRoom.isNotEmpty ? (100 * dataRoom.length) + 30 : 500,
+              height: dataRoom.isNotEmpty ? (150 * dataRoom.length) + 30 : 500,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: dataRoom.map((e) {
@@ -1215,7 +1215,7 @@ class _RoomsPageState extends State<RoomsPage> {
                     children: [
                       Expanded(
                         child: SizedBox(
-                          height: 100,
+                          height: 150,
                           child: Align(
                             alignment: Alignment.bottomCenter,
                             child: Container(
@@ -1239,7 +1239,7 @@ class _RoomsPageState extends State<RoomsPage> {
                 color: eerieBlack.withOpacity(0.6),
                 width: double.infinity,
                 height:
-                    dataRoom.isNotEmpty ? (100 * dataRoom.length) + 40 : 500,
+                    dataRoom.isNotEmpty ? (150 * dataRoom.length) + 40 : 500,
                 child: const Center(
                   child: CircularProgressIndicator(
                     color: eerieBlack,
@@ -1254,6 +1254,7 @@ class _RoomsPageState extends State<RoomsPage> {
       BuildContext context, ResourceViewHeaderDetails details) {
     return Container(
       color: details.resource.color,
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Center(
         child: Text(
           details.resource.displayName,

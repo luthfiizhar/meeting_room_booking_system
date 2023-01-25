@@ -436,8 +436,8 @@ class MyApp extends StatelessWidget {
         builder: (context, child) => ResponsiveWrapper.builder(
           child,
           // maxWidth: 1366,
-          defaultScale: MediaQuery.of(context).size.width < 1366 ? true : false,
-          minWidth: MediaQuery.of(context).size.width < 1366 ? 360 : 1200,
+          defaultScale: MediaQuery.of(context).size.width < 1100 ? true : false,
+          minWidth: 1100,
           breakpoints: [
             // ResponsiveBreakpoint.resize(360, name: MOBILE),
             // ResponsiveBreakpoint.resize(480, name: MOBILE),
