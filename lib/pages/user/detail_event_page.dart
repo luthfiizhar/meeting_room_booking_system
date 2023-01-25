@@ -512,6 +512,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                   'montAbs': monthAbs,
                                                   'repeatType': repeatType,
                                                   'interval': interval,
+                                                  'meetingType': eventType,
                                                   'roomType': roomType,
                                                   'layoutName': layoutName,
                                                   'layoutImage': layoutImage,

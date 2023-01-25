@@ -488,7 +488,9 @@ class _RoomsPageState extends State<RoomsPage> {
             resourceIds: [dataRoom[i]['RoomID']],
             from: DateTime.parse(eventRoom[j]['StartDateTime']),
             to: DateTime.parse(eventRoom[j]['EndDateTime']),
-            background: davysGray,
+            background: eventRoom[i]['MeetingType'] == "EXTERNAL"
+                ? yellowAccent
+                : davysGray,
             capacity: 5,
             contactID: "1111",
             isAllDay: false,
@@ -501,6 +503,7 @@ class _RoomsPageState extends State<RoomsPage> {
             type: eventRoom[j]['Type'],
             googleID: eventRoom[j]['GoogleCalendarEventID'],
             roomId: dataRoom[i]['RoomID'],
+            meetingType: eventRoom[i]['MeetingType'],
           ),
         );
         // Provider.of<MainModel>(context, listen: false).events.appointments!.add(
@@ -561,6 +564,8 @@ class _RoomsPageState extends State<RoomsPage> {
       }
     }).onError((error, stackTrace) {
       // print(stackTrace);
+      loadingGetCalendar = false;
+      setState(() {});
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
@@ -836,6 +841,17 @@ class _RoomsPageState extends State<RoomsPage> {
             ),
             const Expanded(
               child: SizedBox(),
+            ),
+            Wrap(
+              direction: isShowDetail ? Axis.vertical : Axis.horizontal,
+              spacing: isShowDetail ? 10 : 30,
+              children: [
+                legends(davysGray, 'Internal'),
+                legends(yellowAccent, 'External'),
+              ],
+            ),
+            SizedBox(
+              width: isShowDetail ? 30 : 60,
             ),
             SizedBox(
               width: 170,
@@ -1177,7 +1193,7 @@ class _RoomsPageState extends State<RoomsPage> {
             todayHighlightColor: orangeAccent,
             resourceViewHeaderBuilder: resourceViewHeaderBuilder,
             resourceViewSettings: const ResourceViewSettings(
-              size: 100,
+              size: 120,
               displayNameTextStyle: TextStyle(
                 fontFamily: 'Helvetica',
                 fontSize: 14,
@@ -1254,7 +1270,7 @@ class _RoomsPageState extends State<RoomsPage> {
       BuildContext context, ResourceViewHeaderDetails details) {
     return Container(
       color: details.resource.color,
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Center(
         child: Text(
           details.resource.displayName,
@@ -1290,10 +1306,12 @@ class _RoomsPageState extends State<RoomsPage> {
           children: [
             Text(
               appointment.eventName!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Helvetica',
-                color: culturedWhite,
-                fontWeight: FontWeight.w300,
+                color: appointment.meetingType == "EXTERNAL"
+                    ? eerieBlack
+                    : culturedWhite,
+                fontWeight: FontWeight.w700,
               ),
             ),
             // Text(
@@ -1307,6 +1325,33 @@ class _RoomsPageState extends State<RoomsPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget legends(Color color, String label) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 15,
+          height: 15,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+          ),
+        ),
+        const SizedBox(
+          width: 5,
+        ),
+        Text(
+          label,
+          style: helveticaText.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: davysGray,
+          ),
+        )
+      ],
     );
   }
 }

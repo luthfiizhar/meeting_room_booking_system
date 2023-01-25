@@ -25,6 +25,7 @@ const Color blueAccent = Color(0xFF0097D6);
 const Color platinumLight = Color(0xFFEBEBEB);
 const Color violetAccent = Color(0xFF585EAA);
 const Color yellow = Color(0xFFFFCB1F);
+const Color yellowAccent = Color(0xFFFFD64F);
 
 const Color navBarInActiveState =
     Color(0xFF8E8E8E); //Color.fromARGB(255, 255, 255, 255);

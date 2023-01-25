@@ -744,7 +744,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                   ),
                 );
               }
-              selectedEventType = value['Data'][0]['Value'];
+              // selectedEventType = value['Data'][0]['Value'];
             });
           } else {
             showDialog(
@@ -767,52 +767,52 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           );
         });
         if (widget.isEdit == "true") {
-          setState(() {
-            isEdit = true;
-            dynamic editData = widget.edit;
-            // print(editData['guestInvited']);
-            // selectedDate = DateTime.parse(widget.date!);
-            dynamic guest = editData['guestInvited'];
-            dynamic amenities = editData['facilities'];
+          isEdit = true;
+          dynamic editData = widget.edit;
+          // print(editData['guestInvited']);
+          // selectedDate = DateTime.parse(widget.date!);
+          dynamic guest = editData['guestInvited'];
+          dynamic amenities = editData['facilities'];
 
-            // print(guest);
-            // print('bahan edit');
-            // print(editData);
-            _eventName.text = editData['summary'];
-            _eventDesc.text = editData['description'];
-            _additionalNote.text = editData['additionalNote'];
-            repeatValue = editData['repeatType'];
-            List tempGuesList = json.decode(guest);
-            // print("Guest -> $tempGuesList");
-            for (var element in tempGuesList) {
-              invitedGuest.add(element);
-            }
-            // invitedGuest = guest.toList();
-            List tempAmenities = json.decode(amenities);
-            listAmenities.clear();
-            for (var element in tempAmenities) {
-              listAmenities.add(Amenities(
-                amenitiesId: element['AmenitiesID'],
-                amenitiesName: element['AmenitiesName'],
-                defaultAmount: int.parse(element['DefaultAmount']),
-                qty: int.parse(element['Amount']),
-                photo: element['ImageURL'],
-              ));
-            }
-            if (editData['bookingType'] == "RECURRENT") {
-              _repeatEnd.text = DateFormat('d MMM yyyy')
-                  .format(DateTime.parse(editData['repeatEndDate']));
-              _repeatInterval.text = editData['interval'];
-              _repeatOnMonthly.text = editData['montAbs'];
-            }
-            layoutImageUrl = editData['layoutImage'];
-            layoutName = editData['layoutName'];
-            layoutId = editData['layoutId'];
-            layoutFromupload = false;
-            emptyLayout = false;
-            participantValue = double.parse(editData['participant'].toString());
-            _totalParticipant.text = participantValue.toString();
-          });
+          // print(guest);
+          // print('bahan edit');
+          // print(editData);
+          selectedEventType = editData['meetingType'];
+          _eventName.text = editData['summary'];
+          _eventDesc.text = editData['description'];
+          _additionalNote.text = editData['additionalNote'];
+          repeatValue = editData['repeatType'];
+          List tempGuesList = json.decode(guest);
+          // print("Guest -> $tempGuesList");
+          for (var element in tempGuesList) {
+            invitedGuest.add(element);
+          }
+          // invitedGuest = guest.toList();
+          List tempAmenities = json.decode(amenities);
+          listAmenities.clear();
+          for (var element in tempAmenities) {
+            listAmenities.add(Amenities(
+              amenitiesId: element['AmenitiesID'],
+              amenitiesName: element['AmenitiesName'],
+              defaultAmount: int.parse(element['DefaultAmount']),
+              qty: int.parse(element['Amount']),
+              photo: element['ImageURL'],
+            ));
+          }
+          if (editData['bookingType'] == "RECURRENT") {
+            _repeatEnd.text = DateFormat('d MMM yyyy')
+                .format(DateTime.parse(editData['repeatEndDate']));
+            _repeatInterval.text = editData['interval'];
+            _repeatOnMonthly.text = editData['montAbs'];
+          }
+          layoutImageUrl = editData['layoutImage'];
+          layoutName = editData['layoutName'];
+          layoutId = editData['layoutId'];
+          layoutFromupload = false;
+          emptyLayout = false;
+          participantValue = double.parse(editData['participant'].toString());
+          _totalParticipant.text = participantValue.toString();
+          setState(() {});
         } else {
           isEdit = false;
         }
