@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -302,6 +303,11 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
 
   @override
   Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+    return screenWidth < 1200 ? mobile() : desktop();
+  }
+
+  Widget desktop() {
     return LayoutPageWeb(
       index: 3,
       scrollController: scrollController,
@@ -668,6 +674,92 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
     );
   }
 
+  Widget mobile() {
+    return LayoutPageWebMobile(
+      scrollController: scrollController,
+      child: Container(
+        padding: const EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 20,
+          bottom: 20,
+        ),
+        child: Column(
+          children: [
+            coverURL == ""
+                ? Container(
+                    height: 200,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: platinum,
+                    ),
+                  )
+                : CachedNetworkImage(
+                    imageUrl: coverURL,
+                    imageBuilder: (context, imageProvider) {
+                      return Container(
+                        height: 200,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: platinum,
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+            const SizedBox(
+              height: 20,
+            ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    summary,
+                    style: const TextStyle(
+                      fontFamily: 'Helvetica',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      fontFamily: 'Helvetica',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  eventDetailContainer(),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  detailContainer2()
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   eventDetailContainer() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -975,12 +1067,18 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
             color: sonicSilver,
           ),
         ),
-        Text(
-          content,
-          style: helveticaText.copyWith(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: davysGray,
+        SizedBox(
+          width: 200,
+          child: Text(
+            content,
+            style: helveticaText.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: davysGray,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            textAlign: TextAlign.end,
           ),
         ),
       ],

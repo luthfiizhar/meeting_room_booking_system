@@ -657,16 +657,65 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
   }
 }
 
-class NavigationBarMobile extends StatefulWidget {
-  const NavigationBarMobile({super.key});
+class NavigationBarWebMobile extends StatefulWidget {
+  const NavigationBarWebMobile({super.key});
 
   @override
-  State<NavigationBarMobile> createState() => _NavigationBarMobileState();
+  State<NavigationBarWebMobile> createState() => _NavigationBarWebMobileState();
 }
 
-class _NavigationBarMobileState extends State<NavigationBarMobile> {
+class _NavigationBarWebMobileState extends State<NavigationBarWebMobile> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      height: 75,
+      padding: const EdgeInsets.only(
+        left: 15,
+        top: 15,
+        bottom: 15,
+        right: 15,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: Image.asset('assets/navbarlogo.png').image,
+                fit: BoxFit.fill,
+              ),
+            ),
+            height: 45,
+            width: 140,
+          ),
+          const SizedBox(
+            height: 32,
+            child: VerticalDivider(
+              color: davysGray,
+              thickness: 1,
+            ),
+          ),
+          const SizedBox(
+            width: 13,
+          ),
+          Expanded(
+            child: Text(
+              'Meeting Room Booking System',
+              maxLines: 2,
+              style: helveticaText.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: davysGray,
+              ),
+            ),
+          ),
+          InkWell(
+              onTap: () {
+                Scaffold.of(context).openEndDrawer();
+              },
+              child: const Icon(Icons.menu)),
+        ],
+      ),
+    );
   }
 }
