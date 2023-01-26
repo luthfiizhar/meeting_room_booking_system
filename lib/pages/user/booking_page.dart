@@ -775,8 +775,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           dynamic amenities = editData['facilities'];
 
           // print(guest);
-          // print('bahan edit');
-          // print(editData);
+          print('bahan edit');
+          print(editData);
           selectedEventType = editData['meetingType'];
           _eventName.text = editData['summary'];
           _eventDesc.text = editData['description'];
@@ -809,7 +809,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           layoutName = editData['layoutName'];
           layoutId = editData['layoutId'];
           layoutFromupload = false;
-          emptyLayout = false;
+          if (layoutImageUrl != "" || layoutId != "") {
+            emptyLayout = false;
+          }
           participantValue = double.parse(editData['participant'].toString());
           _totalParticipant.text = participantValue.toString();
           setState(() {});
