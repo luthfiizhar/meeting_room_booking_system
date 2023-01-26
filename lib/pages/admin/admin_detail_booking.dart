@@ -297,8 +297,8 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
   @override
   void dispose() {
     super.dispose();
-    scrollController.removeListener(() {});
-    scrollController.dispose();
+    // scrollController.removeListener(() {});
+    // scrollController.dispose();
   }
 
   @override
@@ -1068,7 +1068,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           ),
         ),
         SizedBox(
-          width: 200,
+          width: MediaQuery.of(context).size.width < 1366 ? 200 : null,
           child: Text(
             content,
             style: helveticaText.copyWith(

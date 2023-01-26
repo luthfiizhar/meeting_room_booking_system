@@ -4,6 +4,9 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
+import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
+import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
@@ -29,6 +32,8 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
   int totalResult = 0;
 
   List areaList = [];
+
+  List<AreaCapacityListContainer> roomList = [];
 
   List showPerPageList = ["5", "10", "20", "50", "100"];
 
@@ -74,13 +79,36 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
   }
 
   Future updateList() {
-    // areaList.clear();
+    roomList.clear();
     return apiReq.getRoomList(searchTerm).then((value) {
+      print(value);
       if (value['Status'].toString() == "200") {
         areaList = value['Data']['List'];
         totalResult = value['Data']['TotalRows'];
+        int index = 0;
+        for (var element in areaList) {
+          Room room = Room(
+            roomId: element['RoomID'] ?? "",
+            roomName: element['RoomName'] ?? "",
+            floorName: element['AreaName'] ?? "",
+            buildingName: element['SiteLocation'] ?? "",
+            maxCapacity: element['MaxCapacity'].toString(),
+            minCapacity: element['MinCapacity'].toString(),
+            prohibitedFacilities: [],
+            defaultFacilities: [],
+            areaPhoto: [],
+          );
+          roomList.add(
+            AreaCapacityListContainer(
+              room: room,
+              index: index,
+            ),
+          );
+          index++;
+        }
         // countPagination(value['Data']['TotalRows']);
         // showedPage = availablePage.take(5).toList();
+        setState(() {});
       } else {
         showDialog(
           context: context,
@@ -311,13 +339,13 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
             Expanded(
               child: InkWell(
                 onTap: () {
-                  onTapHeader("Capacity");
+                  onTapHeader("MinCapacity");
                 },
                 child: Row(
                   children: [
                     Expanded(
                       child: Text(
-                        'Capacity',
+                        'Min. Cap',
                         style: helveticaText.copyWith(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -325,7 +353,32 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                         ),
                       ),
                     ),
-                    iconSort("Capacity"),
+                    iconSort("MinCapacity"),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  onTapHeader("MaxCapacity");
+                },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Max. Cap',
+                        style: helveticaText.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: davysGray,
+                        ),
+                      ),
+                    ),
+                    iconSort("MaxCapacity"),
                     const SizedBox(
                       width: 20,
                     ),
@@ -348,21 +401,20 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
         ),
         ListView.builder(
           shrinkWrap: true,
-          itemCount: areaList.length,
+          itemCount: roomList.length,
           itemBuilder: (context, index) {
-            Room room = Room(
-              roomId: areaList[index]['RoomID'] ?? "",
-              roomName: areaList[index]['RoomName'] ?? "",
-              floorName: areaList[index]['AreaName'] ?? "",
-              buildingName: areaList[index]['SiteLocation'] ?? "",
-              maxCapacity: areaList[index]['MaxCapacity'].toString(),
-              prohibitedFacilities: [],
-              defaultFacilities: [],
-              areaPhoto: [],
-            );
-            return AreaCapacityListContainer(
-              room: room,
-            );
+            // Room room = Room(
+            //   roomId: areaList[index]['RoomID'] ?? "",
+            //   roomName: areaList[index]['RoomName'] ?? "",
+            //   floorName: areaList[index]['AreaName'] ?? "",
+            //   buildingName: areaList[index]['SiteLocation'] ?? "",
+            //   maxCapacity: areaList[index]['MaxCapacity'].toString(),
+            //   minCapacity: areaList[index]['MinCapacity'].toString(),
+            //   prohibitedFacilities: [],
+            //   defaultFacilities: [],
+            //   areaPhoto: [],
+            // );
+            return roomList[index];
           },
         ),
         const SizedBox(
@@ -615,6 +667,36 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
           ],
         ),
         const SizedBox(
+          height: 28,
+        ),
+        const Divider(
+          color: grayx11,
+          thickness: 0.5,
+        ),
+        const SizedBox(
+          height: 28,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            TransparentButtonBlack(
+              text: 'Cancel',
+              disabled: false,
+              onTap: () {},
+              padding: ButtonSize().mediumSize(),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            RegularButton(
+              text: 'Save',
+              disabled: false,
+              onTap: () {},
+              padding: ButtonSize().mediumSize(),
+            ),
+          ],
+        ),
+        const SizedBox(
           height: 20,
         ),
       ],
@@ -673,10 +755,16 @@ class AreaCapacityListContainer extends StatefulWidget {
   AreaCapacityListContainer({
     super.key,
     this.room,
+    this.index = 0,
   });
 
   Room? room;
   Function? onRemove;
+  TextEditingController _minCapacity = TextEditingController();
+  TextEditingController _maxCapacity = TextEditingController();
+  FocusNode minCapacityNode = FocusNode();
+  FocusNode maxCapacityNode = FocusNode();
+  int? index;
 
   @override
   State<AreaCapacityListContainer> createState() =>
@@ -684,16 +772,16 @@ class AreaCapacityListContainer extends StatefulWidget {
 }
 
 class _AreaCapacityListContainerState extends State<AreaCapacityListContainer> {
-  TextEditingController _capacity = TextEditingController();
-  FocusNode capacityNode = FocusNode();
-  int? index;
-
   @override
   void initState() {
     super.initState();
 
-    _capacity.text = widget.room!.maxCapacity;
-    capacityNode.addListener(() {
+    widget._maxCapacity.text = widget.room!.maxCapacity;
+    widget._minCapacity.text = widget.room!.minCapacity;
+    widget.minCapacityNode.addListener(() {
+      setState(() {});
+    });
+    widget.maxCapacityNode.addListener(() {
       setState(() {});
     });
   }
@@ -701,15 +789,17 @@ class _AreaCapacityListContainerState extends State<AreaCapacityListContainer> {
   @override
   void dispose() {
     super.dispose();
-    capacityNode.removeListener(() {});
-    capacityNode.dispose();
+    widget.minCapacityNode.removeListener(() {});
+    widget.minCapacityNode.dispose();
+    widget.maxCapacityNode.removeListener(() {});
+    widget.maxCapacityNode.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        index != 0
+        widget.index != 0
             ? const Divider(
                 color: grayx11,
                 thickness: 0.5,
@@ -743,8 +833,22 @@ class _AreaCapacityListContainerState extends State<AreaCapacityListContainer> {
                     SizedBox(
                       width: 75,
                       child: BlackInputField(
-                        controller: _capacity,
-                        focusNode: capacityNode,
+                        controller: widget._minCapacity,
+                        focusNode: widget.minCapacityNode,
+                        enabled: true,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 75,
+                      child: BlackInputField(
+                        controller: widget._maxCapacity,
+                        focusNode: widget.maxCapacityNode,
                         enabled: true,
                       ),
                     ),
