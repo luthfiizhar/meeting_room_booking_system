@@ -488,7 +488,9 @@ class _RoomsPageState extends State<RoomsPage> {
             resourceIds: [dataRoom[i]['RoomID']],
             from: DateTime.parse(eventRoom[j]['StartDateTime']),
             to: DateTime.parse(eventRoom[j]['EndDateTime']),
-            background: davysGray,
+            background: eventRoom[j]['MeetingType'] == "EXTERNAL"
+                ? yellowAccent
+                : davysGray,
             capacity: 5,
             contactID: "1111",
             isAllDay: false,
@@ -501,6 +503,7 @@ class _RoomsPageState extends State<RoomsPage> {
             type: eventRoom[j]['Type'],
             googleID: eventRoom[j]['GoogleCalendarEventID'],
             roomId: dataRoom[i]['RoomID'],
+            meetingType: eventRoom[j]['MeetingType'],
           ),
         );
         // Provider.of<MainModel>(context, listen: false).events.appointments!.add(
@@ -560,7 +563,9 @@ class _RoomsPageState extends State<RoomsPage> {
         );
       }
     }).onError((error, stackTrace) {
-      // print(stackTrace);
+      print(stackTrace);
+      loadingGetCalendar = false;
+      setState(() {});
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
@@ -837,6 +842,17 @@ class _RoomsPageState extends State<RoomsPage> {
             const Expanded(
               child: SizedBox(),
             ),
+            Wrap(
+              direction: isShowDetail ? Axis.vertical : Axis.horizontal,
+              spacing: isShowDetail ? 10 : 30,
+              children: [
+                legends(davysGray, 'Internal'),
+                legends(yellowAccent, 'External'),
+              ],
+            ),
+            SizedBox(
+              width: isShowDetail ? 30 : 60,
+            ),
             SizedBox(
               width: 170,
               child: WhiteDropdown(
@@ -889,7 +905,7 @@ class _RoomsPageState extends State<RoomsPage> {
         Container(
           // color: Colors.amber,
           // height: MediaQuery.of(context).size.height - 60,
-          height: dataRoom.isNotEmpty ? (100 * dataRoom.length) + 30 : 500,
+          height: dataRoom.isNotEmpty ? (150 * dataRoom.length) + 30 : 500,
           child: SfCalendar(
             key: const ValueKey(CalendarView.timelineDay),
             view: CalendarView.timelineDay,
@@ -1161,7 +1177,7 @@ class _RoomsPageState extends State<RoomsPage> {
               timeIntervalHeight: -1,
               timeIntervalWidth: 50,
               timeInterval: Duration(minutes: 15),
-              timelineAppointmentHeight: 120,
+              timelineAppointmentHeight: 170,
               // dateFormat: 'd',
               // dayFormat: 'EEE',
               timeTextStyle: TextStyle(
@@ -1177,7 +1193,7 @@ class _RoomsPageState extends State<RoomsPage> {
             todayHighlightColor: orangeAccent,
             resourceViewHeaderBuilder: resourceViewHeaderBuilder,
             resourceViewSettings: const ResourceViewSettings(
-              size: 100,
+              size: 120,
               displayNameTextStyle: TextStyle(
                 fontFamily: 'Helvetica',
                 fontSize: 14,
@@ -1207,7 +1223,7 @@ class _RoomsPageState extends State<RoomsPage> {
               height: 30,
             ),
             SizedBox(
-              height: dataRoom.isNotEmpty ? (100 * dataRoom.length) + 30 : 500,
+              height: dataRoom.isNotEmpty ? (150 * dataRoom.length) + 30 : 500,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: dataRoom.map((e) {
@@ -1215,7 +1231,7 @@ class _RoomsPageState extends State<RoomsPage> {
                     children: [
                       Expanded(
                         child: SizedBox(
-                          height: 100,
+                          height: 150,
                           child: Align(
                             alignment: Alignment.bottomCenter,
                             child: Container(
@@ -1239,7 +1255,7 @@ class _RoomsPageState extends State<RoomsPage> {
                 color: eerieBlack.withOpacity(0.6),
                 width: double.infinity,
                 height:
-                    dataRoom.isNotEmpty ? (100 * dataRoom.length) + 40 : 500,
+                    dataRoom.isNotEmpty ? (150 * dataRoom.length) + 40 : 500,
                 child: const Center(
                   child: CircularProgressIndicator(
                     color: eerieBlack,
@@ -1254,6 +1270,7 @@ class _RoomsPageState extends State<RoomsPage> {
       BuildContext context, ResourceViewHeaderDetails details) {
     return Container(
       color: details.resource.color,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Center(
         child: Text(
           details.resource.displayName,
@@ -1289,10 +1306,12 @@ class _RoomsPageState extends State<RoomsPage> {
           children: [
             Text(
               appointment.eventName!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Helvetica',
-                color: culturedWhite,
-                fontWeight: FontWeight.w300,
+                color: appointment.meetingType == "EXTERNAL"
+                    ? eerieBlack
+                    : culturedWhite,
+                fontWeight: FontWeight.w700,
               ),
             ),
             // Text(
@@ -1306,6 +1325,33 @@ class _RoomsPageState extends State<RoomsPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget legends(Color color, String label) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 15,
+          height: 15,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+          ),
+        ),
+        const SizedBox(
+          width: 5,
+        ),
+        Text(
+          label,
+          style: helveticaText.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: davysGray,
+          ),
+        )
+      ],
     );
   }
 }
