@@ -159,14 +159,6 @@ class _DetailEventPageState extends State<DetailEventPage> {
               "${value['Data']['BookingDateOriginal']} ${value['Data']['BookingStartTime']}:00");
 
           selectedDate = value['Data']['BookingDateOriginal'];
-          for (var element in bookingHistory) {
-            // if (bookingStep > 2) {
-            if (element['Status'] == "APPROVED" ||
-                element['Status'] == "DECLINED") {
-              approvalComment = element['Description'];
-            }
-            // }
-          }
         });
       } else {
         setState(() {
@@ -212,9 +204,10 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   // isOwner = false;
                   isGoogleMeetShowed = true;
                   isButtonShowed = true;
-                  if (bookingStatus == "DECLINED") {
+                  if (bookingStatus != "WAITING APPROVAL" ||
+                      bookingStatus != "CREATED") {
                     print('if declined');
-                    isButtonShowed = false;
+                    isButtonShowed = true;
                   }
                 });
               } else if (value["Data"]["Pic"].toString() == "1") {
@@ -229,9 +222,10 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   isOwner = true;
                   isButtonShowed = true;
                   isGoogleMeetShowed = true;
-                  if (bookingStatus == "DECLINED") {
+                  if (bookingStatus != "WAITING APPROVAL" ||
+                      bookingStatus != "CREATED") {
                     print('if declined');
-                    isButtonShowed = false;
+                    isButtonShowed = true;
                   }
                 });
               } else {
@@ -1397,7 +1391,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
                               bookingHistory[index]['EmpNIP'],
                           bookingHistory[index]['Status'],
                           bookingHistory[index]['LogDate'],
-                          bookingHistory[index]['Description'],
+                          comments: bookingHistory[index]['Description'] ?? "-",
                         ),
                       ),
                       index == bookingHistory.length - 1
@@ -1528,8 +1522,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
     );
   }
 
-  Widget bookingDetail(
-      String name, String status, String logDate, String comments) {
+  Widget bookingDetail(String name, String status, String logDate,
+      {String comments = "-"}) {
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

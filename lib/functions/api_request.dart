@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/main.dart';
@@ -9,6 +10,8 @@ import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/model/user.dart';
 import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page.dart';
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/event_menu_page/event_menu_page.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/user_admin_page/user_admin_page.dart';
 import 'api_url.dart';
 
 class ReqAPI {
@@ -42,7 +45,7 @@ class ReqAPI {
       "RepeatInterval" : ${booking.repeatInterval},
       "Days" : ${booking.daysWeek},
       "RepeatEndDate": "${booking.repeatEndDate}",
-      "MeetingType": "Internal",
+      "MeetingType": "${booking.meetingType}",
       "AttendantsNumber": ${booking.attendantsNumber},
       "Amenities": ${booking.amenities},
       "Attendants": ${booking.attendants},
@@ -89,7 +92,7 @@ class ReqAPI {
       "RepeatInterval" : ${booking.repeatInterval},
       "Days" : ${booking.daysWeek},
       "RepeatEndDate": "${booking.repeatEndDate}",
-      "MeetingType": "Internal",
+      "MeetingType": "${booking.meetingType}",
       "AttendantsNumber": ${booking.attendantsNumber},
       "Amenities": ${booking.amenities},
       "Attendants": ${booking.attendants},
@@ -135,7 +138,7 @@ class ReqAPI {
       "RepeatInterval" : ${booking.repeatInterval},
       "Days" : ${booking.daysWeek},
       "RepeatEndDate": "${booking.repeatEndDate}",
-      "MeetingType": "Internal",
+      "MeetingType": "${booking.meetingType}",
       "AttendantsNumber": ${booking.attendantsNumber},
       "LayoutID" : "${booking.layoutId}",
       "LayoutName" : "${booking.layoutName}",
@@ -184,7 +187,7 @@ class ReqAPI {
       "RepeatInterval" : ${booking.repeatInterval},
       "Days" : ${booking.daysWeek},
       "RepeatEndDate": "${booking.repeatEndDate}",
-      "MeetingType": "Internal",
+      "MeetingType": "${booking.meetingType}",
       "AttendantsNumber": ${booking.attendantsNumber},
       "LayoutID" : "${booking.layoutId}",
       "LayoutName" : "${booking.layoutName}",
@@ -276,6 +279,8 @@ class ReqAPI {
       var data = json.decode(response.body);
       return data;
     } on Error catch (e) {
+      return e;
+    } on HttpException catch (e) {
       return e;
     }
   }
@@ -1720,6 +1725,122 @@ class ReqAPI {
     };
     try {
       var response = await http.delete(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future getUserRoleList() async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(
+        apiUrlGlobal, '/MRBS_Backend/public/api/admin/user/role/list');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future addUserAdmin(UserAdmin userAdmin) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/user');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+        "NIP" : "${userAdmin.nip}",
+        "Name" : "${userAdmin.name}",
+        "CountryCode" : "${userAdmin.phoneCode}",
+        "PhoneNumber" : "${userAdmin.phoneNumber}",
+        "BuildingID" : "${userAdmin.buildingId}",
+        "Role" : ${userAdmin.roleList},
+        "Email" : "${userAdmin.email}"
+    }
+    """;
+    try {
+      var response = await http.post(
+        url,
+        headers: requestHeader,
+        body: bodySend,
+      );
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future getEventSettings() async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/settings');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future setEventSettings(SettingEvent setting) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/settings');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+      "StartHour": "${setting.startHour}",
+      "EndHour": "${setting.endHour}",
+      "BookingMinDuration": ${setting.bookingMinDuration},
+      "BookingMaxDuration": ${setting.bookingMaxDuration},
+      "AudiMinDuration": ${setting.audiMinDuration},
+      "AudiMaxDuration": ${setting.audiMaxDuration},
+      "SocHubMinDuration": ${setting.socHubMinDuration},
+      "SocHubMaxDuration": ${setting.socHubMaxDuration},
+      "CanteenMinDuration": ${setting.canteenMinDuration},
+      "CanteenMaxDuration": ${setting.canteenMaxDuration},
+      "RecurrentNumber": ${setting.reccurentNumber}
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
 
       var data = json.decode(response.body);
 

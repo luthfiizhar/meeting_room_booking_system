@@ -737,8 +737,8 @@ class _RoomsPageState extends State<RoomsPage> {
                                 //     : (100 * dataRoom.length) >= 600
                                 //         ? (100 * dataRoom.length) + 100 + 63
                                 //         : null,
-                                height: (100 * dataRoom.length) >= 600
-                                    ? (100 * dataRoom.length) + 100 + 63
+                                height: (150 * dataRoom.length) >= 600
+                                    ? (150 * dataRoom.length) + 100 + 63
                                     : MediaQuery.of(context).size.width > 1366
                                         ? MediaQuery.of(context).size.height -
                                             180
