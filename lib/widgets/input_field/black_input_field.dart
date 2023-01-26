@@ -21,6 +21,8 @@ class BlackInputField extends StatelessWidget {
     this.inputFormatters,
     this.onEditingComplete,
     this.onChanged,
+    this.contentPadding =
+        const EdgeInsets.only(right: 15, left: 15, top: 18, bottom: 15),
   });
 
   final TextEditingController controller;
@@ -40,6 +42,7 @@ class BlackInputField extends StatelessWidget {
   TextInputAction? textInputAction;
   double fontSize;
   List<TextInputFormatter>? inputFormatters;
+  EdgeInsetsGeometry contentPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -130,12 +133,7 @@ class BlackInputField extends StatelessWidget {
             fontWeight: FontWeight.w300,
             color: sonicSilver,
           ),
-          contentPadding: const EdgeInsets.only(
-            right: 15,
-            left: 15,
-            top: 18,
-            bottom: 15,
-          ),
+          contentPadding: contentPadding,
           suffixIcon: suffixIcon,
           suffixIconColor: eerieBlack,
           prefixIcon: prefixIcon,
