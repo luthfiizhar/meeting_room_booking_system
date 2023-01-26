@@ -158,7 +158,6 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // room.clear();
     updateList().then((value) {
@@ -651,7 +650,6 @@ class _AreaListContainerState extends State<AreaListContainer> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     facilityScrollController.addListener(() {});
     prohibitedScrollController.addListener(() {});
@@ -659,7 +657,6 @@ class _AreaListContainerState extends State<AreaListContainer> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     facilityScrollController.dispose();
     prohibitedScrollController.dispose();

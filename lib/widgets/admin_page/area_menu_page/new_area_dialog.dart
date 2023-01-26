@@ -305,6 +305,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
 
   initAmenitiesList() async {
     apiReq.getAmenitiesListAdmin().then((value) {
+      print(value);
       if (value['Status'] == "200") {
         List result = value['Data'];
         for (var element in result) {
@@ -1753,7 +1754,6 @@ class _SelectProhibitedFacilityDialogState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     // getAmenitiesList(widget.roomId!).then((value) {

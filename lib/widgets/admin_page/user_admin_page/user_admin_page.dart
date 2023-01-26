@@ -3,6 +3,7 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
+import 'package:meeting_room_booking_system/widgets/admin_page/user_admin_page/add_admin_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
@@ -86,12 +87,13 @@ class _AdminUserPageState extends State<AdminUserPage> {
     adminList.clear();
     apiReq.getUserAdminList(searchTerm).then((value) {
       if (value['Status'] == '200') {
+        print(value['Data']);
         List result = value['Data']['List'];
         for (var element in result) {
           adminList.add(UserAdmin(
             name: element['EmpName'],
             nip: element['EmpNIP'],
-            role: element['Name'],
+            roleList: element['Role'],
             phoneCode: element['CountryCode'],
             phoneNumber: element['PhoneNumber'],
             place: "Head Office",
@@ -157,12 +159,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
             ),
             InkWell(
               onTap: () {
-                // showDialog(
-                //   context: context,
-                //   builder: (context) => NewAreaDialog(
-                //     isEdit: false,
-                //   ),
-                // );
+                showDialog(
+                  context: context,
+                  builder: (context) => AddUserAdminDialog(),
+                );
               },
               child: SizedBox(
                 child: Row(
@@ -686,10 +686,11 @@ class _UserAdminListContainerState extends State<UserAdminListContainer> {
 
   initiate() {
     setState(() {
+      // print(widget.user!.roleList);
       name = widget.user!.name;
       email = widget.user!.email;
       nip = widget.user!.nip;
-      role = widget.user!.role;
+      // role = widget.user!.role;
       place = widget.user!.place;
       phoneCode = widget.user!.phoneCode;
       phoneNumber = widget.user!.phoneNumber;
@@ -748,13 +749,32 @@ class _UserAdminListContainerState extends State<UserAdminListContainer> {
                   ),
                 ),
                 Expanded(
-                  child: Text(
-                    role,
-                    style: helveticaText.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      color: davysGray,
-                    ),
+                  child: Wrap(
+                    children: widget.user!.roleList
+                        .asMap()
+                        .map((index, element) => MapEntry(
+                              index,
+                              Text(
+                                '${element['Name']}  ${index == widget.user!.roleList.length - 1 ? "" : ", "}',
+                                style: helveticaText.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w300,
+                                  color: davysGray,
+                                ),
+                              ),
+                            ))
+                        .values
+                        .toList(),
+                    // children: [
+                    //   Text(
+                    //     role,
+                    //     style: helveticaText.copyWith(
+                    //       fontSize: 16,
+                    //       fontWeight: FontWeight.w300,
+                    //       color: davysGray,
+                    //     ),
+                    //   ),
+                    // ],
                   ),
                 ),
                 SizedBox(
@@ -902,7 +922,9 @@ class UserAdmin {
     this.phoneNumber = "",
     this.email = "",
     this.isCollapse = false,
-  });
+    this.buildingId = "",
+    List? roleList,
+  }) : roleList = roleList ?? [];
   String username;
   String name;
   String nip;
@@ -910,6 +932,27 @@ class UserAdmin {
   String place;
   String phoneCode;
   String phoneNumber;
+  String buildingId;
   String email;
+  List roleList;
   bool isCollapse;
+
+  Map<String, dynamic> toJson() => {
+        '"UserName"': '"$username"',
+        '"Name"': '"$name"',
+        '"NIP"': '"$nip"',
+        '"Role"': '"$role"',
+        '"BuildingName"': '"$place"',
+        '"BuildingID"': '"$buildingId"',
+        '"PhoneCode"': '"$phoneCode"',
+        '"PhoneNumber"': '"$phoneNumber"',
+        '"Email"': '"$email"',
+        '"RoleList"': '"$roleList"',
+        '"isCollapse"': '"$isCollapse"'
+      };
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }

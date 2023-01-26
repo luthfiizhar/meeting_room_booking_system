@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/no_border_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
@@ -16,6 +18,7 @@ class EventMenuPage extends StatefulWidget {
 }
 
 class _EventMenuPageState extends State<EventMenuPage> {
+  ReqAPI apiReq = ReqAPI();
   FocusNode minTimeRange = FocusNode();
   FocusNode maxTimeRange = FocusNode();
   FocusNode interval = FocusNode();
@@ -27,19 +30,23 @@ class _EventMenuPageState extends State<EventMenuPage> {
   FocusNode audiMaxDuration = FocusNode();
   FocusNode socMinDuration = FocusNode();
   FocusNode socMaxDuration = FocusNode();
+  FocusNode canteenMinDuration = FocusNode();
+  FocusNode canteenMaxDuration = FocusNode();
   FocusNode maxRepeat = FocusNode();
 
   String minTimeRangeValue = "07:00";
   String maxTimeRangeValue = "19:00";
-  String intervalValue = "900";
-  String globalMinDurationValue = "900";
-  String globalMaxDurationValue = "900";
+  String intervalValue = "15";
+  String globalMinDurationValue = "15";
+  String globalMaxDurationValue = "15";
   String meetingRoomMinDurationValue = "global";
   String meetingRoomMaxDurationValue = "global";
   String audiMinDurationValue = "global";
   String audiMaxDurationValue = "global";
   String socMinDurationValue = "global";
   String socMaxDurationValue = "global";
+  String canteenMinDurationValue = "global";
+  String canteenMaxDurationValue = "global";
   String maxRepeatValue = "1";
 
   List<TimeRange> intervalChoices = [
@@ -50,6 +57,7 @@ class _EventMenuPageState extends State<EventMenuPage> {
   ];
 
   List<TimeRange> globalChoices = [
+    TimeRange(displayName: 'No Limit', minuteValue: '0', secondValue: '0'),
     TimeRange(displayName: '15 Minutes', minuteValue: '15', secondValue: '900'),
     TimeRange(
         displayName: '30 Minutes', minuteValue: '30', secondValue: '1800'),
@@ -62,10 +70,11 @@ class _EventMenuPageState extends State<EventMenuPage> {
         displayName: 'Same as global',
         minuteValue: 'global',
         secondValue: 'global'),
-    TimeRange(
-        displayName: 'No Limit',
-        minuteValue: 'nolimit',
-        secondValue: 'nolimit'),
+    // TimeRange(
+    //     displayName: 'No Limit',
+    //     minuteValue: 'nolimit',
+    //     secondValue: 'nolimit'),
+    TimeRange(displayName: 'No Limit', minuteValue: '0', secondValue: '0'),
     TimeRange(displayName: '15 Minutes', minuteValue: '15', secondValue: '900'),
     TimeRange(
         displayName: '30 Minutes', minuteValue: '30', secondValue: '1800'),
@@ -83,6 +92,8 @@ class _EventMenuPageState extends State<EventMenuPage> {
     // TimeRange(displayName: '11 Hour', minuteValue: '660', secondValue: '39600'),
     TimeRange(
         displayName: '12 Hours', minuteValue: '720', secondValue: '43200'),
+    TimeRange(
+        displayName: '24 Hours', minuteValue: '1480', secondValue: '86400'),
   ];
 
   List maxRepeatChoices = [
@@ -158,7 +169,7 @@ class _EventMenuPageState extends State<EventMenuPage> {
       _menuItems.addAll(
         [
           DropdownMenuItem<String>(
-            value: item.secondValue.toString(),
+            value: item.minuteValue.toString(),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: Text(
@@ -188,7 +199,7 @@ class _EventMenuPageState extends State<EventMenuPage> {
       _menuItems.addAll(
         [
           DropdownMenuItem<String>(
-            value: item.secondValue.toString(),
+            value: item.minuteValue.toString(),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: Text(
@@ -256,9 +267,55 @@ class _EventMenuPageState extends State<EventMenuPage> {
     return _itemsHeights;
   }
 
+  initEventSettings() {
+    apiReq.getEventSettings().then((value) {
+      if (value['Status'].toString() == "200") {
+        print(value['Data']);
+        minTimeRangeValue = value['Data']['StartHour'].toString();
+        maxTimeRangeValue = value['Data']['EndHour'].toString();
+        globalMinDurationValue = value['Data']['EventMinDuration'].toString();
+        globalMaxDurationValue = value['Data']['EventMaxDuration'].toString();
+        meetingRoomMinDurationValue =
+            value['Data']['MeetingMinDuration'].toString();
+        meetingRoomMaxDurationValue =
+            value['Data']['MeetingMaxDuration'].toString();
+        audiMinDurationValue =
+            value['Data']['AuditoriumMinDuration'].toString();
+        audiMaxDurationValue =
+            value['Data']['AuditoriumMaxDuration'].toString();
+        socMinDurationValue = value['Data']['SocialHubMinDuration'].toString();
+        socMaxDurationValue = value['Data']['SocialHubMaxDuration'].toString();
+        canteenMinDurationValue =
+            value['Data']['CanteenMinDuration'].toString();
+        canteenMaxDurationValue =
+            value['Data']['CanteenMaxDuration'].toString();
+        setState(() {});
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Error getEventSetting',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    initEventSettings();
     globalMinDuration.addListener(() {
       setState(() {});
     });
@@ -280,6 +337,12 @@ class _EventMenuPageState extends State<EventMenuPage> {
     socMinDuration.addListener(() {
       setState(() {});
     });
+    canteenMaxDuration.addListener(() {
+      setState(() {});
+    });
+    canteenMinDuration.addListener(() {
+      setState(() {});
+    });
     maxRepeat.addListener(() {
       setState(() {});
     });
@@ -296,6 +359,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
     audiMinDuration.removeListener(() {});
     audiMaxDuration.removeListener(() {});
     socMinDuration.removeListener(() {});
+    socMaxDuration.removeListener(() {});
+    canteenMaxDuration.removeListener(() {});
+    canteenMinDuration.removeListener(() {});
     maxRepeat.removeListener(() {});
     globalMinDuration.dispose();
     globalMaxDuration.dispose();
@@ -304,6 +370,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
     audiMinDuration.dispose();
     audiMaxDuration.dispose();
     socMinDuration.dispose();
+    socMaxDuration.dispose();
+    canteenMinDuration.dispose();
+    canteenMaxDuration.dispose();
     maxRepeat.dispose();
   }
 
@@ -331,6 +400,10 @@ class _EventMenuPageState extends State<EventMenuPage> {
         ),
         eventDurationSocialHub(),
         const SizedBox(
+          height: 30,
+        ),
+        eventDurationCanteen(),
+        const SizedBox(
           height: 28,
         ),
         const Divider(
@@ -357,7 +430,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
             TransparentButtonBlack(
               text: 'Cancel',
               disabled: false,
-              onTap: () {},
+              onTap: () {
+                initEventSettings();
+              },
               padding: ButtonSize().smallSize(),
             ),
             const SizedBox(
@@ -366,7 +441,55 @@ class _EventMenuPageState extends State<EventMenuPage> {
             RegularButton(
               text: 'Save',
               disabled: false,
-              onTap: () {},
+              onTap: () {
+                SettingEvent settingEvent = SettingEvent();
+
+                settingEvent.startHour = minTimeRangeValue;
+                settingEvent.endHour = maxTimeRangeValue;
+                settingEvent.bookingMinDuration = globalMinDurationValue;
+                settingEvent.bookingMaxDuration = globalMaxDurationValue;
+                settingEvent.audiMinDuration = audiMinDurationValue;
+                settingEvent.audiMaxDuration = audiMaxDurationValue;
+                settingEvent.socHubMinDuration = socMinDurationValue;
+                settingEvent.socHubMaxDuration = socMaxDurationValue;
+                settingEvent.meetingRoomMinDuration =
+                    meetingRoomMinDurationValue;
+                settingEvent.meetingRoomMaxDuration =
+                    meetingRoomMaxDurationValue;
+                settingEvent.reccurentNumber = maxRepeatValue;
+                settingEvent.canteenMinDuration = canteenMinDurationValue;
+                settingEvent.canteenMaxDuration = canteenMaxDurationValue;
+
+                apiReq.setEventSettings(settingEvent).then((value) {
+                  if (value['Status'].toString() == "200") {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialogBlack(
+                        title: value['Title'],
+                        contentText: value['Message'],
+                      ),
+                    );
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialogBlack(
+                        title: value['Title'],
+                        contentText: value['Message'],
+                        isSuccess: false,
+                      ),
+                    );
+                  }
+                }).onError((error, stackTrace) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialogBlack(
+                      title: "Error setEventSetting",
+                      contentText: error.toString(),
+                      isSuccess: false,
+                    ),
+                  );
+                });
+              },
               padding: ButtonSize().smallSize(),
             )
           ],
@@ -431,7 +554,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getTimeChoices(timeChoices),
               customHeights: getCustomItemsHeights(timeChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                minTimeRangeValue = value;
+              },
             ),
           ),
         ),
@@ -452,7 +577,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getTimeChoices(timeChoices),
               customHeights: getCustomItemsHeights(timeChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                maxTimeRangeValue = value;
+              },
             ),
           ),
         ),
@@ -473,7 +600,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getInterval(intervalChoices),
               customHeights: getCustomItemsHeights(intervalChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                intervalValue = value;
+              },
             ),
           ),
         ),
@@ -524,7 +653,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getMaxRepeatItems(maxRepeatChoices),
               customHeights: getCustomItemsHeights(maxRepeatChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                maxRepeatValue = value;
+              },
             ),
           ),
         ),
@@ -578,7 +709,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getDurationTimeChoices(globalChoices),
               customHeights: getCustomItemsHeights(globalChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                globalMinDurationValue = value;
+              },
             ),
           ),
         ),
@@ -599,7 +732,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getDurationTimeChoices(globalChoices),
               customHeights: getCustomItemsHeights(globalChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                globalMaxDurationValue = value;
+              },
             ),
           ),
         )
@@ -637,7 +772,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getDurationTimeChoices(roomChoices),
               customHeights: getCustomItemsHeights(roomChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                meetingRoomMinDurationValue = value;
+              },
             ),
           ),
         ),
@@ -658,7 +795,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getDurationTimeChoices(roomChoices),
               customHeights: getCustomItemsHeights(roomChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                meetingRoomMaxDurationValue = value;
+              },
             ),
           ),
         )
@@ -672,7 +811,7 @@ class _EventMenuPageState extends State<EventMenuPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
-          'Event Duration - Meeting Room',
+          'Event Duration - Auditorium',
           style: helveticaText.copyWith(
             fontSize: 24,
             fontWeight: FontWeight.w700,
@@ -696,7 +835,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getDurationTimeChoices(roomChoices),
               customHeights: getCustomItemsHeights(roomChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                audiMinDurationValue = value;
+              },
             ),
           ),
         ),
@@ -717,7 +858,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getDurationTimeChoices(roomChoices),
               customHeights: getCustomItemsHeights(roomChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                audiMaxDurationValue = value;
+              },
             ),
           ),
         )
@@ -755,7 +898,9 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getDurationTimeChoices(roomChoices),
               customHeights: getCustomItemsHeights(roomChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                socMinDurationValue = value;
+              },
             ),
           ),
         ),
@@ -776,7 +921,72 @@ class _EventMenuPageState extends State<EventMenuPage> {
               items: getDurationTimeChoices(roomChoices),
               customHeights: getCustomItemsHeights(roomChoices),
               enabled: true,
-              onChanged: (value) {},
+              onChanged: (value) {
+                socMaxDurationValue = value;
+              },
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget eventDurationCanteen() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          'Event Duration - Canteen',
+          style: helveticaText.copyWith(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: davysGray,
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        inputField(
+          'Min. Duration',
+          SizedBox(
+            width: 250,
+            child: BlackDropdown(
+              hintText: 'Choose duration time',
+              suffixIcon: const Icon(
+                Icons.keyboard_arrow_down_sharp,
+              ),
+              value: canteenMinDurationValue,
+              focusNode: canteenMinDuration,
+              items: getDurationTimeChoices(roomChoices),
+              customHeights: getCustomItemsHeights(roomChoices),
+              enabled: true,
+              onChanged: (value) {
+                canteenMinDurationValue = value;
+              },
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        inputField(
+          'Max. Duration',
+          SizedBox(
+            width: 250,
+            child: BlackDropdown(
+              hintText: 'Choose duration time',
+              suffixIcon: const Icon(
+                Icons.keyboard_arrow_down_sharp,
+              ),
+              value: canteenMaxDurationValue,
+              focusNode: canteenMaxDuration,
+              items: getDurationTimeChoices(roomChoices),
+              customHeights: getCustomItemsHeights(roomChoices),
+              enabled: true,
+              onChanged: (value) {
+                canteenMaxDurationValue = value;
+              },
             ),
           ),
         )
@@ -799,4 +1009,36 @@ class TimeRange {
   String toString() {
     return "{displayName : $displayName, secondValue = $secondValue, minuteValue = $minuteValue}";
   }
+}
+
+class SettingEvent {
+  SettingEvent({
+    this.startHour = "",
+    this.endHour = "",
+    this.bookingMinDuration = "",
+    this.bookingMaxDuration = "",
+    this.audiMinDuration = "",
+    this.audiMaxDuration = "",
+    this.socHubMinDuration = "",
+    this.socHubMaxDuration = "",
+    this.meetingRoomMinDuration = "",
+    this.meetingRoomMaxDuration = "",
+    this.canteenMinDuration = "",
+    this.canteenMaxDuration = "",
+    this.reccurentNumber = "",
+  });
+
+  String startHour;
+  String endHour;
+  String bookingMinDuration;
+  String bookingMaxDuration;
+  String audiMinDuration;
+  String audiMaxDuration;
+  String socHubMinDuration;
+  String socHubMaxDuration;
+  String meetingRoomMinDuration;
+  String meetingRoomMaxDuration;
+  String canteenMinDuration;
+  String canteenMaxDuration;
+  String reccurentNumber;
 }
