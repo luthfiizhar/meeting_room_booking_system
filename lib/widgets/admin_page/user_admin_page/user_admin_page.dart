@@ -35,12 +35,13 @@ class _AdminUserPageState extends State<AdminUserPage> {
   List<UserAdmin> adminList = [];
   // User userAdmin
   // List<Amenities> facilities = [];
+  int totalResult = 0;
 
   List showPerPageList = ["5", "10", "20", "50", "100"];
 
   int currentPaginatedPage = 1;
-  List availablePage = [1, 2, 3, 4, 5];
-  List showedPage = [1, 2, 3, 4, 5];
+  List availablePage = [1];
+  List showedPage = [1];
 
   countPagination(int totalRow) {
     print('total row -> $totalRow');
@@ -83,11 +84,11 @@ class _AdminUserPageState extends State<AdminUserPage> {
     });
   }
 
-  updateList() {
+  Future updateList() {
     adminList.clear();
-    apiReq.getUserAdminList(searchTerm).then((value) {
+    setState(() {});
+    return apiReq.getUserAdminList(searchTerm).then((value) {
       if (value['Status'] == '200') {
-        print(value['Data']);
         List result = value['Data']['List'];
         for (var element in result) {
           adminList.add(UserAdmin(
@@ -98,13 +99,15 @@ class _AdminUserPageState extends State<AdminUserPage> {
             phoneNumber: element['PhoneNumber'],
             place: "Head Office",
             email: element['Email'],
+            buildingId: element['BuildingID'].toString(),
             isCollapse: false,
           ));
         }
         print("admin List --> $adminList");
         // adminList = value['Data'];
-        countPagination(value['Data']['TotalRows']);
-        showedPage = availablePage.take(5).toList();
+        totalResult = value['Data']['TotalRows'];
+        // countPagination(value['Data']['TotalRows']);
+        // showedPage = availablePage.take(5).toList();
       } else {
         showDialog(
           context: context,
@@ -125,10 +128,19 @@ class _AdminUserPageState extends State<AdminUserPage> {
     });
   }
 
+  resetState() {
+    updateList().then((value) {
+      countPagination(totalResult);
+    });
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
-    updateList();
+    updateList().then((value) {
+      countPagination(totalResult);
+    });
   }
 
   @override
@@ -162,7 +174,11 @@ class _AdminUserPageState extends State<AdminUserPage> {
                 showDialog(
                   context: context,
                   builder: (context) => AddUserAdminDialog(),
-                );
+                ).then((value) {
+                  updateList().then((value) {
+                    countPagination(totalResult);
+                  });
+                });
               },
               child: SizedBox(
                 child: Row(
@@ -206,7 +222,9 @@ class _AdminUserPageState extends State<AdminUserPage> {
                   setState(() {
                     searchTerm.keyWords = value;
 
-                    updateList();
+                    updateList().then((value) {
+                      countPagination(totalResult);
+                    });
                   });
                 },
               ),
@@ -318,6 +336,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
               user: adminList[index],
               onClose: closeDetail,
               onClick: onClickListUser,
+              resetState: resetState,
             );
           },
         ),
@@ -359,7 +378,9 @@ class _AdminUserPageState extends State<AdminUserPage> {
                           //   countPagination(value['Data']['TotalRows']);
                           //   showedPage = availablePage.take(5).toList();
                           // });
-                          updateList();
+                          updateList().then((value) {
+                            countPagination(totalResult);
+                          });
                         });
                       },
                       value: searchTerm.max,
@@ -663,12 +684,14 @@ class UserAdminListContainer extends StatefulWidget {
     this.onClose,
     this.onClick,
     this.index,
+    this.resetState,
   });
 
   // bool isCollapsed;
   UserAdmin? user;
   Function? onClose;
   Function? onClick;
+  Function? resetState;
   int? index;
 
   @override
@@ -676,6 +699,7 @@ class UserAdminListContainer extends StatefulWidget {
 }
 
 class _UserAdminListContainerState extends State<UserAdminListContainer> {
+  ReqAPI apiReq = ReqAPI();
   String name = "";
   String email = "";
   String nip = "";
@@ -879,7 +903,15 @@ class _UserAdminListContainerState extends State<UserAdminListContainer> {
             spacing: 10,
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  widget.user!.isEdit = true;
+                  showDialog(
+                    context: context,
+                    builder: (context) => AddUserAdminDialog(
+                      userAdmin: widget.user,
+                    ),
+                  );
+                },
                 child: const Icon(
                   Icons.edit,
                   color: orangeAccent,
@@ -889,14 +921,46 @@ class _UserAdminListContainerState extends State<UserAdminListContainer> {
                 onTap: () {
                   showDialog(
                     context: context,
-                    builder: (context) => ConfirmDialogBlack(
+                    builder: (context) => const ConfirmDialogBlack(
                       title: 'Confirmation',
                       contentText: 'Are you sure want delete this user?',
-                      onTapConfirm: () {
-                        Navigator.of(context).pop(true);
-                      },
                     ),
-                  );
+                  ).then((value) {
+                    if (value) {
+                      apiReq.deleteUserAdmin(widget.user!.nip).then((result) {
+                        if (result['Status'].toString() == "200") {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialogBlack(
+                              title: result['Title'],
+                              contentText: result['Message'],
+                            ),
+                          ).then((value) {
+                            // Navigator.of(context).pop();
+                            widget.resetState!();
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialogBlack(
+                              title: result['Title'],
+                              contentText: result['Message'],
+                              isSuccess: false,
+                            ),
+                          );
+                        }
+                      }).onError((error, stackTrace) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialogBlack(
+                            title: "Error deleteUserAdmin",
+                            contentText: error.toString(),
+                            isSuccess: false,
+                          ),
+                        );
+                      });
+                    }
+                  });
                 },
                 child: const Icon(
                   Icons.delete_outline_rounded,
@@ -923,6 +987,7 @@ class UserAdmin {
     this.email = "",
     this.isCollapse = false,
     this.buildingId = "",
+    this.isEdit = false,
     List? roleList,
   }) : roleList = roleList ?? [];
   String username;
@@ -936,6 +1001,7 @@ class UserAdmin {
   String email;
   List roleList;
   bool isCollapse;
+  bool isEdit;
 
   Map<String, dynamic> toJson() => {
         '"UserName"': '"$username"',
@@ -948,7 +1014,6 @@ class UserAdmin {
         '"PhoneNumber"': '"$phoneNumber"',
         '"Email"': '"$email"',
         '"RoleList"': '"$roleList"',
-        '"isCollapse"': '"$isCollapse"'
       };
 
   @override

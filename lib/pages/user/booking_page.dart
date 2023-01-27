@@ -1322,11 +1322,25 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                         ),
                                         InkWell(
                                           onTap: () {
-                                            if (_email.text != "") {
-                                              setState(() {
-                                                invitedGuest.add(_email.text);
-                                                _email.text = "";
-                                              });
+                                            if (EmailValidator.validate(
+                                                _email.text)) {
+                                              if (_email.text != "") {
+                                                setState(() {
+                                                  invitedGuest.add(_email.text);
+                                                  _email.text = "";
+                                                });
+                                              }
+                                            } else {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    const AlertDialogBlack(
+                                                  title: 'Email not valid',
+                                                  contentText:
+                                                      "Please check the email address.",
+                                                  isSuccess: false,
+                                                ),
+                                              );
                                             }
                                           },
                                           child: const Icon(

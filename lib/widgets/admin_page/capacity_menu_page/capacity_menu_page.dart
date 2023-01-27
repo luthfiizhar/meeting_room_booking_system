@@ -79,7 +79,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
   }
 
   Future updateList() {
+    areaList.clear();
     roomList.clear();
+    setState(() {});
     return apiReq.getRoomList(searchTerm).then((value) {
       print(value);
       if (value['Status'].toString() == "200") {
@@ -691,7 +693,48 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
             RegularButton(
               text: 'Save',
               disabled: false,
-              onTap: () {},
+              onTap: () {
+                List<Room> setRoom = [];
+                for (var element in roomList) {
+                  setRoom.add(Room(
+                    roomId: element.room!.roomId,
+                    maxCapacity: element._maxCapacity.text,
+                    minCapacity: element._minCapacity.text,
+                  ));
+                }
+                apiReq.setCapacityArea(setRoom).then((value) {
+                  if (value['Status'].toString() == "200") {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialogBlack(
+                        title: value['Title'],
+                        contentText: value['Message'],
+                      ),
+                    ).then((value) {
+                      updateList().then((value) {
+                        countPagination(totalResult);
+                      });
+                    });
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialogBlack(
+                        title: value['Title'],
+                        contentText: value['Message'],
+                        isSuccess: false,
+                      ),
+                    );
+                  }
+                }).onError((error, stackTrace) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialogBlack(
+                      title: "Error setCapacityRoom",
+                      contentText: error.toString(),
+                    ),
+                  );
+                });
+              },
               padding: ButtonSize().mediumSize(),
             ),
           ],

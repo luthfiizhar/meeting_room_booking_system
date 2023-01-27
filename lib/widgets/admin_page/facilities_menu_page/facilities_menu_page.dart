@@ -7,6 +7,7 @@ import 'package:meeting_room_booking_system/model/amenities_class.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/facilities_menu_page/add_facility_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/search_input_field.dart';
@@ -32,7 +33,7 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
   int totalResult = 0;
 
   List facilitiesList = [];
-  List<Amenities> facilities = [];
+  List<Amenities> facility = [];
 
   List showPerPageList = ["5", "10", "20", "50", "100"];
 
@@ -62,12 +63,22 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
   onTapHeader(String orderBy) {}
 
   Future updateList() {
-    // return facilitiesList.clear();
+    facility.clear();
     return apiReq.getFacilitiesTableList(searchTerm).then((value) {
       if (value['Status'] == '200') {
         print(value);
         facilitiesList = value['Data']['List'];
         totalResult = value['Data']['TotalRows'];
+        for (var element in facilitiesList) {
+          facility.add(
+            Amenities(
+              amenitiesId: element['AmenitiesID'].toString(),
+              amenitiesName: element['AmenitiesName'],
+              type: element['AmenitiesType'],
+              photo: element['ImageURL'],
+            ),
+          );
+        }
         // countPagination(value['Data']['TotalRows']);
       } else {
         showDialog(
@@ -89,11 +100,19 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
     });
   }
 
+  resetState() {
+    updateList().then((value) {
+      countPagination(totalResult);
+    });
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     updateList().then((value) {
       countPagination(totalResult);
+      setState(() {});
     });
   }
 
@@ -130,7 +149,11 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                   builder: (context) => AddNewFacilityDialog(
                     isEdit: false,
                   ),
-                );
+                ).then((value) {
+                  updateList().then((value) {
+                    countPagination(totalResult);
+                  });
+                });
               },
               child: SizedBox(
                 child: Row(
@@ -174,10 +197,11 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                 focusNode: searchNode,
                 maxLines: 1,
                 onFieldSubmitted: (value) {
-                  print('submit');
                   setState(() {
                     searchTerm.keyWords = value;
-                    updateList().then((value) {});
+                    updateList().then((value) {
+                      setState(() {});
+                    });
                   });
                 },
               ),
@@ -217,7 +241,7 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
         //       .values
         //       .toList(),
         // ),
-        facilitiesList.isEmpty
+        facility.isEmpty
             ? SizedBox(
                 width: double.infinity,
                 height: 230,
@@ -238,7 +262,7 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                   childAspectRatio: 3 / 4,
                   crossAxisCount: 4,
                 ),
-                itemCount: facilitiesList.length,
+                itemCount: facility.length,
                 itemBuilder: (context, index) {
                   return Container(
                     height: 295,
@@ -250,11 +274,8 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                       ),
                     ),
                     child: FacilitiesListContainer(
-                      facilitiesId:
-                          facilitiesList[index]['AmenitiesID'].toString(),
-                      imageUrl: facilitiesList[index]['ImageURL'],
-                      type: facilitiesList[index]['AmenitiesType'],
-                      name: facilitiesList[index]['AmenitiesName'],
+                      resetState: resetState,
+                      facility: facility[index],
                     ),
                   );
                 },
@@ -293,6 +314,7 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                           searchTerm.max = value!.toString();
                           updateList().then((value) {
                             countPagination(totalResult);
+                            setState(() {});
                           });
                           // getMyBookingList(searchTerm).then((value) {
                           //   myBookList = value['Data']['List'];
@@ -347,7 +369,9 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                               }
                               searchTerm.pageNumber =
                                   currentPaginatedPage.toString();
-                              updateList();
+                              updateList().then((value) {
+                                setState(() {});
+                              });
                               // getMyBookingList(searchTerm)
                               //     .then((value) {
                               //   myBookList = value['Data']['List'];
@@ -417,10 +441,9 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                                         });
                                         searchTerm.pageNumber =
                                             currentPaginatedPage.toString();
-                                        updateList();
-                                        print(showedPage);
-                                        print(
-                                            'current ${searchTerm.pageNumber}');
+                                        updateList().then((value) {
+                                          setState(() {});
+                                        });
                                       },
                                 child: Container(
                                   width: 35,
@@ -503,7 +526,9 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                               }
                               searchTerm.pageNumber =
                                   currentPaginatedPage.toString();
-                              updateList();
+                              updateList().then((value) {
+                                setState(() {});
+                              });
                               // getMyBookingList(searchTerm)
                               //     .then((value) {
                               //   myBookList = value['Data']['List'];
@@ -562,20 +587,15 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
 }
 
 class FacilitiesListContainer extends StatelessWidget {
-  const FacilitiesListContainer({
+  FacilitiesListContainer({
     super.key,
-    this.facilitiesId = "",
-    this.imageUrl = "",
-    this.name = "",
-    this.type = "",
-    this.isProhibited = false,
-  });
+    this.resetState,
+    Amenities? facility,
+  }) : facility = facility ?? Amenities();
 
-  final String facilitiesId;
-  final String imageUrl;
-  final String name;
-  final String type;
-  final bool isProhibited;
+  ReqAPI apiReq = ReqAPI();
+  Function? resetState;
+  Amenities? facility;
 
   @override
   Widget build(BuildContext context) {
@@ -591,10 +611,10 @@ class FacilitiesListContainer extends StatelessWidget {
             child: SizedBox(
               width: 200,
               height: 175,
-              child: imageUrl == ""
-                  ? SizedBox()
+              child: facility!.photo! == ""
+                  ? const SizedBox()
                   : CachedNetworkImage(
-                      imageUrl: imageUrl,
+                      imageUrl: facility!.photo!,
                       imageBuilder: (context, imageProvider) {
                         return Container(
                           padding: const EdgeInsets.all(15),
@@ -630,7 +650,7 @@ class FacilitiesListContainer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  facility!.amenitiesName!,
                   style: helveticaText.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
@@ -641,11 +661,11 @@ class FacilitiesListContainer extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  type,
+                  facility!.type!,
                   style: helveticaText.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: davysGray,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w300,
+                    color: sonicSilver,
                   ),
                 ),
                 const SizedBox(
@@ -655,7 +675,15 @@ class FacilitiesListContainer extends StatelessWidget {
                   spacing: 10,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AddNewFacilityDialog(
+                            isEdit: true,
+                            amenities: facility,
+                          ),
+                        );
+                      },
                       child: const Icon(
                         Icons.edit,
                         color: orangeAccent,
@@ -663,7 +691,51 @@ class FacilitiesListContainer extends StatelessWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const ConfirmDialogBlack(
+                            title: 'Confirmation',
+                            contentText:
+                                'Are you sure want delete this facility?',
+                          ),
+                        ).then((value) {
+                          if (value) {
+                            apiReq
+                                .deleteFacilities(facility!.amenitiesId!)
+                                .then((value) {
+                              if (value['Status'].toString() == "200") {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialogBlack(
+                                    title: value['Title'],
+                                    contentText: value['Message'],
+                                  ),
+                                ).then((value) {
+                                  resetState!();
+                                });
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialogBlack(
+                                    title: value['Title'],
+                                    contentText: value['Message'],
+                                    isSuccess: false,
+                                  ),
+                                );
+                              }
+                            }).onError((error, stackTrace) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialogBlack(
+                                  title: "Error deleteFacilities",
+                                  contentText: error.toString(),
+                                ),
+                              );
+                            });
+                          }
+                        });
+                      },
                       child: const Icon(
                         Icons.delete_outline_outlined,
                         color: orangeAccent,

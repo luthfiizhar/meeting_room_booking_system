@@ -1,12 +1,14 @@
 class Amenities {
   Amenities({
-    this.amenitiesId,
-    this.amenitiesName,
+    this.amenitiesId = "",
+    this.amenitiesName = "",
     this.qty = 0,
     this.photo = "",
     this.isProhibited = false,
     this.defaultAmount = 0,
     this.roomAmenitiesId = "",
+    this.type = "",
+    this.isAvailableToUser = true,
   });
 
   String? amenitiesId;
@@ -16,6 +18,8 @@ class Amenities {
   bool? isProhibited;
   int? defaultAmount;
   String? roomAmenitiesId;
+  String? type;
+  bool? isAvailableToUser;
 
   Amenities.fromJSon(Map<String, dynamic> json)
       : amenitiesName = json['AmenitiesName'],

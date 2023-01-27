@@ -13,11 +13,13 @@ class Room {
     this.maxBookingDuration = "",
     this.coverPhoto = "",
     this.availability = "INACTIVE",
-    this.areaPhoto,
-    this.defaultFacilities,
-    this.prohibitedFacilities,
+    List? areaPhoto,
+    List? defaultFacilities,
+    List? prohibitedFacilities,
     this.isCollapsed = false,
-  });
+  })  : areaPhoto = areaPhoto ?? [],
+        defaultFacilities = defaultFacilities ?? [],
+        prohibitedFacilities = prohibitedFacilities ?? [];
 
   String roomId;
   String roomName;
