@@ -62,7 +62,26 @@ class _AdminUserPageState extends State<AdminUserPage> {
     });
   }
 
-  onTapHeader(String orderBy) {}
+  onTapHeader(String orderBy) {
+    setState(() {
+      if (searchTerm.orderBy == orderBy) {
+        switch (searchTerm.orderDir) {
+          case "ASC":
+            searchTerm.orderDir = "DESC";
+            break;
+          case "DESC":
+            searchTerm.orderDir = "ASC";
+            break;
+          default:
+        }
+      }
+      searchTerm.orderBy = orderBy;
+      updateList().then((value) {
+        currentPaginatedPage = 1;
+        countPagination(totalResult);
+      });
+    });
+  }
 
   closeDetail(index) {
     setState(() {
@@ -290,10 +309,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
             ),
             Expanded(
               child: InkWell(
-                onTap: () {
-                  onTapHeader("Name");
-                  //ROLE
-                },
+                // onTap: () {
+                //   onTapHeader("Role");
+                //   //ROLE
+                // },
                 child: Row(
                   children: [
                     Expanded(
@@ -306,10 +325,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
                         ),
                       ),
                     ),
-                    iconSort("Name"),
-                    const SizedBox(
-                      width: 20,
-                    ),
+                    // iconSort("Role"),
+                    // const SizedBox(
+                    //   width: 20,
+                    // ),
                   ],
                 ),
               ),
