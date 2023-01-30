@@ -161,16 +161,16 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                               selected: index == 3,
                               color: selectedColor,
                             ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            SettingPageMenuItem(
-                              title: 'Event',
-                              type: 'Event',
-                              onHighlight: onHighlight,
-                              selected: index == 4,
-                              color: selectedColor,
-                            ),
+                            // const SizedBox(
+                            //   height: 20,
+                            // ),
+                            // SettingPageMenuItem(
+                            //   title: 'Event',
+                            //   type: 'Event',
+                            //   onHighlight: onHighlight,
+                            //   selected: index == 4,
+                            //   color: selectedColor,
+                            // ),
                             const SizedBox(
                               height: 20,
                             ),
