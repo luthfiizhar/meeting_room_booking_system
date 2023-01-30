@@ -145,6 +145,7 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
     typeValue = widget.amenities!.type!;
     isAvailableToUser = widget.amenities!.isAvailableToUser!;
     urlImage = widget.amenities!.photo!;
+    isAvailableToUser = widget.amenities!.isAvailableToUser!;
     setState(() {});
   }
 

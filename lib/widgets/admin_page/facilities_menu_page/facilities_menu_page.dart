@@ -77,6 +77,7 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
               type: element['Value'],
               photo: element['ImageURL'],
               typeName: element['AmenitiesType'],
+              isAvailableToUser: element['Options'],
             ),
           );
         }
@@ -672,79 +673,91 @@ class FacilitiesListContainer extends StatelessWidget {
                 const SizedBox(
                   height: 33,
                 ),
-                Wrap(
-                  spacing: 10,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AddNewFacilityDialog(
-                            isEdit: true,
-                            amenities: facility,
-                          ),
-                        ).then((value) {
-                          resetState!();
-                        });
-                      },
-                      child: const Icon(
-                        Icons.edit,
-                        color: orangeAccent,
-                        size: 18,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => const ConfirmDialogBlack(
-                            title: 'Confirmation',
-                            contentText:
-                                'Are you sure want delete this facility?',
-                          ),
-                        ).then((value) {
-                          if (value) {
-                            apiReq
-                                .deleteFacilities(facility!.amenitiesId!)
-                                .then((value) {
-                              if (value['Status'].toString() == "200") {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogBlack(
-                                    title: value['Title'],
-                                    contentText: value['Message'],
-                                  ),
-                                ).then((value) {
-                                  resetState!();
-                                });
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogBlack(
-                                    title: value['Title'],
-                                    contentText: value['Message'],
-                                    isSuccess: false,
-                                  ),
-                                );
-                              }
-                            }).onError((error, stackTrace) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialogBlack(
-                                  title: "Error deleteFacilities",
-                                  contentText: error.toString(),
-                                ),
-                              );
+                    Wrap(
+                      spacing: 10,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AddNewFacilityDialog(
+                                isEdit: true,
+                                amenities: facility,
+                              ),
+                            ).then((value) {
+                              resetState!();
                             });
-                          }
-                        });
-                      },
-                      child: const Icon(
-                        Icons.delete_outline_outlined,
-                        color: orangeAccent,
-                        size: 18,
-                      ),
+                          },
+                          child: const Icon(
+                            Icons.edit,
+                            color: orangeAccent,
+                            size: 18,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => const ConfirmDialogBlack(
+                                title: 'Confirmation',
+                                contentText:
+                                    'Are you sure want delete this facility?',
+                              ),
+                            ).then((value) {
+                              if (value) {
+                                apiReq
+                                    .deleteFacilities(facility!.amenitiesId!)
+                                    .then((value) {
+                                  if (value['Status'].toString() == "200") {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogBlack(
+                                        title: value['Title'],
+                                        contentText: value['Message'],
+                                      ),
+                                    ).then((value) {
+                                      resetState!();
+                                    });
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogBlack(
+                                        title: value['Title'],
+                                        contentText: value['Message'],
+                                        isSuccess: false,
+                                      ),
+                                    );
+                                  }
+                                }).onError((error, stackTrace) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialogBlack(
+                                      title: "Error deleteFacilities",
+                                      contentText: error.toString(),
+                                    ),
+                                  );
+                                });
+                              }
+                            });
+                          },
+                          child: const Icon(
+                            Icons.delete_outline_outlined,
+                            color: orangeAccent,
+                            size: 18,
+                          ),
+                        ),
+                      ],
                     ),
+                    facility!.isAvailableToUser!
+                        ? const SizedBox()
+                        : const Icon(
+                            Icons.person_off_outlined,
+                            color: davysGray,
+                            size: 18,
+                          )
                   ],
                 ),
               ],
