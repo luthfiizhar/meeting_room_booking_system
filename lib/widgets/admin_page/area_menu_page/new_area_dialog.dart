@@ -60,7 +60,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   String areaAlias = "";
   String roomId = "";
   String selectedBuilding = "1";
-  String selectedFloor = "AR-1";
+  String? selectedFloor = "AR-1";
   String selectedType = "MeetingRoom";
   String minCapacity = "";
   String maxCapacity = "";
@@ -74,6 +74,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   List buildingList = [];
   List floorList = [];
   List roomType = [];
+
+  bool isLoading = false;
 
   List<RadioModel> availabilityList = [
     RadioModel(
@@ -248,7 +250,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   }
 
   initFloorList() async {
-    apiReq.getFloorListDropdown().then((value) {
+    apiReq.getFloorListDropdown(selectedBuilding).then((value) {
       if (value["Status"].toString() == "200") {
         setState(() {
           floorList = value['Data'];
@@ -466,7 +468,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
 
   initDataEdit() {
     apiReq.adminRoomDetail(widget.roomId).then((value) {
-      print(value);
+      // print("DEFAULT --> ${value['Data']['DefaultAmenities']}");
+      // print("PROHIBITED --> ${value['Data']['ForbiddenAmenities']}");
       if (value['Status'].toString() == "200") {
         setState(() {
           roomId = value['Data']['RoomID'];
@@ -493,26 +496,31 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
             areaPhoto.insert(areaPhoto.length - 1,
                 {'base64': element['Photo'], 'isLast': false});
           }
-          for (var element in defaultFacilityResult) {
-            defaultFacility.insert(
-              defaultFacility.length - 1,
-              Amenities(
-                amenitiesId: element['AmenitiesID'].toString(),
-                amenitiesName: element['AmenitiesName'],
-                photo: element['ImageURL'],
-                roomAmenitiesId: element['RoomAmenitiesID'],
-              ),
-            );
+          if (defaultFacilityResult != []) {
+            for (var element in defaultFacilityResult) {
+              defaultFacility.insert(
+                defaultFacility.length - 1,
+                Amenities(
+                  amenitiesId: element['AmenitiesID'].toString(),
+                  amenitiesName: element['AmenitiesName'],
+                  photo: element['ImageURL'],
+                  roomAmenitiesId: element['RoomAmenitiesID'].toString(),
+                ),
+              );
+            }
           }
-          for (var element in prohibitedFacilityResult) {
-            prohibitedFacility.insert(
-              prohibitedFacilityResult.length - 1,
-              Amenities(
-                amenitiesId: element['AmenitiesID'].toString(),
-                amenitiesName: element['AmenitiesName'],
-                photo: element['ImageURL'],
-              ),
-            );
+
+          if (prohibitedFacilityResult != []) {
+            for (var element in prohibitedFacilityResult) {
+              prohibitedFacility.insert(
+                prohibitedFacility.length - 1,
+                Amenities(
+                  amenitiesId: element['AmenitiesID'].toString(),
+                  amenitiesName: element['AmenitiesName'],
+                  photo: element['ImageURL'],
+                ),
+              );
+            }
           }
         });
       } else {
@@ -526,6 +534,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
         );
       }
     }).onError((error, stackTrace) {
+      // print(error);
+      // print(stackTrace);
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
@@ -541,7 +551,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   void initState() {
     super.initState();
     initRoomType();
-    initFloorList();
+    // initFloorList();
     initBuildingList();
     initAmenitiesList();
     if (widget.isEdit) {
@@ -696,6 +706,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                         widget.isEdit ? selectedBuilding : null,
                                     onChanged: (value) {
                                       selectedBuilding = value;
+                                      selectedFloor = null;
+                                      initFloorList();
+                                      setState(() {});
                                     },
                                   ),
                                 ),
@@ -710,7 +723,11 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   child: BlackDropdown(
                                     focusNode: floorNode,
                                     items: floorItems(floorList),
-                                    enabled: true,
+                                    enabled: widget.isEdit
+                                        ? true
+                                        : selectedBuilding == ""
+                                            ? false
+                                            : true,
                                     customHeights:
                                         _getCustomItemsHeights(floorList),
                                     hintText: 'Choose',
@@ -1293,7 +1310,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                       TransparentButtonBlack(
                         text: 'Cancel',
                         disabled: false,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).pop(false);
+                        },
                         padding: ButtonSize().smallSize(),
                       ),
                       const SizedBox(
@@ -1315,7 +1334,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                             room.roomAlias = areaAlias;
                             room.availability = availabilityValue;
                             room.buildingId = selectedBuilding;
-                            room.floorId = selectedFloor;
+                            room.floorId = selectedFloor!;
                             room.roomType = selectedType;
                             // room.defaultFacilities = defaultFacility;
                             room.minCapacity = minCapacity;
@@ -1400,7 +1419,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                     ),
                                   ).then((value) {
                                     widget.resetState!();
-                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop(true);
                                   });
                                 } else {
                                   showDialog(

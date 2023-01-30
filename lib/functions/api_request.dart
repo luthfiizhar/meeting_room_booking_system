@@ -1074,12 +1074,12 @@ class ReqAPI {
     }
   }
 
-  Future getFloorListDropdown() async {
+  Future getFloorListDropdown(String buildingId) async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
-    var url = Uri.https(
-        apiUrlGlobal, '/MRBS_Backend/public/api/admin/area/dropdown/1');
+    var url = Uri.https(apiUrlGlobal,
+        '/MRBS_Backend/public/api/admin/area/dropdown/$buildingId');
     Map<String, String> requestHeader = {
       'Authorization': 'Bearer $jwt',
       // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
