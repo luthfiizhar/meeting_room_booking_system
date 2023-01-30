@@ -231,6 +231,9 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
       apiReq.getUserProfile().then((value) {
         if (value["Status"].toString() == "200") {

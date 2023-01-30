@@ -267,6 +267,9 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
     }).onError((error, stackTrace) {
       showDialog(
@@ -324,6 +327,9 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
     }).onError((error, stackTrace) {
       showDialog(

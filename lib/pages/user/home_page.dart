@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
@@ -8,6 +9,7 @@ import 'package:meeting_room_booking_system/widgets/amenities_container.dart';
 import 'package:meeting_room_booking_system/widgets/banner/landscape_white_banner.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/feedback_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/end_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/apporval_message.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/available_room_offer_container.dart';
@@ -35,6 +37,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ReqAPI apiReq = ReqAPI();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  GlobalKey datePickerKey = GlobalKey();
+  LayerLink datePickerLayerLink = LayerLink();
+  OverlayEntry? datePickerOverlayEntry;
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _facilityController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
@@ -148,6 +154,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             isSuccess: false,
           ),
         );
+        // if (value['Status'].toString() == "401") {
+        //   context.go('/login');
+        // }
       }
     }).onError((error, stackTrace) {
       showDialog(
@@ -178,6 +187,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
     }).onError((error, stackTrace) {
       showDialog(
@@ -244,6 +256,38 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
   }
 
+  OverlayEntry datePickerOverlay() {
+    RenderBox? renderBox =
+        datePickerKey.currentContext!.findRenderObject() as RenderBox?;
+    var size = renderBox!.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+
+    return OverlayEntry(
+        builder: (context) => Positioned(
+              width: 277,
+              child: CompositedTransformFollower(
+                showWhenUnlinked: false,
+                offset: Offset(0.0, size.height + 5.0),
+                link: datePickerLayerLink,
+                child: Material(
+                  color: white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  elevation: 4.0,
+                  child: CustomDatePicker(
+                    controller: datePickerControl,
+                    isDark: true,
+                    changeDate: onDateChanged,
+                    currentDate: selectedDate,
+                    maxDate: DateTime.now().add(const Duration(days: 30)),
+                    setPickerStatus: setDatePickerVisible,
+                    canPickPastDay: false,
+                  ),
+                ),
+              ),
+            ));
+  }
+
   @override
   void dispose() {
     // _controller.dispose();
@@ -283,11 +327,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     endTimeContainerVisible = value;
     meetingTypeContainerVisible = value;
     opacityOn = value;
+    // if (datePickerOverlayEntry!.mounted) {
+    //   datePickerOverlayEntry!.remove();
+    // }
+
     setState(() {});
   }
 
   setOpacityOn(bool value) {
     opacityOn = value;
+    if (!value) {
+      datePickerOverlayEntry!.remove();
+    }
     setState(() {});
   }
 
@@ -302,8 +353,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     // print(mouseY);
     if (value) {
       setOpacityOn(true);
+      // datePickerOverlayEntry = datePickerOverlay();
+      // Overlay.of(context)!.insert(datePickerOverlayEntry!);
     } else {
       setOpacityOn(false);
+      // datePickerOverlayEntry!.remove();
     }
     datePickerVisible = value;
     // _datePickerOverlay(context);
@@ -631,7 +685,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: datePickerVisible,
                           child: Positioned(
                             left: 265,
-                            top: 310,
+                            top: isAccSyncToGoogle ? 310 : 440,
                             child: CustomDatePicker(
                               controller: datePickerControl,
                               isDark: true,
@@ -648,7 +702,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: timePickerContainerVisible,
                           child: Positioned(
                             left: 465,
-                            top: 310,
+                            top: isAccSyncToGoogle ? 310 : 440,
                             child: TimePickerContainer(
                               // controller: datePickerControl,
                               endTime: endTime,
@@ -670,7 +724,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Visibility(
                           visible: startTimeContainerVisible,
                           child: Positioned(
-                            top: 440,
+                            top: isAccSyncToGoogle ? 440 : 560,
                             left: 475,
                             child: StartTimeContainer(
                               items: startTimeList,
@@ -683,7 +737,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Visibility(
                           visible: endTimeContainerVisible,
                           child: Positioned(
-                            top: 440,
+                            top: isAccSyncToGoogle ? 440 : 560,
                             left: 595,
                             child: EndTimeContainer(
                               items: endTimeList,
@@ -698,7 +752,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: participantContainerVisible,
                           child: Positioned(
                             left: 265,
-                            top: 390,
+                            top: isAccSyncToGoogle ? 390 : 520,
                             child: ParticipantContainer(
                               setParticipantStatus: setParticipantStatus,
                               onChangeParticipant: onParticipanSelected,
@@ -710,7 +764,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: amenitiesContainerVisible,
                           child: Positioned(
                             left: 465,
-                            top: 390,
+                            top: isAccSyncToGoogle ? 390 : 520,
                             child: AmenitiesContainer(
                               tvOnChange: (value) {
                                 if (checkBoxTv) {
@@ -766,7 +820,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: meetingTypeContainerVisible,
                           child: Positioned(
                             left: 30,
-                            top: 420,
+                            top: isAccSyncToGoogle ? 420 : 550,
                             child: RoomTypeContainerHomePage(
                               changeRoomType: changeRoomType,
                               setContainerStatus: setMeetingTypeContainerStatus,
@@ -788,6 +842,33 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const GreetingContainer(),
+        Visibility(
+          visible: isAccSyncToGoogle ? false : true,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 30,
+              ),
+              InkWell(
+                onTap: () {
+                  context.go('/gws');
+                },
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 780,
+                    minWidth: 780,
+                  ),
+                  child: const WhiteBannerLandscape(
+                    title: 'Link your Google account',
+                    subtitle: '& enjoy your benefits.',
+                    imagePath: 'assets/banner_pict_google.png',
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
         const SizedBox(
           height: 30,
         ),
@@ -811,6 +892,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           roomTypeUrl: roomTypeImage,
           searchRoom: search,
           initLoading: initLoading,
+          datePickerKey: datePickerKey,
+          datePickerLayerLink: datePickerLayerLink,
         ),
         const SizedBox(
           height: 30,
@@ -824,10 +907,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           height: 30,
         ),
         Visibility(
-          visible: isAccSyncToGoogle ? false : true,
+          visible: true,
           child: InkWell(
             onTap: () {
-              context.go('/gws');
+              // context.go('/gws');
+              showDialog(
+                context: context,
+                builder: (context) => const FeedbackDialog(),
+              );
             },
             child: ConstrainedBox(
               constraints: const BoxConstraints(
@@ -835,9 +922,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 minWidth: 780,
               ),
               child: const WhiteBannerLandscape(
-                title: 'Link your Google account',
-                subtitle: '& enjoy your benefits.',
-                imagePath: 'assets/banner_pict_google.png',
+                title: 'How is your experience? ',
+                subtitle: 'We love to hear from you!',
+                imagePath: 'assets/feedback_bg.png',
+                borderColor: platinum,
+                backgroundColor: white,
+                fit: BoxFit.fitWidth,
+                isUseGradient: false,
               ),
             ),
           ),
