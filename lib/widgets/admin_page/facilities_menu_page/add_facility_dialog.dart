@@ -129,8 +129,8 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
     urlImage = "data:image/$format;base64,${base64Encode(imageBytes)}";
   }
 
-  initFacilitiesType() {
-    apiReq.getAmenitiesType().then((value) {
+  Future initFacilitiesType() {
+    return apiReq.getAmenitiesType().then((value) {
       if (value['Status'].toString() == "200") {
         itemTypes = value['Data'];
         setState(() {});
@@ -151,10 +151,12 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
   @override
   void initState() {
     super.initState();
-    initFacilitiesType();
-    if (widget.isEdit) {
-      initDataEdit();
-    }
+    initFacilitiesType().then((value) {
+      if (widget.isEdit) {
+        initDataEdit();
+      }
+    });
+
     nameNode.addListener(() {
       setState(() {});
     });

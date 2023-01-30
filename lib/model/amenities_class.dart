@@ -8,6 +8,7 @@ class Amenities {
     this.defaultAmount = 0,
     this.roomAmenitiesId = "",
     this.type = "",
+    this.typeName = "",
     this.isAvailableToUser = true,
   });
 
@@ -19,6 +20,7 @@ class Amenities {
   int? defaultAmount;
   String? roomAmenitiesId;
   String? type;
+  String? typeName;
   bool? isAvailableToUser;
 
   Amenities.fromJSon(Map<String, dynamic> json)

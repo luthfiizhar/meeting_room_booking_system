@@ -26,7 +26,7 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
   FocusNode searchNode = FocusNode();
   FocusNode showPerRowsNode = FocusNode();
 
-  SearchTerm searchTerm = SearchTerm();
+  SearchTerm searchTerm = SearchTerm(max: "20");
 
   int selectedIndexArea = 0;
 
@@ -74,8 +74,9 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
             Amenities(
               amenitiesId: element['AmenitiesID'].toString(),
               amenitiesName: element['AmenitiesName'],
-              type: element['AmenitiesType'],
+              type: element['Value'],
               photo: element['ImageURL'],
+              typeName: element['AmenitiesType'],
             ),
           );
         }
@@ -661,7 +662,7 @@ class FacilitiesListContainer extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  facility!.type!,
+                  facility!.typeName!,
                   style: helveticaText.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w300,
@@ -682,7 +683,9 @@ class FacilitiesListContainer extends StatelessWidget {
                             isEdit: true,
                             amenities: facility,
                           ),
-                        );
+                        ).then((value) {
+                          resetState!();
+                        });
                       },
                       child: const Icon(
                         Icons.edit,

@@ -186,7 +186,10 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                   context: context,
                   builder: (context) => AddNewFloorDialog(),
                 ).then((value) {
-                  updateList();
+                  updateList().then((value) {
+                    countPagination(totalResult);
+                    setState(() {});
+                  });
                 });
               },
               child: SizedBox(
