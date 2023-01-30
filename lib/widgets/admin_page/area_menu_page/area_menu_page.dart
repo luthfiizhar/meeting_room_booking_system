@@ -160,6 +160,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
   void initState() {
     super.initState();
     // room.clear();
+    searchTerm.orderDir = "ASC";
     updateList().then((value) {
       countPagination(totalResult);
     });

@@ -1112,7 +1112,9 @@ class ReqAPI {
     {
         "Keywords": "${searchTerm.keyWords}",
         "MaxRecord": "${searchTerm.max}",
-        "PageNumber": "${searchTerm.pageNumber}"
+        "PageNumber": "${searchTerm.pageNumber}",
+        "SortBy": "${searchTerm.orderBy}",
+        "SortOrder": "${searchTerm.orderDir}"
     }
   """;
     try {
