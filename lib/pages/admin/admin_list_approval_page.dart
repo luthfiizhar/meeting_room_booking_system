@@ -7,6 +7,7 @@ import 'package:meeting_room_booking_system/widgets/admin_page/filter_search_bar
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
+import 'package:go_router/go_router.dart';
 
 class AdminListPage extends StatefulWidget {
   const AdminListPage({super.key});
@@ -142,6 +143,9 @@ class _AdminListPageState extends State<AdminListPage> {
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
     }).onError((error, stackTrace) {
       showDialog(
@@ -157,6 +161,7 @@ class _AdminListPageState extends State<AdminListPage> {
   }
 
   Future updateList() {
+    setState(() {});
     return apiReq.getAuditoriumApprovalList(searchTerm).then((value) {
       print(value);
       if (value['Status'].toString() == "200") {
@@ -175,6 +180,9 @@ class _AdminListPageState extends State<AdminListPage> {
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
     }).onError((error, stackTrace) {
       showDialog(
@@ -186,7 +194,6 @@ class _AdminListPageState extends State<AdminListPage> {
         ),
       );
     });
-    setState(() {});
   }
 
   @override

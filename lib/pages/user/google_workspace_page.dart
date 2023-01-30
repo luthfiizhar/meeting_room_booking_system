@@ -328,6 +328,9 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                       isSuccess: false,
                     ),
                   );
+                  if (value['Status'].toString() == "401") {
+                    context.go('/login');
+                  }
                 }
               }).onError((error, stackTrace) {
                 showDialog(
@@ -353,6 +356,9 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
     }).onError((error, stackTrace) {
       showDialog(

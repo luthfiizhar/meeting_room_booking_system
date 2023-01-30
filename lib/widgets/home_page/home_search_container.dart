@@ -27,6 +27,8 @@ class HomeRoomSearchContainer extends StatefulWidget {
     this.roomTypeUrl,
     this.searchRoom,
     this.initLoading = true,
+    this.datePickerKey,
+    this.datePickerLayerLink,
   });
 
   TextEditingController? dateController;
@@ -51,6 +53,8 @@ class HomeRoomSearchContainer extends StatefulWidget {
   String? roomTypeName;
   String? roomTypeUrl;
   bool initLoading;
+  GlobalKey? datePickerKey;
+  LayerLink? datePickerLayerLink;
 
   @override
   State<HomeRoomSearchContainer> createState() =>
@@ -225,33 +229,37 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                   height: 7,
                 ),
                 inputField(
-                  InkWell(
-                    onTap: () {
-                      if (widget.datePickerStatus!) {
-                        widget.setDatePickerStatus!(false);
-                      } else {
-                        widget.setDatePickerStatus!(true);
-                      }
-                    },
-                    child: SizedBox(
-                      width: 145,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: InputFieldSearchPage(
-                              controller: widget.dateController,
+                  CompositedTransformTarget(
+                    link: widget.datePickerLayerLink!,
+                    child: InkWell(
+                      onTap: () {
+                        if (widget.datePickerStatus!) {
+                          widget.setDatePickerStatus!(false);
+                        } else {
+                          widget.setDatePickerStatus!(true);
+                        }
+                      },
+                      child: SizedBox(
+                        width: 145,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: InputFieldSearchPage(
+                                key: widget.datePickerKey,
+                                controller: widget.dateController,
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          const Icon(
-                            Icons.keyboard_arrow_down_sharp,
-                            size: 16,
-                            color: davysGray,
-                          ),
-                        ],
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            const Icon(
+                              Icons.keyboard_arrow_down_sharp,
+                              size: 16,
+                              color: davysGray,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

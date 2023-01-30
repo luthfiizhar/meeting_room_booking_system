@@ -172,6 +172,9 @@ class _DetailEventPageState extends State<DetailEventPage> {
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
       apiReq.getUserProfile().then((value) {
         print(value);
