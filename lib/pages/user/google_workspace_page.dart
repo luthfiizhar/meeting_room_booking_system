@@ -238,6 +238,15 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
             isAccLinked = true;
           });
         }
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       }
     });
     animateIntroSection();
@@ -319,6 +328,15 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
                   ).then((value) {
                     context.goNamed('home');
                   });
+                } else if (value['Status'].toString() == "401") {
+                  showDialog(
+                    context: context,
+                    builder: (context) => TokenExpiredDialog(
+                      title: value['Title'],
+                      contentText: value['Message'],
+                      isSuccess: false,
+                    ),
+                  );
                 } else {
                   showDialog(
                     context: context,
@@ -347,6 +365,15 @@ class _GoogleWorkspacePageState extends State<GoogleWorkspacePage>
         });
 
         if (code != "") {}
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,

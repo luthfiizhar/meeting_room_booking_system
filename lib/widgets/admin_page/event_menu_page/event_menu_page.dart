@@ -290,6 +290,15 @@ class _EventMenuPageState extends State<EventMenuPage> {
         canteenMaxDurationValue =
             value['Data']['CanteenMaxDuration'].toString();
         setState(() {});
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -467,6 +476,15 @@ class _EventMenuPageState extends State<EventMenuPage> {
                       builder: (context) => AlertDialogBlack(
                         title: value['Title'],
                         contentText: value['Message'],
+                      ),
+                    );
+                  } else if (value['Status'].toString() == "401") {
+                    showDialog(
+                      context: context,
+                      builder: (context) => TokenExpiredDialog(
+                        title: value['Title'],
+                        contentText: value['Message'],
+                        isSuccess: false,
                       ),
                     );
                   } else {

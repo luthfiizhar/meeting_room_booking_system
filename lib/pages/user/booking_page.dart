@@ -533,6 +533,15 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           isContactEmpty = false;
           setState(() {});
         }
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -748,6 +757,15 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                 }
                 // selectedEventType = value['Data'][0]['Value'];
               });
+            } else if (value['Status'].toString() == "401") {
+              showDialog(
+                context: context,
+                builder: (context) => TokenExpiredDialog(
+                  title: value['Title'],
+                  contentText: value['Message'],
+                  isSuccess: false,
+                ),
+              );
             } else {
               showDialog(
                 context: context,
@@ -824,6 +842,15 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             isEdit = false;
           }
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,

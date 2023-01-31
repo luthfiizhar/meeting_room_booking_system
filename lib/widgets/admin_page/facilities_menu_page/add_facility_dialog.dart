@@ -134,6 +134,15 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
       if (value['Status'].toString() == "200") {
         itemTypes = value['Data'];
         setState(() {});
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       }
     });
   }

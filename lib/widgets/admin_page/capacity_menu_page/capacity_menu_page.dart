@@ -112,6 +112,15 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
         // countPagination(value['Data']['TotalRows']);
         // showedPage = availablePage.take(5).toList();
         setState(() {});
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -717,6 +726,15 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                         countPagination(totalResult);
                       });
                     });
+                  } else if (value['Status'].toString() == "401") {
+                    showDialog(
+                      context: context,
+                      builder: (context) => TokenExpiredDialog(
+                        title: value['Title'],
+                        contentText: value['Message'],
+                        isSuccess: false,
+                      ),
+                    );
                   } else {
                     showDialog(
                       context: context,

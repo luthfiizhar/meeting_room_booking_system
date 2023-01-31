@@ -247,7 +247,15 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
         // });
         // context.goNamed('home');
         if (value['Status'].toString() == "401") {
-          context.go('/login');
+          showDialog(
+            context: context,
+            builder: (context) => TokenExpiredDialog(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
+          // context.go('/login');
         }
       }
     }).onError((error, stackTrace) {

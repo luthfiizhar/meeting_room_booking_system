@@ -48,6 +48,15 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
             isSuccess: true,
           ),
         );
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -79,6 +88,15 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
             title: value['Title'],
             contentText: value['Message'],
             isSuccess: true,
+          ),
+        );
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
           ),
         );
       } else {

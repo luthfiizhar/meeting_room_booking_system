@@ -90,6 +90,15 @@ class _LoginPopUpState extends State<LoginPopUp> {
               } else {
                 Navigator.of(context).pop(true);
               }
+            } else if (value['Status'].toString() == "401") {
+              showDialog(
+                context: context,
+                builder: (context) => TokenExpiredDialog(
+                  title: value['Title'],
+                  contentText: value['Message'],
+                  isSuccess: false,
+                ),
+              );
             } else {
               showDialog(
                 context: context,
