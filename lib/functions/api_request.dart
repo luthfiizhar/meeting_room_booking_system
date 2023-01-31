@@ -1907,7 +1907,8 @@ class ReqAPI {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
-    var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/user');
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/user-edit');
     Map<String, String> requestHeader = {
       'Authorization': 'Bearer $jwt',
       'Content-Type': 'application/json',
