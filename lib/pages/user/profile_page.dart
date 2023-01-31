@@ -79,6 +79,15 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
           _phoneCode.text = phoneCode;
           _phone.text = phone;
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -187,6 +196,24 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                     title: value['Title'],
                     contentText: value['Message'],
                     isSuccess: true,
+                  ),
+                );
+              } else if (value['Status'].toString() == "401") {
+                showDialog(
+                  context: context,
+                  builder: (context) => TokenExpiredDialog(
+                    title: value['Title'],
+                    contentText: value['Message'],
+                    isSuccess: false,
+                  ),
+                );
+              } else if (value['Status'].toString() == "401") {
+                showDialog(
+                  context: context,
+                  builder: (context) => TokenExpiredDialog(
+                    title: value['Title'],
+                    contentText: value['Message'],
+                    isSuccess: false,
                   ),
                 );
               } else {
@@ -443,6 +470,15 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                                 isSuccess: true,
                               ),
                             );
+                          } else if (value['Status'].toString() == "401") {
+                            showDialog(
+                              context: context,
+                              builder: (context) => TokenExpiredDialog(
+                                title: value['Title'],
+                                contentText: value['Message'],
+                                isSuccess: false,
+                              ),
+                            );
                           } else {
                             showDialog(
                               context: context,
@@ -505,6 +541,15 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                             title: value["Title"],
                             contentText: value["Message"],
                             isSuccess: true,
+                          ),
+                        );
+                      } else if (value['Status'].toString() == "401") {
+                        showDialog(
+                          context: context,
+                          builder: (context) => TokenExpiredDialog(
+                            title: value['Title'],
+                            contentText: value['Message'],
+                            isSuccess: false,
                           ),
                         );
                       } else {

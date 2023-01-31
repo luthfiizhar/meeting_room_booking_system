@@ -80,6 +80,15 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
           // countPagination(value['Data']['TotalRows']);
           // showedPage = availablePage.take(5).toList();
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -111,6 +120,15 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
             title: value['Title'],
             contentText: value['Message'],
             isSuccess: true,
+          ),
+        );
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
           ),
         );
       } else {

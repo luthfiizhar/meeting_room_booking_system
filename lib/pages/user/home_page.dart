@@ -145,6 +145,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             });
           }
         }
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -178,6 +187,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           upcomingData = [value['Data']];
           emptyMessage = value['Message'];
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -226,14 +244,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         if (status == "401") {
           showDialog(
             context: context,
-            builder: (context) => AlertDialogBlack(
+            builder: (context) => TokenExpiredDialog(
               title: value['Title'],
               contentText: value['Message'],
               isSuccess: false,
             ),
-          ).then((value) {
-            context.go('/login');
-          });
+          );
         }
         // showDialog(
         //   context: context,

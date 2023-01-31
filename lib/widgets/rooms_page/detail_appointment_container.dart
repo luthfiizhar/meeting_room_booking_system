@@ -133,6 +133,15 @@ class _DetailAppointmentContainerState
             });
           }
         }
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       }
     }).onError((error, stackTrace) {
       showDialog(

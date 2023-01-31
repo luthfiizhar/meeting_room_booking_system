@@ -227,6 +227,15 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
         setState(() {
           roomType = value['Data'];
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -256,6 +265,15 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
           floorList = value['Data'];
           print("FloorList --> $floorList");
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -284,6 +302,15 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
         setState(() {
           buildingList = value['Data'];
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -323,6 +350,15 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
             photo: element['ImageURL'].toString(),
           ));
         }
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -469,7 +505,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
 
   Future initDataEdit() {
     return apiReq.adminRoomDetail(widget.roomId).then((value) {
-      // print("DEFAULT --> ${value['Data']['DefaultAmenities']}");
+      print("DEFAULT --> ${value['Data']['DefaultAmenities']}");
       // print("PROHIBITED --> ${value['Data']['ForbiddenAmenities']}");
       if (value['Status'].toString() == "200") {
         roomId = value['Data']['RoomID'];
@@ -505,6 +541,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                 amenitiesName: element['AmenitiesName'],
                 photo: element['ImageURL'],
                 roomAmenitiesId: element['RoomAmenitiesID'].toString(),
+                qty: element['Amount'],
               ),
             );
           }
@@ -523,6 +560,15 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
           }
         }
         setState(() {});
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -1401,6 +1447,17 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                           widget.resetState!();
                                           Navigator.of(context).pop();
                                         });
+                                      } else if (value['Status'].toString() ==
+                                          "401") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              TokenExpiredDialog(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
                                       } else {
                                         showDialog(
                                           context: context,
@@ -1444,6 +1501,17 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                           widget.resetState!();
                                           Navigator.of(context).pop(true);
                                         });
+                                      } else if (value['Status'].toString() ==
+                                          "401") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              TokenExpiredDialog(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
                                       } else {
                                         showDialog(
                                           context: context,

@@ -104,6 +104,15 @@ class _MyBookingPageState extends State<MyBookingPage> {
           resultRows = value['Data']['TotalRows'];
           // countPagination(value['Data']['TotalRows']);
           // showedPage = availablePage.take(5).toList();
+        } else if (value['Status'].toString() == "401") {
+          showDialog(
+            context: context,
+            builder: (context) => TokenExpiredDialog(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
         } else {
           showDialog(
             context: context,

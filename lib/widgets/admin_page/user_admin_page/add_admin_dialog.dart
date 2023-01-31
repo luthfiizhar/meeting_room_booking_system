@@ -103,6 +103,15 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
         setState(() {
           buildingList = value['Data'];
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -137,6 +146,15 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
           ));
         }
         setState(() {});
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       }
     });
   }
@@ -409,6 +427,16 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
                                   ).then((value) {
                                     Navigator.of(context).pop();
                                   });
+                                } else if (value['Status'].toString() ==
+                                    "401") {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => TokenExpiredDialog(
+                                      title: value['Title'],
+                                      contentText: value['Message'],
+                                      isSuccess: false,
+                                    ),
+                                  );
                                 } else {
                                   showDialog(
                                     context: context,
@@ -442,6 +470,16 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
                                   ).then((value) {
                                     Navigator.of(context).pop();
                                   });
+                                } else if (value['Status'].toString() ==
+                                    "401") {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => TokenExpiredDialog(
+                                      title: value['Title'],
+                                      contentText: value['Message'],
+                                      isSuccess: false,
+                                    ),
+                                  );
                                 } else {
                                   showDialog(
                                     context: context,
