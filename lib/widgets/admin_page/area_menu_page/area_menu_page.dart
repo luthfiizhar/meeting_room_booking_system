@@ -770,7 +770,8 @@ class _AreaListContainerState extends State<AreaListContainer> {
               ),
             ],
           ),
-          Expanded(
+          SizedBox(
+            width: 300,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [

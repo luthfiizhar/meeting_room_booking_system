@@ -254,6 +254,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
       if (value["Status"].toString() == "200") {
         setState(() {
           floorList = value['Data'];
+          print("FloorList --> $floorList");
         });
       } else {
         showDialog(
@@ -466,8 +467,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
     });
   }
 
-  initDataEdit() {
-    apiReq.adminRoomDetail(widget.roomId).then((value) {
+  Future initDataEdit() {
+    return apiReq.adminRoomDetail(widget.roomId).then((value) {
       // print("DEFAULT --> ${value['Data']['DefaultAmenities']}");
       // print("PROHIBITED --> ${value['Data']['ForbiddenAmenities']}");
       if (value['Status'].toString() == "200") {
@@ -554,8 +555,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
     initBuildingList();
     initAmenitiesList();
     if (widget.isEdit) {
-      initDataEdit();
-      initFloorList();
+      initDataEdit().then((value) {
+        initFloorList();
+      });
     }
     areaNameNode.addListener(() {
       setState(() {});
