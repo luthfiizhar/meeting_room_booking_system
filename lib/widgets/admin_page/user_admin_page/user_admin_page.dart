@@ -947,7 +947,9 @@ class _UserAdminListContainerState extends State<UserAdminListContainer> {
                     builder: (context) => AddUserAdminDialog(
                       userAdmin: widget.user,
                     ),
-                  );
+                  ).then((value) {
+                    widget.resetState!();
+                  });
                 },
                 child: const Icon(
                   Icons.edit,
