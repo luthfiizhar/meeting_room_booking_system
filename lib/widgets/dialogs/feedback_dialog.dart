@@ -177,17 +177,19 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                 height: 35,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TransparentButtonBlack(
                     text: 'I\'ll do it later',
                     disabled: false,
-                    padding: ButtonSize().mediumSize(),
+                    padding: ButtonSize().smallSize(),
                     onTap: () {
                       Navigator.of(context).pop();
                     },
                   ),
-                  // const SizedBox(width: 10,)
+                  const SizedBox(
+                    width: 5,
+                  ),
                   RegularButton(
                     text: 'Submit',
                     disabled: false,

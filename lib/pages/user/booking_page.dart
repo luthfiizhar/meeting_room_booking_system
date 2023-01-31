@@ -161,7 +161,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   String repeatEnd = "";
 
   List<RadioModel>? listEventType = [];
-  String? selectedEventType = "";
+  String? selectedEventType = "Internal";
   String? roomType = "MeetingRoom";
 
   double participantMin = 0;
@@ -2131,6 +2131,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             //BOOKING AUDI
                                             else {
                                               showDialog(
+                                                barrierDismissible: false,
                                                 context: context,
                                                 builder: (context) =>
                                                     const ConfirmDialogBlack(
