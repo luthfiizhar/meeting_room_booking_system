@@ -465,7 +465,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
                               //   countPagination(
                               //       value['Data']['TotalRows']);
                               // });
-                              updateList();
+                              updateList().then((value) {
+                                // countPagination(totalResult);
+                                setState(() {});
+                              });
                             });
                           }
                         : null,
@@ -541,7 +544,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
                                         //             ['TotalRows']);
                                         //   });
                                         // });
-                                        updateList();
+                                        updateList().then((value) {
+                                          // countPagination(totalResult);
+                                          setState(() {});
+                                        });
                                       },
                                 child: Container(
                                   width: 35,
@@ -629,7 +635,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
                               //   countPagination(
                               //       value['Data']['TotalRows']);
                               // });
-                              updateList();
+                              updateList().then((value) {
+                                // countPagination(totalResult);
+                                setState(() {});
+                              });
                             });
                           }
                         : null,

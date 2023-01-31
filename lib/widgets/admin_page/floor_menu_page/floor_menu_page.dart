@@ -54,9 +54,23 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
   }
 
   onTapHeader(String orderBy) {
-    updateList().then((value) {
-      // countPagination(totalResult);
-      // showedPage = availablePage.take(5).toList();
+    setState(() {
+      if (searchTerm.orderBy == orderBy) {
+        switch (searchTerm.orderDir) {
+          case "ASC":
+            searchTerm.orderDir = "DESC";
+            break;
+          case "DESC":
+            searchTerm.orderDir = "ASC";
+            break;
+          default:
+        }
+      }
+      searchTerm.orderBy = orderBy;
+      // print("SearchTerm ---> $searchTerm");
+      updateList().then((value) {
+        countPagination(totalResult);
+      });
     });
   }
 
@@ -152,7 +166,7 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
       );
     });
 
-    updateList();
+    updateList().then((value) {});
   }
 
   @override
@@ -264,7 +278,7 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
             Expanded(
               child: InkWell(
                 onTap: () {
-                  onTapHeader("Floor");
+                  onTapHeader("FloorName");
                 },
                 child: Row(
                   children: [
@@ -278,7 +292,7 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                         ),
                       ),
                     ),
-                    iconSort("Floor"),
+                    iconSort("FloorName"),
                     const SizedBox(
                       width: 20,
                     ),
@@ -289,7 +303,7 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
             Expanded(
               child: InkWell(
                 onTap: () {
-                  onTapHeader("Building");
+                  onTapHeader("BuildingName");
                 },
                 child: Row(
                   children: [
@@ -303,7 +317,7 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                         ),
                       ),
                     ),
-                    iconSort("Building"),
+                    iconSort("BuildingName"),
                     const SizedBox(
                       width: 20,
                     ),
@@ -374,8 +388,9 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                           //     showedPage = availablePage.take(5).toList();
                           //   });
                           // });
-                          updateList();
-                          countPagination(totalResult);
+                          updateList().then((value) {
+                            countPagination(totalResult);
+                          });
                         });
                       },
                       value: searchTerm.max,
@@ -433,7 +448,9 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                               //     showedPage = availablePage.take(5).toList();
                               //   });
                               // });
-                              updateList();
+                              updateList().then((value) {
+                                // countPagination(totalResult);
+                              });
                             });
                           }
                         : null,
@@ -512,7 +529,7 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                                         // print(showedPage);
                                         // print(
                                         //     'current ${searchTerm.pageNumber}');
-                                        updateList();
+                                        updateList().then((value) {});
                                       },
                                 child: Container(
                                   width: 35,
@@ -604,7 +621,7 @@ class _FloorMenuSettingPageState extends State<FloorMenuSettingPage> {
                               //     showedPage = availablePage.take(5).toList();
                               //   });
                               // });
-                              updateList();
+                              updateList().then((value) {});
                             });
                           }
                         : null,

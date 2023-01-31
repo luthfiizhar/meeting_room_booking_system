@@ -544,6 +544,11 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                 qty: element['Amount'],
               ),
             );
+            for (var element2 in allAmenities) {
+              if (element2.amenitiesId == element['AmenitiesID']) {
+                element2.qty = element['Amount'];
+              }
+            }
           }
         }
 
