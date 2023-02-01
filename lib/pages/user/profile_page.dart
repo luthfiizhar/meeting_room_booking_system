@@ -62,7 +62,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
           name = value['Data']['EmpName'];
           nip = value['Data']['EmpNIP'];
           email = value['Data']['Email'];
-          avaya = value['AvayaNumber'] ?? "-";
+          avaya = value['Data']['AvayaNumber'] ?? "-";
           phoneCode = value['Data']['CountryCode'];
           phone = value['Data']['PhoneNumber'];
           int gooleSync = value['Data']['GoogleAccountSync'];
