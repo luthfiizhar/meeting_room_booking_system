@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
@@ -14,19 +11,13 @@ import 'package:meeting_room_booking_system/model/booking_class.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
-import 'package:meeting_room_booking_system/pages/user/booking_page.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
-import 'package:meeting_room_booking_system/widgets/dialogs/booking_page_dialog.dart';
-import 'package:meeting_room_booking_system/widgets/dialogs/room_booking_dialog.dart';
-import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/white_dropdown.dart';
-import 'package:meeting_room_booking_system/widgets/footer.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/available_room_offer_container.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
-import 'package:meeting_room_booking_system/widgets/navigation_bar/navigation_bar.dart';
 import 'package:meeting_room_booking_system/widgets/rooms_page/detail_appointment_container.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -107,19 +98,19 @@ class _RoomsPageState extends State<RoomsPage> {
     if (dataRoom.isEmpty) {
       _events!.appointments!.clear();
     }
-    dataRoom.forEach((e) {
+    for (var e in dataRoom) {
       if (indexColor % 3 == 0) {
         indexColor = 0;
       }
       _events!.resources!.add(
         CalendarResource(
           id: e['RoomID'],
-          displayName: e['RoomName'],
+          displayName: e['RoomString'],
           color: colors[indexColor],
         ),
       );
       indexColor++;
-    });
+    }
     setState(() {
       updateCalendar(selectedDate.toString());
       // apiReq
@@ -1286,19 +1277,48 @@ class _RoomsPageState extends State<RoomsPage> {
 
   Widget resourceViewHeaderBuilder(
       BuildContext context, ResourceViewHeaderDetails details) {
+    final String roomName = details.resource.displayName.split(",")[0];
+    final String capacity = details.resource.displayName.split(",")[1];
+
     return Container(
       color: details.resource.color,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Center(
-        child: Text(
-          details.resource.displayName,
-          style: helveticaText.copyWith(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: culturedWhite,
-          ),
-          textAlign: TextAlign.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              roomName,
+              style: helveticaText.copyWith(
+                fontWeight: FontWeight.w400,
+                color: culturedWhite,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              capacity,
+              style: helveticaText.copyWith(
+                fontWeight: FontWeight.w300,
+                color: culturedWhite,
+                fontSize: 16,
+              ),
+            )
+          ],
         ),
+
+        // child: Text(
+        //   details.resource.displayName,
+        //   style: helveticaText.copyWith(
+        //     fontSize: 16,
+        //     fontWeight: FontWeight.w400,
+        //     color: culturedWhite,
+        //   ),
+        //   textAlign: TextAlign.center,
+        // ),
       ),
     );
   }
