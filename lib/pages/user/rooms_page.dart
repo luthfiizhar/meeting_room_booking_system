@@ -872,7 +872,7 @@ class _RoomsPageState extends State<RoomsPage> {
               width: isShowDetail ? 30 : 60,
             ),
             SizedBox(
-              width: 170,
+              width: 180,
               child: WhiteDropdown(
                 focusNode: areaNode,
                 customHeights: _getCustomItemsHeights(areaList),

@@ -120,6 +120,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
             email: element['Email'],
             buildingId: element['BuildingID'].toString(),
             isCollapse: false,
+            roleString: element['RoleString'],
           ));
         }
         print("admin List --> $adminList");
@@ -318,10 +319,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
             ),
             Expanded(
               child: InkWell(
-                // onTap: () {
-                //   onTapHeader("Role");
-                //   //ROLE
-                // },
+                onTap: () {
+                  onTapHeader("RoleString");
+                  //ROLE
+                },
                 child: Row(
                   children: [
                     Expanded(
@@ -334,10 +335,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
                         ),
                       ),
                     ),
-                    // iconSort("Role"),
-                    // const SizedBox(
-                    //   width: 20,
-                    // ),
+                    iconSort("RoleString"),
+                    const SizedBox(
+                      width: 20,
+                    ),
                   ],
                 ),
               ),
@@ -810,33 +811,41 @@ class _UserAdminListContainerState extends State<UserAdminListContainer> {
                   ),
                 ),
                 Expanded(
-                  child: Wrap(
-                    children: widget.user!.roleList
-                        .asMap()
-                        .map((index, element) => MapEntry(
-                              index,
-                              Text(
-                                '${element['Name']}  ${index == widget.user!.roleList.length - 1 ? "" : ", "}',
-                                style: helveticaText.copyWith(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w300,
-                                  color: davysGray,
-                                ),
-                              ),
-                            ))
-                        .values
-                        .toList(),
-                    // children: [
-                    //   Text(
-                    //     role,
-                    //     style: helveticaText.copyWith(
-                    //       fontSize: 16,
-                    //       fontWeight: FontWeight.w300,
-                    //       color: davysGray,
-                    //     ),
-                    //   ),
-                    // ],
+                  child: Text(
+                    widget.user!.roleString,
+                    style: helveticaText.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      color: davysGray,
+                    ),
                   ),
+                  // child: Wrap(
+                  //   children: widget.user!.roleList
+                  //       .asMap()
+                  //       .map((index, element) => MapEntry(
+                  //             index,
+                  //             Text(
+                  //               '${element['Name']}${index == widget.user!.roleList.length - 1 ? "" : ", "}',
+                  //               style: helveticaText.copyWith(
+                  //                 fontSize: 16,
+                  //                 fontWeight: FontWeight.w300,
+                  //                 color: davysGray,
+                  //               ),
+                  //             ),
+                  //           ))
+                  //       .values
+                  //       .toList(),
+                  // children: [
+                  //   Text(
+                  //     role,
+                  //     style: helveticaText.copyWith(
+                  //       fontSize: 16,
+                  //       fontWeight: FontWeight.w300,
+                  //       color: davysGray,
+                  //     ),
+                  //   ),
+                  // ],
+                  // ),
                 ),
                 SizedBox(
                   width: 20,
@@ -1036,6 +1045,7 @@ class UserAdmin {
     this.isCollapse = false,
     this.buildingId = "",
     this.isEdit = false,
+    this.roleString = "",
     List? roleList,
   }) : roleList = roleList ?? [];
   String username;
@@ -1050,6 +1060,7 @@ class UserAdmin {
   List roleList;
   bool isCollapse;
   bool isEdit;
+  String roleString;
 
   Map<String, dynamic> toJson() => {
         '"UserName"': '"$username"',
@@ -1062,6 +1073,7 @@ class UserAdmin {
         '"PhoneNumber"': '"$phoneNumber"',
         '"Email"': '"$email"',
         '"RoleList"': '"$roleList"',
+        '"RoleString"': '"$roleString'
       };
 
   @override
