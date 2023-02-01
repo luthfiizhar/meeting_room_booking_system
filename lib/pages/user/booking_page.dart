@@ -2585,6 +2585,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                   name: roomName,
                                   area: floor,
                                   pictNotFound: isPictEmpty,
+                                  minCapacity: participantMin.toString(),
+                                  maxCapacity: participantMax.toString(),
                                 ),
                         ),
                       ),

@@ -923,7 +923,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           height: 30,
         ),
         Visibility(
-          visible: false,
+          visible: true,
           child: InkWell(
             onTap: () {
               // context.go('/gws');
