@@ -12,7 +12,12 @@ import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 
 class AddUserAdminDialog extends StatefulWidget {
-  const AddUserAdminDialog({super.key});
+  AddUserAdminDialog({
+    super.key,
+    UserAdmin? userAdmin,
+  }) : userAdmin = userAdmin ?? UserAdmin();
+
+  UserAdmin userAdmin;
 
   @override
   State<AddUserAdminDialog> createState() => _AddUserAdminDialogState();
@@ -36,7 +41,7 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
   String email = "";
   String phoneCode = "";
   String phoneNumber = "";
-  String buildingValue = "";
+  String buildingValue = "1";
   List buildingList = [];
 
   List<Roles> roleList = [
@@ -98,6 +103,15 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
         setState(() {
           buildingList = value['Data'];
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -120,28 +134,64 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
     });
   }
 
-  initRoleList() {
-    setState(() {
-      apiReq.getUserRoleList().then((value) {
-        if (value['Status'].toString() == "200") {
-          List roleResult = value['Data'];
-          for (var element in roleResult) {
-            roleList.add(Roles(
-              isChecked: false,
-              name: element['Name'],
-              value: element['Value'],
-            ));
-          }
+  Future initRoleList() {
+    return apiReq.getUserRoleList().then((value) {
+      if (value['Status'].toString() == "200") {
+        List roleResult = value['Data'];
+        for (var element in roleResult) {
+          roleList.add(Roles(
+            isChecked: false,
+            name: element['Name'],
+            value: element['Value'],
+          ));
         }
-      });
+        setState(() {});
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
     });
+  }
+
+  initDataEdit() {
+    print(widget.userAdmin);
+    nip = widget.userAdmin.nip;
+    _nip.text = nip;
+    email = widget.userAdmin.email;
+    _email.text = email;
+    buildingValue = widget.userAdmin.buildingId;
+    List tempRole = widget.userAdmin.roleList;
+    phoneCode =
+        widget.userAdmin.phoneCode == "-" ? "" : widget.userAdmin.phoneCode;
+    _phoneCode.text = phoneCode;
+    phoneNumber =
+        widget.userAdmin.phoneNumber == "-" ? "" : widget.userAdmin.phoneNumber;
+    _phoneNumber.text = phoneNumber;
+    for (var element in tempRole) {
+      for (var element2 in roleList) {
+        if (element['Role'] == element2.value) {
+          element2.isChecked = true;
+        }
+      }
+    }
+    setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
     initBuilding();
-    initRoleList();
+    initRoleList().then((value) {
+      if (widget.userAdmin.isEdit) {
+        initDataEdit();
+      }
+    });
   }
 
   @override
@@ -202,7 +252,9 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
                         controller: _nip,
                         enabled: true,
                         focusNode: nipNode,
-                        onSaved: (newValue) {},
+                        onSaved: (newValue) {
+                          nip = newValue.toString();
+                        },
                         validator: (value) =>
                             value == "" ? "This field is required" : null,
                         hintText: 'NIP here...',
@@ -219,7 +271,9 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
                         controller: _email,
                         focusNode: emailNode,
                         enabled: true,
-                        onSaved: (newValue) {},
+                        onSaved: (newValue) {
+                          email = newValue.toString();
+                        },
                         validator: (value) =>
                             value == "" ? "This field is required" : null,
                         hintText: 'Email here...',
@@ -241,7 +295,9 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
                               focusNode: phoneCodeNode,
                               prefixIcon: const Icon(Icons.add),
                               enabled: true,
-                              onSaved: (newValue) {},
+                              onSaved: (newValue) {
+                                phoneCode = newValue.toString();
+                              },
                               validator: (value) => value == "" ? "" : null,
                               // hintText: 'Phone code',
                               contentPadding: const EdgeInsets.only(
@@ -258,7 +314,9 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
                               controller: _phoneNumber,
                               focusNode: phoneNumberNode,
                               enabled: true,
-                              onSaved: (newValue) {},
+                              onSaved: (newValue) {
+                                phoneNumber = newValue.toString();
+                              },
                               validator: (value) => value == "" ? "" : null,
                               hintText: 'Phone number here...',
                             ),
@@ -278,7 +336,7 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
                         items: buildingItems(buildingList),
                         focusNode: buildingNode,
                         customHeights: _getCustomItemsHeights(buildingList),
-                        // value: ,
+                        value: buildingValue,
                         onChanged: (value) {
                           buildingValue = value;
                         },
@@ -356,6 +414,93 @@ class _AddUserAdminDialogState extends State<AddUserAdminDialog> {
                             }
 
                             print(userAdmin);
+                            if (widget.userAdmin.isEdit) {
+                              apiReq.updateUserAdmin(userAdmin).then((value) {
+                                if (value['Status'].toString() == "200") {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialogBlack(
+                                      title: value['Title'],
+                                      contentText: value['Message'],
+                                      isSuccess: true,
+                                    ),
+                                  ).then((value) {
+                                    Navigator.of(context).pop();
+                                  });
+                                } else if (value['Status'].toString() ==
+                                    "401") {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => TokenExpiredDialog(
+                                      title: value['Title'],
+                                      contentText: value['Message'],
+                                      isSuccess: false,
+                                    ),
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialogBlack(
+                                      title: value['Title'],
+                                      contentText: value['Message'],
+                                      isSuccess: false,
+                                    ),
+                                  );
+                                }
+                              }).onError((error, stackTrace) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialogBlack(
+                                    title: "Error addUserAdmin",
+                                    contentText: error.toString(),
+                                    isSuccess: false,
+                                  ),
+                                );
+                              });
+                            } else {
+                              apiReq.addUserAdmin(userAdmin).then((value) {
+                                if (value['Status'].toString() == "200") {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialogBlack(
+                                      title: value['Title'],
+                                      contentText: value['Message'],
+                                      isSuccess: true,
+                                    ),
+                                  ).then((value) {
+                                    Navigator.of(context).pop();
+                                  });
+                                } else if (value['Status'].toString() ==
+                                    "401") {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => TokenExpiredDialog(
+                                      title: value['Title'],
+                                      contentText: value['Message'],
+                                      isSuccess: false,
+                                    ),
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialogBlack(
+                                      title: value['Title'],
+                                      contentText: value['Message'],
+                                      isSuccess: false,
+                                    ),
+                                  );
+                                }
+                              }).onError((error, stackTrace) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialogBlack(
+                                    title: "Error addUserAdmin",
+                                    contentText: error.toString(),
+                                    isSuccess: false,
+                                  ),
+                                );
+                              });
+                            }
                           }
                         },
                       )

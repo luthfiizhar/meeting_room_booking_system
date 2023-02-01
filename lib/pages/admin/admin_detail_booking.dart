@@ -99,6 +99,15 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
             isSuccess: true,
           ),
         );
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -130,6 +139,15 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
             title: value['Title'],
             contentText: value['Message'],
             isSuccess: true,
+          ),
+        );
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
           ),
         );
       } else {
@@ -222,6 +240,15 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           //   isButtonShowed = false;
           // }
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -231,6 +258,9 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
       apiReq.getUserProfile().then((value) {
         if (value["Status"].toString() == "200") {
@@ -264,6 +294,15 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           // print(bookingDate!.isBefore(DateTime.now()));
           // print(bookingDate);
           // print(DateTime.now());
+        } else if (value['Status'].toString() == "401") {
+          showDialog(
+            context: context,
+            builder: (context) => TokenExpiredDialog(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
         }
       }).onError((error, stackTrace) {
         showDialog(

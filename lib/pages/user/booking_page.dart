@@ -161,7 +161,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   String repeatEnd = "";
 
   List<RadioModel>? listEventType = [];
-  String? selectedEventType = "";
+  String? selectedEventType = "Internal";
   String? roomType = "MeetingRoom";
 
   double participantMin = 0;
@@ -184,6 +184,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   bool isAdditionalNotesVisible = true;
   late bool isEdit;
 
+  final LayerLink _layerLink = LayerLink();
+
   bool isPictEmpty = true;
 
   DateTime dateRefresh = DateTime.now();
@@ -200,6 +202,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     {'value': '5', 'name': 'Friday', 'initial': 'F', 'isSelected': false},
     {'value': '6', 'name': 'Saturday', 'initial': 'S', 'isSelected': false},
   ];
+
+  GlobalKey emailKey = GlobalKey();
 
   bool pictureLoading = true;
   bool isSubmitLoading = false;
@@ -484,30 +488,28 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   }
 
   OverlayEntry emailOverlay() {
-    RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+    RenderBox? renderBox =
+        emailKey.currentContext!.findRenderObject() as RenderBox?;
     var size = renderBox!.size;
     var offset = renderBox.localToGlobal(Offset.zero);
 
     return OverlayEntry(
         builder: (context) => Positioned(
-              left: offset.dx + 200,
-              top: offset.dy + 600,
+              // left: offset.dx,
+              // top: offset.dy + size.height + 10,
               width: size.width,
-              child: Material(
-                elevation: 4.0,
-                child: Container(
-                  color: platinum,
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      ListTile(
-                        title: Text('Syria'),
-                      ),
-                      ListTile(
-                        title: Text('Lebanon'),
-                      )
-                    ],
+              child: CompositedTransformFollower(
+                showWhenUnlinked: false,
+                offset: Offset(0.0, size.height + 5.0),
+                link: _layerLink,
+                child: Material(
+                  elevation: 4.0,
+                  child: EmailSuggestionContainer(
+                    contactList: contactList,
+                    emptyMessage: messageEmptyContact,
+                    isEmpty: isContactEmpty,
+                    filter: filterContact,
+                    selectGuest: selectGuest,
                   ),
                 ),
               ),
@@ -515,23 +517,31 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   }
 
   initContactList() {
+    print(_email.text);
     apiReq.getContactList(_email.text).then((value) {
-      // print(value);
+      print(value);
       emailSuggestionVisible = true;
       if (value['Status'].toString() == "200") {
         if (value['Data'].toString() == "[]") {
-          setState(() {
-            contactList = [];
-            isContactEmpty = true;
-            messageEmptyContact = value['Message'];
-          });
+          contactList = [];
+          isContactEmpty = true;
+          messageEmptyContact = value['Message'];
+          setState(() {});
         } else {
-          setState(() {
-            contactList = value['Data'];
-            filterContactList = contactList;
-            isContactEmpty = false;
-          });
+          contactList = value['Data'];
+          filterContactList = contactList;
+          isContactEmpty = false;
+          setState(() {});
         }
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -658,18 +668,29 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     }
     selectedDate = DateTime.parse(widget.date!);
     apiReq.getRoomDetail(widget.roomId!).then((value) {
-      setState(() {
-        participantValue = double.parse(widget.participant!);
-        pictureLoading = false;
-        roomName = value['Data']['RoomName'];
-        floor = value['Data']['AreaName'];
-        participantMax = value['Data']['MaxCapacity'];
-        participantMin = value['Data']['MinCapacity'];
+      if (value['Status'].toString() == "200") {
+        setState(() {
+          participantValue = double.parse(widget.participant!);
+          pictureLoading = false;
+          roomName = value['Data']['RoomName'];
+          floor = value['Data']['AreaName'];
+          participantMax = value['Data']['MaxCapacity'];
+          participantMin = value['Data']['MinCapacity'];
 
-        List tempResultAmenities = value['Data']['Amenities'];
-        for (var element in tempResultAmenities) {
-          if (element['Default'] > 0) {
-            listAmenities.add(
+          List tempResultAmenities = value['Data']['Amenities'];
+          for (var element in tempResultAmenities) {
+            if (element['Default'] > 0) {
+              listAmenities.add(
+                Amenities(
+                  amenitiesId: element['AmenitiesID'],
+                  amenitiesName: element['AmenitiesName'],
+                  photo: element['ImageURL'],
+                  qty: element['Amount'],
+                  defaultAmount: element['Default'],
+                ),
+              );
+            }
+            resultAmenities.add(
               Amenities(
                 amenitiesId: element['AmenitiesID'],
                 amenitiesName: element['AmenitiesName'],
@@ -679,146 +700,170 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
               ),
             );
           }
-          resultAmenities.add(
-            Amenities(
-              amenitiesId: element['AmenitiesID'],
-              amenitiesName: element['AmenitiesName'],
-              photo: element['ImageURL'],
-              qty: element['Amount'],
-              defaultAmount: element['Default'],
-            ),
-          );
-        }
-        resultFoodAmenities = value['Data']['FoodAmenities'];
-        if (value['Data']['Photos'] != []) {
-          isPictEmpty = false;
-          resultPicture = value['Data']['Photos'];
-        } else {
-          isPictEmpty = true;
-          resultPicture.add({
-            'ImageType': 'NOTFOUND',
-            'ImageUrl':
-                'https://media.istockphoto.com/id/1357365823/vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo.jpg?b=1&s=170667a&w=0&k=20&c=LEhQ7Gji4-gllQqp80hLpQsLHlHLw61DoiVf7XJsSx0='
-          });
-        }
-
-        String formattedDate =
-            DateFormat('d MMM yyyy').format(DateTime.parse(widget.date!));
-        _date.text = formattedDate;
-        startTime = widget.startTime!;
-        checkEndTime();
-        // endTime = widget.endTime!;
-        _startTime.text = widget.startTime!;
-        // _endTime.text = widget.endTime!;
-        _repeatEnd.text = DateFormat('d MMM yyyy').format(DateTime.now());
-        _totalParticipant.text = widget.participant!;
-        if (widget.participant == "25" || widget.participant == "0") {
-          // _totalParticipant.text = participantMin.toString();
-          _totalParticipant.text = "";
-        }
-
-        // if (widget.participant == "0") {
-        //   _totalParticipant.text = participantMin.toString();
-        // }
-        if (roomType != 'MeetingRoom') {
-          _totalParticipant.text = "";
-          // layoutSectionVisible = true;
-          repeatSectionVisible = false;
-          // _totalParticipant.text = participantMin.toString();
-        }
-        if (roomType == "Auditorium") {
-          layoutSectionVisible = true;
-        }
-        _repeatOnMonthly.text = selectedDate!.day.toString();
-        apiReq.getMeetingType().then((value) {
-          // print(value['Data']);
-          if (value['Status'].toString() == "200") {
-            List result = value['Data'];
-            setState(() {
-              for (var element in result) {
-                listEventType!.add(
-                  RadioModel(
-                    isSelected: false,
-                    text: element['Name'],
-                    value: element['Value'],
-                  ),
-                );
-              }
-              // selectedEventType = value['Data'][0]['Value'];
-            });
+          resultFoodAmenities = value['Data']['FoodAmenities'];
+          if (value['Data']['Photos'] != []) {
+            isPictEmpty = false;
+            resultPicture = value['Data']['Photos'];
           } else {
+            isPictEmpty = true;
+            resultPicture.add({
+              'ImageType': 'NOTFOUND',
+              'ImageUrl':
+                  'https://media.istockphoto.com/id/1357365823/vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo.jpg?b=1&s=170667a&w=0&k=20&c=LEhQ7Gji4-gllQqp80hLpQsLHlHLw61DoiVf7XJsSx0='
+            });
+          }
+
+          String formattedDate =
+              DateFormat('d MMM yyyy').format(DateTime.parse(widget.date!));
+          _date.text = formattedDate;
+          startTime = widget.startTime!;
+          checkEndTime();
+          // endTime = widget.endTime!;
+          _startTime.text = widget.startTime!;
+          // _endTime.text = widget.endTime!;
+          _repeatEnd.text = DateFormat('d MMM yyyy').format(DateTime.now());
+          _totalParticipant.text = widget.participant!;
+          if (widget.participant == "25" || widget.participant == "0") {
+            // _totalParticipant.text = participantMin.toString();
+            _totalParticipant.text = "";
+          }
+
+          // if (widget.participant == "0") {
+          //   _totalParticipant.text = participantMin.toString();
+          // }
+          if (roomType != 'MeetingRoom') {
+            _totalParticipant.text = "";
+            // layoutSectionVisible = true;
+            repeatSectionVisible = false;
+            // _totalParticipant.text = participantMin.toString();
+          }
+          if (roomType == "Auditorium") {
+            layoutSectionVisible = true;
+          }
+          _repeatOnMonthly.text = selectedDate!.day.toString();
+          apiReq.getMeetingType().then((value) {
+            // print(value['Data']);
+            if (value['Status'].toString() == "200") {
+              List result = value['Data'];
+              setState(() {
+                for (var element in result) {
+                  listEventType!.add(
+                    RadioModel(
+                      isSelected: false,
+                      text: element['Name'],
+                      value: element['Value'],
+                    ),
+                  );
+                }
+                // selectedEventType = value['Data'][0]['Value'];
+              });
+            } else if (value['Status'].toString() == "401") {
+              showDialog(
+                context: context,
+                builder: (context) => TokenExpiredDialog(
+                  title: value['Title'],
+                  contentText: value['Message'],
+                  isSuccess: false,
+                ),
+              );
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialogBlack(
+                  title: value['Title'],
+                  contentText: value['Message'],
+                  isSuccess: false,
+                ),
+              );
+              if (value['Status'].toString() == "401") {
+                context.go('/login');
+              }
+            }
+          }).onError((error, stackTrace) {
             showDialog(
               context: context,
               builder: (context) => AlertDialogBlack(
-                title: value['Title'],
-                contentText: value['Message'],
+                title: 'Failed connect to API',
+                contentText: error.toString(),
                 isSuccess: false,
               ),
             );
-          }
-        }).onError((error, stackTrace) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialogBlack(
-              title: 'Failed connect to API',
-              contentText: error.toString(),
-              isSuccess: false,
-            ),
-          );
-        });
-        if (widget.isEdit == "true") {
-          isEdit = true;
-          dynamic editData = widget.edit;
-          // print(editData['guestInvited']);
-          // selectedDate = DateTime.parse(widget.date!);
-          dynamic guest = editData['guestInvited'];
-          dynamic amenities = editData['facilities'];
+          });
+          if (widget.isEdit == "true") {
+            isEdit = true;
+            dynamic editData = widget.edit;
+            // print(editData['guestInvited']);
+            // selectedDate = DateTime.parse(widget.date!);
+            dynamic guest = editData['guestInvited'];
+            dynamic amenities = editData['facilities'];
 
-          // print(guest);
-          print('bahan edit');
-          print(editData);
-          selectedEventType = editData['meetingType'];
-          _eventName.text = editData['summary'];
-          _eventDesc.text = editData['description'];
-          _additionalNote.text = editData['additionalNote'];
-          repeatValue = editData['repeatType'];
-          List tempGuesList = json.decode(guest);
-          // print("Guest -> $tempGuesList");
-          for (var element in tempGuesList) {
-            invitedGuest.add(element);
+            // print(guest);
+            print('bahan edit');
+            print(editData);
+            selectedEventType = editData['meetingType'];
+            _eventName.text = editData['summary'];
+            _eventDesc.text = editData['description'];
+            _additionalNote.text = editData['additionalNote'];
+            repeatValue = editData['repeatType'];
+            List tempGuesList = json.decode(guest);
+            // print("Guest -> $tempGuesList");
+            for (var element in tempGuesList) {
+              invitedGuest.add(element);
+            }
+            // invitedGuest = guest.toList();
+            List tempAmenities = json.decode(amenities);
+            listAmenities.clear();
+            for (var element in tempAmenities) {
+              listAmenities.add(Amenities(
+                amenitiesId: element['AmenitiesID'],
+                amenitiesName: element['AmenitiesName'],
+                defaultAmount: int.parse(element['DefaultAmount']),
+                qty: int.parse(element['Amount']),
+                photo: element['ImageURL'],
+              ));
+            }
+            if (editData['bookingType'] == "RECURRENT") {
+              _repeatEnd.text = DateFormat('d MMM yyyy')
+                  .format(DateTime.parse(editData['repeatEndDate']));
+              _repeatInterval.text = editData['interval'];
+              _repeatOnMonthly.text = editData['montAbs'];
+            }
+            layoutImageUrl = editData['layoutImage'];
+            layoutName = editData['layoutName'];
+            layoutId = editData['layoutId'];
+            layoutFromupload = false;
+            if (layoutImageUrl != "" || layoutId != "") {
+              emptyLayout = false;
+            }
+            participantValue = double.parse(editData['participant'].toString());
+            _totalParticipant.text = participantValue.toString();
+            setState(() {});
+          } else {
+            isEdit = false;
           }
-          // invitedGuest = guest.toList();
-          List tempAmenities = json.decode(amenities);
-          listAmenities.clear();
-          for (var element in tempAmenities) {
-            listAmenities.add(Amenities(
-              amenitiesId: element['AmenitiesID'],
-              amenitiesName: element['AmenitiesName'],
-              defaultAmount: int.parse(element['DefaultAmount']),
-              qty: int.parse(element['Amount']),
-              photo: element['ImageURL'],
-            ));
-          }
-          if (editData['bookingType'] == "RECURRENT") {
-            _repeatEnd.text = DateFormat('d MMM yyyy')
-                .format(DateTime.parse(editData['repeatEndDate']));
-            _repeatInterval.text = editData['interval'];
-            _repeatOnMonthly.text = editData['montAbs'];
-          }
-          layoutImageUrl = editData['layoutImage'];
-          layoutName = editData['layoutName'];
-          layoutId = editData['layoutId'];
-          layoutFromupload = false;
-          if (layoutImageUrl != "" || layoutId != "") {
-            emptyLayout = false;
-          }
-          participantValue = double.parse(editData['participant'].toString());
-          _totalParticipant.text = participantValue.toString();
-          setState(() {});
-        } else {
-          isEdit = false;
+        });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
         }
-      });
+      }
     }).onError((error, stackTrace) {
       showDialog(
         context: context,
@@ -859,7 +904,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       if (_email.text == "") {
         setState(() {
           // filterContactList = contactList;
-          // initContactList();
+          initContactList();
           emailSuggestionVisible = false;
           isContactEmpty = true;
         });
@@ -913,8 +958,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     emailNode.addListener(() async {
       setState(() {
         if (emailNode.hasFocus) {
-          // _overlayEntry = emailOverlay();
-          // Overlay.of(context)!.insert(_overlayEntry!);
           if (_email.text != "") {
             initContactList();
             // if (contactList.isEmpty) {
@@ -927,14 +970,17 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             //   });
             // }
           } else {
+            initContactList();
             setState(() {
+              // _overlayEntry = emailOverlay();
+              // Overlay.of(context)!.insert(_overlayEntry!);
               isContactEmpty = true;
               emailSuggestionVisible = false;
             });
           }
           // else {
           //   if (contactList == []) {
-          //     initContactList();
+          // initContactList();
           //   } else {
           //     setState(() {
           //       isContactEmpty = false;
@@ -949,7 +995,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           //   }
           // }
         } else {
-          // emailSuggestionVisible = false;
+          emailSuggestionVisible = false;
           // _overlayEntry!.remove();
         }
       });
@@ -1281,39 +1327,43 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                     child: Row(
                                       children: [
                                         Expanded(
-                                          child: SizedBox(
-                                            // width: 100,
-                                            child: BlackInputField(
-                                              controller: _email,
-                                              focusNode: emailNode,
-                                              enabled: true,
-                                              hintText: 'Email here..',
-                                              maxLines: 1,
-                                              obsecureText: false,
-                                              onFieldSubmitted: (x) {
-                                                if (_email.text != "") {
-                                                  setState(() {
-                                                    if (EmailValidator.validate(
-                                                        x)) {
-                                                      invitedGuest
-                                                          .add(_email.text);
-                                                      _email.text = "";
-                                                    } else {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (context) =>
-                                                            const AlertDialogBlack(
-                                                          title:
-                                                              'Email not valid',
-                                                          contentText:
-                                                              "Please check the email address.",
-                                                          isSuccess: false,
-                                                        ),
-                                                      );
-                                                    }
-                                                  });
-                                                }
-                                              },
+                                          child: CompositedTransformTarget(
+                                            link: _layerLink,
+                                            child: SizedBox(
+                                              key: emailKey,
+                                              // width: 100,
+                                              child: BlackInputField(
+                                                controller: _email,
+                                                focusNode: emailNode,
+                                                enabled: true,
+                                                hintText: 'Email here..',
+                                                maxLines: 1,
+                                                obsecureText: false,
+                                                onFieldSubmitted: (x) {
+                                                  if (_email.text != "") {
+                                                    setState(() {
+                                                      if (EmailValidator
+                                                          .validate(x)) {
+                                                        invitedGuest
+                                                            .add(_email.text);
+                                                        _email.text = "";
+                                                      } else {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (context) =>
+                                                              const AlertDialogBlack(
+                                                            title:
+                                                                'Email not valid',
+                                                            contentText:
+                                                                "Please check the email address.",
+                                                            isSuccess: false,
+                                                          ),
+                                                        );
+                                                      }
+                                                    });
+                                                  }
+                                                },
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -2108,6 +2158,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             //BOOKING AUDI
                                             else {
                                               showDialog(
+                                                barrierDismissible: false,
                                                 context: context,
                                                 builder: (context) =>
                                                     const ConfirmDialogBlack(

@@ -60,7 +60,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   String areaAlias = "";
   String roomId = "";
   String selectedBuilding = "1";
-  String selectedFloor = "AR-1";
+  String? selectedFloor = "AR-1";
   String selectedType = "MeetingRoom";
   String minCapacity = "";
   String maxCapacity = "";
@@ -74,6 +74,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   List buildingList = [];
   List floorList = [];
   List roomType = [];
+
+  bool isLoading = false;
 
   List<RadioModel> availabilityList = [
     RadioModel(
@@ -225,6 +227,15 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
         setState(() {
           roomType = value['Data'];
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -248,11 +259,21 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   }
 
   initFloorList() async {
-    apiReq.getFloorListDropdown().then((value) {
+    apiReq.getFloorListDropdown(selectedBuilding).then((value) {
       if (value["Status"].toString() == "200") {
         setState(() {
           floorList = value['Data'];
+          print("FloorList --> $floorList");
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -281,6 +302,15 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
         setState(() {
           buildingList = value['Data'];
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -320,6 +350,15 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
             photo: element['ImageURL'].toString(),
           ));
         }
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -464,35 +503,36 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
     });
   }
 
-  initDataEdit() {
-    apiReq.adminRoomDetail(widget.roomId).then((value) {
-      print(value);
+  Future initDataEdit() {
+    return apiReq.adminRoomDetail(widget.roomId).then((value) {
+      print("DEFAULT --> ${value['Data']['DefaultAmenities']}");
+      // print("PROHIBITED --> ${value['Data']['ForbiddenAmenities']}");
       if (value['Status'].toString() == "200") {
-        setState(() {
-          roomId = value['Data']['RoomID'];
-          areaName = value['Data']['RoomName'];
-          areaAlias = value['Data']['RoomAlias'];
-          selectedType = value['Data']['RoomType'];
-          selectedFloor = value['Data']['AreaID'];
-          selectedBuilding = value['Data']['BuildingID'];
-          minCapacity = value['Data']['MinCapacity'].toString();
-          maxCapacity = value['Data']['MaxCapacity'].toString();
-          int maxDurationSec = int.parse(value['Data']['BookingDuration']);
-          maxDuration = "${maxDurationSec / 3600}";
-          availabilityValue = value['Data']['Status'];
-          coverPhotoBase64 = value['Data']['CoverPhoto'];
-          _areaName.text = areaName;
-          _areaAlias.text = areaAlias;
-          _minCapacity.text = minCapacity;
-          _maxCapacity.text = maxCapacity;
-          _maxDuration.text = maxDuration;
-          List areaPhotoResult = value['Data']['RoomPhotos'];
-          List defaultFacilityResult = value['Data']['DefaultAmenities'];
-          List prohibitedFacilityResult = value['Data']['ForbiddenAmenities'];
-          for (var element in areaPhotoResult) {
-            areaPhoto.insert(areaPhoto.length - 1,
-                {'base64': element['Photo'], 'isLast': false});
-          }
+        roomId = value['Data']['RoomID'];
+        areaName = value['Data']['RoomName'];
+        areaAlias = value['Data']['RoomAlias'];
+        selectedType = value['Data']['RoomType'];
+        selectedBuilding = value['Data']['BuildingID'];
+        selectedFloor = value['Data']['AreaID'];
+        minCapacity = value['Data']['MinCapacity'].toString();
+        maxCapacity = value['Data']['MaxCapacity'].toString();
+        int maxDurationSec = int.parse(value['Data']['BookingDuration']);
+        maxDuration = "${maxDurationSec / 3600}";
+        availabilityValue = value['Data']['Status'];
+        coverPhotoBase64 = value['Data']['CoverPhoto'];
+        _areaName.text = areaName;
+        _areaAlias.text = areaAlias;
+        _minCapacity.text = minCapacity;
+        _maxCapacity.text = maxCapacity;
+        _maxDuration.text = maxDuration;
+        List areaPhotoResult = value['Data']['RoomPhotos'];
+        List defaultFacilityResult = value['Data']['DefaultAmenities'];
+        List prohibitedFacilityResult = value['Data']['ForbiddenAmenities'];
+        for (var element in areaPhotoResult) {
+          areaPhoto.insert(areaPhoto.length - 1,
+              {'base64': element['Photo'], 'isLast': false});
+        }
+        if (defaultFacilityResult != []) {
           for (var element in defaultFacilityResult) {
             defaultFacility.insert(
               defaultFacility.length - 1,
@@ -500,13 +540,22 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                 amenitiesId: element['AmenitiesID'].toString(),
                 amenitiesName: element['AmenitiesName'],
                 photo: element['ImageURL'],
-                roomAmenitiesId: element['RoomAmenitiesID'],
+                roomAmenitiesId: element['RoomAmenitiesID'].toString(),
+                qty: element['Amount'],
               ),
             );
+            for (var element2 in allAmenities) {
+              if (element2.amenitiesId == element['AmenitiesID']) {
+                element2.qty = element['Amount'];
+              }
+            }
           }
+        }
+
+        if (prohibitedFacilityResult != []) {
           for (var element in prohibitedFacilityResult) {
             prohibitedFacility.insert(
-              prohibitedFacilityResult.length - 1,
+              prohibitedFacility.length - 1,
               Amenities(
                 amenitiesId: element['AmenitiesID'].toString(),
                 amenitiesName: element['AmenitiesName'],
@@ -514,7 +563,17 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
               ),
             );
           }
-        });
+        }
+        setState(() {});
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -526,6 +585,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
         );
       }
     }).onError((error, stackTrace) {
+      // print(error);
+      // print(stackTrace);
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
@@ -541,11 +602,13 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   void initState() {
     super.initState();
     initRoomType();
-    initFloorList();
+    // initFloorList();
     initBuildingList();
     initAmenitiesList();
     if (widget.isEdit) {
-      initDataEdit();
+      initDataEdit().then((value) {
+        initFloorList();
+      });
     }
     areaNameNode.addListener(() {
       setState(() {});
@@ -696,6 +759,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                         widget.isEdit ? selectedBuilding : null,
                                     onChanged: (value) {
                                       selectedBuilding = value;
+                                      selectedFloor = null;
+                                      initFloorList();
+                                      setState(() {});
                                     },
                                   ),
                                 ),
@@ -710,7 +776,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   child: BlackDropdown(
                                     focusNode: floorNode,
                                     items: floorItems(floorList),
-                                    enabled: true,
+                                    enabled:
+                                        selectedBuilding == "" ? false : true,
                                     customHeights:
                                         _getCustomItemsHeights(floorList),
                                     hintText: 'Choose',
@@ -1293,142 +1360,194 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                       TransparentButtonBlack(
                         text: 'Cancel',
                         disabled: false,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).pop(false);
+                        },
                         padding: ButtonSize().smallSize(),
                       ),
                       const SizedBox(
                         width: 10,
                       ),
-                      RegularButton(
-                        text: 'Confirm',
-                        disabled: false,
-                        onTap: () {
-                          if (formKey.currentState!.validate()) {
-                            formKey.currentState!.save();
+                      isLoading
+                          ? const CircularProgressIndicator(
+                              color: eerieBlack,
+                            )
+                          : RegularButton(
+                              text: 'Confirm',
+                              disabled: false,
+                              onTap: () {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                if (formKey.currentState!.validate()) {
+                                  formKey.currentState!.save();
 
-                            Room room = Room();
-                            List areaPhotoValue = [];
-                            List selectedProhibited = [];
-                            List<Amenities> selectedDefaultFacilities = [];
+                                  Room room = Room();
+                                  List areaPhotoValue = [];
+                                  List selectedProhibited = [];
+                                  List<Amenities> selectedDefaultFacilities =
+                                      [];
 
-                            room.roomName = areaName;
-                            room.roomAlias = areaAlias;
-                            room.availability = availabilityValue;
-                            room.buildingId = selectedBuilding;
-                            room.floorId = selectedFloor;
-                            room.roomType = selectedType;
-                            // room.defaultFacilities = defaultFacility;
-                            room.minCapacity = minCapacity;
-                            room.maxCapacity = maxCapacity;
-                            room.maxBookingDuration = maxDuration;
-                            // room.prohibitedFacilities = prohibitedFacility;
-                            room.coverPhoto = coverPhotoBase64;
-                            // room.areaPhoto = areaPhoto;
+                                  room.roomName = areaName;
+                                  room.roomAlias = areaAlias;
+                                  room.availability = availabilityValue;
+                                  room.buildingId = selectedBuilding;
+                                  room.floorId = selectedFloor!;
+                                  room.roomType = selectedType;
+                                  // room.defaultFacilities = defaultFacility;
+                                  room.minCapacity = minCapacity;
+                                  room.maxCapacity = maxCapacity;
+                                  room.maxBookingDuration = maxDuration;
+                                  // room.prohibitedFacilities = prohibitedFacility;
+                                  room.coverPhoto = coverPhotoBase64;
+                                  // room.areaPhoto = areaPhoto;
 
-                            for (var element in defaultFacility) {
-                              if (element.amenitiesId != "0") {
-                                selectedDefaultFacilities.add(element);
-                              }
-                            }
-                            for (var element in prohibitedFacility) {
-                              if (element.amenitiesId != "0") {
-                                selectedProhibited
-                                    .add('"${element.amenitiesId}"');
-                              }
-                            }
-                            for (var element in areaPhoto) {
-                              if (element['isLast'] != true) {
-                                if (widget.isEdit) {
-                                  areaPhotoValue.add(
-                                      {'"Photo"': '"${element['base64']}"'});
-                                } else {
-                                  areaPhotoValue.add('"${element['base64']}"');
+                                  for (var element in defaultFacility) {
+                                    if (element.amenitiesId != "0") {
+                                      selectedDefaultFacilities.add(element);
+                                    }
+                                  }
+                                  for (var element in prohibitedFacility) {
+                                    if (element.amenitiesId != "0") {
+                                      selectedProhibited
+                                          .add('"${element.amenitiesId}"');
+                                    }
+                                  }
+                                  for (var element in areaPhoto) {
+                                    if (element['isLast'] != true) {
+                                      if (widget.isEdit) {
+                                        areaPhotoValue.add({
+                                          '"Photo"': '"${element['base64']}"'
+                                        });
+                                      } else {
+                                        areaPhotoValue
+                                            .add('"${element['base64']}"');
+                                      }
+                                    }
+                                  }
+                                  room.defaultFacilities =
+                                      selectedDefaultFacilities;
+                                  room.prohibitedFacilities =
+                                      selectedProhibited;
+                                  room.areaPhoto = areaPhotoValue;
+                                  // print("AREA PHOTO --> $areaPhotoValue");
+                                  if (widget.isEdit) {
+                                    room.roomId = widget.roomId;
+                                    print(room.toJson());
+                                    apiReq.editRoom(room).then((value) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      print(value);
+                                      if (value['Status'].toString() == "200") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: true,
+                                          ),
+                                        ).then((value) {
+                                          widget.resetState!();
+                                          Navigator.of(context).pop();
+                                        });
+                                      } else if (value['Status'].toString() ==
+                                          "401") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              TokenExpiredDialog(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
+                                      }
+                                    }).onError((error, stackTrace) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: 'Error addNewRoom',
+                                          contentText: error.toString(),
+                                          isSuccess: false,
+                                        ),
+                                      );
+                                    });
+                                  } else {
+                                    apiReq.addNewRoom(room).then((value) {
+                                      // print(value);
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      if (value['Status'].toString() == "200") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: true,
+                                          ),
+                                        ).then((value) {
+                                          widget.resetState!();
+                                          Navigator.of(context).pop(true);
+                                        });
+                                      } else if (value['Status'].toString() ==
+                                          "401") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              TokenExpiredDialog(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
+                                      }
+                                    }).onError((error, stackTrace) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: 'Error addNewRoom',
+                                          contentText: error.toString(),
+                                          isSuccess: false,
+                                        ),
+                                      );
+                                    });
+                                  }
+
+                                  // print(room.toJson());
                                 }
-                              }
-                            }
-                            room.defaultFacilities = selectedDefaultFacilities;
-                            room.prohibitedFacilities = selectedProhibited;
-                            room.areaPhoto = areaPhotoValue;
-                            // print("AREA PHOTO --> $areaPhotoValue");
-                            if (widget.isEdit) {
-                              room.roomId = widget.roomId;
-                              print(room.toJson());
-                              apiReq.editRoom(room).then((value) {
-                                print(value);
-                                if (value['Status'].toString() == "200") {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialogBlack(
-                                      title: value['Title'],
-                                      contentText: value['Message'],
-                                      isSuccess: true,
-                                    ),
-                                  ).then((value) {
-                                    widget.resetState!();
-                                    Navigator.of(context).pop();
-                                  });
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialogBlack(
-                                      title: value['Title'],
-                                      contentText: value['Message'],
-                                      isSuccess: false,
-                                    ),
-                                  );
-                                }
-                              }).onError((error, stackTrace) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogBlack(
-                                    title: 'Error addNewRoom',
-                                    contentText: error.toString(),
-                                    isSuccess: false,
-                                  ),
-                                );
-                              });
-                            } else {
-                              apiReq.addNewRoom(room).then((value) {
-                                print(value);
-                                if (value['Status'].toString() == "200") {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialogBlack(
-                                      title: value['Title'],
-                                      contentText: value['Message'],
-                                      isSuccess: true,
-                                    ),
-                                  ).then((value) {
-                                    widget.resetState!();
-                                    Navigator.of(context).pop();
-                                  });
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialogBlack(
-                                      title: value['Title'],
-                                      contentText: value['Message'],
-                                      isSuccess: false,
-                                    ),
-                                  );
-                                }
-                              }).onError((error, stackTrace) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogBlack(
-                                    title: 'Error addNewRoom',
-                                    contentText: error.toString(),
-                                    isSuccess: false,
-                                  ),
-                                );
-                              });
-                            }
-
-                            // print(room.toJson());
-                          }
-                        },
-                        padding: ButtonSize().smallSize(),
-                      ),
+                              },
+                              padding: ButtonSize().smallSize(),
+                            ),
                     ],
                   ),
                 ],

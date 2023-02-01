@@ -255,6 +255,15 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
             isShowDetail = true;
           }
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         setState(() {
           isLoadingGetDetail = false;
@@ -267,6 +276,9 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
     }).onError((error, stackTrace) {
       showDialog(
@@ -312,6 +324,15 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
             isShowDetail = true;
           }
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         setState(() {
           isLoadingGetDetail = false;
@@ -324,6 +345,9 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
     }).onError((error, stackTrace) {
       showDialog(

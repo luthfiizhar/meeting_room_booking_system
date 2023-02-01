@@ -224,17 +224,17 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
         // );
         // String code = "";
         // html.window.onMessage.listen((event) async {});
-        context.goNamed('home');
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => LoginPopUp(
-            resetState: resetState,
-            updateLogin: updateAfterLogin,
-          ),
-        ).then((value) {
-          resetState();
-        });
+        // context.go('/login');
+        // showDialog(
+        //   context: context,
+        //   barrierDismissible: false,
+        //   builder: (context) => LoginPopUp(
+        //     resetState: resetState,
+        //     updateLogin: updateAfterLogin,
+        //   ),
+        // ).then((value) {
+        //   resetState();
+        // });
         // showDialog(
         //   context: context,
         //   barrierDismissible: false,
@@ -245,7 +245,18 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
         // ).then((value) {
         //   resetState();
         // });
-        context.goNamed('home');
+        // context.goNamed('home');
+        if (value['Status'].toString() == "401") {
+          showDialog(
+            context: context,
+            builder: (context) => TokenExpiredDialog(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
+          // context.go('/login');
+        }
       }
     }).onError((error, stackTrace) {
       showDialog(

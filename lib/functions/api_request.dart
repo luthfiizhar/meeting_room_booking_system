@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/main.dart';
+import 'package:meeting_room_booking_system/model/amenities_class.dart';
 import 'package:meeting_room_booking_system/model/booking_class.dart';
 import 'package:http/http.dart' as http;
 import 'package:meeting_room_booking_system/model/room.dart';
@@ -348,6 +349,71 @@ class ReqAPI {
     };
     try {
       var response = await http.get(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future addFacilities(Amenities facilities) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/amenities');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+      "AmenitiesName" : "${facilities.amenitiesName}",
+      "Type" : "${facilities.type}",
+      "Option" : ${facilities.isAvailableToUser},
+      "Photo" : "${facilities.photo}"
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future updateFacility(Amenities facilities) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/amenities');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+      "AmenitiesID" : "${facilities.amenitiesId}",
+      "AmenitiesName" : "${facilities.amenitiesName}",
+      "Type" : "${facilities.type}",
+      "Option" : ${facilities.isAvailableToUser},
+      "Photo" : "${facilities.photo}"
+    }
+    """;
+    try {
+      var response =
+          await http.put(url, headers: requestHeader, body: bodySend);
 
       var data = json.decode(response.body);
 
@@ -1008,12 +1074,12 @@ class ReqAPI {
     }
   }
 
-  Future getFloorListDropdown() async {
+  Future getFloorListDropdown(String buildingId) async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
-    var url = Uri.https(
-        apiUrlGlobal, '/MRBS_Backend/public/api/admin/area/dropdown/1');
+    var url = Uri.https(apiUrlGlobal,
+        '/MRBS_Backend/public/api/admin/area/dropdown/$buildingId');
     Map<String, String> requestHeader = {
       'Authorization': 'Bearer $jwt',
       // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
@@ -1046,7 +1112,9 @@ class ReqAPI {
     {
         "Keywords": "${searchTerm.keyWords}",
         "MaxRecord": "${searchTerm.max}",
-        "PageNumber": "${searchTerm.pageNumber}"
+        "PageNumber": "${searchTerm.pageNumber}",
+        "SortBy": "${searchTerm.orderBy}",
+        "SortOrder": "${searchTerm.orderDir}"
     }
   """;
     try {
@@ -1161,6 +1229,29 @@ class ReqAPI {
     }
   }
 
+  Future getAmenitiesType() async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(
+        apiUrlGlobal, '/MRBS_Backend/public/api/admin/amenities-type');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      var response = await http.get(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   Future getFacilitiesTableList(SearchTerm body) async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
@@ -1180,7 +1271,7 @@ class ReqAPI {
       "PageNumber": "${body.pageNumber}"
     }
     """;
-    // print(bodySend);
+    print(bodySend);
     try {
       var response =
           await http.post(url, headers: requestHeader, body: bodySend);
@@ -1713,6 +1804,27 @@ class ReqAPI {
     }
   }
 
+  Future deleteFacilities(String facilitiesId) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(
+        apiUrlGlobal, '/MRBS_Backend/public/api/admin/amenities/$facilitiesId');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.delete(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   Future deleteFloor(String floorId) async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
@@ -1791,6 +1903,65 @@ class ReqAPI {
     }
   }
 
+  Future updateUserAdmin(UserAdmin userAdmin) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/user-edit');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+        "NIP" : "${userAdmin.nip}",
+        "Name" : "${userAdmin.name}",
+        "CountryCode" : "${userAdmin.phoneCode}",
+        "PhoneNumber" : "${userAdmin.phoneNumber}",
+        "BuildingID" : "${userAdmin.buildingId}",
+        "Role" : ${userAdmin.roleList},
+        "Email" : "${userAdmin.email}"
+    }
+    """;
+    try {
+      var response = await http.put(
+        url,
+        headers: requestHeader,
+        body: bodySend,
+      );
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future deleteUserAdmin(String nip) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/user/$nip');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      var response = await http.delete(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   Future getEventSettings() async {
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
@@ -1841,6 +2012,34 @@ class ReqAPI {
     try {
       var response =
           await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future setCapacityArea(List<Room> room) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/room/capacity');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+      "Rooms": $room
+    }
+    """;
+    try {
+      var response =
+          await http.put(url, headers: requestHeader, body: bodySend);
 
       var data = json.decode(response.body);
 

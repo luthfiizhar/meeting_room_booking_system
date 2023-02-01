@@ -197,6 +197,15 @@ class _RoomsPageState extends State<RoomsPage> {
             isShowDetail = true;
           }
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -391,6 +400,15 @@ class _RoomsPageState extends State<RoomsPage> {
         //     .then((value) {
         //   assignDataToCalendar(value['Data']);
         // });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -854,7 +872,7 @@ class _RoomsPageState extends State<RoomsPage> {
               width: isShowDetail ? 30 : 60,
             ),
             SizedBox(
-              width: 170,
+              width: 180,
               child: WhiteDropdown(
                 focusNode: areaNode,
                 customHeights: _getCustomItemsHeights(areaList),

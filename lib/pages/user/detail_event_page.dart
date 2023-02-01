@@ -160,6 +160,15 @@ class _DetailEventPageState extends State<DetailEventPage> {
 
           selectedDate = value['Data']['BookingDateOriginal'];
         });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         setState(() {
           isInitLoading = false;
@@ -172,6 +181,9 @@ class _DetailEventPageState extends State<DetailEventPage> {
             isSuccess: false,
           ),
         );
+        if (value['Status'].toString() == "401") {
+          context.go('/login');
+        }
       }
       apiReq.getUserProfile().then((value) {
         print(value);
@@ -236,6 +248,15 @@ class _DetailEventPageState extends State<DetailEventPage> {
               }
             });
           }
+        } else if (value['Status'].toString() == "401") {
+          showDialog(
+            context: context,
+            builder: (context) => TokenExpiredDialog(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
         }
       }).onError((error, stackTrace) {
         showDialog(

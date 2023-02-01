@@ -398,6 +398,15 @@ class _SearchPageState extends State<SearchPage> {
             isAccSyncToGoogle = false;
           });
         }
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         if (status == "401") {
           showDialog(
@@ -454,6 +463,15 @@ class _SearchPageState extends State<SearchPage> {
         });
         // print(submitFilter);
         // print(listFilter);
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -500,6 +518,15 @@ class _SearchPageState extends State<SearchPage> {
             });
           }
         }
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,

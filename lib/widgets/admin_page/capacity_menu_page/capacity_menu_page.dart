@@ -74,14 +74,17 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
         }
       }
       searchTerm.orderBy = orderBy;
+      print("SearchTerm ---> $searchTerm");
       updateList();
     });
   }
 
   Future updateList() {
+    areaList.clear();
     roomList.clear();
+    setState(() {});
     return apiReq.getRoomList(searchTerm).then((value) {
-      print(value);
+      // print(value);
       if (value['Status'].toString() == "200") {
         areaList = value['Data']['List'];
         totalResult = value['Data']['TotalRows'];
@@ -109,6 +112,15 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
         // countPagination(value['Data']['TotalRows']);
         // showedPage = availablePage.take(5).toList();
         setState(() {});
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -144,7 +156,8 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    searchTerm.orderBy = "FloorName";
+    searchTerm.orderBy = "AreaName";
+    searchTerm.orderDir = "ASC";
     updateList().then((value) {
       countPagination(totalResult);
     });
@@ -264,13 +277,38 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
             Expanded(
               child: InkWell(
                 onTap: () {
-                  onTapHeader("AreaName");
+                  onTapHeader("RoomName");
                 },
                 child: Row(
                   children: [
                     Expanded(
                       child: Text(
                         'Area Name',
+                        style: helveticaText.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: davysGray,
+                        ),
+                      ),
+                    ),
+                    iconSort("RoomName"),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  onTapHeader("AreaName");
+                },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Floor',
                         style: helveticaText.copyWith(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -289,32 +327,7 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
             Expanded(
               child: InkWell(
                 onTap: () {
-                  onTapHeader("Floor");
-                },
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Floor',
-                        style: helveticaText.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: davysGray,
-                        ),
-                      ),
-                    ),
-                    iconSort("Floor"),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  onTapHeader("Building");
+                  onTapHeader("BuildingName");
                 },
                 child: Row(
                   children: [
@@ -328,7 +341,7 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                         ),
                       ),
                     ),
-                    iconSort("Building"),
+                    iconSort("BuildingName"),
                     const SizedBox(
                       width: 20,
                     ),
@@ -386,9 +399,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                 ),
               ),
             ),
-            const SizedBox(
-              width: 20,
-            ),
+            // const SizedBox(
+            //   width: 20,
+            // ),
           ],
         ),
         //HEADER END
@@ -691,7 +704,57 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
             RegularButton(
               text: 'Save',
               disabled: false,
-              onTap: () {},
+              onTap: () {
+                List<Room> setRoom = [];
+                for (var element in roomList) {
+                  setRoom.add(Room(
+                    roomId: element.room!.roomId,
+                    maxCapacity: element._maxCapacity.text,
+                    minCapacity: element._minCapacity.text,
+                  ));
+                }
+                apiReq.setCapacityArea(setRoom).then((value) {
+                  if (value['Status'].toString() == "200") {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialogBlack(
+                        title: value['Title'],
+                        contentText: value['Message'],
+                      ),
+                    ).then((value) {
+                      updateList().then((value) {
+                        countPagination(totalResult);
+                      });
+                    });
+                  } else if (value['Status'].toString() == "401") {
+                    showDialog(
+                      context: context,
+                      builder: (context) => TokenExpiredDialog(
+                        title: value['Title'],
+                        contentText: value['Message'],
+                        isSuccess: false,
+                      ),
+                    );
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialogBlack(
+                        title: value['Title'],
+                        contentText: value['Message'],
+                        isSuccess: false,
+                      ),
+                    );
+                  }
+                }).onError((error, stackTrace) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialogBlack(
+                      title: "Error setCapacityRoom",
+                      contentText: error.toString(),
+                    ),
+                  );
+                });
+              },
               padding: ButtonSize().mediumSize(),
             ),
           ],
@@ -852,22 +915,22 @@ class _AreaCapacityListContainerState extends State<AreaCapacityListContainer> {
                         enabled: true,
                       ),
                     ),
-                    const Expanded(
-                      child: SizedBox(
-                        width: 10,
-                      ),
-                    ),
+                    // const Expanded(
+                    //   child: SizedBox(
+                    //     width: 10,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
-              const SizedBox(
-                width: 20,
-                child: Icon(
-                  Icons.close,
-                  size: 18,
-                  color: davysGray,
-                ),
-              )
+              // const SizedBox(
+              //   width: 20,
+              //   child: Icon(
+              //     Icons.close,
+              //     size: 18,
+              //     color: davysGray,
+              //   ),
+              // )
             ],
           ),
         ),

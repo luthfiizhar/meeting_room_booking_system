@@ -134,6 +134,15 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
         // countPagination(value['Data']['TotalRows']);
         totalResult = value['Data']['TotalRows'];
         setState(() {});
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -160,6 +169,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
   void initState() {
     super.initState();
     // room.clear();
+    searchTerm.orderDir = "ASC";
     updateList().then((value) {
       countPagination(totalResult);
     });
@@ -769,7 +779,8 @@ class _AreaListContainerState extends State<AreaListContainer> {
               ),
             ],
           ),
-          Expanded(
+          SizedBox(
+            width: 300,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
