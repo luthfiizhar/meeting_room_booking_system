@@ -118,6 +118,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
             roomId: element['RoomID'] ?? "",
             roomName: element['RoomName'] ?? "",
             roomType: element['RoomType'] ?? "",
+            roomAlias: element['RoomAlias'] ?? "",
             buildingName: element['SiteLocation'] ?? "",
             floorName: element['AreaName'] ?? "",
             minCapacity: element['MinCapacity'].toString(),
@@ -312,6 +313,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
             roomType: room[index].roomType,
             maxCapacity: room[index].maxCapacity,
             minCapacity: room[index].minCapacity,
+            roomAlias: room[index].roomAlias,
             floor: room[index].floorName,
             building: room[index].buildingName,
             maxDuration: room[index].maxBookingDuration,
@@ -604,6 +606,7 @@ class AreaListContainer extends StatefulWidget {
     super.key,
     this.idRoom = "",
     this.roomName = "",
+    this.roomAlias = "",
     this.roomType = "",
     this.building = "",
     this.floor = "",
@@ -625,6 +628,7 @@ class AreaListContainer extends StatefulWidget {
   String idRoom;
   String roomName;
   String roomType;
+  String roomAlias;
   String floor;
   String building;
   String minCapacity;
@@ -891,6 +895,7 @@ class _AreaListContainerState extends State<AreaListContainer> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       detailInfo('Room Name: ', widget.roomName),
+                      detailInfo('Room Alias: ', widget.roomAlias),
                       detailInfo('Building: ', widget.building),
                       detailInfo('Floor: ', widget.floor),
                       detailInfo('Type: ', widget.roomType),
