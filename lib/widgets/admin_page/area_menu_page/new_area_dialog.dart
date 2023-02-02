@@ -6,6 +6,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
@@ -41,6 +42,7 @@ class NewAreaDialog extends StatefulWidget {
 class _NewAreaDialogState extends State<NewAreaDialog> {
   ReqAPI apiReq = ReqAPI();
   final formKey = GlobalKey<FormState>();
+  ScrollController scrollController = ScrollController();
   TextEditingController _areaName = TextEditingController();
   TextEditingController _areaAlias = TextEditingController();
   TextEditingController _minCapacity = TextEditingController();
@@ -677,6 +679,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
             color: white,
           ),
           child: SingleChildScrollView(
+            controller: scrollController,
             child: Form(
               key: formKey,
               child: Column(
@@ -838,6 +841,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   },
                                   validator: (value) =>
                                       value == "" ? "Required" : null,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                 ),
                               ),
                             ),
@@ -858,6 +864,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   },
                                   validator: (value) =>
                                       value == "" ? "Required" : null,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                 ),
                               ),
                             ),
@@ -878,6 +887,9 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   },
                                   validator: (value) =>
                                       value == "" ? "Required" : null,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                 ),
                               ),
                             ),
@@ -1373,7 +1385,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                               text: 'Confirm',
                               disabled: false,
                               onTap: () {
-                                if (formKey.currentState!.validate()) {
+                                if (formKey.currentState!.validate() &&
+                                    coverPhotoBase64 != "") {
                                   formKey.currentState!.save();
                                   setState(() {
                                     isLoading = true;
@@ -1540,6 +1553,24 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   }
 
                                   // print(room.toJson());
+                                }
+                                {
+                                  scrollController.animateTo(
+                                    0,
+                                    duration: const Duration(milliseconds: 500),
+                                    curve: Curves.linear,
+                                  );
+                                  if (coverPhotoBase64 == "") {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          const AlertDialogBlack(
+                                        title: 'Failed',
+                                        contentText: 'Cover Photo is required.',
+                                        isSuccess: false,
+                                      ),
+                                    );
+                                  }
                                 }
                               },
                               padding: ButtonSize().smallSize(),
