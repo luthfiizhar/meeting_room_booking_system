@@ -1007,8 +1007,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       // print('test');
       // if (roomType != "MeetingRoom") {
       if (scrollController.offset >
-          scrollController.position.maxScrollExtent - 50) {
-        scrollController.jumpTo(scrollController.position.maxScrollExtent - 50);
+          scrollController.position.maxScrollExtent - 75) {
+        scrollController.jumpTo(scrollController.position.maxScrollExtent - 75);
       }
       // }
     });

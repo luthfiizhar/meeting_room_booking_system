@@ -41,7 +41,7 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
         minHeight: 450,
         minWidth: 500,
         maxWidth: 500,
-        maxHeight: 480,
+        maxHeight: 515,
       ),
       child: Material(
         color: Colors.transparent,
