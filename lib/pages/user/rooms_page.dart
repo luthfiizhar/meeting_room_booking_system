@@ -1290,6 +1290,7 @@ class _RoomsPageState extends State<RoomsPage> {
           children: [
             Text(
               roomName,
+              textAlign: TextAlign.center,
               style: helveticaText.copyWith(
                 fontWeight: FontWeight.w400,
                 color: culturedWhite,
@@ -1301,6 +1302,7 @@ class _RoomsPageState extends State<RoomsPage> {
             ),
             Text(
               capacity,
+              textAlign: TextAlign.center,
               style: helveticaText.copyWith(
                 fontWeight: FontWeight.w300,
                 color: culturedWhite,
