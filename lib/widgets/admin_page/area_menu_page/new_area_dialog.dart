@@ -837,9 +837,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   onSaved: (newValue) {
                                     minCapacity = newValue.toString();
                                   },
-                                  validator: (value) => value == ""
-                                      ? "This field is required"
-                                      : null,
+                                  validator: (value) =>
+                                      value == "" ? "Required" : null,
                                 ),
                               ),
                             ),
@@ -858,9 +857,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   onSaved: (newValue) {
                                     maxCapacity = newValue.toString();
                                   },
-                                  validator: (value) => value == ""
-                                      ? "This field is required"
-                                      : null,
+                                  validator: (value) =>
+                                      value == "" ? "Required" : null,
                                 ),
                               ),
                             ),
@@ -879,9 +877,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   onSaved: (newValue) {
                                     maxDuration = newValue.toString();
                                   },
-                                  validator: (value) => value == ""
-                                      ? "This field is required"
-                                      : null,
+                                  validator: (value) =>
+                                      value == "" ? "Required" : null,
                                 ),
                               ),
                             ),
@@ -902,6 +899,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                       onChanged: (value) {
                                         setState(() {
                                           availabilityValue = value;
+                                          print(availabilityValue);
                                         });
                                       },
                                     );
@@ -1376,12 +1374,11 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                               text: 'Confirm',
                               disabled: false,
                               onTap: () {
-                                setState(() {
-                                  isLoading = true;
-                                });
                                 if (formKey.currentState!.validate()) {
                                   formKey.currentState!.save();
-
+                                  setState(() {
+                                    isLoading = true;
+                                  });
                                   Room room = Room();
                                   List areaPhotoValue = [];
                                   List selectedProhibited = [];
