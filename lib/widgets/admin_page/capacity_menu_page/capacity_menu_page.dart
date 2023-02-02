@@ -75,7 +75,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
       }
       searchTerm.orderBy = orderBy;
       print("SearchTerm ---> $searchTerm");
-      updateList();
+      updateList().then((value) {
+        setState(() {});
+      });
     });
   }
 
@@ -458,7 +460,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                       onChanged: (value) {
                         setState(() {
                           searchTerm.max = value!.toString();
-                          updateList();
+                          updateList().then((value) {
+                            countPagination(totalResult);
+                          });
                         });
                       },
                       value: searchTerm.max,
@@ -508,7 +512,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                               searchTerm.pageNumber =
                                   currentPaginatedPage.toString();
 
-                              updateList();
+                              updateList().then((value) {
+                                setState(() {});
+                              });
                             });
                           }
                         : null,
@@ -572,7 +578,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                                         });
                                         searchTerm.pageNumber =
                                             currentPaginatedPage.toString();
-                                        updateList();
+                                        updateList().then((value) {
+                                          setState(() {});
+                                        });
                                       },
                                 child: Container(
                                   width: 35,
@@ -656,7 +664,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                               searchTerm.pageNumber =
                                   currentPaginatedPage.toString();
 
-                              updateList();
+                              updateList().then((value) {
+                                setState(() {});
+                              });
                             });
                           }
                         : null,

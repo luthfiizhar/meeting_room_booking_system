@@ -635,7 +635,6 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _areaName.dispose();
     _minCapacity.dispose();

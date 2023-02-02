@@ -79,10 +79,10 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
         element.isCollapsed = false;
       }
       if (!room[index].isCollapsed) {
-        print('if false');
+        // print('if false');
         room[index].isCollapsed = true;
       } else if (room[index].isCollapsed) {
-        print('if true');
+        // print('if true');
         room[index].isCollapsed = false;
       }
     });
@@ -412,7 +412,9 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                             searchTerm.pageNumber =
                                 currentPaginatedPage.toString();
                             room.clear();
-                            updateList().then((value) {});
+                            updateList().then((value) {
+                              setState(() {});
+                            });
                             // getMyBookingList(searchTerm)
                             //     .then((value) {
                             //   myBookList = value['Data']['List'];
@@ -483,7 +485,9 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                                       searchTerm.pageNumber =
                                           currentPaginatedPage.toString();
                                       room.clear();
-                                      updateList().then((value) {});
+                                      updateList().then((value) {
+                                        setState(() {});
+                                      });
                                     },
                               child: Container(
                                 width: 35,
@@ -567,7 +571,9 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                             searchTerm.pageNumber =
                                 currentPaginatedPage.toString();
                             room.clear();
-                            updateList().then((value) {});
+                            updateList().then((value) {
+                              setState(() {});
+                            });
                             // getMyBookingList(searchTerm)
                             //     .then((value) {
                             //   myBookList = value['Data']['List'];
@@ -672,8 +678,8 @@ class _AreaListContainerState extends State<AreaListContainer> {
   @override
   void dispose() {
     super.dispose();
-    facilityScrollController.dispose();
-    prohibitedScrollController.dispose();
+    // facilityScrollController.dispose();
+    // prohibitedScrollController.dispose();
   }
 
   @override
