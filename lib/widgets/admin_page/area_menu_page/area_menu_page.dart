@@ -765,8 +765,11 @@ class _AreaListContainerState extends State<AreaListContainer> {
               ),
               SizedBox(
                 width: 250,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Wrap(
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  direction: Axis.vertical,
+                  alignment: WrapAlignment.start,
+                  spacing: 10,
                   children: [
                     Text(
                       widget.roomName,
@@ -776,6 +779,9 @@ class _AreaListContainerState extends State<AreaListContainer> {
                         color: davysGray,
                       ),
                     ),
+                    // const SizedBox(
+                    //   width: 15,
+                    // ),
                     Text(
                       widget.roomType,
                       style: helveticaText.copyWith(

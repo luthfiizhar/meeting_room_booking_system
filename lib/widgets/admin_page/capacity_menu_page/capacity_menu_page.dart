@@ -889,16 +889,34 @@ class _AreaCapacityListContainerState extends State<AreaCapacityListContainer> {
               Expanded(
                 child: Text(
                   widget.room!.roomName,
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: davysGray,
+                    height: 1.3,
+                  ),
                 ),
               ),
               Expanded(
                 child: Text(
                   widget.room!.floorName,
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: davysGray,
+                    height: 1.3,
+                  ),
                 ),
               ),
               Expanded(
                 child: Text(
                   widget.room!.buildingName,
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: davysGray,
+                    height: 1.3,
+                  ),
                 ),
               ),
               Expanded(
