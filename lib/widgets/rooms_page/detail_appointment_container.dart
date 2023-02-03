@@ -497,7 +497,7 @@ class _DetailAppointmentContainerState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 125,
+          width: 85,
           child: Text(
             label,
             style: helveticaText.copyWith(
@@ -549,7 +549,7 @@ class _DetailAppointmentContainerState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 125,
+          width: 85,
           child: Text(
             label,
             style: helveticaText.copyWith(

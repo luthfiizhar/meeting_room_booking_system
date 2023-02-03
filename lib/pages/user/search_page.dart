@@ -785,6 +785,12 @@ class _SearchPageState extends State<SearchPage> {
       hourEnd = hourEnd + 1;
       minuteEnd = 0;
     }
+    if (hourEnd >= 19) {
+      hourEnd = 19;
+      if (minuteEnd > 0) {
+        minuteEnd = 0;
+      }
+    }
 
     endTime =
         "${hourEnd.toString().padLeft(2, '0')}:${minuteEnd.toString().padLeft(2, '0')}";
