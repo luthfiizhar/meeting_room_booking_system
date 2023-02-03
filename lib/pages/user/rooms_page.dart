@@ -848,19 +848,22 @@ class _RoomsPageState extends State<RoomsPage> {
                 height: 1.3,
               ),
             ),
-            const Expanded(
-              child: SizedBox(),
+            Expanded(
+              child: Wrap(
+                alignment: WrapAlignment.end,
+                direction: Axis.horizontal,
+                // direction: isShowDetail ? Axis.vertical : Axis.horizontal,
+                // spacing: isShowDetail ? 10 : 30,
+                spacing: 30,
+                runSpacing: 10,
+                children: [
+                  legends(davysGray, 'Internal'),
+                  legends(yellowAccent, 'External'),
+                ],
+              ),
             ),
-            Wrap(
-              direction: isShowDetail ? Axis.vertical : Axis.horizontal,
-              spacing: isShowDetail ? 10 : 30,
-              children: [
-                legends(davysGray, 'Internal'),
-                legends(yellowAccent, 'External'),
-              ],
-            ),
-            SizedBox(
-              width: isShowDetail ? 30 : 60,
+            const SizedBox(
+              width: 30,
             ),
             SizedBox(
               width: 180,
@@ -1369,8 +1372,10 @@ class _RoomsPageState extends State<RoomsPage> {
   }
 
   Widget legends(Color color, String label) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return Wrap(
+      // alignment: WrapAlignment.end,
+      // runAlignment: WrapAlignment.end,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Container(
           width: 15,
