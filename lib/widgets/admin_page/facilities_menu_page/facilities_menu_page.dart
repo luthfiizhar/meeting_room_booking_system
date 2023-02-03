@@ -78,6 +78,7 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
               photo: element['ImageURL'],
               typeName: element['AmenitiesType'],
               isAvailableToUser: element['Options'],
+              category: element['Category'] ?? "",
             ),
           );
         }
@@ -161,9 +162,11 @@ class _FacilitiesMenuPageState extends State<FacilitiesMenuPage> {
                     isEdit: false,
                   ),
                 ).then((value) {
-                  updateList().then((value) {
-                    countPagination(totalResult);
-                  });
+                  if (value) {
+                    updateList().then((value) {
+                      countPagination(totalResult);
+                    });
+                  }
                 });
               },
               child: SizedBox(
@@ -697,7 +700,9 @@ class FacilitiesListContainer extends StatelessWidget {
                                 amenities: facility,
                               ),
                             ).then((value) {
-                              resetState!();
+                              if (value) {
+                                resetState!();
+                              }
                             });
                           },
                           child: const Icon(

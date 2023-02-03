@@ -9,6 +9,7 @@ class Amenities {
     this.roomAmenitiesId = "",
     this.type = "",
     this.typeName = "",
+    this.category = "",
     this.isAvailableToUser = true,
   });
 
@@ -21,6 +22,7 @@ class Amenities {
   String? roomAmenitiesId;
   String? type;
   String? typeName;
+  String? category;
   bool? isAvailableToUser;
 
   Amenities.fromJSon(Map<String, dynamic> json)
@@ -34,7 +36,8 @@ class Amenities {
         '"ImageURL"': '"$photo"',
         '"DefaultAmount"': '"$defaultAmount"',
         '"isProhibited"': '$isProhibited',
-        '"RoomAmenitiesID"': '"$roomAmenitiesId"'
+        '"RoomAmenitiesID"': '"$roomAmenitiesId"',
+        '"Category"': '"$category"'
       };
 
   @override

@@ -36,6 +36,7 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
   ReqAPI apiReq = ReqAPI();
   final formKey = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
+  ScrollController scrollController = ScrollController();
 
   FocusNode nameNode = FocusNode();
   FocusNode typeNode = FocusNode();
@@ -43,10 +44,13 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
   String id = "";
   String name = "";
   String typeValue = "UTILITIES";
+  String categoryValue = "";
   String itemPhoto = "";
   bool isAvailableToUser = false;
 
   List itemTypes = [];
+  List<FacilityCategory> categoryList = [];
+  bool isLoading = false;
 
   String urlImage = "";
   bool emptyImage = true;
@@ -143,7 +147,47 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
             isSuccess: false,
           ),
         );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+          ),
+        );
       }
+    });
+  }
+
+  Future initFacilityCategory() {
+    return apiReq.getFacilityCategory().then((value) {
+      if (value['Status'].toString() == "200") {
+        List categoryResult = value['Data'];
+        for (var element in categoryResult) {
+          categoryList.add(FacilityCategory(
+            name: element['Name'],
+            value: element['Value'],
+            isSelected: false,
+          ));
+        }
+        setState(() {});
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: "Error getFacilityCategory",
+          contentText: error.toString(),
+        ),
+      );
     });
   }
 
@@ -154,7 +198,25 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
     typeValue = widget.amenities!.type!;
     isAvailableToUser = widget.amenities!.isAvailableToUser!;
     urlImage = widget.amenities!.photo!;
-    isAvailableToUser = widget.amenities!.isAvailableToUser!;
+    List<String> resCategories = widget.amenities!.category!.split(",");
+    List<FacilityCategory> tempCategories = [];
+    for (var element in resCategories) {
+      tempCategories.add(
+        FacilityCategory(
+          name: element,
+          value: element,
+          isSelected: true,
+        ),
+      );
+    }
+
+    for (var element in tempCategories) {
+      for (var element2 in categoryList) {
+        if (element2.value == element.value) {
+          element2.isSelected = true;
+        }
+      }
+    }
     setState(() {});
   }
 
@@ -162,9 +224,11 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
   void initState() {
     super.initState();
     initFacilitiesType().then((value) {
-      if (widget.isEdit) {
-        initDataEdit();
-      }
+      initFacilityCategory().then((value) {
+        if (widget.isEdit) {
+          initDataEdit();
+        }
+      });
     });
 
     nameNode.addListener(() {
@@ -200,264 +264,338 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
           minHeight: 490,
           maxHeight: 500,
         ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 30,
-            horizontal: 35,
-          ),
-          child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Add New Facilities',
-                  style: helveticaText.copyWith(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: eerieBlack,
-                  ),
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                inputField(
-                  'Name',
-                  Expanded(
-                    child: BlackInputField(
-                      controller: _name,
-                      enabled: true,
-                      focusNode: nameNode,
-                      hintText: 'Name here...',
-                      validator: (value) =>
-                          value == "" ? "Name is required" : null,
-                      onSaved: (newValue) {
-                        name = newValue.toString();
-                      },
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 30,
+              horizontal: 35,
+            ),
+            child: Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Add New Facilities',
+                    style: helveticaText.copyWith(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: eerieBlack,
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                inputField(
-                  'Type',
-                  SizedBox(
-                    width: 250,
-                    child: BlackDropdown(
-                      focusNode: typeNode,
-                      items: itemTypeDropdown(itemTypes),
-                      customHeights: _getCustomItemsHeights(itemTypes),
-                      hintText: 'Choose',
-                      value: widget.isEdit ? typeValue : null,
-                      onChanged: (value) {
-                        typeValue = value;
-                      },
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  inputField(
+                    'Name',
+                    Expanded(
+                      child: BlackInputField(
+                        controller: _name,
+                        enabled: true,
+                        focusNode: nameNode,
+                        hintText: 'Name here...',
+                        validator: (value) =>
+                            value == "" ? "Name is required" : null,
+                        onSaved: (newValue) {
+                          name = newValue.toString();
+                        },
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                inputField(
-                  'Option',
-                  SizedBox(
-                    width: 250,
-                    child: BlackCheckBox(
-                      selectedValue: isAvailableToUser,
-                      onChanged: (value) {
-                        if (isAvailableToUser) {
-                          isAvailableToUser = false;
-                        } else {
-                          isAvailableToUser = true;
-                        }
-                        setState(() {});
-                      },
-                      filled: true,
-                      label: 'Available to User',
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  inputField(
+                    'Type',
+                    SizedBox(
+                      width: 250,
+                      child: BlackDropdown(
+                        focusNode: typeNode,
+                        items: itemTypeDropdown(itemTypes),
+                        customHeights: _getCustomItemsHeights(itemTypes),
+                        hintText: 'Choose',
+                        value: widget.isEdit ? typeValue : null,
+                        onChanged: (value) {
+                          typeValue = value;
+                        },
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                inputFieldPhoto(
-                  'Item Photo',
-                  urlImage == ""
-                      ? InkWell(
-                          onTap: () {
-                            getImage();
-                          },
-                          child: SizedBox(
-                            width: 250,
-                            height: 150,
-                            child: DottedBorder(
-                              dashPattern: [10, 4],
-                              radius: Radius.circular(5),
-                              strokeCap: StrokeCap.round,
-                              child: Container(
-                                width: 250,
-                                height: 150,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.add_circle_outline_sharp,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      'Add Item Photo',
-                                      style: helveticaText.copyWith(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w300,
-                                        color: spanishGray,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      : urlImage.startsWith('data')
-                          ? Container(
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  inputField(
+                    'Option',
+                    SizedBox(
+                      width: 250,
+                      child: BlackCheckBox(
+                        selectedValue: isAvailableToUser,
+                        onChanged: (value) {
+                          if (isAvailableToUser) {
+                            isAvailableToUser = false;
+                          } else {
+                            isAvailableToUser = true;
+                          }
+                          setState(() {});
+                        },
+                        filled: true,
+                        label: 'Available to User',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  inputField(
+                    'Category',
+                    SizedBox(
+                      // width: 250,
+                      child: Wrap(
+                        spacing: 15,
+                        children: categoryList.map((e) {
+                          return BlackCheckBox(
+                            selectedValue: e.isSelected,
+                            filled: true,
+                            label: e.name,
+                            onChanged: (value) {
+                              if (e.isSelected) {
+                                e.isSelected = false;
+                              } else {
+                                e.isSelected = true;
+                              }
+                              setState(() {});
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  inputFieldPhoto(
+                    'Item Photo',
+                    urlImage == ""
+                        ? InkWell(
+                            onTap: () {
+                              getImage();
+                            },
+                            child: SizedBox(
                               width: 250,
                               height: 150,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                  image: MemoryImage(
-                                    Base64Decoder()
-                                        .convert(urlImage.split(',').last),
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            )
-                          : CachedNetworkImage(
-                              imageUrl: urlImage,
-                              imageBuilder: (context, imageProvider) {
-                                return Container(
+                              child: DottedBorder(
+                                dashPattern: [10, 4],
+                                radius: Radius.circular(5),
+                                strokeCap: StrokeCap.round,
+                                child: Container(
                                   width: 250,
                                   height: 150,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
-                                    ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.add_circle_outline_sharp,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Add Item Photo',
+                                        style: helveticaText.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w300,
+                                          color: spanishGray,
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                );
-                              },
+                                ),
+                              ),
                             ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TransparentButtonBlack(
-                      text: 'Cancel',
-                      disabled: false,
-                      padding: ButtonSize().mediumSize(),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    RegularButton(
-                      text: 'Confirm',
-                      disabled: false,
-                      padding: ButtonSize().mediumSize(),
-                      onTap: () {
-                        if (formKey.currentState!.validate()) {
-                          formKey.currentState!.save();
-                          Amenities addFacilitiesData = Amenities();
-                          addFacilitiesData.amenitiesName = name;
-                          addFacilitiesData.type = typeValue;
-                          addFacilitiesData.photo = urlImage;
-                          addFacilitiesData.isAvailableToUser =
-                              isAvailableToUser;
-                          if (widget.isEdit) {
-                            addFacilitiesData.amenitiesId = id;
-                            apiReq
-                                .updateFacility(addFacilitiesData)
-                                .then((value) {
-                              if (value['Status'].toString() == "200") {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogBlack(
-                                    title: value['Title'],
-                                    contentText: value['Message'],
+                          )
+                        : urlImage.startsWith('data')
+                            ? Container(
+                                width: 250,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                    image: MemoryImage(
+                                      Base64Decoder()
+                                          .convert(urlImage.split(',').last),
+                                    ),
+                                    fit: BoxFit.cover,
                                   ),
-                                ).then((value) {
-                                  Navigator.of(context).pop();
-                                });
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogBlack(
-                                    title: value['Title'],
-                                    contentText: value['Message'],
-                                    isSuccess: false,
-                                  ),
-                                );
-                              }
-                            }).onError((error, stackTrace) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialogBlack(
-                                  title: "Error addFacilities",
-                                  contentText: error.toString(),
                                 ),
-                              );
-                            });
-                          } else {
-                            apiReq
-                                .addFacilities(addFacilitiesData)
-                                .then((value) {
-                              if (value['Status'].toString() == "200") {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogBlack(
-                                    title: value['Title'],
-                                    contentText: value['Message'],
-                                  ),
-                                ).then((value) {
-                                  Navigator.of(context).pop();
-                                });
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogBlack(
-                                    title: value['Title'],
-                                    contentText: value['Message'],
-                                    isSuccess: false,
-                                  ),
-                                );
-                              }
-                            }).onError((error, stackTrace) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialogBlack(
-                                  title: "Error addFacilities",
-                                  contentText: error.toString(),
-                                ),
-                              );
-                            });
-                          }
-                        }
-                      },
-                    )
-                  ],
-                )
-              ],
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: urlImage,
+                                imageBuilder: (context, imageProvider) {
+                                  return Container(
+                                    width: 250,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TransparentButtonBlack(
+                        text: 'Cancel',
+                        disabled: false,
+                        padding: ButtonSize().mediumSize(),
+                        onTap: () {
+                          Navigator.of(context).pop(false);
+                        },
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      isLoading
+                          ? const SizedBox(
+                              child: CircularProgressIndicator(
+                                color: eerieBlack,
+                              ),
+                            )
+                          : RegularButton(
+                              text: 'Confirm',
+                              disabled: false,
+                              padding: ButtonSize().mediumSize(),
+                              onTap: () {
+                                if (formKey.currentState!.validate() &&
+                                    urlImage != "") {
+                                  formKey.currentState!.save();
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  Amenities addFacilitiesData = Amenities();
+                                  addFacilitiesData.amenitiesName = name;
+                                  addFacilitiesData.type = typeValue;
+                                  addFacilitiesData.photo = urlImage;
+                                  addFacilitiesData.isAvailableToUser =
+                                      isAvailableToUser;
+
+                                  List categoriesTempList = [];
+                                  for (var element in categoryList
+                                      .where((element) => element.isSelected)
+                                      .toList()) {
+                                    categoriesTempList.add(element.value);
+                                  }
+                                  addFacilitiesData.category =
+                                      categoriesTempList.join(",");
+                                  if (widget.isEdit) {
+                                    addFacilitiesData.amenitiesId = id;
+                                    apiReq
+                                        .updateFacility(addFacilitiesData)
+                                        .then((value) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      if (value['Status'].toString() == "200") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        ).then((value) {
+                                          Navigator.of(context).pop(true);
+                                        });
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
+                                      }
+                                    }).onError((error, stackTrace) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: "Error addFacilities",
+                                          contentText: error.toString(),
+                                        ),
+                                      );
+                                    });
+                                  } else {
+                                    apiReq
+                                        .addFacilities(addFacilitiesData)
+                                        .then((value) {
+                                      if (value['Status'].toString() == "200") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        ).then((value) {
+                                          Navigator.of(context).pop(true);
+                                        });
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
+                                      }
+                                    }).onError((error, stackTrace) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: "Error addFacilities",
+                                          contentText: error.toString(),
+                                        ),
+                                      );
+                                    });
+                                  }
+                                } else {
+                                  scrollController.animateTo(
+                                    0,
+                                    duration: const Duration(milliseconds: 500),
+                                    curve: Curves.linear,
+                                  );
+                                  if (urlImage == "") {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          const AlertDialogBlack(
+                                        title: "Failed",
+                                        contentText: "Photo is required.",
+                                        isSuccess: false,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                            )
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -511,5 +649,24 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
         widget,
       ],
     );
+  }
+}
+
+class FacilityCategory {
+  FacilityCategory({
+    this.name = "",
+    this.value = "",
+    this.isSelected = false,
+  });
+  String name;
+  String value;
+  bool isSelected;
+
+  Map<String, dynamic> toJson() =>
+      {'"name"': '"$name"', '"value"': '"$value"', '"isSelected"': isSelected};
+
+  @override
+  String toString() {
+    return toJson().toString();
   }
 }
