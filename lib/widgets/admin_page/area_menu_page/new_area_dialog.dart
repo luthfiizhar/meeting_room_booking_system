@@ -562,6 +562,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                 amenitiesId: element['AmenitiesID'].toString(),
                 amenitiesName: element['AmenitiesName'],
                 photo: element['ImageURL'],
+                isProhibited: true,
               ),
             );
           }
@@ -1755,15 +1756,7 @@ class _SelectFacilityDialogAdminState extends State<SelectFacilityDialogAdmin> {
 
   List<Amenities> selectedAmen = [];
 
-  @override
-  void initState() {
-    super.initState();
-
-    // getAmenitiesList(widget.roomId!).then((value) {
-    //   // print(value);
-    //   setState(() {
-    //     listAmen = value['Data'];
-    print(widget.listAmen!);
+  Future setListAmen() async {
     for (var element in widget.listAmen!) {
       amenities.add(
         Amenities(
@@ -1774,6 +1767,28 @@ class _SelectFacilityDialogAdminState extends State<SelectFacilityDialogAdmin> {
         ),
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // getAmenitiesList(widget.roomId!).then((value) {
+    //   // print(value);
+    //   setState(() {
+    //     listAmen = value['Data'];
+    print("PROHIBITED --> ${widget.prohibitedList!}");
+    setListAmen().then((value) {
+      for (var element in amenities) {
+        for (var element2 in widget.prohibitedList!) {
+          if (element.amenitiesId == element2.amenitiesId &&
+              element2.isProhibited! == true) {
+            amenities.removeWhere((e) => e.amenitiesId == element.amenitiesId);
+          }
+        }
+      }
+      setState(() {});
+    });
 
     //     print(amenities.toString());
     //   });
