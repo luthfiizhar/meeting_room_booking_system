@@ -1077,7 +1077,6 @@ class _RoomsPageState extends State<RoomsPage> {
                             .toString()
                             .substring(11, 16),
                         'participant': '0',
-                        'facilities': '[]',
                         'roomType': 'MeetingRoom',
                         'isEdit': 'false'
                       },

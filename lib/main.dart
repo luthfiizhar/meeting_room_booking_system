@@ -189,7 +189,7 @@ class MyApp extends StatelessWidget {
           GoRoute(
             name: 'booking_search',
             path:
-                'booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType&isEdit=:isEdit',
+                'booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&type=:roomType&isEdit=:isEdit',
             // 'booking/isEdit=:isEdit',
             pageBuilder: (context, state) {
               return NoTransitionPage<void>(
@@ -201,7 +201,7 @@ class MyApp extends StatelessWidget {
                     startTime: state.params['startTime'],
                     endTime: state.params['endTime'],
                     participant: state.params['participant'],
-                    facilities: state.params['facilities'],
+                    // facilities: state.params['facilities'],
                     roomType: state.params['roomType'],
                     isEdit: state.params['isEdit']!,
                     queryParameter: state.queryParams,
@@ -231,7 +231,7 @@ class MyApp extends StatelessWidget {
           GoRoute(
               name: 'booking_rooms',
               path:
-                  'booking_rooms/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType&isEdit=:isEdit',
+                  'booking_rooms/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&type=:roomType&isEdit=:isEdit',
               pageBuilder: (context, state) {
                 dynamic edit = state.queryParams;
                 return NoTransitionPage<void>(
@@ -242,7 +242,6 @@ class MyApp extends StatelessWidget {
                     startTime: state.params['startTime'],
                     endTime: state.params['endTime'],
                     participant: state.params['participant'],
-                    facilities: state.params['facilities'],
                     roomType: state.params['roomType'],
                     isEdit: state.params['isEdit']!,
                     edit: edit,
@@ -275,7 +274,7 @@ class MyApp extends StatelessWidget {
       GoRoute(
           name: 'booking',
           path:
-              '/booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&facilities=:facilities&type=:roomType&isEdit=:isEdit',
+              '/booking/roomId=:roomId&date=:date&startTime=:startTime&endTime=:endTime&participant=:participant&type=:roomType&isEdit=:isEdit',
           pageBuilder: (context, state) {
             dynamic edit = state.queryParams;
             return NoTransitionPage<void>(
@@ -286,7 +285,7 @@ class MyApp extends StatelessWidget {
                 startTime: state.params['startTime'],
                 endTime: state.params['endTime'],
                 participant: state.params['participant'],
-                facilities: state.params['facilities'],
+                // facilities: state.params['facilities'],
                 roomType: state.params['roomType'],
                 isEdit: state.params['isEdit']!,
                 edit: edit,
