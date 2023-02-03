@@ -374,6 +374,7 @@ class ReqAPI {
     {
       "AmenitiesName" : "${facilities.amenitiesName}",
       "Type" : "${facilities.type}",
+      "Category" : "${facilities.category}",
       "Option" : ${facilities.isAvailableToUser},
       "Photo" : "${facilities.photo}"
     }
@@ -381,6 +382,29 @@ class ReqAPI {
     try {
       var response =
           await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future getFacilityCategory() async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(
+        apiUrlGlobal, '/MRBS_Backend/public/api/admin/amenities-category');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      var response = await http.get(url, headers: requestHeader);
 
       var data = json.decode(response.body);
 
@@ -406,6 +430,7 @@ class ReqAPI {
     {
       "AmenitiesID" : "${facilities.amenitiesId}",
       "AmenitiesName" : "${facilities.amenitiesName}",
+      "Category" : "${facilities.category}",
       "Type" : "${facilities.type}",
       "Option" : ${facilities.isAvailableToUser},
       "Photo" : "${facilities.photo}"
