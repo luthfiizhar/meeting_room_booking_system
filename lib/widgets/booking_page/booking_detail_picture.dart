@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -9,12 +10,16 @@ class BookingRoomPicture extends StatefulWidget {
     this.pictures,
     this.name,
     this.area,
+    this.minCapacity = "",
+    this.maxCapacity = "",
     this.pictNotFound = true,
   });
 
   List? pictures;
   String? name;
   String? area;
+  String? minCapacity;
+  String? maxCapacity;
   bool pictNotFound = false;
 
   @override
@@ -36,7 +41,7 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
         minHeight: 450,
         minWidth: 500,
         maxWidth: 500,
-        maxHeight: 470,
+        maxHeight: 515,
       ),
       child: Material(
         color: Colors.transparent,
@@ -193,15 +198,42 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                 // softWrap: true,
               ),
               const SizedBox(
-                height: 10,
+                height: 12,
               ),
-              Text(
-                widget.area!,
-                style: const TextStyle(
-                  fontFamily: 'Helvetica',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w300,
-                ),
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.end,
+                spacing: 12,
+                children: [
+                  const Icon(MdiIcons.officeBuildingOutline),
+                  Text(
+                    widget.area!,
+                    style: const TextStyle(
+                      fontFamily: 'Helvetica',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 13,
+              ),
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.end,
+                spacing: 12,
+                children: [
+                  const Icon(
+                    Icons.people_alt_outlined,
+                  ),
+                  Text(
+                    "${widget.minCapacity} - ${widget.maxCapacity} Person",
+                    style: const TextStyle(
+                      fontFamily: 'Helvetica',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

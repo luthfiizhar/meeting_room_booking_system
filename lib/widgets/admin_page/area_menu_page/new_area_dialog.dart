@@ -6,6 +6,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
@@ -41,6 +42,7 @@ class NewAreaDialog extends StatefulWidget {
 class _NewAreaDialogState extends State<NewAreaDialog> {
   ReqAPI apiReq = ReqAPI();
   final formKey = GlobalKey<FormState>();
+  ScrollController scrollController = ScrollController();
   TextEditingController _areaName = TextEditingController();
   TextEditingController _areaAlias = TextEditingController();
   TextEditingController _minCapacity = TextEditingController();
@@ -492,21 +494,21 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
 
   removeProhibitedFacilites(int index) {
     setState(() {
-      // var id = prohibitedFacility.elementAt(index).amenitiesId;
-      // // print("ID --> $id");
-      // for (var i = 0; i < allAmenities.length; i++) {
-      //   if (allAmenities[i].amenitiesId == id) {
-      //     allAmenities[i].qty = 0;
-      //   }
-      // }
-      // defaultFacility.removeAt(index);
+      var id = prohibitedFacility.elementAt(index).amenitiesId;
+      // print("ID --> $id");
+      for (var i = 0; i < prohibitedFacility.length; i++) {
+        if (prohibitedFacility[i].amenitiesId == id) {
+          prohibitedFacility[i].isProhibited = false;
+        }
+      }
+      prohibitedFacility.removeAt(index);
     });
   }
 
   Future initDataEdit() {
     return apiReq.adminRoomDetail(widget.roomId).then((value) {
       print("DEFAULT --> ${value['Data']['DefaultAmenities']}");
-      // print("PROHIBITED --> ${value['Data']['ForbiddenAmenities']}");
+      print("PROHIBITED --> ${value['Data']['ForbiddenAmenities']}");
       if (value['Status'].toString() == "200") {
         roomId = value['Data']['RoomID'];
         areaName = value['Data']['RoomName'];
@@ -560,6 +562,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                 amenitiesId: element['AmenitiesID'].toString(),
                 amenitiesName: element['AmenitiesName'],
                 photo: element['ImageURL'],
+                isProhibited: true,
               ),
             );
           }
@@ -635,7 +638,6 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _areaName.dispose();
     _minCapacity.dispose();
@@ -678,6 +680,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
             color: white,
           ),
           child: SingleChildScrollView(
+            controller: scrollController,
             child: Form(
               key: formKey,
               child: Column(
@@ -837,9 +840,11 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   onSaved: (newValue) {
                                     minCapacity = newValue.toString();
                                   },
-                                  validator: (value) => value == ""
-                                      ? "This field is required"
-                                      : null,
+                                  validator: (value) =>
+                                      value == "" ? "Required" : null,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                 ),
                               ),
                             ),
@@ -858,9 +863,11 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   onSaved: (newValue) {
                                     maxCapacity = newValue.toString();
                                   },
-                                  validator: (value) => value == ""
-                                      ? "This field is required"
-                                      : null,
+                                  validator: (value) =>
+                                      value == "" ? "Required" : null,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                 ),
                               ),
                             ),
@@ -879,9 +886,11 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   onSaved: (newValue) {
                                     maxDuration = newValue.toString();
                                   },
-                                  validator: (value) => value == ""
-                                      ? "This field is required"
-                                      : null,
+                                  validator: (value) =>
+                                      value == "" ? "Required" : null,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                 ),
                               ),
                             ),
@@ -902,6 +911,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                       onChanged: (value) {
                                         setState(() {
                                           availabilityValue = value;
+                                          print(availabilityValue);
                                         });
                                       },
                                     );
@@ -1150,6 +1160,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                                       listAmen: allAmenities,
                                                       setListAmenities:
                                                           setListAmenities,
+                                                      prohibitedList:
+                                                          prohibitedFacility,
                                                     ),
                                                   );
                                                 },
@@ -1292,58 +1304,128 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                               Wrap(
                                 spacing: 15,
                                 runSpacing: 15,
-                                children: prohibitedFacility.map((e) {
-                                  if (e.amenitiesId == '0') {
-                                    return InkWell(
-                                      onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              SelectProhibitedFacilityDialog(
-                                            listAmen: allProhibitedAmenities,
-                                            setListAmenities: setProhibitedList,
-                                          ),
-                                        );
-                                      },
-                                      child: DottedBorder(
-                                        borderType: BorderType.Rect,
-                                        radius: const Radius.circular(5),
-                                        dashPattern: const [10, 4, 10, 4],
-                                        child: SizedBox(
-                                          height: 165,
-                                          width: 125,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              const Icon(
-                                                MdiIcons.plusCircleOutline,
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Text(
-                                                'Add Facility',
-                                                style: helveticaText.copyWith(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w300,
-                                                  color: davysGray,
+                                children: prohibitedFacility
+                                    .asMap()
+                                    .map((index, e) => MapEntry(
+                                        index,
+                                        e.amenitiesId == '0'
+                                            ? InkWell(
+                                                onTap: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        SelectProhibitedFacilityDialog(
+                                                      listAmen:
+                                                          allProhibitedAmenities,
+                                                      setListAmenities:
+                                                          setProhibitedList,
+                                                    ),
+                                                  );
+                                                },
+                                                child: DottedBorder(
+                                                  borderType: BorderType.Rect,
+                                                  radius:
+                                                      const Radius.circular(5),
+                                                  dashPattern: const [
+                                                    10,
+                                                    4,
+                                                    10,
+                                                    4
+                                                  ],
+                                                  child: SizedBox(
+                                                    height: 165,
+                                                    width: 125,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        const Icon(
+                                                          MdiIcons
+                                                              .plusCircleOutline,
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Text(
+                                                          'Add Facility',
+                                                          style: helveticaText
+                                                              .copyWith(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.w300,
+                                                            color: davysGray,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
                                               )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return ProhibitedFacilityItemContainer(
-                                      image: e.photo!,
-                                      name: e.amenitiesName!,
-                                    );
-                                  }
-                                }).toList(),
+                                            : ProhibitedFacilityItemContainer(
+                                                image: e.photo!,
+                                                name: e.amenitiesName!,
+                                                index: index,
+                                                remove:
+                                                    removeProhibitedFacilites,
+                                              )))
+                                    .values
+                                    .toList(),
+                                // children: prohibitedFacility.map((e) {
+                                //   if (e.amenitiesId == '0') {
+                                //     return InkWell(
+                                //       onTap: () {
+                                //         showDialog(
+                                //           context: context,
+                                //           builder: (context) =>
+                                //               SelectProhibitedFacilityDialog(
+                                //             listAmen: allProhibitedAmenities,
+                                //             setListAmenities: setProhibitedList,
+                                //           ),
+                                //         );
+                                //       },
+                                //       child: DottedBorder(
+                                //         borderType: BorderType.Rect,
+                                //         radius: const Radius.circular(5),
+                                //         dashPattern: const [10, 4, 10, 4],
+                                //         child: SizedBox(
+                                //           height: 165,
+                                //           width: 125,
+                                //           child: Column(
+                                //             crossAxisAlignment:
+                                //                 CrossAxisAlignment.center,
+                                //             mainAxisAlignment:
+                                //                 MainAxisAlignment.center,
+                                //             children: [
+                                //               const Icon(
+                                //                 MdiIcons.plusCircleOutline,
+                                //               ),
+                                //               const SizedBox(
+                                //                 height: 10,
+                                //               ),
+                                //               Text(
+                                //                 'Add Facility',
+                                //                 style: helveticaText.copyWith(
+                                //                   fontSize: 16,
+                                //                   fontWeight: FontWeight.w300,
+                                //                   color: davysGray,
+                                //                 ),
+                                //               )
+                                //             ],
+                                //           ),
+                                //         ),
+                                //       ),
+                                //     );
+                                //   } else {
+                                //     return ProhibitedFacilityItemContainer(
+                                //       image: e.photo!,
+                                //       name: e.amenitiesName!,
+                                //     );
+                                //   }
+                                // }).toList(),
                               ),
                             ],
                           ),
@@ -1376,12 +1458,12 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                               text: 'Confirm',
                               disabled: false,
                               onTap: () {
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                if (formKey.currentState!.validate()) {
+                                if (formKey.currentState!.validate() &&
+                                    coverPhotoBase64 != "") {
                                   formKey.currentState!.save();
-
+                                  setState(() {
+                                    isLoading = true;
+                                  });
                                   Room room = Room();
                                   List areaPhotoValue = [];
                                   List selectedProhibited = [];
@@ -1544,6 +1626,23 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   }
 
                                   // print(room.toJson());
+                                } else {
+                                  scrollController.animateTo(
+                                    0,
+                                    duration: const Duration(milliseconds: 500),
+                                    curve: Curves.linear,
+                                  );
+                                  if (coverPhotoBase64 == "") {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          const AlertDialogBlack(
+                                        title: 'Failed',
+                                        contentText: 'Cover Photo is required.',
+                                        isSuccess: false,
+                                      ),
+                                    );
+                                  }
                                 }
                               },
                               padding: ButtonSize().smallSize(),
@@ -1638,11 +1737,13 @@ class SelectFacilityDialogAdmin extends StatefulWidget {
     this.setListAmenities,
     this.roomId,
     this.listAmen,
+    this.prohibitedList,
   });
 
   Function? setListAmenities;
   String? roomId;
   List<Amenities>? listAmen;
+  List<Amenities>? prohibitedList;
 
   @override
   State<SelectFacilityDialogAdmin> createState() =>
@@ -1655,16 +1756,7 @@ class _SelectFacilityDialogAdminState extends State<SelectFacilityDialogAdmin> {
 
   List<Amenities> selectedAmen = [];
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    // getAmenitiesList(widget.roomId!).then((value) {
-    //   // print(value);
-    //   setState(() {
-    //     listAmen = value['Data'];
-    print(widget.listAmen!);
+  Future setListAmen() async {
     for (var element in widget.listAmen!) {
       amenities.add(
         Amenities(
@@ -1675,6 +1767,28 @@ class _SelectFacilityDialogAdminState extends State<SelectFacilityDialogAdmin> {
         ),
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // getAmenitiesList(widget.roomId!).then((value) {
+    //   // print(value);
+    //   setState(() {
+    //     listAmen = value['Data'];
+    print("PROHIBITED --> ${widget.prohibitedList!}");
+    setListAmen().then((value) {
+      for (var element in amenities) {
+        for (var element2 in widget.prohibitedList!) {
+          if (element.amenitiesId == element2.amenitiesId &&
+              element2.isProhibited! == true) {
+            amenities.removeWhere((e) => e.amenitiesId == element.amenitiesId);
+          }
+        }
+      }
+      setState(() {});
+    });
 
     //     print(amenities.toString());
     //   });
@@ -2127,59 +2241,142 @@ class _FacilityItemContainerState extends State<FacilityItemContainer> {
   }
 }
 
-class ProhibitedFacilityItemContainer extends StatelessWidget {
+class ProhibitedFacilityItemContainer extends StatefulWidget {
   ProhibitedFacilityItemContainer({
     super.key,
     this.name = "",
     this.image = "",
+    this.remove,
+    this.index = 0,
   });
 
+  int index;
   String name;
   String image;
+  Function? remove;
 
   @override
+  State<ProhibitedFacilityItemContainer> createState() =>
+      _ProhibitedFacilityItemContainerState();
+}
+
+class _ProhibitedFacilityItemContainerState
+    extends State<ProhibitedFacilityItemContainer> {
+  bool isHover = false;
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(7),
-      height: 165,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 100,
-            height: 80,
-            child: CachedNetworkImage(
-              imageUrl: image,
-              imageBuilder: (context, imageProvider) {
-                return Container(
-                  width: 100,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: Image(
-                        image: imageProvider,
-                      ).image,
-                      fit: BoxFit.contain,
+    return MouseRegion(
+      onEnter: (event) {
+        setState(() {
+          isHover = true;
+        });
+      },
+      onExit: (event) {
+        setState(() {
+          isHover = false;
+        });
+      },
+      child: SizedBox(
+        child: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(7),
+              height: 165,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    height: 80,
+                    child: CachedNetworkImage(
+                      imageUrl: widget.image,
+                      imageBuilder: (context, imageProvider) {
+                        return Container(
+                          width: 100,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: Image(
+                                image: imageProvider,
+                              ).image,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                );
-              },
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    widget.name,
+                    style: helveticaText.copyWith(
+                      fontSize: 14,
+                      color: eerieBlack,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Text(
-            name,
-            style: helveticaText.copyWith(
-              fontSize: 14,
-              color: eerieBlack,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ],
+            isHover
+                ? Positioned(
+                    top: 5,
+                    right: 5,
+                    child: InkWell(
+                      onTap: () {
+                        widget.remove!(widget.index);
+                      },
+                      child: Icon(Icons.close),
+                    ),
+                  )
+                : const SizedBox(),
+          ],
+        ),
       ),
     );
+    // return Container(
+    //   padding: const EdgeInsets.all(7),
+    //   height: 165,
+    //   child: Column(
+    //     mainAxisAlignment: MainAxisAlignment.start,
+    //     children: [
+    //       SizedBox(
+    //         width: 100,
+    //         height: 80,
+    //         child: CachedNetworkImage(
+    //           imageUrl: image,
+    //           imageBuilder: (context, imageProvider) {
+    //             return Container(
+    //               width: 100,
+    //               height: 80,
+    //               decoration: BoxDecoration(
+    //                 image: DecorationImage(
+    //                   image: Image(
+    //                     image: imageProvider,
+    //                   ).image,
+    //                   fit: BoxFit.contain,
+    //                 ),
+    //               ),
+    //             );
+    //           },
+    //         ),
+    //       ),
+    //       const SizedBox(
+    //         height: 15,
+    //       ),
+    //       Text(
+    //         name,
+    //         style: helveticaText.copyWith(
+    //           fontSize: 14,
+    //           color: eerieBlack,
+    //           fontWeight: FontWeight.w300,
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }
 

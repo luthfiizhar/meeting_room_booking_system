@@ -79,10 +79,10 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
         element.isCollapsed = false;
       }
       if (!room[index].isCollapsed) {
-        print('if false');
+        // print('if false');
         room[index].isCollapsed = true;
       } else if (room[index].isCollapsed) {
-        print('if true');
+        // print('if true');
         room[index].isCollapsed = false;
       }
     });
@@ -118,6 +118,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
             roomId: element['RoomID'] ?? "",
             roomName: element['RoomName'] ?? "",
             roomType: element['RoomType'] ?? "",
+            roomAlias: element['RoomAlias'] ?? "",
             buildingName: element['SiteLocation'] ?? "",
             floorName: element['AreaName'] ?? "",
             minCapacity: element['MinCapacity'].toString(),
@@ -312,6 +313,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
             roomType: room[index].roomType,
             maxCapacity: room[index].maxCapacity,
             minCapacity: room[index].minCapacity,
+            roomAlias: room[index].roomAlias,
             floor: room[index].floorName,
             building: room[index].buildingName,
             maxDuration: room[index].maxBookingDuration,
@@ -410,7 +412,9 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                             searchTerm.pageNumber =
                                 currentPaginatedPage.toString();
                             room.clear();
-                            updateList().then((value) {});
+                            updateList().then((value) {
+                              setState(() {});
+                            });
                             // getMyBookingList(searchTerm)
                             //     .then((value) {
                             //   myBookList = value['Data']['List'];
@@ -481,7 +485,9 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                                       searchTerm.pageNumber =
                                           currentPaginatedPage.toString();
                                       room.clear();
-                                      updateList().then((value) {});
+                                      updateList().then((value) {
+                                        setState(() {});
+                                      });
                                     },
                               child: Container(
                                 width: 35,
@@ -565,7 +571,9 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
                             searchTerm.pageNumber =
                                 currentPaginatedPage.toString();
                             room.clear();
-                            updateList().then((value) {});
+                            updateList().then((value) {
+                              setState(() {});
+                            });
                             // getMyBookingList(searchTerm)
                             //     .then((value) {
                             //   myBookList = value['Data']['List'];
@@ -604,6 +612,7 @@ class AreaListContainer extends StatefulWidget {
     super.key,
     this.idRoom = "",
     this.roomName = "",
+    this.roomAlias = "",
     this.roomType = "",
     this.building = "",
     this.floor = "",
@@ -625,6 +634,7 @@ class AreaListContainer extends StatefulWidget {
   String idRoom;
   String roomName;
   String roomType;
+  String roomAlias;
   String floor;
   String building;
   String minCapacity;
@@ -668,8 +678,8 @@ class _AreaListContainerState extends State<AreaListContainer> {
   @override
   void dispose() {
     super.dispose();
-    facilityScrollController.dispose();
-    prohibitedScrollController.dispose();
+    // facilityScrollController.dispose();
+    // prohibitedScrollController.dispose();
   }
 
   @override
@@ -755,8 +765,11 @@ class _AreaListContainerState extends State<AreaListContainer> {
               ),
               SizedBox(
                 width: 250,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Wrap(
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  direction: Axis.vertical,
+                  alignment: WrapAlignment.start,
+                  spacing: 10,
                   children: [
                     Text(
                       widget.roomName,
@@ -766,6 +779,9 @@ class _AreaListContainerState extends State<AreaListContainer> {
                         color: davysGray,
                       ),
                     ),
+                    // const SizedBox(
+                    //   width: 15,
+                    // ),
                     Text(
                       widget.roomType,
                       style: helveticaText.copyWith(
@@ -891,6 +907,7 @@ class _AreaListContainerState extends State<AreaListContainer> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       detailInfo('Room Name: ', widget.roomName),
+                      detailInfo('Room Alias: ', widget.roomAlias),
                       detailInfo('Building: ', widget.building),
                       detailInfo('Floor: ', widget.floor),
                       detailInfo('Type: ', widget.roomType),

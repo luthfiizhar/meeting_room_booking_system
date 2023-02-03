@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
@@ -75,7 +76,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
       }
       searchTerm.orderBy = orderBy;
       print("SearchTerm ---> $searchTerm");
-      updateList();
+      updateList().then((value) {
+        setState(() {});
+      });
     });
   }
 
@@ -458,7 +461,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                       onChanged: (value) {
                         setState(() {
                           searchTerm.max = value!.toString();
-                          updateList();
+                          updateList().then((value) {
+                            countPagination(totalResult);
+                          });
                         });
                       },
                       value: searchTerm.max,
@@ -508,7 +513,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                               searchTerm.pageNumber =
                                   currentPaginatedPage.toString();
 
-                              updateList();
+                              updateList().then((value) {
+                                setState(() {});
+                              });
                             });
                           }
                         : null,
@@ -572,7 +579,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                                         });
                                         searchTerm.pageNumber =
                                             currentPaginatedPage.toString();
-                                        updateList();
+                                        updateList().then((value) {
+                                          setState(() {});
+                                        });
                                       },
                                 child: Container(
                                   width: 35,
@@ -656,7 +665,9 @@ class _CapacityMenuPageState extends State<CapacityMenuPage> {
                               searchTerm.pageNumber =
                                   currentPaginatedPage.toString();
 
-                              updateList();
+                              updateList().then((value) {
+                                setState(() {});
+                              });
                             });
                           }
                         : null,
@@ -878,16 +889,34 @@ class _AreaCapacityListContainerState extends State<AreaCapacityListContainer> {
               Expanded(
                 child: Text(
                   widget.room!.roomName,
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: davysGray,
+                    height: 1.3,
+                  ),
                 ),
               ),
               Expanded(
                 child: Text(
                   widget.room!.floorName,
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: davysGray,
+                    height: 1.3,
+                  ),
                 ),
               ),
               Expanded(
                 child: Text(
                   widget.room!.buildingName,
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: davysGray,
+                    height: 1.3,
+                  ),
                 ),
               ),
               Expanded(
@@ -899,6 +928,9 @@ class _AreaCapacityListContainerState extends State<AreaCapacityListContainer> {
                         controller: widget._minCapacity,
                         focusNode: widget.minCapacityNode,
                         enabled: true,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
                       ),
                     ),
                   ],
@@ -913,6 +945,9 @@ class _AreaCapacityListContainerState extends State<AreaCapacityListContainer> {
                         controller: widget._maxCapacity,
                         focusNode: widget.maxCapacityNode,
                         enabled: true,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
                       ),
                     ),
                     // const Expanded(

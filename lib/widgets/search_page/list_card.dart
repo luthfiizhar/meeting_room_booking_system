@@ -50,10 +50,9 @@ class ListRoomContainer extends StatelessWidget {
       amen = "None";
     } else {
       if (amenities!.length > 1) {
-        amen =
-            "${amenities![0]['AmenitiesName']} & ${amenities![1]['AmenitiesName']}";
+        amen = "${amenities![0]['Category']} & ${amenities![1]['Category']}";
       } else {
-        amen = amenities!.first['AmenitiesName'].toString();
+        amen = amenities!.first['Category'].toString();
       }
     }
 
@@ -288,7 +287,6 @@ class ListRoomContainer extends StatelessWidget {
                       'startTime': '$selectedStartTime',
                       'endTime': '$selectedEndTime',
                       'participant': '$participantSelected',
-                      'facilities': '$amenities',
                       'roomType': '$roomType',
                       'isEdit': 'false'
                     },

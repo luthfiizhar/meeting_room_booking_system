@@ -468,6 +468,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       hourEnd = hourEnd + 1;
       minuteEnd = 0;
     }
+    if (hourEnd >= 19) {
+      hourEnd = 19;
+      if (minuteEnd > 0) {
+        minuteEnd = 0;
+      }
+    }
 
     endTime =
         "${hourEnd.toString().padLeft(2, '0')}:${minuteEnd.toString().padLeft(2, '0')}";
@@ -923,7 +929,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           height: 30,
         ),
         Visibility(
-          visible: false,
+          visible: true,
           child: InkWell(
             onTap: () {
               // context.go('/gws');
