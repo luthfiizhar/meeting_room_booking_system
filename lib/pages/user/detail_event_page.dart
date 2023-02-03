@@ -498,7 +498,6 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                   'endTime': endTime,
                                                   'participant':
                                                       participantTotal,
-                                                  'facilities': "[]",
                                                   //tempAmenities.toString(),
                                                   'roomType': roomType,
                                                   'isEdit': 'true'
