@@ -834,7 +834,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     participantSelected = value;
     participantValue = valueDouble;
     _participantController.text = participantSelected;
-    participantOverlayEntry!.remove();
+    participantOverlayEntry!.markNeedsBuild();
+    // participantOverlayEntry!.remove();
     // setOpacityOn(false);
     setState(() {});
   }
