@@ -39,8 +39,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   GlobalKey datePickerKey = GlobalKey();
+  GlobalKey timeFieldkey = GlobalKey();
+  GlobalKey selectTimePickerKey = GlobalKey();
+  GlobalKey participantKey = GlobalKey();
+  GlobalKey facilityKey = GlobalKey();
+  GlobalKey roomTypeKey = GlobalKey();
+  // GlobalKey searchContainerKey = GlobalKey();
   LayerLink datePickerLayerLink = LayerLink();
+  LayerLink timeFieldLayerLink = LayerLink();
+  LayerLink selectTimePickerLayerLink = LayerLink();
+  LayerLink participantLayerLink = LayerLink();
+  LayerLink facilityLayerLink = LayerLink();
+  LayerLink roomTypeLayerLink = LayerLink();
+
   OverlayEntry? datePickerOverlayEntry;
+  OverlayEntry? selectTimeOverlayEntry;
+  OverlayEntry? startTimeOverlayEntry;
+  OverlayEntry? endTimeOverlayEntry;
+  OverlayEntry? participantOverlayEntry;
+  OverlayEntry? facilityOverlayEntry;
+  OverlayEntry? roomTypeOverlayEntry;
+  OverlayState? overlayState = OverlayState();
+
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _facilityController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
@@ -304,6 +324,236 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ));
   }
 
+  OverlayEntry timePickerOverlay() {
+    RenderBox? renderBox =
+        timeFieldkey.currentContext!.findRenderObject() as RenderBox?;
+    var size = renderBox!.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+
+    return OverlayEntry(
+        builder: (context) => Positioned(
+              width: 277,
+              child: CompositedTransformFollower(
+                showWhenUnlinked: false,
+                offset: Offset(0.0, size.height + 5.0),
+                link: timeFieldLayerLink,
+                child: Material(
+                  color: white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  elevation: 4.0,
+                  child: TimePickerContainer(
+                    // controller: datePickerControl,
+                    endTime: endTime,
+                    startTime: startTime,
+                    initialEndTime: endTime,
+                    endTimeStatus: endTimeContainerVisible,
+                    startTimeStatus: startTimeContainerVisible,
+                    isDark: true,
+                    selectedDate: selectedDate,
+                    setEndTimeStatus: setEndTimeStatus,
+                    setStartTimeStatus: setStartTimeStatus,
+                    setListEndTime: setListEndTime,
+                    setListStartTime: setListStartTime,
+                    setTime: setTime,
+                    setTimePickerStatus: setTimePickerStatus,
+                  ),
+                ),
+              ),
+            ));
+  }
+
+  OverlayEntry startTimeOverlay() {
+    RenderBox? renderBox =
+        timeFieldkey.currentContext!.findRenderObject() as RenderBox?;
+    var size = renderBox!.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+
+    return OverlayEntry(
+        builder: (context) => Positioned(
+              width: 85,
+              child: CompositedTransformFollower(
+                showWhenUnlinked: false,
+                offset: Offset(0.0, size.height + 115),
+                link: timeFieldLayerLink,
+                child: Material(
+                  color: white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  elevation: 4.0,
+                  child: StartTimeContainer(
+                    items: startTimeList,
+                    setStartTime: setStartTime,
+                    setStartTimeStatus: setStartTimeStatus,
+                    setInitialEndTime: setInitialEndTime,
+                  ),
+                ),
+              ),
+            ));
+  }
+
+  OverlayEntry endTimeOverlay() {
+    RenderBox? renderBox =
+        timeFieldkey.currentContext!.findRenderObject() as RenderBox?;
+    var size = renderBox!.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+
+    return OverlayEntry(
+        builder: (context) => Positioned(
+              width: 85,
+              child: CompositedTransformFollower(
+                showWhenUnlinked: false,
+                offset: Offset(175, size.height + 115),
+                link: timeFieldLayerLink,
+                child: Material(
+                  color: white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  elevation: 4.0,
+                  child: EndTimeContainer(
+                    items: endTimeList,
+                    setEndTime: setEndTime,
+                    setEndTimeStatus: setEndTimeStatus,
+                    startTime: startTime,
+                    setTime: setTime,
+                  ),
+                ),
+              ),
+            ));
+  }
+
+  OverlayEntry participantOverlay() {
+    RenderBox? renderBox =
+        participantKey.currentContext!.findRenderObject() as RenderBox?;
+    var size = renderBox!.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+
+    return OverlayEntry(
+        builder: (context) => Positioned(
+              width: 300,
+              child: CompositedTransformFollower(
+                showWhenUnlinked: false,
+                offset: Offset(0.0, size.height + 5.0),
+                link: participantLayerLink,
+                child: Material(
+                  color: white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  elevation: 4.0,
+                  child: ParticipantContainer(
+                    setParticipantStatus: setParticipantStatus,
+                    onChangeParticipant: onParticipanSelected,
+                    participantValue: participantValue,
+                  ),
+                ),
+              ),
+            ));
+  }
+
+  OverlayEntry facilityOverlay() {
+    RenderBox? renderBox =
+        facilityKey.currentContext!.findRenderObject() as RenderBox?;
+    var size = renderBox!.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+
+    return OverlayEntry(
+        builder: (context) => Positioned(
+              width: 150,
+              height: 100,
+              child: CompositedTransformFollower(
+                showWhenUnlinked: false,
+                offset: Offset(0.0, size.height + 5.0),
+                link: facilityLayerLink,
+                child: Material(
+                  color: white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  elevation: 4.0,
+                  child: AmenitiesContainer(
+                    tvOnChange: (value) {
+                      if (checkBoxTv) {
+                        checkBoxTv = false;
+                        facilitySelected
+                            .removeWhere((element) => element == 'TV');
+                      } else {
+                        checkBoxTv = true;
+                        facilitySelected.add('TV');
+                      }
+                      if (facilitySelected.isNotEmpty) {
+                        if (facilitySelected.length > 1) {
+                          _facilityController.text = "TV & Camera";
+                        } else if (facilitySelected.length == 1) {
+                          _facilityController.text =
+                              facilitySelected[0].toString();
+                        }
+                      } else {
+                        _facilityController.text = "None";
+                      }
+                      facilityOverlayEntry!.markNeedsBuild();
+                      // print(facilitySelected);
+                      setState(() {});
+                    },
+                    cameraOnChange: (value) {
+                      if (checkBoxCamera) {
+                        checkBoxCamera = false;
+                        facilitySelected
+                            .removeWhere((element) => element == 'Camera');
+                      } else {
+                        checkBoxCamera = true;
+                        facilitySelected.add('Camera');
+                      }
+                      if (facilitySelected.isNotEmpty) {
+                        if (facilitySelected.length > 1) {
+                          _facilityController.text = "TV & Camera";
+                        } else if (facilitySelected.length == 1) {
+                          _facilityController.text = facilitySelected[0];
+                        }
+                      } else {
+                        _facilityController.text = "None";
+                      }
+                      facilityOverlayEntry!.markNeedsBuild();
+                      // print(facilitySelected);
+
+                      setState(() {});
+                    },
+                    cameraValue: checkBoxCamera,
+                    tvValue: checkBoxTv,
+                  ),
+                ),
+              ),
+            ));
+  }
+
+  OverlayEntry roomTypeOverlay() {
+    RenderBox? renderBox =
+        roomTypeKey.currentContext!.findRenderObject() as RenderBox?;
+    var size = renderBox!.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+
+    return OverlayEntry(
+        builder: (context) => Positioned(
+              width: 550,
+              child: CompositedTransformFollower(
+                showWhenUnlinked: false,
+                offset: Offset(0.0, size.height + 5.0),
+                link: roomTypeLayerLink,
+                child: Material(
+                  color: white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  elevation: 4.0,
+                  child: RoomTypeContainerHomePage(
+                    changeRoomType: changeRoomType,
+                    setContainerStatus: setMeetingTypeContainerStatus,
+                    roomTypeList: roomTypeList,
+                    roomTypeName: roomTypeName,
+                    roomTypeValue: roomTypeValue,
+                  ),
+                ),
+              ),
+            ));
+  }
+
   @override
   void dispose() {
     // _controller.dispose();
@@ -343,9 +593,44 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     endTimeContainerVisible = value;
     meetingTypeContainerVisible = value;
     opacityOn = value;
-    // if (datePickerOverlayEntry!.mounted) {
-    //   datePickerOverlayEntry!.remove();
-    // }
+    setOpacityOn(value);
+
+    // Overlay.of(context)!.();
+    if (datePickerOverlayEntry != null) {
+      if (datePickerOverlayEntry!.mounted) {
+        datePickerOverlayEntry!.remove();
+      }
+    }
+    if (selectTimeOverlayEntry != null) {
+      if (selectTimeOverlayEntry!.mounted) {
+        selectTimeOverlayEntry!.remove();
+      }
+    }
+    if (participantOverlayEntry != null) {
+      if (participantOverlayEntry!.mounted) {
+        participantOverlayEntry!.remove();
+      }
+    }
+    if (facilityOverlayEntry != null) {
+      if (facilityOverlayEntry!.mounted) {
+        facilityOverlayEntry!.remove();
+      }
+    }
+    if (roomTypeOverlayEntry != null) {
+      if (roomTypeOverlayEntry!.mounted) {
+        roomTypeOverlayEntry!.remove();
+      }
+    }
+    if (startTimeOverlayEntry != null) {
+      if (startTimeOverlayEntry!.mounted) {
+        startTimeOverlayEntry!.remove();
+      }
+    }
+    if (endTimeOverlayEntry != null) {
+      if (endTimeOverlayEntry!.mounted) {
+        endTimeOverlayEntry!.remove();
+      }
+    }
 
     setState(() {});
   }
@@ -353,7 +638,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   setOpacityOn(bool value) {
     opacityOn = value;
     if (!value) {
-      datePickerOverlayEntry!.remove();
+      // datePickerOverlayEntry!.remove();
     }
     setState(() {});
   }
@@ -369,13 +654,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     // print(mouseY);
     if (value) {
       setOpacityOn(true);
-      // datePickerOverlayEntry = datePickerOverlay();
-      // Overlay.of(context)!.insert(datePickerOverlayEntry!);
+      datePickerOverlayEntry = datePickerOverlay();
+      Overlay.of(context)!.insert(datePickerOverlayEntry!);
     } else {
+      datePickerOverlayEntry!.remove();
+
       setOpacityOn(false);
-      // datePickerOverlayEntry!.remove();
     }
-    datePickerVisible = value;
+    // datePickerVisible = value;
     // _datePickerOverlay(context);
     setState(() {});
   }
@@ -419,13 +705,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       endTime = "$endHour:$endMinute";
     }
     _timeController.text = "$startTime - $endTime";
+    // if (datePickerOverlayEntry!.mounted) {
+    //   datePickerOverlayEntry!.remove();
+    // }
     setOpacityOn(false);
+
     setState(() {});
   }
 
   setTimePickerStatus(bool value) {
-    timePickerContainerVisible = value;
+    // timePickerContainerVisible = value;
     opacityOn = value;
+    if (value) {
+      selectTimeOverlayEntry = timePickerOverlay();
+      Overlay.of(context)!.insert(selectTimeOverlayEntry!);
+    } else {
+      selectTimeOverlayEntry!.remove();
+      setOpacityOn(false);
+    }
     setState(() {});
   }
 
@@ -442,12 +739,32 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   setStartTimeStatus(bool value) {
-    startTimeContainerVisible = value;
+    // startTimeContainerVisible = value;
+    if (value) {
+      startTimeOverlayEntry = startTimeOverlay();
+      Overlay.of(context)!.insert(startTimeOverlayEntry!);
+    } else {
+      if (startTimeOverlayEntry != null) {
+        if (startTimeOverlayEntry!.mounted) {
+          startTimeOverlayEntry!.remove();
+        }
+      }
+    }
     setState(() {});
   }
 
   setEndTimeStatus(bool value) {
-    endTimeContainerVisible = value;
+    // endTimeContainerVisible = value;
+    if (value) {
+      endTimeOverlayEntry = endTimeOverlay();
+      Overlay.of(context)!.insert(endTimeOverlayEntry!);
+    } else {
+      if (endTimeOverlayEntry != null) {
+        if (endTimeOverlayEntry!.mounted) {
+          endTimeOverlayEntry!.remove();
+        }
+      }
+    }
     setState(() {});
   }
 
@@ -455,6 +772,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     startTime = start;
     endTime = end;
     _timeController.text = "$startTime - $endTime";
+
     setState(() {});
   }
 
@@ -483,9 +801,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   setEndTime(String end) {
     endTime = end;
-    timePickerContainerVisible = false;
-    endTimeContainerVisible = false;
+    // timePickerContainerVisible = false;
+    // endTimeContainerVisible = false;
     opacityOn = false;
+    if (selectTimeOverlayEntry != null) {
+      if (selectTimeOverlayEntry!.mounted) {
+        selectTimeOverlayEntry!.remove();
+      }
+    }
     setState(() {});
   }
 
@@ -495,8 +818,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   setParticipantStatus(bool value) {
-    participantContainerVisible = value;
+    // participantContainerVisible = value;
     opacityOn = value;
+    if (value) {
+      participantOverlayEntry = participantOverlay();
+      Overlay.of(context)!.insert(participantOverlayEntry!);
+    } else {
+      participantOverlayEntry!.remove();
+      setOpacityOn(false);
+    }
     setState(() {});
   }
 
@@ -504,19 +834,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     participantSelected = value;
     participantValue = valueDouble;
     _participantController.text = participantSelected;
+    participantOverlayEntry!.markNeedsBuild();
+    // participantOverlayEntry!.remove();
     // setOpacityOn(false);
     setState(() {});
   }
 
   setAmenitiesStatus(bool value) {
-    amenitiesContainerVisible = value;
+    // amenitiesContainerVisible = value;
     opacityOn = value;
+    if (value) {
+      facilityOverlayEntry = facilityOverlay();
+      Overlay.of(context)!.insert(facilityOverlayEntry!);
+    } else {
+      facilityOverlayEntry!.remove();
+      setOpacityOn(value);
+    }
     setState(() {});
   }
 
   setMeetingTypeContainerStatus(bool value) {
-    meetingTypeContainerVisible = value;
+    // meetingTypeContainerVisible = value;
     opacityOn = value;
+    if (value) {
+      roomTypeOverlayEntry = roomTypeOverlay();
+      Overlay.of(context)!.insert(roomTypeOverlayEntry!);
+    } else {
+      roomTypeOverlayEntry!.remove();
+    }
     setState(() {});
   }
 
@@ -692,7 +1037,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     minHeight:
                                         MediaQuery.of(context).size.width,
                                   ),
-                                  child: InkWell(
+                                  child: GestureDetector(
                                     onTap: () {
                                       resetAllVisibleStatus(false);
                                     },
@@ -703,162 +1048,162 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                               )
                             : SizedBox(),
-                        Visibility(
-                          visible: datePickerVisible,
-                          child: Positioned(
-                            left: 265,
-                            // top: isAccSyncToGoogle ? 310 : 440,
-                            top: 310,
-                            child: CustomDatePicker(
-                              controller: datePickerControl,
-                              isDark: true,
-                              changeDate: onDateChanged,
-                              currentDate: selectedDate,
-                              maxDate:
-                                  DateTime.now().add(const Duration(days: 30)),
-                              setPickerStatus: setDatePickerVisible,
-                              canPickPastDay: false,
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: timePickerContainerVisible,
-                          child: Positioned(
-                            left: 465,
-                            // top: isAccSyncToGoogle ? 310 : 440,
-                            top: 310,
-                            child: TimePickerContainer(
-                              // controller: datePickerControl,
-                              endTime: endTime,
-                              startTime: startTime,
-                              initialEndTime: endTime,
-                              endTimeStatus: endTimeContainerVisible,
-                              startTimeStatus: startTimeContainerVisible,
-                              isDark: true,
-                              selectedDate: selectedDate,
-                              setEndTimeStatus: setEndTimeStatus,
-                              setStartTimeStatus: setStartTimeStatus,
-                              setListEndTime: setListEndTime,
-                              setListStartTime: setListStartTime,
-                              setTime: setTime,
-                              setTimePickerStatus: setTimePickerStatus,
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: startTimeContainerVisible,
-                          child: Positioned(
-                            // top: isAccSyncToGoogle ? 440 : 560,
-                            top: 440,
-                            left: 475,
-                            child: StartTimeContainer(
-                              items: startTimeList,
-                              setStartTime: setStartTime,
-                              setStartTimeStatus: setStartTimeStatus,
-                              setInitialEndTime: setInitialEndTime,
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: endTimeContainerVisible,
-                          child: Positioned(
-                            // top: isAccSyncToGoogle ? 440 : 560,
-                            top: 440,
-                            left: 595,
-                            child: EndTimeContainer(
-                              items: endTimeList,
-                              setEndTime: setEndTime,
-                              setEndTimeStatus: setEndTimeStatus,
-                              startTime: startTime,
-                              setTime: setTime,
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: participantContainerVisible,
-                          child: Positioned(
-                            left: 265,
-                            // top: isAccSyncToGoogle ? 390 : 520,
-                            top: 390,
-                            child: ParticipantContainer(
-                              setParticipantStatus: setParticipantStatus,
-                              onChangeParticipant: onParticipanSelected,
-                              participantValue: participantValue,
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: amenitiesContainerVisible,
-                          child: Positioned(
-                            left: 465,
-                            // top: isAccSyncToGoogle ? 390 : 520,
-                            top: 390,
-                            child: AmenitiesContainer(
-                              tvOnChange: (value) {
-                                if (checkBoxTv) {
-                                  checkBoxTv = false;
-                                  facilitySelected.removeWhere(
-                                      (element) => element == 'TV');
-                                } else {
-                                  checkBoxTv = true;
-                                  facilitySelected.add('TV');
-                                }
-                                if (facilitySelected.isNotEmpty) {
-                                  if (facilitySelected.length > 1) {
-                                    _facilityController.text = "TV & Camera";
-                                  } else if (facilitySelected.length == 1) {
-                                    _facilityController.text =
-                                        facilitySelected[0].toString();
-                                  }
-                                } else {
-                                  _facilityController.text = "None";
-                                }
-                                // print(facilitySelected);
-                                setState(() {});
-                              },
-                              cameraOnChange: (value) {
-                                if (checkBoxCamera) {
-                                  checkBoxCamera = false;
-                                  facilitySelected.removeWhere(
-                                      (element) => element == 'Camera');
-                                } else {
-                                  checkBoxCamera = true;
-                                  facilitySelected.add('Camera');
-                                }
-                                if (facilitySelected.isNotEmpty) {
-                                  if (facilitySelected.length > 1) {
-                                    _facilityController.text = "TV & Camera";
-                                  } else if (facilitySelected.length == 1) {
-                                    _facilityController.text =
-                                        facilitySelected[0];
-                                  }
-                                } else {
-                                  _facilityController.text = "None";
-                                }
-                                // print(facilitySelected);
+                        // Visibility(
+                        //   visible: datePickerVisible,
+                        //   child: Positioned(
+                        //     left: 265,
+                        //     // top: isAccSyncToGoogle ? 310 : 440,
+                        //     top: 310,
+                        //     child: CustomDatePicker(
+                        //       controller: datePickerControl,
+                        //       isDark: true,
+                        //       changeDate: onDateChanged,
+                        //       currentDate: selectedDate,
+                        //       maxDate:
+                        //           DateTime.now().add(const Duration(days: 30)),
+                        //       setPickerStatus: setDatePickerVisible,
+                        //       canPickPastDay: false,
+                        //     ),
+                        //   ),
+                        // ),
+                        // Visibility(
+                        //   visible: timePickerContainerVisible,
+                        //   child: Positioned(
+                        //     left: 465,
+                        //     // top: isAccSyncToGoogle ? 310 : 440,
+                        //     top: 310,
+                        //     child: TimePickerContainer(
+                        //       // controller: datePickerControl,
+                        //       endTime: endTime,
+                        //       startTime: startTime,
+                        //       initialEndTime: endTime,
+                        //       endTimeStatus: endTimeContainerVisible,
+                        //       startTimeStatus: startTimeContainerVisible,
+                        //       isDark: true,
+                        //       selectedDate: selectedDate,
+                        //       setEndTimeStatus: setEndTimeStatus,
+                        //       setStartTimeStatus: setStartTimeStatus,
+                        //       setListEndTime: setListEndTime,
+                        //       setListStartTime: setListStartTime,
+                        //       setTime: setTime,
+                        //       setTimePickerStatus: setTimePickerStatus,
+                        //     ),
+                        //   ),
+                        // ),
+                        // Visibility(
+                        //   visible: startTimeContainerVisible,
+                        //   child: Positioned(
+                        //     // top: isAccSyncToGoogle ? 440 : 560,
+                        //     top: 440,
+                        //     left: 475,
+                        //     child: StartTimeContainer(
+                        //       items: startTimeList,
+                        //       setStartTime: setStartTime,
+                        //       setStartTimeStatus: setStartTimeStatus,
+                        //       setInitialEndTime: setInitialEndTime,
+                        //     ),
+                        //   ),
+                        // ),
+                        // Visibility(
+                        //   visible: endTimeContainerVisible,
+                        //   child: Positioned(
+                        //     // top: isAccSyncToGoogle ? 440 : 560,
+                        //     top: 440,
+                        //     left: 595,
+                        //     child: EndTimeContainer(
+                        //       items: endTimeList,
+                        //       setEndTime: setEndTime,
+                        //       setEndTimeStatus: setEndTimeStatus,
+                        //       startTime: startTime,
+                        //       setTime: setTime,
+                        //     ),
+                        //   ),
+                        // ),
+                        // Visibility(
+                        //   visible: participantContainerVisible,
+                        //   child: Positioned(
+                        //     left: 265,
+                        //     // top: isAccSyncToGoogle ? 390 : 520,
+                        //     top: 390,
+                        //     child: ParticipantContainer(
+                        //       setParticipantStatus: setParticipantStatus,
+                        //       onChangeParticipant: onParticipanSelected,
+                        //       participantValue: participantValue,
+                        //     ),
+                        //   ),
+                        // ),
+                        // Visibility(
+                        //   visible: amenitiesContainerVisible,
+                        //   child: Positioned(
+                        //     left: 465,
+                        //     // top: isAccSyncToGoogle ? 390 : 520,
+                        //     top: 390,
+                        //     child: AmenitiesContainer(
+                        //       tvOnChange: (value) {
+                        //         if (checkBoxTv) {
+                        //           checkBoxTv = false;
+                        //           facilitySelected.removeWhere(
+                        //               (element) => element == 'TV');
+                        //         } else {
+                        //           checkBoxTv = true;
+                        //           facilitySelected.add('TV');
+                        //         }
+                        //         if (facilitySelected.isNotEmpty) {
+                        //           if (facilitySelected.length > 1) {
+                        //             _facilityController.text = "TV & Camera";
+                        //           } else if (facilitySelected.length == 1) {
+                        //             _facilityController.text =
+                        //                 facilitySelected[0].toString();
+                        //           }
+                        //         } else {
+                        //           _facilityController.text = "None";
+                        //         }
+                        //         // print(facilitySelected);
+                        //         setState(() {});
+                        //       },
+                        //       cameraOnChange: (value) {
+                        //         if (checkBoxCamera) {
+                        //           checkBoxCamera = false;
+                        //           facilitySelected.removeWhere(
+                        //               (element) => element == 'Camera');
+                        //         } else {
+                        //           checkBoxCamera = true;
+                        //           facilitySelected.add('Camera');
+                        //         }
+                        //         if (facilitySelected.isNotEmpty) {
+                        //           if (facilitySelected.length > 1) {
+                        //             _facilityController.text = "TV & Camera";
+                        //           } else if (facilitySelected.length == 1) {
+                        //             _facilityController.text =
+                        //                 facilitySelected[0];
+                        //           }
+                        //         } else {
+                        //           _facilityController.text = "None";
+                        //         }
+                        //         // print(facilitySelected);
 
-                                setState(() {});
-                              },
-                              cameraValue: checkBoxCamera,
-                              tvValue: checkBoxTv,
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: meetingTypeContainerVisible,
-                          child: Positioned(
-                            left: 30,
-                            // top: isAccSyncToGoogle ? 420 : 550,
-                            top: 420,
-                            child: RoomTypeContainerHomePage(
-                              changeRoomType: changeRoomType,
-                              setContainerStatus: setMeetingTypeContainerStatus,
-                              roomTypeList: roomTypeList,
-                              roomTypeName: roomTypeName,
-                              roomTypeValue: roomTypeValue,
-                            ),
-                          ),
-                        ),
+                        //         setState(() {});
+                        //       },
+                        //       cameraValue: checkBoxCamera,
+                        //       tvValue: checkBoxTv,
+                        //     ),
+                        //   ),
+                        // ),
+                        // Visibility(
+                        //   visible: meetingTypeContainerVisible,
+                        //   child: Positioned(
+                        //     left: 30,
+                        //     // top: isAccSyncToGoogle ? 420 : 550,
+                        //     top: 420,
+                        //     child: RoomTypeContainerHomePage(
+                        //       changeRoomType: changeRoomType,
+                        //       setContainerStatus: setMeetingTypeContainerStatus,
+                        //       roomTypeList: roomTypeList,
+                        //       roomTypeName: roomTypeName,
+                        //       roomTypeValue: roomTypeValue,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -922,7 +1267,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           searchRoom: search,
           initLoading: initLoading,
           datePickerKey: datePickerKey,
+          participantKey: participantKey,
+          timeFieldKey: timeFieldkey,
+          facilityKey: facilityKey,
+          roomTypeKey: roomTypeKey,
           datePickerLayerLink: datePickerLayerLink,
+          participantLayerLink: participantLayerLink,
+          timeFieldLayerLink: timeFieldLayerLink,
+          facilityLayerLink: facilityLayerLink,
+          roomTypeLayerLink: roomTypeLayerLink,
         ),
         const SizedBox(
           height: 30,
