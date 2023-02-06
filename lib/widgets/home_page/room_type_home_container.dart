@@ -57,23 +57,21 @@ class RoomTypeContainerHomePage extends StatelessWidget {
       //     },
       //   ),
       // ),
-      child: Row(
+      child: Wrap(
+        // mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 20,
+        runSpacing: 20,
         children: roomTypeList!
             .asMap()
             .map((index, e) {
               return MapEntry(
                 index,
-                Padding(
-                  padding: EdgeInsets.only(
-                    right: index + 1 != roomTypeList!.length ? 20 : 0,
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      changeRoomType!(e['Value'], e['Name'], e['Image']);
-                      setContainerStatus!(false);
-                    },
-                    child: choices(e['Name'], e['Image']),
-                  ),
+                InkWell(
+                  onTap: () {
+                    changeRoomType!(e['Value'], e['Name'], e['Image']);
+                    setContainerStatus!(false);
+                  },
+                  child: choices(e['Name'], e['Image']),
                 ),
               );
             })
