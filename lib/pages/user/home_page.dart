@@ -707,7 +707,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: datePickerVisible,
                           child: Positioned(
                             left: 265,
-                            top: isAccSyncToGoogle ? 310 : 440,
+                            // top: isAccSyncToGoogle ? 310 : 440,
+                            top: 310,
                             child: CustomDatePicker(
                               controller: datePickerControl,
                               isDark: true,
@@ -724,7 +725,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: timePickerContainerVisible,
                           child: Positioned(
                             left: 465,
-                            top: isAccSyncToGoogle ? 310 : 440,
+                            // top: isAccSyncToGoogle ? 310 : 440,
+                            top: 310,
                             child: TimePickerContainer(
                               // controller: datePickerControl,
                               endTime: endTime,
@@ -746,7 +748,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Visibility(
                           visible: startTimeContainerVisible,
                           child: Positioned(
-                            top: isAccSyncToGoogle ? 440 : 560,
+                            // top: isAccSyncToGoogle ? 440 : 560,
+                            top: 440,
                             left: 475,
                             child: StartTimeContainer(
                               items: startTimeList,
@@ -759,7 +762,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Visibility(
                           visible: endTimeContainerVisible,
                           child: Positioned(
-                            top: isAccSyncToGoogle ? 440 : 560,
+                            // top: isAccSyncToGoogle ? 440 : 560,
+                            top: 440,
                             left: 595,
                             child: EndTimeContainer(
                               items: endTimeList,
@@ -774,7 +778,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: participantContainerVisible,
                           child: Positioned(
                             left: 265,
-                            top: isAccSyncToGoogle ? 390 : 520,
+                            // top: isAccSyncToGoogle ? 390 : 520,
+                            top: 390,
                             child: ParticipantContainer(
                               setParticipantStatus: setParticipantStatus,
                               onChangeParticipant: onParticipanSelected,
@@ -786,7 +791,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: amenitiesContainerVisible,
                           child: Positioned(
                             left: 465,
-                            top: isAccSyncToGoogle ? 390 : 520,
+                            // top: isAccSyncToGoogle ? 390 : 520,
+                            top: 390,
                             child: AmenitiesContainer(
                               tvOnChange: (value) {
                                 if (checkBoxTv) {
@@ -842,7 +848,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           visible: meetingTypeContainerVisible,
                           child: Positioned(
                             left: 30,
-                            top: isAccSyncToGoogle ? 420 : 550,
+                            // top: isAccSyncToGoogle ? 420 : 550,
+                            top: 420,
                             child: RoomTypeContainerHomePage(
                               changeRoomType: changeRoomType,
                               setContainerStatus: setMeetingTypeContainerStatus,
@@ -865,7 +872,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       children: [
         const GreetingContainer(),
         Visibility(
-          visible: isAccSyncToGoogle ? false : true,
+          visible: false,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -929,14 +936,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           height: 30,
         ),
         Visibility(
-          visible: true,
+          visible: isAccSyncToGoogle ? false : true,
           child: InkWell(
             onTap: () {
-              // context.go('/gws');
-              showDialog(
-                context: context,
-                builder: (context) => const FeedbackDialog(),
-              );
+              context.go('/gws');
             },
             child: ConstrainedBox(
               constraints: const BoxConstraints(
@@ -944,16 +947,36 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 minWidth: 780,
               ),
               child: const WhiteBannerLandscape(
-                title: 'How is your experience? ',
-                subtitle: 'We love to hear from you!',
-                imagePath: 'assets/feedback_bg.png',
-                borderColor: platinum,
-                backgroundColor: white,
-                fit: BoxFit.fitWidth,
-                isUseGradient: false,
+                title: 'Link your Google account',
+                subtitle: '& enjoy your benefits.',
+                imagePath: 'assets/banner_pict_google.png',
               ),
             ),
           ),
+          // child: InkWell(
+          //   onTap: () {
+          //     // context.go('/gws');
+          //     showDialog(
+          //       context: context,
+          //       builder: (context) => const FeedbackDialog(),
+          //     );
+          //   },
+          //   child: ConstrainedBox(
+          //     constraints: const BoxConstraints(
+          //       maxWidth: 780,
+          //       minWidth: 780,
+          //     ),
+          //     child: const WhiteBannerLandscape(
+          //       title: 'How is your experience? ',
+          //       subtitle: 'We love to hear from you!',
+          //       imagePath: 'assets/feedback_bg.png',
+          //       borderColor: platinum,
+          //       backgroundColor: white,
+          //       fit: BoxFit.fitWidth,
+          //       isUseGradient: false,
+          //     ),
+          //   ),
+          // ),
         ),
       ],
     );
