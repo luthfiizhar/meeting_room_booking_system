@@ -922,7 +922,7 @@ class _RoomsPageState extends State<RoomsPage> {
             key: const ValueKey(CalendarView.timelineDay),
             view: CalendarView.timelineDay,
             maxDate: DateTime(DateTime.now().year, DateTime.now().month,
-                    DateTime.now().day)
+                    DateTime.now().day, 24)
                 .add(const Duration(days: 30)),
             onViewChanged: (viewChangedDetails) {
               selectedDate = viewChangedDetails.visibleDates.first;
