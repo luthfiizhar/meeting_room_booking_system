@@ -23,57 +23,76 @@ class AmenitiesContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {},
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: isDark ? eerieBlack : culturedWhite,
-          border: isDark
-              ? null
-              : Border.all(
-                  color: lightGray,
-                  width: 1,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minHeight: 20,
+          maxHeight: 100,
+          maxWidth: 150,
+          minWidth: 150,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: isDark ? eerieBlack : culturedWhite,
+            border: isDark
+                ? null
+                : Border.all(
+                    color: lightGray,
+                    width: 1,
+                  ),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 20,
                 ),
-        ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 20,
+                Row(
+                  children: [
+                    isDark
+                        ? WhiteCheckbox(
+                            selectedValue: tvValue,
+                            onChanged: tvOnChange,
+                            label: 'TV',
+                          )
+                        : BlackCheckBox(
+                            selectedValue: tvValue,
+                            onChanged: tvOnChange,
+                            label: 'TV',
+                            filled: false,
+                          ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: [
+                    isDark
+                        ? WhiteCheckbox(
+                            selectedValue: cameraValue,
+                            onChanged: cameraOnChange,
+                            label: 'Camera',
+                          )
+                        : BlackCheckBox(
+                            selectedValue: cameraValue,
+                            onChanged: cameraOnChange,
+                            label: 'Camera',
+                            filled: false,
+                          ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
             ),
-            isDark
-                ? WhiteCheckbox(
-                    selectedValue: tvValue,
-                    onChanged: tvOnChange,
-                    label: 'TV',
-                  )
-                : BlackCheckBox(
-                    selectedValue: tvValue,
-                    onChanged: tvOnChange,
-                    label: 'TV',
-                    filled: false,
-                  ),
-            const SizedBox(
-              height: 15,
-            ),
-            isDark
-                ? WhiteCheckbox(
-                    selectedValue: cameraValue,
-                    onChanged: cameraOnChange,
-                    label: 'Camera',
-                  )
-                : BlackCheckBox(
-                    selectedValue: cameraValue,
-                    onChanged: cameraOnChange,
-                    label: 'Camera',
-                    filled: false,
-                  ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
+          ),
         ),
       ),
     );

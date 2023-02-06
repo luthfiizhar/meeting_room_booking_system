@@ -283,7 +283,21 @@ class _InputFieldQtyFoodState extends State<InputFieldQtyFood> {
                   FilteringTextInputFormatter.digitsOnly,
                 ],
                 decoration: const InputDecoration(
-                  border: InputBorder.none,
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: davysGray,
+                      width: 1,
+                    ),
+                  ),
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: eerieBlack,
+                      width: 1,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 5,
+                  ),
                   isDense: true,
                   isCollapsed: true,
                 ),

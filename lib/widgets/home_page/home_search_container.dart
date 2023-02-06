@@ -28,7 +28,15 @@ class HomeRoomSearchContainer extends StatefulWidget {
     this.searchRoom,
     this.initLoading = true,
     this.datePickerKey,
+    this.timeFieldKey,
+    this.participantKey,
+    this.facilityKey,
+    this.roomTypeKey,
+    this.timeFieldLayerLink,
     this.datePickerLayerLink,
+    this.participantLayerLink,
+    this.facilityLayerLink,
+    this.roomTypeLayerLink,
   });
 
   TextEditingController? dateController;
@@ -54,7 +62,15 @@ class HomeRoomSearchContainer extends StatefulWidget {
   String? roomTypeUrl;
   bool initLoading;
   GlobalKey? datePickerKey;
+  GlobalKey? timeFieldKey;
+  GlobalKey? participantKey;
+  GlobalKey? facilityKey;
+  GlobalKey? roomTypeKey;
   LayerLink? datePickerLayerLink;
+  LayerLink? timeFieldLayerLink;
+  LayerLink? participantLayerLink;
+  LayerLink? facilityLayerLink;
+  LayerLink? roomTypeLayerLink;
 
   @override
   State<HomeRoomSearchContainer> createState() =>
@@ -114,106 +130,111 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                   },
                   child: widget.initLoading
                       ? const SizedBox()
-                      : Container(
-                          width: 175,
-                          height: 112,
-                          decoration: BoxDecoration(
-                            color: eerieBlack,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: CachedNetworkImage(
-                            imageUrl: widget.roomTypeUrl!,
-                            placeholder: (context, url) {
-                              return Shimmer(
-                                gradient: const LinearGradient(
-                                  colors: [platinum, grayx11, davysGray],
-                                ),
-                                direction: ShimmerDirection.rtl,
-                                child: Container(
-                                  width: 175,
-                                  height: 112,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(10),
+                      : CompositedTransformTarget(
+                          link: widget.roomTypeLayerLink!,
+                          child: Container(
+                            key: widget.roomTypeKey,
+                            width: 175,
+                            height: 112,
+                            decoration: BoxDecoration(
+                              color: eerieBlack,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl: widget.roomTypeUrl!,
+                              placeholder: (context, url) {
+                                return Shimmer(
+                                  gradient: const LinearGradient(
+                                    colors: [platinum, grayx11, davysGray],
                                   ),
-                                ),
-                              );
-                            },
-                            imageBuilder: (context, imageProvider) {
-                              return Stack(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.only(
-                                      bottom: 12,
-                                      left: 15,
-                                      right: 15,
-                                    ),
+                                  direction: ShimmerDirection.rtl,
+                                  child: Container(
                                     width: 175,
                                     height: 112,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
                                       color: Colors.black,
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
-                                        // opacity: 0.5,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                );
+                              },
+                              imageBuilder: (context, imageProvider) {
+                                return Stack(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 12,
+                                        left: 15,
+                                        right: 15,
+                                      ),
+                                      width: 175,
+                                      height: 112,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.black,
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                          // opacity: 0.5,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.only(
-                                      bottom: 12,
-                                      left: 15,
-                                      right: 15,
-                                    ),
-                                    width: 175,
-                                    height: 112,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: eerieBlack.withOpacity(0.4),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Type',
-                                          style: helveticaText.copyWith(
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 14,
-                                            color: culturedWhite,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 7,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              widget.roomTypeName!,
-                                              style: helveticaText.copyWith(
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 18,
-                                                color: culturedWhite,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 5,
-                                            ),
-                                            const Icon(
-                                              Icons.keyboard_arrow_down_sharp,
-                                              size: 20,
+                                    Container(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 12,
+                                        left: 15,
+                                        right: 15,
+                                      ),
+                                      width: 175,
+                                      height: 112,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: eerieBlack.withOpacity(0.4),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Type',
+                                            style: helveticaText.copyWith(
+                                              fontWeight: FontWeight.w300,
+                                              fontSize: 14,
                                               color: culturedWhite,
                                             ),
-                                          ],
-                                        )
-                                      ],
+                                          ),
+                                          const SizedBox(
+                                            height: 7,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                widget.roomTypeName!,
+                                                style: helveticaText.copyWith(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 18,
+                                                  color: culturedWhite,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 5,
+                                              ),
+                                              const Icon(
+                                                Icons.keyboard_arrow_down_sharp,
+                                                size: 20,
+                                                color: culturedWhite,
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              );
-                            },
+                                  ],
+                                );
+                              },
+                            ),
                           ),
                         ),
                 ),
@@ -269,33 +290,37 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                   height: 30,
                 ),
                 inputField(
-                  InkWell(
-                    onTap: () {
-                      if (widget.participantStatus!) {
-                        widget.setParticipantStatus!(false);
-                      } else {
-                        widget.setParticipantStatus!(true);
-                      }
-                    },
-                    child: SizedBox(
-                      width: 70,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: InputFieldSearchPage(
-                              controller: widget.participantController,
+                  CompositedTransformTarget(
+                    link: widget.participantLayerLink!,
+                    child: InkWell(
+                      onTap: () {
+                        if (widget.participantStatus!) {
+                          widget.setParticipantStatus!(false);
+                        } else {
+                          widget.setParticipantStatus!(true);
+                        }
+                      },
+                      child: SizedBox(
+                        width: 70,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: InputFieldSearchPage(
+                                key: widget.participantKey,
+                                controller: widget.participantController,
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          const Icon(
-                            Icons.keyboard_arrow_down_sharp,
-                            size: 16,
-                            color: davysGray,
-                          ),
-                        ],
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            const Icon(
+                              Icons.keyboard_arrow_down_sharp,
+                              size: 16,
+                              color: davysGray,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -313,33 +338,37 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                   height: 7,
                 ),
                 inputField(
-                  InkWell(
-                    onTap: () {
-                      if (widget.timePickerStatus!) {
-                        widget.setTimeContainerStatus!(false);
-                      } else {
-                        widget.setTimeContainerStatus!(true);
-                      }
-                    },
-                    child: SizedBox(
-                      width: 155,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: InputFieldSearchPage(
-                              controller: widget.timeController,
+                  CompositedTransformTarget(
+                    link: widget.timeFieldLayerLink!,
+                    child: InkWell(
+                      onTap: () {
+                        if (widget.timePickerStatus!) {
+                          widget.setTimeContainerStatus!(false);
+                        } else {
+                          widget.setTimeContainerStatus!(true);
+                        }
+                      },
+                      child: SizedBox(
+                        width: 155,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: InputFieldSearchPage(
+                                key: widget.timeFieldKey,
+                                controller: widget.timeController,
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          const Icon(
-                            Icons.keyboard_arrow_down_sharp,
-                            size: 16,
-                            color: davysGray,
-                          ),
-                        ],
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            const Icon(
+                              Icons.keyboard_arrow_down_sharp,
+                              size: 16,
+                              color: davysGray,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -349,33 +378,37 @@ class _HomeRoomSearchContainerState extends State<HomeRoomSearchContainer> {
                   height: 30,
                 ),
                 inputField(
-                  InkWell(
-                    onTap: () {
-                      if (widget.amenitiesStatus!) {
-                        widget.setAmenitiesStatus!(false);
-                      } else {
-                        widget.setAmenitiesStatus!(true);
-                      }
-                    },
-                    child: SizedBox(
-                      width: 145,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: InputFieldSearchPage(
-                              controller: widget.facilityController,
+                  CompositedTransformTarget(
+                    link: widget.facilityLayerLink!,
+                    child: InkWell(
+                      onTap: () {
+                        if (widget.amenitiesStatus!) {
+                          widget.setAmenitiesStatus!(false);
+                        } else {
+                          widget.setAmenitiesStatus!(true);
+                        }
+                      },
+                      child: SizedBox(
+                        width: 145,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: InputFieldSearchPage(
+                                key: widget.facilityKey,
+                                controller: widget.facilityController,
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          const Icon(
-                            Icons.keyboard_arrow_down_sharp,
-                            size: 16,
-                            color: davysGray,
-                          ),
-                        ],
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            const Icon(
+                              Icons.keyboard_arrow_down_sharp,
+                              size: 16,
+                              color: davysGray,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
