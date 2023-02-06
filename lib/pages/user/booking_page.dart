@@ -1124,9 +1124,21 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                       onSaved: (newValue) {
                                         eventName = newValue!;
                                       },
-                                      validator: (value) => value == ""
-                                          ? 'This field is required'
-                                          : null,
+                                      // validator: (value) => value == ""
+                                      //     ? 'This field is required'
+                                      //     : null,
+                                      validator: (value) {
+                                        if (value == "") {
+                                          return 'This field is required';
+                                        } else {
+                                          if (value.toString().contains("\"") ||
+                                              value.toString().contains("'")) {
+                                            return 'Can\'t contains " or \' symbols.';
+                                          } else {
+                                            return null;
+                                          }
+                                        }
+                                      },
                                     ),
                                   ),
                                 ),
@@ -1146,6 +1158,16 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                         eventDesc = newValue!;
                                       },
                                       maxLines: 4,
+                                      validator: (value) {
+                                        if (value != "") {
+                                          if (value.toString().contains("\"") ||
+                                              value.toString().contains("'")) {
+                                            return 'Can\'t contains " or \' symbols.';
+                                          } else {
+                                            return null;
+                                          }
+                                        }
+                                      },
                                     ),
                                   ),
                                 ),
@@ -2891,6 +2913,16 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           hintText: 'Additional Notes ...',
           onSaved: (newValue) {
             additionalNote = newValue!;
+          },
+          validator: (value) {
+            if (value != "") {
+              if (value.toString().contains("\"") ||
+                  value.toString().contains("'")) {
+                return 'Can\'t contains " or \' symbols.';
+              } else {
+                return null;
+              }
+            }
           },
         )
       ],
