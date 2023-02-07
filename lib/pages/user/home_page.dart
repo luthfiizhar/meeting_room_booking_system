@@ -1289,30 +1289,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           height: 30,
         ),
         Visibility(
-          visible: isAccSyncToGoogle ? false : true,
-          child: InkWell(
-            onTap: () {
-              context.go('/gws');
-            },
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 780,
-                minWidth: 780,
-              ),
-              child: const WhiteBannerLandscape(
-                title: 'Link your Google account',
-                subtitle: '& enjoy your benefits.',
-                imagePath: 'assets/banner_pict_google.png',
-              ),
-            ),
-          ),
+          // visible: isAccSyncToGoogle ? false : true,
           // child: InkWell(
           //   onTap: () {
-          //     // context.go('/gws');
-          //     showDialog(
-          //       context: context,
-          //       builder: (context) => const FeedbackDialog(),
-          //     );
+          //     context.go('/gws');
           //   },
           //   child: ConstrainedBox(
           //     constraints: const BoxConstraints(
@@ -1320,16 +1300,37 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           //       minWidth: 780,
           //     ),
           //     child: const WhiteBannerLandscape(
-          //       title: 'How is your experience? ',
-          //       subtitle: 'We love to hear from you!',
-          //       imagePath: 'assets/feedback_bg.png',
-          //       borderColor: platinum,
-          //       backgroundColor: white,
-          //       fit: BoxFit.fitWidth,
-          //       isUseGradient: false,
+          //       title: 'Link your Google account',
+          //       subtitle: '& enjoy your benefits.',
+          //       imagePath: 'assets/banner_pict_google.png',
           //     ),
           //   ),
           // ),
+          visible: true,
+          child: InkWell(
+            onTap: () {
+              // context.go('/gws');
+              showDialog(
+                context: context,
+                builder: (context) => const FeedbackDialog(),
+              );
+            },
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 780,
+                minWidth: 780,
+              ),
+              child: const WhiteBannerLandscape(
+                title: 'How is your experience? ',
+                subtitle: 'We love to hear from you!',
+                imagePath: 'assets/feedback_bg.png',
+                borderColor: platinum,
+                backgroundColor: white,
+                fit: BoxFit.fitWidth,
+                isUseGradient: false,
+              ),
+            ),
+          ),
         ),
       ],
     );

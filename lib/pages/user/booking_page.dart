@@ -1232,6 +1232,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                       onSaved: (newValue) {
                                         eventDesc = newValue!;
                                       },
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter
+                                            .singleLineFormatter,
+                                      ],
                                       maxLines: 4,
                                       validator: (value) {
                                         if (value != "") {
@@ -3025,6 +3029,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           focusNode: additionalNoteNode,
           maxLines: 4,
           hintText: 'Additional Notes ...',
+          inputFormatters: [
+            FilteringTextInputFormatter.singleLineFormatter,
+          ],
           onSaved: (newValue) {
             additionalNote = newValue!;
           },
