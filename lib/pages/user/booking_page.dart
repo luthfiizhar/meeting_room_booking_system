@@ -1232,10 +1232,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                       onSaved: (newValue) {
                                         eventDesc = newValue!;
                                       },
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter
-                                            .singleLineFormatter,
-                                      ],
+                                      // inputFormatters: [
+                                      //   FilteringTextInputFormatter
+                                      //       .singleLineFormatter,
+                                      // ],
                                       maxLines: 4,
                                       validator: (value) {
                                         if (value != "") {
@@ -2036,9 +2036,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             booking.roomId = widget.roomId;
                                             booking.roomType = roomType;
                                             booking.summary = eventName;
-                                            booking.description = eventDesc;
+                                            booking.description = eventDesc
+                                                .replaceAll('\n', '\\n');
                                             booking.additionalNote =
-                                                additionalNote;
+                                                additionalNote.replaceAll(
+                                                    '\n', '\\n');
                                             booking.startDate = DateTime.parse(
                                                 "${DateFormat('yyyy-MM-dd').format(selectedDate!)} $startTime:00");
                                             booking.endDate = DateTime.parse(
@@ -2128,6 +2130,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             // print('Event Room -> $eventRoomRefresh');
                                             if (roomType == "MeetingRoom") {
                                               if (!isEdit) {
+                                                print(booking.toJson());
                                                 //BOOKING FUNCTION
                                                 apiReq
                                                     .bookingRoom(booking)
@@ -3029,9 +3032,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           focusNode: additionalNoteNode,
           maxLines: 4,
           hintText: 'Additional Notes ...',
-          inputFormatters: [
-            FilteringTextInputFormatter.singleLineFormatter,
-          ],
+          // inputFormatters: [
+          //   FilteringTextInputFormatter.singleLineFormatter,
+          // ],
           onSaved: (newValue) {
             additionalNote = newValue!;
           },
