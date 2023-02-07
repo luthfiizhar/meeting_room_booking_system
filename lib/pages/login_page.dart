@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
@@ -68,12 +69,16 @@ class _LoginPageState extends State<LoginPage> {
       // if (whiteList!.contains(username)) {
       apiReq
           .loginHCSSO(username!.toString(), password!.toString())
-          .then((value) {
+          .then((value) async {
         // print("login Dummy $value");
         setState(() {
           isLoading = false;
         });
+
         if (value['Status'].toString() == "200") {
+          print(value);
+          var box = await Hive.openBox('userLogin');
+          box.put('feedback', value['Data']['Feedback'] ?? false);
           dynamic firstLogin = value['Data']['LoginCount'].toString();
           apiReq.getUserProfile().then((value) async {
             // print("getUserProfile $value");

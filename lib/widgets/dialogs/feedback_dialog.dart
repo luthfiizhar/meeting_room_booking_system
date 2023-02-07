@@ -214,7 +214,11 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                               if (formKey.currentState!.validate()) {
                                 formKey.currentState!.save();
                                 apiReq
-                                    .sendFeedback(selectedValue, comment)
+                                    .sendFeedback(
+                                        selectedValue,
+                                        comment
+                                            .toString()
+                                            .replaceAll('\n', '\\n'))
                                     .then((value) {
                                   setState(() {
                                     isLoading = false;

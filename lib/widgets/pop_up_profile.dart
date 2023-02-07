@@ -5,6 +5,7 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/feedback_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/login_pop_up.dart';
 
 class PopUpProfile extends StatelessWidget {
@@ -162,6 +163,25 @@ class PopUpProfile extends StatelessWidget {
                 height: 15,
               ),
               TextButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => FeedbackDialog(),
+                  );
+                },
+                child: Text(
+                  'Give Us Feedback',
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                    color: davysGray,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              TextButton(
                 onPressed: () async {
                   popUpProfile!(false);
                   var box = await Hive.openBox('userLogin');
@@ -172,6 +192,7 @@ class PopUpProfile extends StatelessWidget {
                   box.put('jwtToken', "");
                   box.delete('jwtToken');
                   box.delete('firstLogin');
+                  box.delete('feedback');
                   resetState!;
                   context.go('/login');
                   // showDialog(
