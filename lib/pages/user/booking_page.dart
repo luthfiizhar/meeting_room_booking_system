@@ -2140,13 +2140,14 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                               contentText: value[
                                                                   'Message']),
                                                     ).then((value) {
-                                                      setState(() {
-                                                        isSubmitLoading = false;
-                                                      });
                                                       // updateEvent(model).then((value) {
                                                       //   context.go('/rooms');
                                                       // });
                                                       if (widget.floor == "") {
+                                                        setState(() {
+                                                          isSubmitLoading =
+                                                              false;
+                                                        });
                                                         context
                                                             .goNamed('rooms');
                                                       } else {
@@ -2155,6 +2156,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                                 widget.floor,
                                                                 widget.date!)
                                                             .then((value) {
+                                                          setState(() {
+                                                            isSubmitLoading =
+                                                                false;
+                                                          });
                                                           if (value['Status']
                                                                   .toString() ==
                                                               "200") {
