@@ -109,6 +109,13 @@ class _RoomsPageState extends State<RoomsPage> {
           color: colors[indexColor],
         ),
       );
+      Provider.of<MainModel>(context, listen: false).events.resources!.add(
+            CalendarResource(
+              id: e['RoomID'],
+              displayName: e['RoomString'],
+              color: colors[indexColor],
+            ),
+          );
       indexColor++;
     }
     setState(() {
@@ -356,7 +363,7 @@ class _RoomsPageState extends State<RoomsPage> {
     _events = RoomEventDataSource(<RoomEvent>[], <CalendarResource>[]);
     // print('ini init state');
     // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   mainModel = Provider.of<MainModel>(context, listen: true);
+    //   mainModel = Provider.of<MainModel>(context, listen: false);
     // });
     apiReq.getAreaListWithRooms().then((value) {
       if (value['Status'].toString() == "200") {
@@ -483,7 +490,7 @@ class _RoomsPageState extends State<RoomsPage> {
 
   assignDataToCalendar(dynamic data) {
     _events!.appointments!.clear();
-    // Provider.of<MainModel>(context, listen: false).events.appointments!.clear();
+    Provider.of<MainModel>(context, listen: false).events.appointments!.clear();
     dataRoom = data;
     int length = dataRoom.length;
     // print(dataRoom);
@@ -491,55 +498,61 @@ class _RoomsPageState extends State<RoomsPage> {
       eventRoom = dataRoom[i]['Bookings'];
 
       for (var j = 0; j < eventRoom.length; j++) {
-        _events!.appointments!.add(
-          RoomEvent(
-            // subject: ,
-            resourceIds: [dataRoom[i]['RoomID']],
-            from: DateTime.parse(eventRoom[j]['StartDateTime']),
-            to: DateTime.parse(eventRoom[j]['EndDateTime']),
-            background: eventRoom[j]['MeetingType'] == "EXTERNAL"
-                ? yellowAccent
-                : davysGray,
-            capacity: 5,
-            contactID: "1111",
-            isAllDay: false,
-            eventName: eventRoom[j]['Summary'] ?? "-",
-            organizer: "",
-            recurrenceRule: "NONE",
-            endTimeZone: "",
-            startTimeZone: "",
-            bookingID: eventRoom[j]['BookingID'],
-            type: eventRoom[j]['Type'],
-            googleID: eventRoom[j]['GoogleCalendarEventID'],
-            roomId: dataRoom[i]['RoomID'],
-            meetingType: eventRoom[j]['MeetingType'],
-          ),
-        );
-        // Provider.of<MainModel>(context, listen: false).events.appointments!.add(
-        //       RoomEvent(
-        //         // subject: ,
-        //         resourceIds: [dataRoom[i]['RoomID']],
-        //         from: DateTime.parse(eventRoom[j]['StartDateTime']),
-        //         to: DateTime.parse(eventRoom[j]['EndDateTime']),
-        //         background: davysGray,
-        //         capacity: 5,
-        //         contactID: "1111",
-        //         isAllDay: false,
-        //         eventName: eventRoom[j]['Description'],
-        //         organizer: "",
-        //         recurrenceRule: "NONE",
-        //         endTimeZone: "",
-        //         startTimeZone: "",
-        //         bookingID: eventRoom[j]['BookingID'],
-        //       ),
-        //     );
+        // _events!.appointments!.add(
+        //   RoomEvent(
+        //     // subject: ,
+        //     resourceIds: [dataRoom[i]['RoomID']],
+        //     from: DateTime.parse(eventRoom[j]['StartDateTime']),
+        //     to: DateTime.parse(eventRoom[j]['EndDateTime']),
+        //     background: eventRoom[j]['MeetingType'] == "EXTERNAL"
+        //         ? yellowAccent
+        //         : davysGray,
+        //     capacity: 5,
+        //     contactID: "1111",
+        //     isAllDay: false,
+        //     eventName: eventRoom[j]['Summary'] ?? "-",
+        //     organizer: "",
+        //     recurrenceRule: "NONE",
+        //     endTimeZone: "",
+        //     startTimeZone: "",
+        //     bookingID: eventRoom[j]['BookingID'],
+        //     type: eventRoom[j]['Type'],
+        //     googleID: eventRoom[j]['GoogleCalendarEventID'],
+        //     roomId: dataRoom[i]['RoomID'],
+        //     meetingType: eventRoom[j]['MeetingType'],
+        //   ),
+        // );
+        Provider.of<MainModel>(context, listen: false).events.appointments!.add(
+              RoomEvent(
+                // subject: ,
+                resourceIds: [dataRoom[i]['RoomID']],
+                from: DateTime.parse(eventRoom[j]['StartDateTime']),
+                to: DateTime.parse(eventRoom[j]['EndDateTime']),
+                background: eventRoom[j]['MeetingType'] == "EXTERNAL"
+                    ? yellowAccent
+                    : davysGray,
+                capacity: 5,
+                contactID: "1111",
+                isAllDay: false,
+                eventName: eventRoom[j]['Summary'] ?? "-",
+                organizer: "",
+                recurrenceRule: "NONE",
+                endTimeZone: "",
+                startTimeZone: "",
+                bookingID: eventRoom[j]['BookingID'],
+                type: eventRoom[j]['Type'],
+                googleID: eventRoom[j]['GoogleCalendarEventID'],
+                roomId: dataRoom[i]['RoomID'],
+                meetingType: eventRoom[j]['MeetingType'],
+              ),
+            );
       }
     }
-    _events!.notifyListeners(
-        CalendarDataSourceAction.reset, _events!.appointments!);
-    // Provider.of<MainModel>(context, listen: false).events.notifyListeners(
-    //     CalendarDataSourceAction.reset,
-    //     Provider.of<MainModel>(context, listen: false).events.appointments!);
+    // _events!.notifyListeners(
+    //     CalendarDataSourceAction.reset, _events!.appointments!);
+    Provider.of<MainModel>(context, listen: false).events.notifyListeners(
+        CalendarDataSourceAction.reset,
+        Provider.of<MainModel>(context, listen: false).events.appointments!);
     // setState(() {});
     setState(() {
       loadingGetCalendar = false;
@@ -555,9 +568,7 @@ class _RoomsPageState extends State<RoomsPage> {
       });
     });
 
-    apiReq
-        .getBookingListRoom(selectedArea!, date, _events!.appointments!)
-        .then((value) {
+    apiReq.getBookingListRoom(selectedArea!, date).then((value) {
       // print(value);
       if (value['Status'].toString() == "200") {
         assignDataToCalendar(value['Data']);
@@ -928,6 +939,10 @@ class _RoomsPageState extends State<RoomsPage> {
               selectedDate = viewChangedDetails.visibleDates.first;
               if (dataRoom == []) {
                 _events!.appointments!.clear();
+                Provider.of<MainModel>(context, listen: false)
+                    .events
+                    .appointments!
+                    .clear();
               } else {
                 // setState(() {
                 //   loadingGetCalendar = true;
@@ -1064,7 +1079,7 @@ class _RoomsPageState extends State<RoomsPage> {
                     //END BOOK WITH DIALOG
                     // _events!.appointments!.clear();
                     context.goNamed(
-                      'booking',
+                      'booking_rooms',
                       params: {
                         "roomId": calendarTapDetails.resource!.id.toString(),
                         'date':
@@ -1078,7 +1093,8 @@ class _RoomsPageState extends State<RoomsPage> {
                             .substring(11, 16),
                         'participant': '0',
                         'roomType': 'MeetingRoom',
-                        'isEdit': 'false'
+                        'isEdit': 'false',
+                        'floor': selectedArea.toString(),
                       },
                       // queryParams: {
                       //   "roomId": calendarTapDetails.resource!.id.toString(),
@@ -1178,8 +1194,8 @@ class _RoomsPageState extends State<RoomsPage> {
                 }
               }
             },
-            dataSource:
-                _events, //_getRoomDataSource(selectedRoom!, resetState),
+            dataSource: Provider.of<MainModel>(context, listen: false)
+                .events, //_events, //_getRoomDataSource(selectedRoom!, resetState),
             showDatePickerButton: true,
             showNavigationArrow: true,
             appointmentBuilder: appointmentBuilder,

@@ -16,6 +16,7 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/amenities_class.dart';
 import 'package:meeting_room_booking_system/model/booking_class.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
+import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/booking_detail_picture.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/confirm_book_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/food_item.dart';
@@ -39,6 +40,7 @@ import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:provider/provider.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:http/http.dart' as http;
 
@@ -57,6 +59,7 @@ class BookingRoomPage extends StatefulWidget {
     this.foodAmenities = "[]",
     this.summary = "",
     this.description = "",
+    this.floor = "",
     this.recurrent,
     this.invitedGuest,
     this.edit,
@@ -75,6 +78,7 @@ class BookingRoomPage extends StatefulWidget {
   dynamic foodAmenities;
   String summary;
   String description;
+  String floor;
   dynamic recurrent;
   List? invitedGuest;
   dynamic edit;
@@ -261,6 +265,77 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   //     return e;
   //   }
   // }
+
+  Future assignDataToCalendar(dynamic data) async {
+    // _events!.appointments!.clear();
+    Provider.of<MainModel>(context, listen: false).events.appointments!.clear();
+    List dataRoom = data;
+    int length = dataRoom.length;
+    // print(dataRoom);
+    for (var i = 0; i < length; i++) {
+      List eventRoom = dataRoom[i]['Bookings'];
+
+      for (var j = 0; j < eventRoom.length; j++) {
+        // _events!.appointments!.add(
+        //   RoomEvent(
+        //     // subject: ,
+        //     resourceIds: [dataRoom[i]['RoomID']],
+        //     from: DateTime.parse(eventRoom[j]['StartDateTime']),
+        //     to: DateTime.parse(eventRoom[j]['EndDateTime']),
+        //     background: eventRoom[j]['MeetingType'] == "EXTERNAL"
+        //         ? yellowAccent
+        //         : davysGray,
+        //     capacity: 5,
+        //     contactID: "1111",
+        //     isAllDay: false,
+        //     eventName: eventRoom[j]['Summary'] ?? "-",
+        //     organizer: "",
+        //     recurrenceRule: "NONE",
+        //     endTimeZone: "",
+        //     startTimeZone: "",
+        //     bookingID: eventRoom[j]['BookingID'],
+        //     type: eventRoom[j]['Type'],
+        //     googleID: eventRoom[j]['GoogleCalendarEventID'],
+        //     roomId: dataRoom[i]['RoomID'],
+        //     meetingType: eventRoom[j]['MeetingType'],
+        //   ),
+        // );
+        Provider.of<MainModel>(context, listen: false).events.appointments!.add(
+              RoomEvent(
+                // subject: ,
+                resourceIds: [dataRoom[i]['RoomID']],
+                from: DateTime.parse(eventRoom[j]['StartDateTime']),
+                to: DateTime.parse(eventRoom[j]['EndDateTime']),
+                background: eventRoom[j]['MeetingType'] == "EXTERNAL"
+                    ? yellowAccent
+                    : davysGray,
+                capacity: 5,
+                contactID: "1111",
+                isAllDay: false,
+                eventName: eventRoom[j]['Summary'] ?? "-",
+                organizer: "",
+                recurrenceRule: "NONE",
+                endTimeZone: "",
+                startTimeZone: "",
+                bookingID: eventRoom[j]['BookingID'],
+                type: eventRoom[j]['Type'],
+                googleID: eventRoom[j]['GoogleCalendarEventID'],
+                roomId: dataRoom[i]['RoomID'],
+                meetingType: eventRoom[j]['MeetingType'],
+              ),
+            );
+      }
+    }
+    // _events!.notifyListeners(
+    //     CalendarDataSourceAction.reset, _events!.appointments!);
+    Provider.of<MainModel>(context, listen: false).events.notifyListeners(
+        CalendarDataSourceAction.reset,
+        Provider.of<MainModel>(context, listen: false).events.appointments!);
+    // setState(() {});
+    setState(() {
+      // loadingGetCalendar = false;
+    });
+  }
 
   Future forRefreshCalendar() async {
     var box = await Hive.openBox('calendarInfo');
@@ -2071,7 +2146,41 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                       // updateEvent(model).then((value) {
                                                       //   context.go('/rooms');
                                                       // });
-                                                      context.go('/rooms');
+                                                      if (widget.floor == "") {
+                                                        context
+                                                            .goNamed('rooms');
+                                                      } else {
+                                                        apiReq
+                                                            .getBookingListRoom(
+                                                                widget.floor,
+                                                                widget.date!)
+                                                            .then((value) {
+                                                          if (value['Status']
+                                                                  .toString() ==
+                                                              "200") {
+                                                            assignDataToCalendar(
+                                                                    value[
+                                                                        'Data'])
+                                                                .then((value) {
+                                                              context.goNamed(
+                                                                  'rooms');
+                                                            });
+                                                            setState(() {});
+                                                          } else {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder: (context) =>
+                                                                  AlertDialogBlack(
+                                                                title: value[
+                                                                    'Title'],
+                                                                contentText: value[
+                                                                    'Message'],
+                                                              ),
+                                                            );
+                                                          }
+                                                        });
+                                                      }
+
                                                       // context.pop();
                                                       // Navigator.of(context).pop();
                                                     });
