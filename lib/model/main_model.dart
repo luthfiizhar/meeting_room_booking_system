@@ -33,7 +33,7 @@ class MainModel extends ChangeNotifier {
   bool _isScrollAtEdge = false;
   double _scrollPosition = 0;
 
-  final RoomEventDataSource _events =
+  RoomEventDataSource _events =
       RoomEventDataSource(<RoomEvent>[], <CalendarResource>[]);
 
   String get jwtToken => _jwtToken;
@@ -198,6 +198,11 @@ class MainModel extends ChangeNotifier {
 
   setEventRoom(List value) {
     _eventRoom = value;
+    notifyListeners();
+  }
+
+  setEvent(RoomEventDataSource value) {
+    _events = value;
     notifyListeners();
   }
 }

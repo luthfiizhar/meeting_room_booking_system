@@ -88,6 +88,7 @@ class _RoomsPageState extends State<RoomsPage> {
       loadingGetCalendar = true;
     });
     _events!.resources!.clear();
+    Provider.of<MainModel>(context, listen: false).events.resources!.clear();
     // _events!.appointments!.clear();
     int indexColor = 0;
     // List areaselect;
