@@ -252,11 +252,11 @@ class ReqAPI {
     }
   }
 
-  Future getBookingListRoom(String area, String date, List listEvent) async {
+  Future getBookingListRoom(String area, String date) async {
     // String link = 'fmklg.klgsys.com';
     // String link = 'fmklg-backend.klgsys.com';
     // _events!.appointments!.clear();
-    listEvent.clear();
+    // listEvent.clear();
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
