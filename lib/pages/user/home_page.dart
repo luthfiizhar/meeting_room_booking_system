@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
@@ -106,6 +107,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool initLoading = true;
 
   bool isAccSyncToGoogle = false;
+  bool feedback = true;
 
   bool isUserAdmin = false;
 
@@ -567,10 +569,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  feedbackBox() async {
+    var box = await Hive.openBox('userLogin');
+
+    feedback = box.get('feedback') ?? false;
+    setState(() {});
+
+    // if (!feedback) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) => FeedbackDialog(),
+    //   );
+    // }
+  }
+
   @override
   void initState() {
     super.initState();
-
+    feedbackBox();
     String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
     _dateController.text = formattedDate;
     _facilityController.text = 'None';
@@ -1306,7 +1322,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           //     ),
           //   ),
           // ),
-          visible: true,
+          visible: feedback,
           child: InkWell(
             onTap: () {
               // context.go('/gws');
