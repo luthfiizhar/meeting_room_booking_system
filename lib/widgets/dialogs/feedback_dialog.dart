@@ -5,6 +5,7 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 
 class FeedbackDialog extends StatefulWidget {
@@ -21,13 +22,15 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
   TextEditingController _comment = TextEditingController();
   FocusNode commentNode = FocusNode();
 
+  bool isLoading = false;
+
   int selectedValue = 99;
   String comment = "";
 
   List<FeedBackIcon> optionEmoticon = [
     FeedBackIcon(
       index: 0,
-      value: "Bad",
+      value: 1,
       iconLocation: 'assets/feedback_bad.png',
       selectedColor: orangeAccent,
       notSelectedColor: davysGray,
@@ -35,7 +38,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     ),
     FeedBackIcon(
       index: 1,
-      value: "Neutral",
+      value: 2,
       iconLocation: 'assets/feedback_neutral.png',
       selectedColor: blueAccent,
       notSelectedColor: davysGray,
@@ -43,7 +46,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     ),
     FeedBackIcon(
       index: 2,
-      value: "Good",
+      value: 3,
       iconLocation: 'assets/feedback_good.png',
       selectedColor: greenAcent,
       notSelectedColor: davysGray,
@@ -54,13 +57,13 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
   onChange(int index) {
     switch (index) {
       case 0:
-        selectedValue = 0;
-        break;
-      case 1:
         selectedValue = 1;
         break;
-      case 2:
+      case 1:
         selectedValue = 2;
+        break;
+      case 2:
+        selectedValue = 3;
         break;
       default:
         selectedValue = 99;
@@ -104,104 +107,168 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
             horizontal: 35,
             vertical: 30,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                'Give us feedback!',
-                style: helveticaText.copyWith(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: eerieBlack,
-                ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Text(
-                'How do you feel about the system so far?',
-                style: helveticaText.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w300,
-                  color: eerieBlack,
-                ),
-              ),
-              const SizedBox(
-                height: 35,
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Wrap(
-                  spacing: 60,
-                  children: optionEmoticon
-                      .asMap()
-                      .map((index, element) => MapEntry(
-                            index,
-                            SizedBox(
-                              height: 70,
-                              width: 70,
-                              child: InkWell(
-                                onTap: () {
-                                  onChange(index);
-                                },
-                                child: FeedBackIcons(
-                                  index: index,
-                                  value: element.value,
-                                  selectedColor: element.selectedColor,
-                                  isSelected: selectedValue == index,
-                                  iconLocation: element.iconLocation,
-                                ),
-                              ),
-                            ),
-                          ))
-                      .values
-                      .toList(),
-                ),
-              ),
-              const SizedBox(
-                height: 35,
-              ),
-              BlackInputField(
-                controller: _comment,
-                focusNode: commentNode,
-                enabled: true,
-                maxLines: 4,
-                hintText: 'Tell us more...',
-                onSaved: (newValue) {
-                  comment = newValue.toString();
-                },
-              ),
-              const SizedBox(
-                height: 35,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TransparentButtonBlack(
-                    text: 'I\'ll do it later',
-                    disabled: false,
-                    padding: ButtonSize().smallSize(),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'Give us feedback!',
+                  style: helveticaText.copyWith(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: eerieBlack,
                   ),
-                  const SizedBox(
-                    width: 5,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  'How do you feel about the system so far?',
+                  style: helveticaText.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w300,
+                    color: eerieBlack,
                   ),
-                  RegularButton(
-                    text: 'Submit',
-                    disabled: false,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 65, vertical: 20),
-                    onTap: () {
-                      // Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              )
-            ],
+                ),
+                const SizedBox(
+                  height: 35,
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Wrap(
+                    spacing: 60,
+                    children: optionEmoticon
+                        .asMap()
+                        .map((index, element) => MapEntry(
+                              index,
+                              Builder(builder: (context) {
+                                return SizedBox(
+                                  height: 70,
+                                  width: 70,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      onChange(index);
+                                    },
+                                    child: FeedBackIcons(
+                                      index: index,
+                                      value: element.value,
+                                      selectedColor: element.selectedColor,
+                                      isSelected:
+                                          selectedValue == element.value,
+                                      iconLocation: element.iconLocation,
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ))
+                        .values
+                        .toList(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 35,
+                ),
+                BlackInputField(
+                  controller: _comment,
+                  focusNode: commentNode,
+                  enabled: true,
+                  maxLines: 4,
+                  hintText: 'Tell us more...',
+                  onSaved: (newValue) {
+                    comment = newValue.toString();
+                  },
+                ),
+                const SizedBox(
+                  height: 35,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TransparentButtonBlack(
+                      text: 'I\'ll do it later',
+                      disabled: false,
+                      padding: ButtonSize().smallSize(),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    isLoading
+                        ? const CircularProgressIndicator(
+                            color: eerieBlack,
+                          )
+                        : RegularButton(
+                            text: 'Submit',
+                            disabled: false,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 65, vertical: 20),
+                            onTap: () {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              if (formKey.currentState!.validate()) {
+                                formKey.currentState!.save();
+                                apiReq
+                                    .sendFeedback(selectedValue, comment)
+                                    .then((value) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  if (value['Status'].toString() == "200") {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogBlack(
+                                        title: value['Title'],
+                                        contentText: value['Message'],
+                                      ),
+                                    ).then((value) {
+                                      Navigator.of(context).pop();
+                                    });
+                                  } else if (value['Status'].toString() ==
+                                      "401") {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => TokenExpiredDialog(
+                                        title: value['Title'],
+                                        contentText: value['Message'],
+                                        isSuccess: false,
+                                      ),
+                                    );
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogBlack(
+                                        title: value['Title'],
+                                        contentText: value['Message'],
+                                        isSuccess: false,
+                                      ),
+                                    );
+                                  }
+                                }).onError((error, stackTrace) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialogBlack(
+                                      title: 'Error sendFeedback',
+                                      contentText: error.toString(),
+                                      isSuccess: false,
+                                    ),
+                                  );
+                                });
+                              }
+                            },
+                          )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -209,11 +276,11 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
   }
 }
 
-class FeedBackIcons extends StatelessWidget {
+class FeedBackIcons extends StatefulWidget {
   FeedBackIcons({
     super.key,
     this.index = 0,
-    this.value = "",
+    this.value = 3,
     this.iconLocation = "",
     this.isSelected = false,
     this.selectedColor = greenAcent,
@@ -221,18 +288,40 @@ class FeedBackIcons extends StatelessWidget {
 
   int? index;
   Color? selectedColor;
-  String? value;
+  int? value;
   String? iconLocation;
   bool? isSelected;
 
   @override
+  State<FeedBackIcons> createState() => _FeedBackIconsState();
+}
+
+class _FeedBackIconsState extends State<FeedBackIcons> {
+  bool isHover = false;
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 70,
-      width: 70,
-      child: ImageIcon(
-        AssetImage(iconLocation!),
-        color: !isSelected! ? platinum : selectedColor,
+    return MouseRegion(
+      onHover: (event) {
+        setState(() {
+          isHover = true;
+        });
+      },
+      onExit: (event) {
+        setState(() {
+          isHover = false;
+        });
+      },
+      child: SizedBox(
+        height: 70,
+        width: 70,
+        child: ImageIcon(
+          AssetImage(widget.iconLocation!),
+          color: isHover
+              ? widget.selectedColor
+              : !widget.isSelected!
+                  ? platinum
+                  : widget.selectedColor,
+        ),
       ),
     );
   }
@@ -241,7 +330,7 @@ class FeedBackIcons extends StatelessWidget {
 class FeedBackIcon {
   FeedBackIcon({
     this.index = 0,
-    this.value = "",
+    this.value = 3,
     this.iconLocation,
     this.selectedColor = greenAcent,
     this.notSelectedColor = platinum,
@@ -249,7 +338,7 @@ class FeedBackIcon {
   });
 
   int? index;
-  String? value;
+  int? value;
   Color? selectedColor;
   Color? notSelectedColor;
   String? iconLocation;

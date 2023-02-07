@@ -2074,6 +2074,34 @@ class ReqAPI {
     }
   }
 
+  Future sendFeedback(int rating, String comment) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/user/feedback');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+      "Rating" : $rating,
+      "Comment" : "$comment"
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   //END CLASS REQ API
 }
 
