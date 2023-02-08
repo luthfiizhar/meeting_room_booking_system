@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
@@ -99,8 +100,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         constraints: const BoxConstraints(
           minWidth: 450,
           maxWidth: 450,
-          minHeight: 450,
-          maxHeight: 500,
+          minHeight: 300,
+          // maxHeight: 500,
         ),
         child: Container(
           padding: const EdgeInsets.symmetric(
@@ -138,35 +139,54 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                 ),
                 Align(
                   alignment: Alignment.center,
-                  child: Wrap(
-                    spacing: 60,
-                    children: optionEmoticon
-                        .asMap()
-                        .map((index, element) => MapEntry(
-                              index,
-                              Builder(builder: (context) {
-                                return SizedBox(
-                                  height: 70,
-                                  width: 70,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      onChange(index);
-                                    },
-                                    child: FeedBackIcons(
-                                      index: index,
-                                      value: element.value,
-                                      selectedColor: element.selectedColor,
-                                      isSelected:
-                                          selectedValue == element.value,
-                                      iconLocation: element.iconLocation,
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ))
-                        .values
-                        .toList(),
+                  child: RatingBar.builder(
+                    allowHalfRating: false,
+                    minRating: 1,
+                    maxRating: 5,
+                    initialRating: 5,
+                    itemCount: 5,
+                    itemSize: 50,
+                    itemPadding: const EdgeInsets.symmetric(horizontal: 10),
+                    itemBuilder: (context, index) {
+                      return const Icon(
+                        Icons.star,
+                        color: yellow,
+                      );
+                    },
+                    onRatingUpdate: (value) {
+                      print(value);
+                      selectedValue = value.toInt();
+                    },
                   ),
+                  // child: Wrap(
+                  //   spacing: 60,
+                  //   children: optionEmoticon
+                  //       .asMap()
+                  //       .map((index, element) => MapEntry(
+                  //             index,
+                  //             Builder(builder: (context) {
+                  //               return SizedBox(
+                  //                 height: 70,
+                  //                 width: 70,
+                  //                 child: GestureDetector(
+                  //                   onTap: () {
+                  //                     onChange(index);
+                  //                   },
+                  //                   child: FeedBackIcons(
+                  //                     index: index,
+                  //                     value: element.value,
+                  //                     selectedColor: element.selectedColor,
+                  //                     isSelected:
+                  //                         selectedValue == element.value,
+                  //                     iconLocation: element.iconLocation,
+                  //                   ),
+                  //                 ),
+                  //               );
+                  //             }),
+                  //           ))
+                  //       .values
+                  //       .toList(),
+                  // ),
                 ),
                 const SizedBox(
                   height: 35,
