@@ -1237,16 +1237,17 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                       //       .singleLineFormatter,
                                       // ],
                                       maxLines: 4,
-                                      validator: (value) {
-                                        if (value != "") {
-                                          if (value.toString().contains("\"") ||
-                                              value.toString().contains("'")) {
-                                            return 'Can\'t contains " or \' symbols.';
-                                          } else {
-                                            return null;
-                                          }
-                                        }
-                                      },
+                                      // validator: (value) {
+                                      //   if (value != "") {
+                                      //     if (value.toString().contains("\"") ||
+                                      //         value.toString().contains("'")) {
+                                      //       return 'Can\'t contains " or \' symbols.';
+                                      //     }
+                                      //     else {
+                                      //       return null;
+                                      //     }
+                                      //   }
+                                      // },
                                     ),
                                   ),
                                 ),
@@ -2035,12 +2036,15 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             }
                                             booking.roomId = widget.roomId;
                                             booking.roomType = roomType;
-                                            booking.summary = eventName;
+                                            booking.summary = eventName
+                                                .replaceAll('"', '\\"');
                                             booking.description = eventDesc
-                                                .replaceAll('\n', '\\n');
+                                                .replaceAll('\n', '\\n')
+                                                .replaceAll('"', '\\"');
                                             booking.additionalNote =
-                                                additionalNote.replaceAll(
-                                                    '\n', '\\n');
+                                                additionalNote
+                                                    .replaceAll('\n', '\\n')
+                                                    .replaceAll('"', '\\"');
                                             booking.startDate = DateTime.parse(
                                                 "${DateFormat('yyyy-MM-dd').format(selectedDate!)} $startTime:00");
                                             booking.endDate = DateTime.parse(
@@ -3038,16 +3042,16 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           onSaved: (newValue) {
             additionalNote = newValue!;
           },
-          validator: (value) {
-            if (value != "") {
-              if (value.toString().contains("\"") ||
-                  value.toString().contains("'")) {
-                return 'Can\'t contains " or \' symbols.';
-              } else {
-                return null;
-              }
-            }
-          },
+          // validator: (value) {
+          //   if (value != "") {
+          //     if (value.toString().contains("\"") ||
+          //         value.toString().contains("'")) {
+          //       return 'Can\'t contains " or \' symbols.';
+          //     } else {
+          //       return null;
+          //     }
+          //   }
+          // },
         )
       ],
     );
