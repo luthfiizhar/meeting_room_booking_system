@@ -281,9 +281,10 @@ class ReqAPI {
       return data;
     } on Error catch (e) {
       return e;
-    } on HttpException catch (e) {
-      return e;
     }
+    // on HttpException catch (e) {
+    //   return e;
+    // }
   }
 
 // Future getBookingListRoom(

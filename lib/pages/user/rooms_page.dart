@@ -223,7 +223,7 @@ class _RoomsPageState extends State<RoomsPage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
-          title: 'Failed connect to API',
+          title: 'Failed getMRBSBookingDetail',
           contentText: error.toString(),
           isSuccess: false,
         ),
@@ -281,7 +281,7 @@ class _RoomsPageState extends State<RoomsPage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
-          title: 'Failed connect to API',
+          title: 'Error getGoogleBookingDetail',
           contentText: error.toString(),
           isSuccess: false,
         ),
@@ -422,7 +422,7 @@ class _RoomsPageState extends State<RoomsPage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
-          title: 'Failed connect to API',
+          title: 'Error getAreaListWithRooms',
           contentText: error.toString(),
           isSuccess: false,
         ),
@@ -590,7 +590,7 @@ class _RoomsPageState extends State<RoomsPage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
-          title: 'Failed connect to API',
+          title: 'Error getBookingListRoom',
           contentText: error.toString(),
         ),
       );
