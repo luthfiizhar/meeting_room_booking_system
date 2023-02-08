@@ -25,7 +25,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
 
   bool isLoading = false;
 
-  int selectedValue = 99;
+  int selectedValue = 5;
   String comment = "";
 
   List<FeedBackIcon> optionEmoticon = [
@@ -143,7 +143,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                     allowHalfRating: false,
                     minRating: 1,
                     maxRating: 5,
-                    initialRating: 5,
+                    initialRating: selectedValue.toDouble(),
                     itemCount: 5,
                     itemSize: 50,
                     itemPadding: const EdgeInsets.symmetric(horizontal: 10),
