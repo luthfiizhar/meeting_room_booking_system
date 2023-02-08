@@ -9,10 +9,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/widgets/admin_page/area_menu_page/new_area_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 
 class BugReportDialog extends StatefulWidget {
@@ -23,6 +25,8 @@ class BugReportDialog extends StatefulWidget {
 }
 
 class _BugReportDialogState extends State<BugReportDialog> {
+  ReqAPI apiReq = ReqAPI();
+  final formKey = GlobalKey<FormState>();
   TextEditingController _description = TextEditingController();
   FocusNode descriptionNode = FocusNode();
 
@@ -98,141 +102,198 @@ class _BugReportDialogState extends State<BugReportDialog> {
           // maxHeight: 650,
         ),
         child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 35,
-              vertical: 30,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Bug Report',
-                  style: helveticaText.copyWith(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: eerieBlack,
+          child: Form(
+            key: formKey,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 35,
+                vertical: 30,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Bug Report',
+                    style: helveticaText.copyWith(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: eerieBlack,
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                // Text(
-                //   'Please send the report ',
-                //   style: helveticaText.copyWith(
-                //     fontSize: 18,
-                //     fontWeight: FontWeight.w300,
-                //     color: eerieBlack,
-                //   ),
-                // ),
-                // const SizedBox(
-                //   height: 35,
-                // ),
-                BlackInputField(
-                  controller: _description,
-                  focusNode: descriptionNode,
-                  enabled: true,
-                  maxLines: 5,
-                  onSaved: (newValue) {
-                    description = newValue.toString();
-                  },
-                  obsecureText: false,
-                  hintText: 'Description here ...',
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                Text(
-                  'Photo',
-                  style: helveticaText.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w300,
-                    color: eerieBlack,
+                  const SizedBox(
+                    height: 25,
                   ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Wrap(
-                  spacing: 15,
-                  runSpacing: 15,
-                  children: bugPhoto
-                      .asMap()
-                      .map(
-                        (index, element) => MapEntry(
-                          index,
-                          element['isLast']
-                              ? InkWell(
-                                  onTap: () {
-                                    getBugPhoto();
-                                  },
-                                  child: DottedBorder(
-                                    borderType: BorderType.Rect,
-                                    radius: const Radius.circular(5),
-                                    dashPattern: const [10, 4, 10, 4],
-                                    child: SizedBox(
-                                      width: 200,
-                                      height: 100,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(
-                                            MdiIcons.plusCircleOutline,
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text(
-                                            'Add Photo',
-                                            style: helveticaText.copyWith(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w300,
-                                              color: davysGray,
+                  // Text(
+                  //   'Please send the report ',
+                  //   style: helveticaText.copyWith(
+                  //     fontSize: 18,
+                  //     fontWeight: FontWeight.w300,
+                  //     color: eerieBlack,
+                  //   ),
+                  // ),
+                  // const SizedBox(
+                  //   height: 35,
+                  // ),
+                  BlackInputField(
+                    controller: _description,
+                    focusNode: descriptionNode,
+                    enabled: true,
+                    maxLines: 5,
+                    onSaved: (newValue) {
+                      description = newValue.toString();
+                    },
+                    obsecureText: false,
+                    hintText: 'Description here ...',
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Text(
+                    'Photo',
+                    style: helveticaText.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w300,
+                      color: eerieBlack,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Wrap(
+                    spacing: 15,
+                    runSpacing: 15,
+                    children: bugPhoto
+                        .asMap()
+                        .map(
+                          (index, element) => MapEntry(
+                            index,
+                            element['isLast']
+                                ? InkWell(
+                                    onTap: () {
+                                      getBugPhoto();
+                                    },
+                                    child: DottedBorder(
+                                      borderType: BorderType.Rect,
+                                      radius: const Radius.circular(5),
+                                      dashPattern: const [10, 4, 10, 4],
+                                      child: SizedBox(
+                                        width: 200,
+                                        height: 100,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              MdiIcons.plusCircleOutline,
                                             ),
-                                          )
-                                        ],
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              'Add Photo',
+                                              style: helveticaText.copyWith(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w300,
+                                                color: davysGray,
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
+                                  )
+                                : BugPhotoItemContainer(
+                                    index: index,
+                                    base64: element['base64'],
+                                    remove: removeBugPhoto,
                                   ),
-                                )
-                              : BugPhotoItemContainer(
-                                  index: index,
-                                  base64: element['base64'],
-                                  remove: removeBugPhoto,
+                          ),
+                        )
+                        .values
+                        .toList(),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TransparentButtonBlack(
+                        text: 'Cancel',
+                        disabled: false,
+                        padding: ButtonSize().smallSize(),
+                        onTap: () {
+                          Navigator.of(context).pop(false);
+                        },
+                      ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      RegularButton(
+                        text: 'Submit',
+                        disabled: false,
+                        padding: ButtonSize().mediumSize(),
+                        onTap: () {
+                          if (formKey.currentState!.validate()) {
+                            formKey.currentState!.save();
+                            description = description
+                                .replaceAll('\n', '\\n')
+                                .replaceAll('"', '\\"');
+                            List photo = [];
+                            for (var element in bugPhoto) {
+                              if (element['isLast'] == false) {
+                                photo.add('"${element['base64']}"');
+                              }
+                            }
+                            apiReq
+                                .sendBugReport(description, photo)
+                                .then((value) {
+                              if (value['Status'].toString() == "200") {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialogBlack(
+                                    title: value['Title'],
+                                    contentText: value['Message'],
+                                  ),
+                                ).then((value) {
+                                  Navigator.of(context).pop(true);
+                                });
+                              } else if (value['Status'].toString() == "401") {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => TokenExpiredDialog(
+                                    title: value['Title'],
+                                    contentText: value['Message'],
+                                  ),
+                                );
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialogBlack(
+                                    title: value['Title'],
+                                    contentText: value['Message'],
+                                    isSuccess: false,
+                                  ),
+                                );
+                              }
+                            }).onError((error, stackTrace) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialogBlack(
+                                  title: 'Error sendBugReport',
+                                  contentText: error.toString(),
+                                  isSuccess: false,
                                 ),
-                        ),
+                              );
+                            });
+                          }
+                        },
                       )
-                      .values
-                      .toList(),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TransparentButtonBlack(
-                      text: 'Cancel',
-                      disabled: false,
-                      padding: ButtonSize().smallSize(),
-                      onTap: () {
-                        Navigator.of(context).pop(false);
-                      },
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    RegularButton(
-                      text: 'Submit',
-                      disabled: false,
-                      padding: ButtonSize().mediumSize(),
-                      onTap: () {},
-                    )
-                  ],
-                )
-              ],
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),

@@ -2103,6 +2103,35 @@ class ReqAPI {
     }
   }
 
+  Future sendBugReport(String description, List photo) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/user/bug-report');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+      "Description" : "$description",
+      "Photo" : $photo
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   //END CLASS REQ API
 }
 
