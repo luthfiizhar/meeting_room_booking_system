@@ -555,10 +555,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
   selectGuest(String value) {
     setState(() {
+      print("select");
+      emailSuggestionVisible = false;
+      emailNode.unfocus();
       invitedGuest.add(value);
       _email.text = "";
-      emailNode.unfocus();
-      emailSuggestionVisible = false;
     });
   }
 
@@ -595,7 +596,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     print(_email.text);
     apiReq.getContactList(_email.text).then((value) {
       print(value);
-      emailSuggestionVisible = true;
+      // emailSuggestionVisible = true;
       if (value['Status'].toString() == "200") {
         if (value['Data'].toString() == "[]") {
           contactList = [];
@@ -955,30 +956,12 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       if (_email.text != "") {
         // filterContactList.clear();
         setState(() {
-          // filterContactList = contactList
-          //     .where((element) => element['Name']
-          //         .toString()
-          //         .toLowerCase()
-          //         .contains(_email.text.toLowerCase()))
-          //     .toList();
-
+          emailSuggestionVisible = true;
           initContactList();
         });
-
-        // for (var element in contactList) {
-        //   // element['Name'].toString().contains(_email.text);
-        //   // if (_email.text =) {}
-        //   if (element['Name'].toString().contains(_email.text) ||
-        //       element['Email'].toString().contains(_email.text)) {
-        //     setState(() {
-        //       filterContactList.add(element);
-        //     });
-        //   }
-        // }
       }
       if (_email.text == "") {
         setState(() {
-          // filterContactList = contactList;
           initContactList();
           emailSuggestionVisible = false;
           isContactEmpty = true;
@@ -1035,15 +1018,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         if (emailNode.hasFocus) {
           if (_email.text != "") {
             initContactList();
-            // if (contactList.isEmpty) {
-            //   initContactList();
-            // } else {
-            //   setState(() {
-            //     isContactEmpty = false;
-            //     emailSuggestionVisible = true;
-            //     filterContactList = contactList;
-            //   });
-            // }
           } else {
             initContactList();
             setState(() {
@@ -1053,24 +1027,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
               emailSuggestionVisible = false;
             });
           }
-          // else {
-          //   if (contactList == []) {
-          // initContactList();
-          //   } else {
-          //     setState(() {
-          //       isContactEmpty = false;
-          //       emailSuggestionVisible = true;
-          //       // filterContactList = contactList
-          //       //     .where((element) => element['Name']
-          //       //         .toString()
-          //       //         .toLowerCase()
-          //       //         .contains(_email.text.toLowerCase()))
-          //       //     .toList();
-          //     });
-          //   }
-          // }
         } else {
-          emailSuggestionVisible = false;
+          // emailSuggestionVisible = false;
           // _overlayEntry!.remove();
         }
       });
