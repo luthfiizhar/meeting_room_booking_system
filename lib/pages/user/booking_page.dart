@@ -1386,9 +1386,23 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             FilteringTextInputFormatter
                                                 .digitsOnly
                                           ],
-                                          validator: (value) => value == ""
-                                              ? "Min. $participantMin"
-                                              : null,
+                                          // validator: (value) => value == ""
+                                          //     ? "Min. $participantMin"
+                                          //     : null,
+                                          validator: (value) {
+                                            if (value.toString() != "") {
+                                              if (int.parse(value) >=
+                                                      participantMin.toInt() &&
+                                                  int.parse(value) <=
+                                                      participantMax.toInt()) {
+                                                return null;
+                                              } else {
+                                                return "$participantMin - $participantMax";
+                                              }
+                                            } else {
+                                              return "$participantMin - $participantMax";
+                                            }
+                                          },
                                           focusNode: totalParticipantNode,
                                           onSaved: (newValue) {
                                             totalParticipant = newValue!;
