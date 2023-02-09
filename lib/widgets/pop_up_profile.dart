@@ -190,7 +190,7 @@ class PopUpProfile extends StatelessWidget {
                   );
                 },
                 child: Text(
-                  'Report Bug/Error',
+                  'Report Error',
                   style: helveticaText.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w300,

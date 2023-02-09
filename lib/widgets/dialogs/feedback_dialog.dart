@@ -25,7 +25,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
 
   bool isLoading = false;
 
-  int selectedValue = 5;
+  int selectedValue = 0;
   String comment = "";
 
   List<FeedBackIcon> optionEmoticon = [
@@ -231,7 +231,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                               setState(() {
                                 isLoading = true;
                               });
-                              if (formKey.currentState!.validate()) {
+                              if (formKey.currentState!.validate() &&
+                                  selectedValue > 0) {
                                 formKey.currentState!.save();
                                 apiReq
                                     .sendFeedback(
@@ -286,6 +287,17 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                                     ),
                                   );
                                 });
+                              } else {
+                                isLoading = false;
+                                setState(() {});
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => const AlertDialogBlack(
+                                    title: 'Failed',
+                                    contentText: 'Please input your rating.',
+                                    isSuccess: false,
+                                  ),
+                                );
                               }
                             },
                           )
