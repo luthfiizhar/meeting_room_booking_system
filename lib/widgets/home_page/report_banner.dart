@@ -54,19 +54,23 @@ class ReportBanner extends StatelessWidget {
               height: 10,
             ),
             Text(
-              'Let us know.',
+              'Let us know!',
               style: helveticaText.copyWith(
                   fontSize: 20, fontWeight: FontWeight.w300, color: white),
             ),
             const SizedBox(
-              height: 20,
+              height: 30,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
                   child: TransparentBorderedWhiteButton(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                    ),
                     text: 'Report Now',
+                    fontWeight: FontWeight.w700,
                     disabled: false,
                     onTap: () {
                       showDialog(
@@ -74,7 +78,6 @@ class ReportBanner extends StatelessWidget {
                         builder: (context) => const BugReportDialog(),
                       );
                     },
-                    padding: ButtonSize().mediumSize(),
                   ),
                 ),
               ],
