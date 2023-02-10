@@ -35,6 +35,8 @@ class _BugReportDialogState extends State<BugReportDialog> {
     {'base64': "picker", 'isLast': true}
   ];
 
+  bool isLoading = false;
+
   String urlImage = "";
   bool emptyImage = true;
   File? pickedImage;
@@ -96,8 +98,8 @@ class _BugReportDialogState extends State<BugReportDialog> {
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(
-          minWidth: 725,
-          maxWidth: 725,
+          minWidth: 620,
+          maxWidth: 620,
           minHeight: 300,
           // maxHeight: 650,
         ),
@@ -114,7 +116,7 @@ class _BugReportDialogState extends State<BugReportDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Bug Report',
+                    'Report Error',
                     style: helveticaText.copyWith(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
@@ -122,19 +124,19 @@ class _BugReportDialogState extends State<BugReportDialog> {
                     ),
                   ),
                   const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    'Do you experience any error in system? Please describe here!',
+                    style: helveticaText.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w300,
+                      color: eerieBlack,
+                    ),
+                  ),
+                  const SizedBox(
                     height: 25,
                   ),
-                  // Text(
-                  //   'Please send the report ',
-                  //   style: helveticaText.copyWith(
-                  //     fontSize: 18,
-                  //     fontWeight: FontWeight.w300,
-                  //     color: eerieBlack,
-                  //   ),
-                  // ),
-                  // const SizedBox(
-                  //   height: 35,
-                  // ),
                   BlackInputField(
                     controller: _description,
                     focusNode: descriptionNode,
@@ -144,13 +146,13 @@ class _BugReportDialogState extends State<BugReportDialog> {
                       description = newValue.toString();
                     },
                     obsecureText: false,
-                    hintText: 'Description here ...',
+                    hintText: 'Tell us more ...',
                   ),
                   const SizedBox(
                     height: 25,
                   ),
                   Text(
-                    'Photo',
+                    'Have any photo? You can add prove of error here.',
                     style: helveticaText.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w300,
@@ -158,7 +160,7 @@ class _BugReportDialogState extends State<BugReportDialog> {
                     ),
                   ),
                   const SizedBox(
-                    height: 15,
+                    height: 25,
                   ),
                   Wrap(
                     spacing: 15,
@@ -169,40 +171,42 @@ class _BugReportDialogState extends State<BugReportDialog> {
                           (index, element) => MapEntry(
                             index,
                             element['isLast']
-                                ? InkWell(
-                                    onTap: () {
-                                      getBugPhoto();
-                                    },
-                                    child: DottedBorder(
-                                      borderType: BorderType.Rect,
-                                      radius: const Radius.circular(5),
-                                      dashPattern: const [10, 4, 10, 4],
-                                      child: SizedBox(
-                                        width: 200,
-                                        height: 100,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(
-                                              MdiIcons.plusCircleOutline,
+                                ? bugPhoto.length - 1 < 2
+                                    ? InkWell(
+                                        onTap: () {
+                                          getBugPhoto();
+                                        },
+                                        child: DottedBorder(
+                                          borderType: BorderType.Rect,
+                                          radius: const Radius.circular(5),
+                                          dashPattern: const [10, 4, 10, 4],
+                                          child: SizedBox(
+                                            width: 250,
+                                            height: 150,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(
+                                                  MdiIcons.plusCircleOutline,
+                                                ),
+                                                const SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text(
+                                                  'Add Photo',
+                                                  style: helveticaText.copyWith(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w300,
+                                                    color: davysGray,
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              'Add Photo',
-                                              style: helveticaText.copyWith(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w300,
-                                                color: davysGray,
-                                              ),
-                                            )
-                                          ],
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  )
+                                      )
+                                    : const SizedBox()
                                 : BugPhotoItemContainer(
                                     index: index,
                                     base64: element['base64'],
@@ -337,8 +341,8 @@ class _BugPhotoItemContainerState extends State<BugPhotoItemContainer> {
         children: [
           widget.base64.startsWith('data')
               ? Container(
-                  width: 200,
-                  height: 100,
+                  width: 250,
+                  height: 150,
                   decoration: BoxDecoration(
                     color: davysGray,
                     borderRadius: BorderRadius.circular(5),

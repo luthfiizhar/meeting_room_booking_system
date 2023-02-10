@@ -1,11 +1,8 @@
 import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -18,7 +15,6 @@ import 'package:meeting_room_booking_system/model/booking_class.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/booking_detail_picture.dart';
-import 'package:meeting_room_booking_system/widgets/booking_page/confirm_book_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/food_item.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/pick_end_time_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/pick_start_time_dialog.dart';
@@ -114,7 +110,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   FocusNode repeatEndNode = FocusNode();
   FocusNode repeatOnNode = FocusNode();
   FocusNode additionalNoteNode = FocusNode();
-  OverlayEntry? _overlayEntry;
+
+  OverlayEntry? suggestEmailOverlayEntry;
+  GlobalKey emailKey = GlobalKey();
+  LayerLink emailLayerLink = LayerLink();
 
   String eventName = "";
   String eventDesc = "";
@@ -188,8 +187,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   bool isAdditionalNotesVisible = true;
   late bool isEdit;
 
-  final LayerLink _layerLink = LayerLink();
-
   bool isPictEmpty = true;
 
   DateTime dateRefresh = DateTime.now();
@@ -206,8 +203,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     {'value': '5', 'name': 'Friday', 'initial': 'F', 'isSelected': false},
     {'value': '6', 'name': 'Saturday', 'initial': 'S', 'isSelected': false},
   ];
-
-  GlobalKey emailKey = GlobalKey();
 
   bool pictureLoading = true;
   bool isSubmitLoading = false;
@@ -577,7 +572,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
               child: CompositedTransformFollower(
                 showWhenUnlinked: false,
                 offset: Offset(0.0, size.height + 5.0),
-                link: _layerLink,
+                link: emailLayerLink,
                 child: Material(
                   elevation: 4.0,
                   child: EmailSuggestionContainer(
@@ -609,6 +604,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           isContactEmpty = false;
           setState(() {});
         }
+        suggestEmailOverlayEntry!.markNeedsBuild();
       } else if (value['Status'].toString() == "401") {
         showDialog(
           context: context,
@@ -956,14 +952,19 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       if (_email.text != "") {
         // filterContactList.clear();
         setState(() {
-          emailSuggestionVisible = true;
+          // emailSuggestionVisible = true;
+
           initContactList();
         });
       }
       if (_email.text == "") {
         setState(() {
           initContactList();
-          emailSuggestionVisible = false;
+          suggestEmailOverlayEntry!.markNeedsBuild();
+          // emailSuggestionVisible = false;
+          // if (suggestEmailOverlayEntry!.mounted) {
+          //   suggestEmailOverlayEntry!.remove();
+          // }
           isContactEmpty = true;
         });
       }
@@ -1016,6 +1017,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     emailNode.addListener(() async {
       setState(() {
         if (emailNode.hasFocus) {
+          suggestEmailOverlayEntry = emailOverlay();
+          Overlay.of(context)!.insert(suggestEmailOverlayEntry!);
           if (_email.text != "") {
             initContactList();
           } else {
@@ -1030,6 +1033,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         } else {
           // emailSuggestionVisible = false;
           // _overlayEntry!.remove();
+          suggestEmailOverlayEntry!.remove();
         }
       });
     });
@@ -1402,7 +1406,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                       children: [
                                         Expanded(
                                           child: CompositedTransformTarget(
-                                            link: _layerLink,
+                                            link: emailLayerLink,
                                             child: SizedBox(
                                               key: emailKey,
                                               // width: 100,
@@ -2498,20 +2502,20 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                         ),
                       ),
                     ),
-                    Visibility(
-                      visible: emailSuggestionVisible,
-                      child: Positioned(
-                        top: 475,
-                        right: 0,
-                        child: EmailSuggestionContainer(
-                          contactList: contactList,
-                          emptyMessage: messageEmptyContact,
-                          isEmpty: isContactEmpty,
-                          filter: filterContact,
-                          selectGuest: selectGuest,
-                        ),
-                      ),
-                    ),
+                    // Visibility(
+                    //   visible: emailSuggestionVisible,
+                    //   child: Positioned(
+                    //     top: 475,
+                    //     right: 0,
+                    //     child: EmailSuggestionContainer(
+                    //       contactList: contactList,
+                    //       emptyMessage: messageEmptyContact,
+                    //       isEmpty: isContactEmpty,
+                    //       filter: filterContact,
+                    //       selectGuest: selectGuest,
+                    //     ),
+                    //   ),
+                    // ),
                     Visibility(
                       visible: datePickerVisible,
                       child: Positioned(
