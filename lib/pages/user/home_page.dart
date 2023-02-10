@@ -1234,16 +1234,36 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       children: [
         const GreetingContainer(),
         Visibility(
-          visible: false,
+          // visible: isAccSyncToGoogle ? false : true,
+          // child: InkWell(
+          //   onTap: () {
+          //     context.go('/gws');
+          //   },
+          //   child: ConstrainedBox(
+          //     constraints: const BoxConstraints(
+          //       maxWidth: 780,
+          //       minWidth: 780,
+          //     ),
+          //     child: const WhiteBannerLandscape(
+          //       title: 'Link your Google account',
+          //       subtitle: '& enjoy your benefits.',
+          //       imagePath: 'assets/banner_pict_google.png',
+          //     ),
+          //   ),
+          // ),
+          visible: feedback,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const SizedBox(
                 height: 30,
               ),
               InkWell(
                 onTap: () {
-                  context.go('/gws');
+                  // context.go('/gws');
+                  showDialog(
+                    context: context,
+                    builder: (context) => const FeedbackDialog(),
+                  );
                 },
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(
@@ -1251,9 +1271,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     minWidth: 780,
                   ),
                   child: const WhiteBannerLandscape(
-                    title: 'Link your Google account',
-                    subtitle: '& enjoy your benefits.',
-                    imagePath: 'assets/banner_pict_google.png',
+                    title: 'How is your experience? ',
+                    subtitle: 'We love to hear from you!',
+                    imagePath: 'assets/feedback_bg.png',
+                    borderColor: platinum,
+                    backgroundColor: white,
+                    fit: BoxFit.fitWidth,
+                    isUseGradient: false,
                   ),
                 ),
               ),
@@ -1302,51 +1326,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           height: 30,
         ),
         UpcomingEventContainer(),
-        const SizedBox(
-          height: 30,
-        ),
         Visibility(
-          // visible: isAccSyncToGoogle ? false : true,
-          // child: InkWell(
-          //   onTap: () {
-          //     context.go('/gws');
-          //   },
-          //   child: ConstrainedBox(
-          //     constraints: const BoxConstraints(
-          //       maxWidth: 780,
-          //       minWidth: 780,
-          //     ),
-          //     child: const WhiteBannerLandscape(
-          //       title: 'Link your Google account',
-          //       subtitle: '& enjoy your benefits.',
-          //       imagePath: 'assets/banner_pict_google.png',
-          //     ),
-          //   ),
-          // ),
-          visible: feedback,
-          child: InkWell(
-            onTap: () {
-              // context.go('/gws');
-              showDialog(
-                context: context,
-                builder: (context) => const FeedbackDialog(),
-              );
-            },
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 780,
-                minWidth: 780,
+          visible: isAccSyncToGoogle ? false : true,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 30,
               ),
-              child: const WhiteBannerLandscape(
-                title: 'How is your experience? ',
-                subtitle: 'We love to hear from you!',
-                imagePath: 'assets/feedback_bg.png',
-                borderColor: platinum,
-                backgroundColor: white,
-                fit: BoxFit.fitWidth,
-                isUseGradient: false,
+              InkWell(
+                onTap: () {
+                  context.go('/gws');
+                },
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 780,
+                    minWidth: 780,
+                  ),
+                  child: const WhiteBannerLandscape(
+                    title: 'Link your Google account',
+                    subtitle: '& enjoy your benefits.',
+                    imagePath: 'assets/banner_pict_google.png',
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ],
