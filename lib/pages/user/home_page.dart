@@ -16,6 +16,7 @@ import 'package:meeting_room_booking_system/widgets/home_page/apporval_message.d
 import 'package:meeting_room_booking_system/widgets/home_page/available_room_offer_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/greeting_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/home_search_container.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/report_banner.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/room_type_home_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/schedule_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/statistic_container.dart';
@@ -1369,6 +1370,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         ),
         ScheduleContainer(),
+        const SizedBox(
+          height: 30,
+        ),
+        ReportBanner(),
         const SizedBox(
           height: 30,
         ),
