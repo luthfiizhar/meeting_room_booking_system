@@ -92,13 +92,14 @@ class TransparentBorderedBlackButton extends StatelessWidget {
 }
 
 class TransparentBorderedWhiteButton extends StatelessWidget {
-  const TransparentBorderedWhiteButton({
+  TransparentBorderedWhiteButton({
     super.key,
     this.text,
     this.fontSize,
     this.disabled = false,
     this.onTap,
     this.padding,
+    this.fontWeight = FontWeight.w300,
   });
 
   final String? text;
@@ -106,6 +107,7 @@ class TransparentBorderedWhiteButton extends StatelessWidget {
   final VoidCallback? onTap;
   final bool? disabled;
   final EdgeInsetsGeometry? padding;
+  FontWeight? fontWeight;
 
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
@@ -157,7 +159,7 @@ class TransparentBorderedWhiteButton extends StatelessWidget {
             return helveticaText.copyWith(
               fontFamily: 'Helvetica',
               fontSize: 16,
-              fontWeight: FontWeight.w300,
+              fontWeight: fontWeight,
             );
           },
         ),
