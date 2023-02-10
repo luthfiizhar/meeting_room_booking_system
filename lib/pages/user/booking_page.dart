@@ -1,11 +1,8 @@
 import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -16,8 +13,8 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/amenities_class.dart';
 import 'package:meeting_room_booking_system/model/booking_class.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
+import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/booking_detail_picture.dart';
-import 'package:meeting_room_booking_system/widgets/booking_page/confirm_book_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/food_item.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/pick_end_time_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/booking_page/pick_start_time_dialog.dart';
@@ -39,6 +36,7 @@ import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:provider/provider.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:http/http.dart' as http;
 
@@ -57,6 +55,7 @@ class BookingRoomPage extends StatefulWidget {
     this.foodAmenities = "[]",
     this.summary = "",
     this.description = "",
+    this.floor = "",
     this.recurrent,
     this.invitedGuest,
     this.edit,
@@ -75,6 +74,7 @@ class BookingRoomPage extends StatefulWidget {
   dynamic foodAmenities;
   String summary;
   String description;
+  String floor;
   dynamic recurrent;
   List? invitedGuest;
   dynamic edit;
@@ -110,7 +110,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   FocusNode repeatEndNode = FocusNode();
   FocusNode repeatOnNode = FocusNode();
   FocusNode additionalNoteNode = FocusNode();
-  OverlayEntry? _overlayEntry;
+
+  OverlayEntry? suggestEmailOverlayEntry;
+  GlobalKey emailKey = GlobalKey();
+  LayerLink emailLayerLink = LayerLink();
 
   String eventName = "";
   String eventDesc = "";
@@ -184,8 +187,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   bool isAdditionalNotesVisible = true;
   late bool isEdit;
 
-  final LayerLink _layerLink = LayerLink();
-
   bool isPictEmpty = true;
 
   DateTime dateRefresh = DateTime.now();
@@ -202,8 +203,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     {'value': '5', 'name': 'Friday', 'initial': 'F', 'isSelected': false},
     {'value': '6', 'name': 'Saturday', 'initial': 'S', 'isSelected': false},
   ];
-
-  GlobalKey emailKey = GlobalKey();
 
   bool pictureLoading = true;
   bool isSubmitLoading = false;
@@ -261,6 +260,77 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   //     return e;
   //   }
   // }
+
+  Future assignDataToCalendar(dynamic data) async {
+    // _events!.appointments!.clear();
+    Provider.of<MainModel>(context, listen: false).events.appointments!.clear();
+    List dataRoom = data;
+    int length = dataRoom.length;
+    // print(dataRoom);
+    for (var i = 0; i < length; i++) {
+      List eventRoom = dataRoom[i]['Bookings'];
+
+      for (var j = 0; j < eventRoom.length; j++) {
+        // _events!.appointments!.add(
+        //   RoomEvent(
+        //     // subject: ,
+        //     resourceIds: [dataRoom[i]['RoomID']],
+        //     from: DateTime.parse(eventRoom[j]['StartDateTime']),
+        //     to: DateTime.parse(eventRoom[j]['EndDateTime']),
+        //     background: eventRoom[j]['MeetingType'] == "EXTERNAL"
+        //         ? yellowAccent
+        //         : davysGray,
+        //     capacity: 5,
+        //     contactID: "1111",
+        //     isAllDay: false,
+        //     eventName: eventRoom[j]['Summary'] ?? "-",
+        //     organizer: "",
+        //     recurrenceRule: "NONE",
+        //     endTimeZone: "",
+        //     startTimeZone: "",
+        //     bookingID: eventRoom[j]['BookingID'],
+        //     type: eventRoom[j]['Type'],
+        //     googleID: eventRoom[j]['GoogleCalendarEventID'],
+        //     roomId: dataRoom[i]['RoomID'],
+        //     meetingType: eventRoom[j]['MeetingType'],
+        //   ),
+        // );
+        Provider.of<MainModel>(context, listen: false).events.appointments!.add(
+              RoomEvent(
+                // subject: ,
+                resourceIds: [dataRoom[i]['RoomID']],
+                from: DateTime.parse(eventRoom[j]['StartDateTime']),
+                to: DateTime.parse(eventRoom[j]['EndDateTime']),
+                background: eventRoom[j]['MeetingType'] == "EXTERNAL"
+                    ? yellowAccent
+                    : davysGray,
+                capacity: 5,
+                contactID: "1111",
+                isAllDay: false,
+                eventName: eventRoom[j]['Summary'] ?? "-",
+                organizer: "",
+                recurrenceRule: "NONE",
+                endTimeZone: "",
+                startTimeZone: "",
+                bookingID: eventRoom[j]['BookingID'],
+                type: eventRoom[j]['Type'],
+                googleID: eventRoom[j]['GoogleCalendarEventID'],
+                roomId: dataRoom[i]['RoomID'],
+                meetingType: eventRoom[j]['MeetingType'],
+              ),
+            );
+      }
+    }
+    // _events!.notifyListeners(
+    //     CalendarDataSourceAction.reset, _events!.appointments!);
+    Provider.of<MainModel>(context, listen: false).events.notifyListeners(
+        CalendarDataSourceAction.reset,
+        Provider.of<MainModel>(context, listen: false).events.appointments!);
+    // setState(() {});
+    setState(() {
+      // loadingGetCalendar = false;
+    });
+  }
 
   Future forRefreshCalendar() async {
     var box = await Hive.openBox('calendarInfo');
@@ -480,10 +550,11 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
   selectGuest(String value) {
     setState(() {
+      print("select");
+      emailSuggestionVisible = false;
+      emailNode.unfocus();
       invitedGuest.add(value);
       _email.text = "";
-      emailNode.unfocus();
-      emailSuggestionVisible = false;
     });
   }
 
@@ -501,7 +572,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
               child: CompositedTransformFollower(
                 showWhenUnlinked: false,
                 offset: Offset(0.0, size.height + 5.0),
-                link: _layerLink,
+                link: emailLayerLink,
                 child: Material(
                   elevation: 4.0,
                   child: EmailSuggestionContainer(
@@ -520,7 +591,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     print(_email.text);
     apiReq.getContactList(_email.text).then((value) {
       print(value);
-      emailSuggestionVisible = true;
+      // emailSuggestionVisible = true;
       if (value['Status'].toString() == "200") {
         if (value['Data'].toString() == "[]") {
           contactList = [];
@@ -533,6 +604,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           isContactEmpty = false;
           setState(() {});
         }
+        suggestEmailOverlayEntry!.markNeedsBuild();
       } else if (value['Status'].toString() == "401") {
         showDialog(
           context: context,
@@ -880,32 +952,19 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       if (_email.text != "") {
         // filterContactList.clear();
         setState(() {
-          // filterContactList = contactList
-          //     .where((element) => element['Name']
-          //         .toString()
-          //         .toLowerCase()
-          //         .contains(_email.text.toLowerCase()))
-          //     .toList();
+          // emailSuggestionVisible = true;
 
           initContactList();
         });
-
-        // for (var element in contactList) {
-        //   // element['Name'].toString().contains(_email.text);
-        //   // if (_email.text =) {}
-        //   if (element['Name'].toString().contains(_email.text) ||
-        //       element['Email'].toString().contains(_email.text)) {
-        //     setState(() {
-        //       filterContactList.add(element);
-        //     });
-        //   }
-        // }
       }
       if (_email.text == "") {
         setState(() {
-          // filterContactList = contactList;
           initContactList();
-          emailSuggestionVisible = false;
+          suggestEmailOverlayEntry!.markNeedsBuild();
+          // emailSuggestionVisible = false;
+          // if (suggestEmailOverlayEntry!.mounted) {
+          //   suggestEmailOverlayEntry!.remove();
+          // }
           isContactEmpty = true;
         });
       }
@@ -958,17 +1017,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     emailNode.addListener(() async {
       setState(() {
         if (emailNode.hasFocus) {
+          suggestEmailOverlayEntry = emailOverlay();
+          Overlay.of(context)!.insert(suggestEmailOverlayEntry!);
           if (_email.text != "") {
             initContactList();
-            // if (contactList.isEmpty) {
-            //   initContactList();
-            // } else {
-            //   setState(() {
-            //     isContactEmpty = false;
-            //     emailSuggestionVisible = true;
-            //     filterContactList = contactList;
-            //   });
-            // }
           } else {
             initContactList();
             setState(() {
@@ -978,25 +1030,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
               emailSuggestionVisible = false;
             });
           }
-          // else {
-          //   if (contactList == []) {
-          // initContactList();
-          //   } else {
-          //     setState(() {
-          //       isContactEmpty = false;
-          //       emailSuggestionVisible = true;
-          //       // filterContactList = contactList
-          //       //     .where((element) => element['Name']
-          //       //         .toString()
-          //       //         .toLowerCase()
-          //       //         .contains(_email.text.toLowerCase()))
-          //       //     .toList();
-          //     });
-          //   }
-          // }
         } else {
-          emailSuggestionVisible = false;
+          // emailSuggestionVisible = false;
           // _overlayEntry!.remove();
+          suggestEmailOverlayEntry!.remove();
         }
       });
     });
@@ -1157,17 +1194,22 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                       onSaved: (newValue) {
                                         eventDesc = newValue!;
                                       },
+                                      // inputFormatters: [
+                                      //   FilteringTextInputFormatter
+                                      //       .singleLineFormatter,
+                                      // ],
                                       maxLines: 4,
-                                      validator: (value) {
-                                        if (value != "") {
-                                          if (value.toString().contains("\"") ||
-                                              value.toString().contains("'")) {
-                                            return 'Can\'t contains " or \' symbols.';
-                                          } else {
-                                            return null;
-                                          }
-                                        }
-                                      },
+                                      // validator: (value) {
+                                      //   if (value != "") {
+                                      //     if (value.toString().contains("\"") ||
+                                      //         value.toString().contains("'")) {
+                                      //       return 'Can\'t contains " or \' symbols.';
+                                      //     }
+                                      //     else {
+                                      //       return null;
+                                      //     }
+                                      //   }
+                                      // },
                                     ),
                                   ),
                                 ),
@@ -1306,9 +1348,23 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             FilteringTextInputFormatter
                                                 .digitsOnly
                                           ],
-                                          validator: (value) => value == ""
-                                              ? "Min. $participantMin"
-                                              : null,
+                                          // validator: (value) => value == ""
+                                          //     ? "Min. $participantMin"
+                                          //     : null,
+                                          // validator: (value) {
+                                          //   if (value.toString() != "") {
+                                          //     if (int.parse(value) >=
+                                          //             participantMin.toInt() &&
+                                          //         int.parse(value) <=
+                                          //             participantMax.toInt()) {
+                                          //       return null;
+                                          //     } else {
+                                          //       return "$participantMin - $participantMax";
+                                          //     }
+                                          //   } else {
+                                          //     return "$participantMin - $participantMax";
+                                          //   }
+                                          // },
                                           focusNode: totalParticipantNode,
                                           onSaved: (newValue) {
                                             totalParticipant = newValue!;
@@ -1350,7 +1406,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                       children: [
                                         Expanded(
                                           child: CompositedTransformTarget(
-                                            link: _layerLink,
+                                            link: emailLayerLink,
                                             child: SizedBox(
                                               key: emailKey,
                                               // width: 100,
@@ -1956,10 +2012,15 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             }
                                             booking.roomId = widget.roomId;
                                             booking.roomType = roomType;
-                                            booking.summary = eventName;
-                                            booking.description = eventDesc;
+                                            booking.summary = eventName
+                                                .replaceAll('"', '\\"');
+                                            booking.description = eventDesc
+                                                .replaceAll('\n', '\\n')
+                                                .replaceAll('"', '\\"');
                                             booking.additionalNote =
-                                                additionalNote;
+                                                additionalNote
+                                                    .replaceAll('\n', '\\n')
+                                                    .replaceAll('"', '\\"');
                                             booking.startDate = DateTime.parse(
                                                 "${DateFormat('yyyy-MM-dd').format(selectedDate!)} $startTime:00");
                                             booking.endDate = DateTime.parse(
@@ -2049,6 +2110,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             // print('Event Room -> $eventRoomRefresh');
                                             if (roomType == "MeetingRoom") {
                                               if (!isEdit) {
+                                                print(booking.toJson());
                                                 //BOOKING FUNCTION
                                                 apiReq
                                                     .bookingRoom(booking)
@@ -2065,13 +2127,52 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                               contentText: value[
                                                                   'Message']),
                                                     ).then((value) {
-                                                      setState(() {
-                                                        isSubmitLoading = false;
-                                                      });
                                                       // updateEvent(model).then((value) {
                                                       //   context.go('/rooms');
                                                       // });
-                                                      context.go('/rooms');
+                                                      if (widget.floor == "") {
+                                                        setState(() {
+                                                          isSubmitLoading =
+                                                              false;
+                                                        });
+                                                        context
+                                                            .goNamed('rooms');
+                                                      } else {
+                                                        apiReq
+                                                            .getBookingListRoom(
+                                                                widget.floor,
+                                                                widget.date!)
+                                                            .then((value) {
+                                                          setState(() {
+                                                            isSubmitLoading =
+                                                                false;
+                                                          });
+                                                          if (value['Status']
+                                                                  .toString() ==
+                                                              "200") {
+                                                            assignDataToCalendar(
+                                                                    value[
+                                                                        'Data'])
+                                                                .then((value) {
+                                                              context.goNamed(
+                                                                  'rooms');
+                                                            });
+                                                            setState(() {});
+                                                          } else {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder: (context) =>
+                                                                  AlertDialogBlack(
+                                                                title: value[
+                                                                    'Title'],
+                                                                contentText: value[
+                                                                    'Message'],
+                                                              ),
+                                                            );
+                                                          }
+                                                        });
+                                                      }
+
                                                       // context.pop();
                                                       // Navigator.of(context).pop();
                                                     });
@@ -2190,94 +2291,143 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                 ),
                                               ).then((value) {
                                                 if (value) {
-                                                  if (int.parse(
-                                                          totalParticipant) <
-                                                      participantMin) {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (context) =>
-                                                          AlertDialogBlack(
-                                                        title: 'Warning',
-                                                        contentText:
-                                                            'Total participants less then $participantMin person.',
-                                                        isSuccess: false,
-                                                      ),
-                                                    ).then((value) {
-                                                      setState(() {
-                                                        isSubmitLoading = false;
+                                                  // if (int.parse(
+                                                  //         totalParticipant) <
+                                                  //     participantMin) {
+                                                  // showDialog(
+                                                  //   context: context,
+                                                  //   builder: (context) =>
+                                                  //       AlertDialogBlack(
+                                                  //     title: 'Warning',
+                                                  //     contentText:
+                                                  //         'Total participants less then $participantMin person.',
+                                                  //     isSuccess: false,
+                                                  //   ),
+                                                  // ).then((value) {
+                                                  //   setState(() {
+                                                  //     isSubmitLoading = false;
+                                                  //   });
+                                                  // });
+                                                  // } else {
+                                                  booking.layoutId = layoutId;
+                                                  booking.layoutName =
+                                                      layoutName;
+                                                  booking.layoutImage =
+                                                      layoutImageUrl;
+                                                  if (layoutFromupload) {
+                                                    booking.layoutImage =
+                                                        layoutBase64;
+                                                  }
+                                                  // print(booking.toJson());
+                                                  if (!isEdit) {
+                                                    //BOOKING AUDI FUNCTION
+                                                    apiReq
+                                                        .bookingAudi(booking)
+                                                        .then((value) {
+                                                      // print(value);
+                                                      if (value['Status'] ==
+                                                          "200") {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (context) =>
+                                                              AlertDialogBlack(
+                                                                  title: value[
+                                                                      'Title'],
+                                                                  contentText:
+                                                                      value[
+                                                                          'Message']),
+                                                        ).then((value) {
+                                                          setState(() {
+                                                            isSubmitLoading =
+                                                                false;
+                                                          });
+                                                          // updateEvent(model).then((value) {
+                                                          //   context.go('/rooms');
+                                                          // });
+                                                          context.go('/rooms');
+                                                          // context.pop();
+                                                          // Navigator.of(context).pop();
+                                                        });
+                                                      } else {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (context) =>
+                                                              AlertDialogBlack(
+                                                            title:
+                                                                value['Title'],
+                                                            contentText: value[
+                                                                'Message'],
+                                                            isSuccess: false,
+                                                          ),
+                                                        ).then((value) {
+                                                          setState(() {
+                                                            isSubmitLoading =
+                                                                false;
+                                                          });
+                                                          // context.go('/rooms');
+                                                        });
+                                                      }
+                                                      // context.pop();
+                                                    }).onError((error,
+                                                            stackTrace) {
+                                                      // print(error);
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            AlertDialogBlack(
+                                                          title: 'Failed',
+                                                          contentText:
+                                                              error.toString(),
+                                                          isSuccess: false,
+                                                        ),
+                                                      ).then((value) {
+                                                        setState(() {
+                                                          isSubmitLoading =
+                                                              false;
+                                                        });
+                                                        // context.go('/rooms');
                                                       });
                                                     });
+                                                    //END BOOKING AUDI FUNCTION
                                                   } else {
-                                                    booking.layoutId = layoutId;
-                                                    booking.layoutName =
-                                                        layoutName;
-                                                    booking.layoutImage =
-                                                        layoutImageUrl;
-                                                    if (layoutFromupload) {
-                                                      booking.layoutImage =
-                                                          layoutBase64;
-                                                    }
-                                                    // print(booking.toJson());
-                                                    if (!isEdit) {
-                                                      //BOOKING AUDI FUNCTION
-                                                      apiReq
-                                                          .bookingAudi(booking)
-                                                          .then((value) {
-                                                        // print(value);
-                                                        if (value['Status'] ==
-                                                            "200") {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                AlertDialogBlack(
-                                                                    title: value[
-                                                                        'Title'],
-                                                                    contentText:
-                                                                        value[
-                                                                            'Message']),
-                                                          ).then((value) {
-                                                            setState(() {
-                                                              isSubmitLoading =
-                                                                  false;
-                                                            });
-                                                            // updateEvent(model).then((value) {
-                                                            //   context.go('/rooms');
-                                                            // });
-                                                            context
-                                                                .go('/rooms');
-                                                            // context.pop();
-                                                            // Navigator.of(context).pop();
-                                                          });
-                                                        } else {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                AlertDialogBlack(
-                                                              title: value[
-                                                                  'Title'],
-                                                              contentText: value[
-                                                                  'Message'],
-                                                              isSuccess: false,
-                                                            ),
-                                                          ).then((value) {
-                                                            setState(() {
-                                                              isSubmitLoading =
-                                                                  false;
-                                                            });
-                                                            // context.go('/rooms');
-                                                          });
-                                                        }
-                                                        // context.pop();
-                                                      }).onError((error,
-                                                              stackTrace) {
-                                                        // print(error);
+                                                    //EDIT AUDI FUNCTION
+                                                    apiReq
+                                                        .updateBookingAudi(
+                                                            booking)
+                                                        .then((value) {
+                                                      // print(value);
+                                                      if (value['Status'] ==
+                                                          "200") {
                                                         showDialog(
                                                           context: context,
                                                           builder: (context) =>
                                                               AlertDialogBlack(
-                                                            title: 'Failed',
-                                                            contentText: error
-                                                                .toString(),
+                                                                  title: value[
+                                                                      'Title'],
+                                                                  contentText:
+                                                                      value[
+                                                                          'Message']),
+                                                        ).then((value) {
+                                                          setState(() {
+                                                            isSubmitLoading =
+                                                                false;
+                                                          });
+                                                          // updateEvent(model).then((value) {
+                                                          //   context.go('/rooms');
+                                                          // });
+                                                          context.go('/rooms');
+                                                          // context.pop();
+                                                          // Navigator.of(context).pop();
+                                                        });
+                                                      } else {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (context) =>
+                                                              AlertDialogBlack(
+                                                            title:
+                                                                value['Title'],
+                                                            contentText: value[
+                                                                'Message'],
                                                             isSuccess: false,
                                                           ),
                                                         ).then((value) {
@@ -2287,82 +2437,31 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                           });
                                                           // context.go('/rooms');
                                                         });
-                                                      });
-                                                      //END BOOKING AUDI FUNCTION
-                                                    } else {
-                                                      //EDIT AUDI FUNCTION
-                                                      apiReq
-                                                          .updateBookingAudi(
-                                                              booking)
-                                                          .then((value) {
-                                                        // print(value);
-                                                        if (value['Status'] ==
-                                                            "200") {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                AlertDialogBlack(
-                                                                    title: value[
-                                                                        'Title'],
-                                                                    contentText:
-                                                                        value[
-                                                                            'Message']),
-                                                          ).then((value) {
-                                                            setState(() {
-                                                              isSubmitLoading =
-                                                                  false;
-                                                            });
-                                                            // updateEvent(model).then((value) {
-                                                            //   context.go('/rooms');
-                                                            // });
-                                                            context
-                                                                .go('/rooms');
-                                                            // context.pop();
-                                                            // Navigator.of(context).pop();
-                                                          });
-                                                        } else {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                AlertDialogBlack(
-                                                              title: value[
-                                                                  'Title'],
-                                                              contentText: value[
-                                                                  'Message'],
-                                                              isSuccess: false,
-                                                            ),
-                                                          ).then((value) {
-                                                            setState(() {
-                                                              isSubmitLoading =
-                                                                  false;
-                                                            });
-                                                            // context.go('/rooms');
-                                                          });
-                                                        }
-                                                        // context.pop();
-                                                      }).onError((error,
-                                                              stackTrace) {
-                                                        // print(error);
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (context) =>
-                                                              AlertDialogBlack(
-                                                            title: 'Failed',
-                                                            contentText: error
-                                                                .toString(),
-                                                            isSuccess: false,
-                                                          ),
-                                                        ).then((value) {
-                                                          setState(() {
-                                                            isSubmitLoading =
-                                                                false;
-                                                          });
-                                                          // context.go('/rooms');
+                                                      }
+                                                      // context.pop();
+                                                    }).onError((error,
+                                                            stackTrace) {
+                                                      // print(error);
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            AlertDialogBlack(
+                                                          title: 'Failed',
+                                                          contentText:
+                                                              error.toString(),
+                                                          isSuccess: false,
+                                                        ),
+                                                      ).then((value) {
+                                                        setState(() {
+                                                          isSubmitLoading =
+                                                              false;
                                                         });
+                                                        // context.go('/rooms');
                                                       });
-                                                      //END EDIT AUDI FUNCTION
-                                                    }
+                                                    });
+                                                    //END EDIT AUDI FUNCTION
                                                   }
+                                                  // }
                                                 } else {
                                                   setState(() {
                                                     isSubmitLoading = false;
@@ -2403,20 +2502,20 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                         ),
                       ),
                     ),
-                    Visibility(
-                      visible: emailSuggestionVisible,
-                      child: Positioned(
-                        top: 475,
-                        right: 0,
-                        child: EmailSuggestionContainer(
-                          contactList: contactList,
-                          emptyMessage: messageEmptyContact,
-                          isEmpty: isContactEmpty,
-                          filter: filterContact,
-                          selectGuest: selectGuest,
-                        ),
-                      ),
-                    ),
+                    // Visibility(
+                    //   visible: emailSuggestionVisible,
+                    //   child: Positioned(
+                    //     top: 475,
+                    //     right: 0,
+                    //     child: EmailSuggestionContainer(
+                    //       contactList: contactList,
+                    //       emptyMessage: messageEmptyContact,
+                    //       isEmpty: isContactEmpty,
+                    //       filter: filterContact,
+                    //       selectGuest: selectGuest,
+                    //     ),
+                    //   ),
+                    // ),
                     Visibility(
                       visible: datePickerVisible,
                       child: Positioned(
@@ -2911,19 +3010,22 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           focusNode: additionalNoteNode,
           maxLines: 4,
           hintText: 'Additional Notes ...',
+          // inputFormatters: [
+          //   FilteringTextInputFormatter.singleLineFormatter,
+          // ],
           onSaved: (newValue) {
             additionalNote = newValue!;
           },
-          validator: (value) {
-            if (value != "") {
-              if (value.toString().contains("\"") ||
-                  value.toString().contains("'")) {
-                return 'Can\'t contains " or \' symbols.';
-              } else {
-                return null;
-              }
-            }
-          },
+          // validator: (value) {
+          //   if (value != "") {
+          //     if (value.toString().contains("\"") ||
+          //         value.toString().contains("'")) {
+          //       return 'Can\'t contains " or \' symbols.';
+          //     } else {
+          //       return null;
+          //     }
+          //   }
+          // },
         )
       ],
     );

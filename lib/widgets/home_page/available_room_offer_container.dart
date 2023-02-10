@@ -109,10 +109,13 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
         );
       }
     }).onError((error, stackTrace) {
+      setState(() {
+        isEmpty = false;
+      });
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
-          title: 'Failed connect to API',
+          title: 'Error getSuggestAvailableRoom',
           contentText: error.toString(),
         ),
       );
@@ -131,11 +134,7 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
                 ),
                 width: double.infinity,
                 height: widget.height,
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    color: eerieBlack,
-                  ),
-                ),
+                child: const SizedBox(),
               )
             : SizedBox(
                 width: double.infinity,
@@ -297,9 +296,10 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
                                           'startTime': startTimeBook,
                                           'endTime': endTimeBook,
                                           'participant': '0',
-                                          'facilities': '[]',
+                                          // 'facilities': '[]',
                                           'roomType': roomType,
                                           'isEdit': 'false',
+                                          'floor': '""',
                                         },
                                         queryParams: {},
                                       );

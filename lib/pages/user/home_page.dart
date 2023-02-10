@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
@@ -15,6 +16,7 @@ import 'package:meeting_room_booking_system/widgets/home_page/apporval_message.d
 import 'package:meeting_room_booking_system/widgets/home_page/available_room_offer_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/greeting_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/home_search_container.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/report_banner.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/room_type_home_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/schedule_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/statistic_container.dart';
@@ -106,6 +108,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool initLoading = true;
 
   bool isAccSyncToGoogle = false;
+  bool feedback = true;
 
   bool isUserAdmin = false;
 
@@ -567,10 +570,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  feedbackBox() async {
+    var box = await Hive.openBox('userLogin');
+
+    feedback = box.get('feedback') ?? false;
+    setState(() {});
+
+    // if (!feedback) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) => FeedbackDialog(),
+    //   );
+    // }
+  }
+
   @override
   void initState() {
     super.initState();
-
+    feedbackBox();
     String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
     _dateController.text = formattedDate;
     _facilityController.text = 'None';
@@ -1217,16 +1234,36 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       children: [
         const GreetingContainer(),
         Visibility(
-          visible: false,
+          // visible: isAccSyncToGoogle ? false : true,
+          // child: InkWell(
+          //   onTap: () {
+          //     context.go('/gws');
+          //   },
+          //   child: ConstrainedBox(
+          //     constraints: const BoxConstraints(
+          //       maxWidth: 780,
+          //       minWidth: 780,
+          //     ),
+          //     child: const WhiteBannerLandscape(
+          //       title: 'Link your Google account',
+          //       subtitle: '& enjoy your benefits.',
+          //       imagePath: 'assets/banner_pict_google.png',
+          //     ),
+          //   ),
+          // ),
+          visible: feedback,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const SizedBox(
                 height: 30,
               ),
               InkWell(
                 onTap: () {
-                  context.go('/gws');
+                  // context.go('/gws');
+                  showDialog(
+                    context: context,
+                    builder: (context) => const FeedbackDialog(),
+                  );
                 },
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(
@@ -1234,9 +1271,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     minWidth: 780,
                   ),
                   child: const WhiteBannerLandscape(
-                    title: 'Link your Google account',
-                    subtitle: '& enjoy your benefits.',
-                    imagePath: 'assets/banner_pict_google.png',
+                    title: 'How is your experience? ',
+                    subtitle: 'We love to hear from you!',
+                    imagePath: 'assets/feedback_bg.png',
+                    borderColor: platinum,
+                    backgroundColor: white,
+                    fit: BoxFit.fitWidth,
+                    isUseGradient: false,
                   ),
                 ),
               ),
@@ -1285,51 +1326,32 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           height: 30,
         ),
         UpcomingEventContainer(),
-        const SizedBox(
-          height: 30,
-        ),
         Visibility(
           visible: isAccSyncToGoogle ? false : true,
-          child: InkWell(
-            onTap: () {
-              context.go('/gws');
-            },
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 780,
-                minWidth: 780,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 30,
               ),
-              child: const WhiteBannerLandscape(
-                title: 'Link your Google account',
-                subtitle: '& enjoy your benefits.',
-                imagePath: 'assets/banner_pict_google.png',
+              InkWell(
+                onTap: () {
+                  context.go('/gws');
+                },
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 780,
+                    minWidth: 780,
+                  ),
+                  child: const WhiteBannerLandscape(
+                    title: 'Link your Google account',
+                    subtitle: '& enjoy your benefits.',
+                    imagePath: 'assets/banner_pict_google.png',
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-          // child: InkWell(
-          //   onTap: () {
-          //     // context.go('/gws');
-          //     showDialog(
-          //       context: context,
-          //       builder: (context) => const FeedbackDialog(),
-          //     );
-          //   },
-          //   child: ConstrainedBox(
-          //     constraints: const BoxConstraints(
-          //       maxWidth: 780,
-          //       minWidth: 780,
-          //     ),
-          //     child: const WhiteBannerLandscape(
-          //       title: 'How is your experience? ',
-          //       subtitle: 'We love to hear from you!',
-          //       imagePath: 'assets/feedback_bg.png',
-          //       borderColor: platinum,
-          //       backgroundColor: white,
-          //       fit: BoxFit.fitWidth,
-          //       isUseGradient: false,
-          //     ),
-          //   ),
-          // ),
         ),
       ],
     );
@@ -1352,6 +1374,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         ),
         ScheduleContainer(),
+        const SizedBox(
+          height: 30,
+        ),
+        ReportBanner(),
         const SizedBox(
           height: 30,
         ),

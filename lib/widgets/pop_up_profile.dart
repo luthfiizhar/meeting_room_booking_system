@@ -5,6 +5,8 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/bug_report_dialog.dart';
+import 'package:meeting_room_booking_system/widgets/dialogs/feedback_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/login_pop_up.dart';
 
 class PopUpProfile extends StatelessWidget {
@@ -94,29 +96,6 @@ class PopUpProfile extends StatelessWidget {
               const SizedBox(
                 height: 13,
               ),
-              !isAdmin
-                  ? const SizedBox()
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            context.goNamed('admin_list');
-                          },
-                          child: Text(
-                            'Approval',
-                            style: helveticaText.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w300,
-                              color: davysGray,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                      ],
-                    ),
               TextButton(
                 onPressed: () {
                   context.goNamed('setting', params: {
@@ -136,28 +115,46 @@ class PopUpProfile extends StatelessWidget {
               !isAdmin
                   ? const SizedBox()
                   : Column(
-                      children: [
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            context.goNamed('setting', params: {
-                              'isAdmin': isAdmin.toString(),
-                              'menu': 'admin_setting'
-                            });
-                          },
-                          child: Text(
-                            'Settings',
-                            style: helveticaText.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w300,
-                              color: davysGray,
-                            ),
-                          ),
-                        ),
-                      ],
+                      children: [],
                     ),
+              const SizedBox(
+                height: 15,
+              ),
+              TextButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => FeedbackDialog(),
+                  );
+                },
+                child: Text(
+                  'Give Us Feedback',
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                    color: davysGray,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              TextButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => BugReportDialog(),
+                  );
+                },
+                child: Text(
+                  'Report Error',
+                  style: helveticaText.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                    color: davysGray,
+                  ),
+                ),
+              ),
               const SizedBox(
                 height: 15,
               ),
@@ -172,6 +169,7 @@ class PopUpProfile extends StatelessWidget {
                   box.put('jwtToken', "");
                   box.delete('jwtToken');
                   box.delete('firstLogin');
+                  box.delete('feedback');
                   resetState!;
                   context.go('/login');
                   // showDialog(
@@ -201,6 +199,83 @@ class PopUpProfile extends StatelessWidget {
                   ),
                 ),
               ),
+              !isAdmin
+                  ? const SizedBox()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 13,
+                        ),
+                        const Divider(
+                          color: spanishGray,
+                          thickness: 0.5,
+                        ),
+                        const SizedBox(
+                          height: 13,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            context.goNamed('admin_list');
+                          },
+                          child: Text(
+                            'Approval List',
+                            style: helveticaText.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: davysGray,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            context.goNamed('setting', params: {
+                              'isAdmin': isAdmin.toString(),
+                              'menu': 'admin_setting'
+                            });
+                          },
+                          child: Text(
+                            'Settings',
+                            style: helveticaText.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: davysGray,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'Bug List',
+                            style: helveticaText.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: davysGray,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'Feedback Report',
+                            style: helveticaText.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: davysGray,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
             ],
           ),
         ),

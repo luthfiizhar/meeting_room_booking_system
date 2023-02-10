@@ -252,11 +252,11 @@ class ReqAPI {
     }
   }
 
-  Future getBookingListRoom(String area, String date, List listEvent) async {
+  Future getBookingListRoom(String area, String date) async {
     // String link = 'fmklg.klgsys.com';
     // String link = 'fmklg-backend.klgsys.com';
     // _events!.appointments!.clear();
-    listEvent.clear();
+    // listEvent.clear();
     var box = await Hive.openBox('userLogin');
     var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
@@ -281,9 +281,10 @@ class ReqAPI {
       return data;
     } on Error catch (e) {
       return e;
-    } on HttpException catch (e) {
-      return e;
     }
+    // on HttpException catch (e) {
+    //   return e;
+    // }
   }
 
 // Future getBookingListRoom(
@@ -2065,6 +2066,63 @@ class ReqAPI {
     try {
       var response =
           await http.put(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future sendFeedback(int rating, String comment) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/user/feedback');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+      "Rating" : $rating,
+      "Comment" : "$comment"
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future sendBugReport(String description, List photo) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/user/bug-report');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+      "Description" : "$description",
+      "Photo" : $photo
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
 
       var data = json.decode(response.body);
 
