@@ -170,6 +170,7 @@ class PopUpProfile extends StatelessWidget {
                   box.delete('jwtToken');
                   box.delete('firstLogin');
                   box.delete('feedback');
+                  box.delete('feedbackBanner');
                   resetState!;
                   context.go('/login');
                   // showDialog(

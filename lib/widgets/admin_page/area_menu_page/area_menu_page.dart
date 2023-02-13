@@ -765,11 +765,12 @@ class _AreaListContainerState extends State<AreaListContainer> {
               ),
               SizedBox(
                 width: 250,
-                child: Wrap(
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  direction: Axis.vertical,
-                  alignment: WrapAlignment.start,
-                  spacing: 10,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  // direction: Axis.vertical,
+                  // alignment: WrapAlignment.start,
+                  // spacing: 10,
                   children: [
                     Text(
                       widget.roomName,
@@ -779,9 +780,9 @@ class _AreaListContainerState extends State<AreaListContainer> {
                         color: davysGray,
                       ),
                     ),
-                    // const SizedBox(
-                    //   width: 15,
-                    // ),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Text(
                       widget.roomType,
                       style: helveticaText.copyWith(
@@ -903,27 +904,31 @@ class _AreaListContainerState extends State<AreaListContainer> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      detailInfo('Room Name: ', widget.roomName),
-                      detailInfo('Room Alias: ', widget.roomAlias),
-                      detailInfo('Building: ', widget.building),
-                      detailInfo('Floor: ', widget.floor),
-                      detailInfo('Type: ', widget.roomType),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        detailInfo('Room Name: ', widget.roomName),
+                        detailInfo('Room Alias: ', widget.roomAlias),
+                        detailInfo('Building: ', widget.building),
+                        detailInfo('Floor: ', widget.floor),
+                        detailInfo('Type: ', widget.roomType),
+                      ],
+                    ),
                   ),
                   const SizedBox(
                     width: 100,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      detailInfo('Min Capacity: ', widget.minCapacity),
-                      detailInfo('Max Capacity: ', widget.maxCapacity),
-                      detailInfo('Max Book Duration: ', '$duration Hours'),
-                      detailInfo('Status: ', widget.availability),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        detailInfo('Min Capacity: ', widget.minCapacity),
+                        detailInfo('Max Capacity: ', widget.maxCapacity),
+                        detailInfo('Max Book Duration: ', '$duration Hours'),
+                        detailInfo('Status: ', widget.availability),
+                      ],
+                    ),
                   ),
                 ],
               ),
