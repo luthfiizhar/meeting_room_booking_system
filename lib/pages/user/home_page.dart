@@ -109,6 +109,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   bool isAccSyncToGoogle = false;
   bool feedback = true;
+  bool feedbackBanner = false;
 
   bool isUserAdmin = false;
 
@@ -574,7 +575,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     var box = await Hive.openBox('userLogin');
 
     feedback = box.get('feedback') ?? false;
+    feedbackBanner = box.get('feedbackBanner') ?? false;
     setState(() {});
+    if (feedback) {
+      showDialog(
+        context: context,
+        builder: (context) => const FeedbackDialog(),
+      ).then((value) {
+        if (value) {
+          box.put('feedback', false);
+        }
+      });
+    }
 
     // if (!feedback) {
     //   showDialog(
@@ -1251,7 +1263,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           //     ),
           //   ),
           // ),
-          visible: feedback,
+          visible: feedbackBanner,
           child: Column(
             children: [
               const SizedBox(
