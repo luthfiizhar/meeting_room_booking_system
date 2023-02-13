@@ -79,6 +79,7 @@ class _LoginPageState extends State<LoginPage> {
           print(value);
           var box = await Hive.openBox('userLogin');
           box.put('feedback', value['Data']['Feedback'] ?? false);
+          box.put('feedbackBanner', value['Data']['FeedbackBanner'] ?? false);
           dynamic firstLogin = value['Data']['LoginCount'].toString();
           apiReq.getUserProfile().then((value) async {
             // print("getUserProfile $value");
