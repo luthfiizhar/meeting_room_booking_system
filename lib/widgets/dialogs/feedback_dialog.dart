@@ -212,7 +212,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                       disabled: false,
                       padding: ButtonSize().smallSize(),
                       onTap: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(false);
                       },
                     ),
                     const SizedBox(
@@ -252,7 +252,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                                         contentText: value['Message'],
                                       ),
                                     ).then((value) {
-                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop(true);
                                     });
                                   } else if (value['Status'].toString() ==
                                       "401") {
