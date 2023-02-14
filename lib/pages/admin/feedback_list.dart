@@ -28,7 +28,9 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
   String highRating = "";
   String lowRating = "";
 
-  SearchTerm searchTerm = SearchTerm();
+  SearchTerm searchTerm = SearchTerm(
+    max: "10",
+  );
 
   FocusNode showPerRowsNode = FocusNode();
 
