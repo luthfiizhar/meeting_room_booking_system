@@ -6,6 +6,7 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
+import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/widgets/amenities_container.dart';
 import 'package:meeting_room_booking_system/widgets/banner/landscape_white_banner.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
@@ -25,6 +26,7 @@ import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/participant_container.dart';
 import 'package:meeting_room_booking_system/widgets/start_time_container.dart';
 import 'package:meeting_room_booking_system/widgets/time_picker_container.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'dart:html' as html;
 
@@ -108,7 +110,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool initLoading = true;
 
   bool isAccSyncToGoogle = false;
-  bool feedback = true;
+  bool feedback = false;
   bool feedbackBanner = false;
 
   bool isUserAdmin = false;
@@ -157,6 +159,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   initRoomType() {
     apiReq.getRoomType().then((value) {
+      print(value);
       setState(() {
         initLoading = false;
       });
@@ -293,6 +296,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           isSuccess: false,
         ),
       );
+    });
+  }
+
+  feedbackCheck() {
+    // var box = await Hive.openBox('userLogin');
+
+    // feedback = box.get('feedback') ?? false;
+    // feedbackBanner = box.get('feedbackBanner') ?? false;
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   feedback = Provider.of<MainModel>(context, listen: false).feedback;
+    //   feedbackBanner =
+    //       Provider.of<MainModel>(context, listen: false).feedbackBanner;
+    // });
+    apiReq.feedbackStatus().then((value) {
+      feedback = value['Data']['Feedback'];
+      feedbackBanner = value['Data']['FeedbackBanner'];
+      setState(() {});
+
+      if (feedback) {
+        showDialog(
+          context: context,
+          builder: (context) => const FeedbackDialog(),
+        ).then((value) {});
+      }
     });
   }
 
@@ -571,35 +598,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  feedbackBox() async {
-    var box = await Hive.openBox('userLogin');
-
-    feedback = box.get('feedback') ?? false;
-    feedbackBanner = box.get('feedbackBanner') ?? false;
-    setState(() {});
-    if (feedback) {
-      showDialog(
-        context: context,
-        builder: (context) => const FeedbackDialog(),
-      ).then((value) {
-        if (value) {
-          box.put('feedback', false);
-        }
-      });
-    }
-
-    // if (!feedback) {
-    //   showDialog(
-    //     context: context,
-    //     builder: (context) => FeedbackDialog(),
-    //   );
-    // }
-  }
-
   @override
   void initState() {
     super.initState();
-    feedbackBox();
+
     String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
     _dateController.text = formattedDate;
     _facilityController.text = 'None';
@@ -610,6 +612,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     initTime();
     initRoomType();
     initGetUserProfile();
+    feedbackCheck();
     // initUpcomingEvent();
   }
 
