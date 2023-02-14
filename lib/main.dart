@@ -15,6 +15,8 @@ import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page
 import 'package:meeting_room_booking_system/pages/admin/admin_setting_page.dart';
 import 'package:meeting_room_booking_system/pages/loading_login.dart';
 import 'package:meeting_room_booking_system/pages/login_page.dart';
+import 'package:meeting_room_booking_system/pages/admin/bug_list.dart';
+import 'package:meeting_room_booking_system/pages/admin/feedback_list.dart';
 import 'package:meeting_room_booking_system/pages/user/google_workspace_page.dart';
 // import 'package:meeting_room_booking_system/pages/user/calendar_view_page.dart'
 //     deferred as calendarViewPage;
@@ -362,6 +364,28 @@ class MyApp extends StatelessWidget {
             child: LoginLoading(
               queryParam: param,
             ),
+          );
+        },
+      ),
+      GoRoute(
+        name: 'bug_list',
+        path: '/bug_list',
+        pageBuilder: (context, state) {
+          dynamic param = state.queryParams;
+          return NoTransitionPage<void>(
+            key: state.pageKey,
+            child: const BugListPage(),
+          );
+        },
+      ),
+      GoRoute(
+        name: 'feedback_list',
+        path: '/feedback_list',
+        pageBuilder: (context, state) {
+          dynamic param = state.queryParams;
+          return NoTransitionPage<void>(
+            key: state.pageKey,
+            child: const FeedBackListPage(),
           );
         },
       ),
