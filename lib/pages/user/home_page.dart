@@ -771,7 +771,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   setStartTimeStatus(bool value) {
-    // startTimeContainerVisible = value;
+    startTimeContainerVisible = value;
     if (value) {
       startTimeOverlayEntry = startTimeOverlay();
       Overlay.of(context)!.insert(startTimeOverlayEntry!);
@@ -786,7 +786,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   setEndTimeStatus(bool value) {
-    // endTimeContainerVisible = value;
+    endTimeContainerVisible = value;
     if (value) {
       endTimeOverlayEntry = endTimeOverlay();
       Overlay.of(context)!.insert(endTimeOverlayEntry!);
@@ -833,8 +833,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   setEndTime(String end) {
     endTime = end;
-    // timePickerContainerVisible = false;
-    // endTimeContainerVisible = false;
+    timePickerContainerVisible = false;
+    endTimeContainerVisible = false;
     opacityOn = false;
     if (selectTimeOverlayEntry != null) {
       if (selectTimeOverlayEntry!.mounted) {
