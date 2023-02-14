@@ -193,6 +193,7 @@ class _MyBookingPageState extends State<MyBookingPage> {
       // });
       updateList().then((value) {
         countPagination(resultRows);
+        showedPage = availablePage.take(5).toList();
         // showedPage = availablePage.take(5).toList();
       });
     });
@@ -485,7 +486,10 @@ class _MyBookingPageState extends State<MyBookingPage> {
                                   //   countPagination(value['Data']['TotalRows']);
                                   //   showedPage = availablePage.take(5).toList();
                                   // });
-                                  updateList();
+                                  updateList().then((value) {
+                                    countPagination(resultRows);
+                                    showedPage = availablePage.take(5).toList();
+                                  });
                                 });
                               },
                               value: searchTerm.max,
