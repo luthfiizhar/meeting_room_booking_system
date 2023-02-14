@@ -269,7 +269,7 @@ class PopUpProfile extends StatelessWidget {
                             context.goNamed('feedback_list');
                           },
                           child: Text(
-                            'Feedback Report',
+                            'Rating Result',
                             style: helveticaText.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.w300,
