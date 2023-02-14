@@ -266,7 +266,7 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
               height: 40,
             ),
             Text(
-              'Feedback List',
+              'User Rating',
               style: helveticaText.copyWith(
                 fontSize: 32,
                 fontWeight: FontWeight.w700,
@@ -998,6 +998,28 @@ class _FeedbackListItemState extends State<FeedbackListItem> {
                                             image: DecorationImage(
                                               image: imageProvider,
                                               fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      errorWidget: (context, url, error) {
+                                        return Container(
+                                          width: 50,
+                                          height: 50,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: sonicSilver,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              widget.feedback!.empName
+                                                  .characters.first,
+                                              style: helveticaText.copyWith(
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.w700,
+                                                color: white,
+                                                height: 1.15,
+                                              ),
                                             ),
                                           ),
                                         );
