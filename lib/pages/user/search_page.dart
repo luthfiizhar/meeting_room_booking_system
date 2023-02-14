@@ -808,7 +808,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   setInitialEndTime(String value) {
-    // initialEndTime = value;
+    initialEndTime = value;
     endTime = value;
     setState(() {});
   }
