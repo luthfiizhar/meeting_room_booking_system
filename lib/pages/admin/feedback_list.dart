@@ -139,10 +139,10 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
         }
       }
       searchTerm.orderBy = orderBy;
-      print("SearchTerm ---> $searchTerm");
-      // feedbackListInit().then((value) {
-      //   setState(() {});
-      // });
+      // print("SearchTerm ---> $searchTerm");
+      feedbackListInit().then((value) {
+        setState(() {});
+      });
     });
   }
 
@@ -439,13 +439,13 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
                   flex: 3,
                   child: InkWell(
                     onTap: () {
-                      onTapHeader("Name");
+                      onTapHeader("EmpName");
                     },
                     child: Row(
                       children: [
                         Expanded(
                           child: Text(
-                            'Name',
+                            'User',
                             style: helveticaText.copyWith(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
@@ -453,7 +453,7 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
                             ),
                           ),
                         ),
-                        iconSort("Name"),
+                        iconSort("EmpName"),
                         const SizedBox(
                           width: 20,
                         ),
@@ -465,7 +465,7 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
                   flex: 1,
                   child: InkWell(
                     onTap: () {
-                      onTapHeader("Rate");
+                      onTapHeader("Rating");
                     },
                     child: Row(
                       children: [
@@ -479,7 +479,7 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
                             ),
                           ),
                         ),
-                        iconSort("Rate"),
+                        iconSort("Rating"),
                         const SizedBox(
                           width: 20,
                         ),
@@ -491,7 +491,7 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
                   flex: 1,
                   child: InkWell(
                     onTap: () {
-                      onTapHeader("Date");
+                      onTapHeader("Created_At");
                     },
                     child: Row(
                       children: [
@@ -505,7 +505,7 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
                             ),
                           ),
                         ),
-                        iconSort("Date"),
+                        iconSort("Created_At"),
                         const SizedBox(
                           width: 20,
                         ),
@@ -1268,6 +1268,8 @@ class _FilterRatingContainerState extends State<FilterRatingContainer> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      splashFactory: NoSplash.splashFactory,
+      hoverColor: Colors.transparent,
       onTap: () {
         if (widget.filter['isSelected']) {
           widget.filter['isSelected'] = false;
