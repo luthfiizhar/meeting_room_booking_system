@@ -143,7 +143,16 @@ class StartTimeContainer extends StatelessWidget {
                     // setParticipantStatus!(false);
                     setStartTimeStatus!(false);
                     setStartTime!(items![index]);
-                    setInitialEndTime!(items![index + 4]);
+                    // print(int.parse(items![index].toString().substring(3, 5)));
+                    if (int.parse(items![index].toString().substring(0, 2)) ==
+                            18 &&
+                        (int.parse(items![index].toString().substring(3, 5)) >
+                            00)) {
+                      setInitialEndTime!(items!.last);
+                    } else {
+                      setInitialEndTime!(items![index + 4]);
+                    }
+
                     // print(items![index + 4]);
                   },
                   child: Column(

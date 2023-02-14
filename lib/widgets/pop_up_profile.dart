@@ -170,6 +170,7 @@ class PopUpProfile extends StatelessWidget {
                   box.delete('jwtToken');
                   box.delete('firstLogin');
                   box.delete('feedback');
+                  box.delete('feedbackBanner');
                   resetState!;
                   context.go('/login');
                   // showDialog(
@@ -264,9 +265,11 @@ class PopUpProfile extends StatelessWidget {
                           height: 15,
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.goNamed('feedback_list');
+                          },
                           child: Text(
-                            'Feedback Report',
+                            'Rating Result',
                             style: helveticaText.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.w300,

@@ -2132,6 +2132,60 @@ class ReqAPI {
     }
   }
 
+  Future feedbackStatus() async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/user/feedback/popup');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+    try {
+      var response = await http.get(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future feedbackList(SearchTerm searchTerm) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/feedback');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    var bodySend = """
+    {
+      "Keywords": "",
+      "MaxRecord": "${searchTerm.max}",
+      "PageNumber": "${searchTerm.pageNumber}",
+      "SortBy": "${searchTerm.orderBy}",
+      "SortOrder": "${searchTerm.orderDir}",
+      "Rating": ${searchTerm.rating}
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   //END CLASS REQ API
 }
 
