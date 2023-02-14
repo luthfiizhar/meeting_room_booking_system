@@ -265,7 +265,9 @@ class PopUpProfile extends StatelessWidget {
                           height: 15,
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.goNamed('feedback_list');
+                          },
                           child: Text(
                             'Feedback Report',
                             style: helveticaText.copyWith(
