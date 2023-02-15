@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -31,6 +32,7 @@ class NavigationBarWeb extends StatefulWidget {
     this.resetState,
     this.updateLogin,
     this.checkToken,
+    this.photo = "",
   });
 
   int? index;
@@ -40,6 +42,7 @@ class NavigationBarWeb extends StatefulWidget {
   bool? popUpStatus;
   OverlayEntry? getProfile;
   Function? checkToken;
+  String? photo;
   // GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
@@ -581,17 +584,43 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
                                   width: 55,
                                   child: Row(
                                     children: [
-                                      Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                              'assets/male_user.png',
+                                      widget.photo! == ""
+                                          ? Container(
+                                              width: 30,
+                                              height: 30,
+                                              decoration: const BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: AssetImage(
+                                                    'assets/male_user.png',
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          : CachedNetworkImage(
+                                              imageUrl: widget.photo!,
+                                              placeholder: (context, url) {
+                                                return Container(
+                                                  width: 30,
+                                                  height: 30,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: AssetImage(
+                                                        'assets/male_user.png',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              imageBuilder:
+                                                  (context, imageProvider) {
+                                                return CircleAvatar(
+                                                  radius: 15,
+                                                  backgroundImage:
+                                                      imageProvider,
+                                                );
+                                              },
                                             ),
-                                          ),
-                                        ),
-                                      ),
                                       const Expanded(
                                         child: Icon(
                                           Icons.keyboard_arrow_down_outlined,
