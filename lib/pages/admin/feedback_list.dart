@@ -115,8 +115,8 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
     // print(searchTerm);
     feedbackListInit().then((value) {
       countPagination(resultRows);
-      setState(() {});
     });
+    setState(() {});
   }
 
   resetAll(bool value) {
@@ -148,10 +148,10 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
     });
   }
 
-  Future feedbackListInit() async {
+  Future feedbackListInit() {
     // print(searchTerm);
     feedbackList.clear();
-    apiReq.feedbackList(searchTerm).then((value) {
+    return apiReq.feedbackList(searchTerm).then((value) {
       if (value['Status'].toString() == "200") {
         List listResult = value['Data']['List'];
         resultRows = value['Data']['TotalRows'];
@@ -970,6 +970,9 @@ class _FeedbackListItemState extends State<FeedbackListItem> {
                                     )
                                   : CachedNetworkImage(
                                       imageUrl: widget.feedback!.photo,
+                                      httpHeaders: const {
+                                        "Access-Control-Allow-Origin": "*"
+                                      },
                                       placeholder: (context, url) {
                                         return Shimmer(
                                           gradient: const LinearGradient(
