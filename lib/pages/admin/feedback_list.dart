@@ -927,6 +927,8 @@ class _FeedbackListItemState extends State<FeedbackListItem> {
         Column(
           children: [
             InkWell(
+              splashFactory: NoSplash.splashFactory,
+              hoverColor: Colors.transparent,
               onTap: () {
                 setState(() {
                   if (widget.expanded) {
