@@ -102,6 +102,8 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
   onCLickFilter(dynamic filter) {
     // print(filter);
     // searchTerm.rating = [];
+    searchTerm.pageNumber = "1";
+    currentPaginatedPage = int.parse(searchTerm.pageNumber);
     if (filter['isSelected']) {
       searchTerm.rating!.add(filter['rating']);
     } else {
