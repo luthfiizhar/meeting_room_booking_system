@@ -970,9 +970,6 @@ class _FeedbackListItemState extends State<FeedbackListItem> {
                                     )
                                   : CachedNetworkImage(
                                       imageUrl: widget.feedback!.photo,
-                                      httpHeaders: const {
-                                        "Access-Control-Allow-Origin": "*"
-                                      },
                                       placeholder: (context, url) {
                                         return Shimmer(
                                           gradient: const LinearGradient(
