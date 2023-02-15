@@ -57,6 +57,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   // bool upBottonVisible = false;
   String employeeName = "";
   String employeeEmail = "";
+  String employeePhoto = "";
 
   bool isAdmin = false;
 
@@ -181,6 +182,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
         setState(() {
           employeeName = value['Data']['EmpName'];
           employeeEmail = value['Data']['Email'];
+          employeePhoto = value['Data']['Photo'];
           if (value['Data']['Admin'] == 1) {
             isAdmin = true;
           }
@@ -453,6 +455,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                           child: PopUpProfile(
                             name: employeeName,
                             email: employeeEmail,
+                            photo: employeePhoto,
                             popUpProfile: popUpProfile,
                             resetState: resetState,
                             isAdmin: isAdmin,

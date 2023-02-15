@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
@@ -17,11 +18,13 @@ class PopUpProfile extends StatelessWidget {
     this.resetState,
     this.isAdmin = false,
     this.updateLogin,
+    this.photo,
   });
 
   ReqAPI apiReq = ReqAPI();
   String? name;
   String? email;
+  String? photo;
   Function? popUpProfile;
   Function? resetState;
   Function? updateLogin;
@@ -62,26 +65,65 @@ class PopUpProfile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    name!,
-                    style: helveticaText.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: davysGray,
-                    ),
-                  ),
+                  photo == ""
+                      ? Container(
+                          width: 60,
+                          height: 60,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: sonicSilver,
+                          ),
+                          child: Center(
+                            child: Text(
+                              name!.characters.first,
+                              style: helveticaText.copyWith(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700,
+                                color: white,
+                                height: 1.15,
+                              ),
+                            ),
+                          ),
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: photo!,
+                          imageBuilder: (context, imageProvider) {
+                            return CircleAvatar(
+                              backgroundImage: imageProvider,
+                              radius: 30,
+                            );
+                          },
+                        ),
                   const SizedBox(
-                    height: 7,
+                    width: 25,
                   ),
-                  Text(
-                    email!,
-                    style: helveticaText.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w300,
-                      color: sonicSilver,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          name!,
+                          style: helveticaText.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: davysGray,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 7,
+                        ),
+                        Text(
+                          email!,
+                          style: helveticaText.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w300,
+                            color: sonicSilver,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
