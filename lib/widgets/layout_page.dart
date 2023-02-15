@@ -361,6 +361,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                           popUpStatus: profileVisible,
                           resetState: resetState,
                           updateLogin: updateAfterLogin,
+                          photo: employeePhoto,
                         ),
                       ),
                       Expanded(

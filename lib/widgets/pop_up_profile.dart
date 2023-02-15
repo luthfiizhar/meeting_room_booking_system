@@ -68,38 +68,38 @@ class PopUpProfile extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  photo == ""
-                      ? Container(
-                          width: 60,
-                          height: 60,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: sonicSilver,
-                          ),
-                          child: Center(
-                            child: Text(
-                              name!.characters.first,
-                              style: helveticaText.copyWith(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                                color: white,
-                                height: 1.15,
-                              ),
-                            ),
-                          ),
-                        )
-                      : CachedNetworkImage(
-                          imageUrl: photo!,
-                          imageBuilder: (context, imageProvider) {
-                            return CircleAvatar(
-                              backgroundImage: imageProvider,
-                              radius: 30,
-                            );
-                          },
-                        ),
-                  const SizedBox(
-                    width: 25,
-                  ),
+                  // photo == ""
+                  //     ? Container(
+                  //         width: 60,
+                  //         height: 60,
+                  //         decoration: const BoxDecoration(
+                  //           shape: BoxShape.circle,
+                  //           color: sonicSilver,
+                  //         ),
+                  //         child: Center(
+                  //           child: Text(
+                  //             name!.characters.first,
+                  //             style: helveticaText.copyWith(
+                  //               fontSize: 24,
+                  //               fontWeight: FontWeight.w700,
+                  //               color: white,
+                  //               height: 1.15,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       )
+                  //     : CachedNetworkImage(
+                  //         imageUrl: photo!,
+                  //         imageBuilder: (context, imageProvider) {
+                  //           return CircleAvatar(
+                  //             backgroundImage: imageProvider,
+                  //             radius: 30,
+                  //           );
+                  //         },
+                  //       ),
+                  // const SizedBox(
+                  //   width: 25,
+                  // ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
