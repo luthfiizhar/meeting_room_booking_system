@@ -8,6 +8,8 @@ import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/pages/user/rooms_page.dart';
+import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
+import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/confirmation_dialog_black.dart';
 import 'dart:html' as html;
@@ -331,13 +333,11 @@ class _DetailAppointmentContainerState
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          IconButton(
-                            icon: const Icon(
-                              MdiIcons.informationOutline,
-                              color: blueAccent,
-                              size: 26,
-                            ),
-                            onPressed: () {
+                          TransparentBorderedBlackButton(
+                            disabled: false,
+                            text: 'Detail',
+                            padding: ButtonSize().smallSize(),
+                            onTap: () {
                               if (widget.bookingDetail!.type == "MRBS") {
                                 context.goNamed('detail_event', params: {
                                   'eventId': widget.bookingDetail!.bookingId,
@@ -346,12 +346,29 @@ class _DetailAppointmentContainerState
                                 html.window
                                     .open('http://calendar.google.com', '');
                               }
-                              // context.goNamed('detail_event', params: {
-                              //   'eventId': widget.bookingDetail!.bookingId,
-                              // });
                             },
-                            tooltip: 'Detail Info',
                           ),
+                          // IconButton(
+                          //   icon: const Icon(
+                          //     MdiIcons.informationOutline,
+                          //     color: blueAccent,
+                          //     size: 26,
+                          //   ),
+                          //   onPressed: () {
+                          //     if (widget.bookingDetail!.type == "MRBS") {
+                          //       context.goNamed('detail_event', params: {
+                          //         'eventId': widget.bookingDetail!.bookingId,
+                          //       });
+                          //     } else {
+                          //       html.window
+                          //           .open('http://calendar.google.com', '');
+                          //     }
+                          //     // context.goNamed('detail_event', params: {
+                          //     //   'eventId': widget.bookingDetail!.bookingId,
+                          //     // });
+                          //   },
+                          //   tooltip: 'Detail Info',
+                          // ),
                           // IconButton(
                           //   icon: const Icon(
                           //     MdiIcons.emailOutline,
