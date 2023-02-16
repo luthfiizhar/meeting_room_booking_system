@@ -44,6 +44,8 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
     {'rating': 5, 'isSelected': false},
   ];
 
+  bool isLoading = false;
+
   int currentPaginatedPage = 1;
   List availablePage = [1];
   List showedPage = [1];
@@ -152,7 +154,10 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
 
   Future feedbackListInit() {
     // print(searchTerm);
-    feedbackList.clear();
+    setState(() {
+      isLoading = true;
+      feedbackList.clear();
+    });
     return apiReq.feedbackList(searchTerm).then((value) {
       if (value['Status'].toString() == "200") {
         List listResult = value['Data']['List'];
@@ -184,6 +189,7 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
             expanded: feedbackList[i].expanded,
           ));
         }
+        isLoading = false;
         setState(() {});
       } else if (value['Status'].toString() == "401") {
         showDialog(
@@ -533,36 +539,46 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
             const SizedBox(
               height: 12,
             ),
-            feedbackList.isEmpty
-                ? Center(
-                    child: SizedBox(
-                      width: 900,
-                      height: 200,
-                      child: Center(
-                        child: Text(
-                          'Sorry, there are no rating at the moment.',
-                          style: helveticaText.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w300,
-                            color: davysGray,
-                          ),
-                        ),
+            isLoading
+                ? const SizedBox(
+                    height: 200,
+                    width: 900,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: eerieBlack,
                       ),
                     ),
                   )
-                : ListView.builder(
-                    itemCount: feedbackList.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return FeedbackListItem(
-                        feedback: feedbackList[index],
-                        index: index,
-                        onClick: onClickFeedbackItem,
-                        close: closeDetail,
-                        expanded: feedbackList[index].expanded,
-                      );
-                    },
-                  ),
+                : feedbackList.isEmpty
+                    ? Center(
+                        child: SizedBox(
+                          width: 900,
+                          height: 200,
+                          child: Center(
+                            child: Text(
+                              'Sorry, there are no rating at the moment.',
+                              style: helveticaText.copyWith(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w300,
+                                color: davysGray,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: feedbackList.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return FeedbackListItem(
+                            feedback: feedbackList[index],
+                            index: index,
+                            onClick: onClickFeedbackItem,
+                            close: closeDetail,
+                            expanded: feedbackList[index].expanded,
+                          );
+                        },
+                      ),
             const SizedBox(
               height: 60,
             ),
