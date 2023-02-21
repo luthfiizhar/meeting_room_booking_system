@@ -192,6 +192,8 @@ class _RoomsPageState extends State<RoomsPage> {
           detailEvent.bookingType = value['Data']['BookingType'] ?? "";
           detailEvent.originalBookingDate =
               value['Data']['BookingDateOriginal'];
+          detailEvent.phoneOptions =
+              value['Data']['DisplayPhoneNumber'] ?? false;
           if (!isShowDetail) {
             isShowDetail = true;
           }
@@ -1465,6 +1467,7 @@ class BookingDetail {
     this.bookingType = "",
     this.startTime = "",
     this.originalBookingDate = "",
+    this.phoneOptions = false,
   });
   String bookingId;
   String empNip;
@@ -1490,4 +1493,6 @@ class BookingDetail {
 
   String type;
   String originalBookingDate;
+
+  bool phoneOptions;
 }

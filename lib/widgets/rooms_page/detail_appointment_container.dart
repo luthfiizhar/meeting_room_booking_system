@@ -94,6 +94,7 @@ class _DetailAppointmentContainerState
     phoneNumber = widget.bookingDetail!.phoneNumber;
     bookingType = widget.bookingDetail!.bookingType;
     startTime = widget.bookingDetail!.startTime;
+    isPhonNumberShowed = widget.bookingDetail!.phoneOptions;
     if (bookingType == "GOOGLE") {
     } else {}
 
@@ -127,7 +128,7 @@ class _DetailAppointmentContainerState
             });
           } else {
             setState(() {
-              isPhonNumberShowed = false;
+              // isPhonNumberShowed = false;
               isOwner = false;
               if (date.isBefore(DateTime.now())) {
                 isButtonCancelShowed = false;
@@ -337,7 +338,7 @@ class _DetailAppointmentContainerState
                             disabled: false,
                             text: 'Detail',
                             padding: ButtonSize().smallSize(),
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w700,
                             onTap: () {
                               if (widget.bookingDetail!.type == "MRBS") {
                                 context.goNamed('detail_event', params: {
