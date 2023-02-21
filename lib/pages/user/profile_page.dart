@@ -367,7 +367,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                   width: 93,
                   child: BlackInputField(
                     controller: _phoneCode,
-                    enabled: true,
+                    enabled: false,
                     focusNode: phoneCodeNode,
                     obsecureText: false,
                     prefixIcon: const Icon(
@@ -390,7 +390,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                   width: 225,
                   child: BlackInputField(
                     controller: _phone,
-                    enabled: true,
+                    enabled: false,
                     focusNode: phoneNode,
                     obsecureText: false,
                     hintText: 'Phone Number here ...',
