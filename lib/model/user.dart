@@ -6,6 +6,7 @@ class User {
     this.avaya = "",
     this.phoneCode = "",
     this.phoneNumber = "",
+    this.phoneOptions = false,
   });
 
   String name;
@@ -14,4 +15,5 @@ class User {
   String avaya;
   String phoneCode;
   String phoneNumber;
+  bool phoneOptions;
 }

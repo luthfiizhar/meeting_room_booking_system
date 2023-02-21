@@ -8,6 +8,7 @@ import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
+import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'dart:html' as html;
 
@@ -52,6 +53,8 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
 
   bool isConnectedToGoogle = false;
 
+  bool phoneOptions = false;
+
   bool isLoadingSync = false;
 
   initGetUserProfile() {
@@ -65,6 +68,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
           avaya = value['Data']['AvayaNumber'] ?? "-";
           phoneCode = value['Data']['CountryCode'];
           phone = value['Data']['PhoneNumber'];
+          phoneOptions = value['Data']['DisplayPhoneNumber'];
           int gooleSync = value['Data']['GoogleAccountSync'];
           if (gooleSync == 1) {
             isConnectedToGoogle = true;
@@ -401,6 +405,25 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
               ],
             ),
           ),
+          const SizedBox(
+            height: 20,
+          ),
+          inputRow(
+            '',
+            BlackCheckBox(
+              selectedValue: phoneOptions,
+              onChanged: (value) {
+                if (phoneOptions) {
+                  phoneOptions = false;
+                } else {
+                  phoneOptions = true;
+                }
+                setState(() {});
+              },
+              filled: true,
+              label: 'Let other user see my phone number as contact info.',
+            ),
+          ),
           divider(),
           Text(
             'Link to Google',
@@ -532,6 +555,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                     user.avaya = avaya;
                     user.phoneCode = phoneCode;
                     user.phoneNumber = phone;
+                    user.phoneOptions = phoneOptions;
 
                     apiReq.updateUserProfile(user).then((value) {
                       if (value["Status"].toString() == "200") {
