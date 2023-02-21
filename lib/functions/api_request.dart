@@ -37,6 +37,7 @@ class ReqAPI {
      
       "RoomID": "${booking.roomId}",
       "Summary": "${booking.summary}",
+      "DisplayPhoneNumber" : ${booking.displayPhoneNumber},
       "AdditionalNotes" : "${booking.additionalNote}",
       "Description": "${booking.description}",
       "StartDate": "${booking.startDate.toString().substring(0, 19)}",
@@ -84,6 +85,7 @@ class ReqAPI {
       "BookingID" : "${booking.bookingId}",
       "RoomID": "${booking.roomId}",
       "Summary": "${booking.summary}",
+      "DisplayPhoneNumber" : ${booking.displayPhoneNumber},
       "AdditionalNotes" : "${booking.additionalNote}",
       "Description": "${booking.description}",
       "StartDate": "${booking.startDate.toString().substring(0, 19)}",
@@ -132,6 +134,7 @@ class ReqAPI {
       "Summary": "${booking.summary}",
       "AdditionalNotes" : "${booking.additionalNote}",
       "Description": "${booking.description}",
+      "DisplayPhoneNumber" : ${booking.displayPhoneNumber},
       "StartDate": "${booking.startDate.toString().substring(0, 19)}",
       "EndDate": "${booking.endDate.toString().substring(0, 19)}",
       "Recursive": "${booking.recursive}",
@@ -179,6 +182,7 @@ class ReqAPI {
       "BookingID": "${booking.bookingId}",
       "RoomID": "${booking.roomId}",
       "Summary": "${booking.summary}",
+      "DisplayPhoneNumber" : ${booking.displayPhoneNumber},
       "AdditionalNotes" : "${booking.additionalNote}",
       "Description": "${booking.description}",
       "StartDate": "${booking.startDate.toString().substring(0, 19)}",
@@ -1421,7 +1425,8 @@ class ReqAPI {
         "Email" : "${user.email}",
         "Avaya" : "${user.avaya}",
         "CountryCode" : "${user.phoneCode}",
-        "PhoneNumber" : "${user.phoneNumber}"
+        "PhoneNumber" : "${user.phoneNumber}",
+        "DisplayPhoneNumber" : ${user.phoneOptions}
     }
     """;
     try {

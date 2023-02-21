@@ -25,6 +25,7 @@ import 'package:meeting_room_booking_system/widgets/booking_page/select_layout_d
 import 'package:meeting_room_booking_system/widgets/booking_page/suggestion_email_container.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
 import 'package:meeting_room_booking_system/widgets/custom_date_picker.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
@@ -136,6 +137,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   List contactList = [];
   List filterContactList = [];
   bool isContactEmpty = true;
+
+  bool phoneOptions = false;
 
   bool emptyLayout = true;
   String layoutId = "";
@@ -739,6 +742,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       roomType = "Canteen";
     }
     selectedDate = DateTime.parse(widget.date!);
+    apiReq.getUserProfile().then((value) {
+      phoneOptions = value['Data']['DisplayPhoneNumber'];
+      setState(() {});
+    });
     apiReq.getRoomDetail(widget.roomId!).then((value) {
       if (value['Status'].toString() == "200") {
         setState(() {
@@ -1626,8 +1633,25 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                   ),
                                 ),
                                 const SizedBox(
-                                  height: 20,
+                                  height: 22,
                                 ),
+                                BlackCheckBox(
+                                  filled: true,
+                                  selectedValue: phoneOptions,
+                                  onChanged: (value) {
+                                    if (phoneOptions) {
+                                      phoneOptions = false;
+                                    } else {
+                                      phoneOptions = true;
+                                    }
+                                    setState(() {});
+                                  },
+                                  label:
+                                      'Let other user see my phone number as contact info.',
+                                ),
+                                // const SizedBox(
+                                //   height: 20,
+                                // ),
                                 //REPEAT SECTION
                                 Visibility(
                                   // visible:
@@ -2011,6 +2035,8 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                   widget.edit['bookingId'];
                                             }
                                             booking.roomId = widget.roomId;
+                                            booking.displayPhoneNumber =
+                                                phoneOptions;
                                             booking.roomType = roomType;
                                             booking.summary = eventName
                                                 .replaceAll('"', '\\"');

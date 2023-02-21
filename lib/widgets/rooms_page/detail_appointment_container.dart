@@ -337,6 +337,7 @@ class _DetailAppointmentContainerState
                             disabled: false,
                             text: 'Detail',
                             padding: ButtonSize().smallSize(),
+                            fontWeight: FontWeight.w400,
                             onTap: () {
                               if (widget.bookingDetail!.type == "MRBS") {
                                 context.goNamed('detail_event', params: {
