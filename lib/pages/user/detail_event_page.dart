@@ -243,7 +243,11 @@ class _DetailEventPageState extends State<DetailEventPage> {
               } else {
                 print('else nip tidak cocok');
                 setState(() {
-                  isButtonShowed = false;
+                  if (value["Data"]["Admin"].toString() == "1") {
+                    isButtonShowed = true;
+                  } else {
+                    isButtonShowed = false;
+                  }
                 });
               }
             });
