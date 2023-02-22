@@ -1,11 +1,13 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/user.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/button/regular_button_white.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
@@ -13,6 +15,7 @@ import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.d
 import 'dart:html' as html;
 
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProfileMenuSetting extends StatefulWidget {
   ProfileMenuSetting({
@@ -37,6 +40,10 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   final TextEditingController _phone = TextEditingController();
   final TextEditingController _phoneCode = TextEditingController();
 
+  List<TargetFocus> targets = [];
+  TutorialCoachMark? phoneTutorial;
+  GlobalKey checkPhoneKey = GlobalKey();
+
   FocusNode nameNode = FocusNode();
   FocusNode nipNode = FocusNode();
   FocusNode emailNode = FocusNode();
@@ -57,8 +64,86 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
 
   bool isLoadingSync = false;
 
-  initGetUserProfile() {
-    apiReq.getUserProfile().then((value) {
+  addTargetTutorial() {
+    targets.add(
+      TargetFocus(
+        identify: "Area Type",
+        keyTarget: checkPhoneKey,
+        shape: ShapeLightFocus.RRect,
+        radius: 10,
+        contents: [
+          TargetContent(
+            align: ContentAlign.right,
+            padding: const EdgeInsets.only(
+              bottom: 200,
+            ),
+            // customPosition: CustomTargetContentPosition(top: 100, right: 200),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Show Phone Number",
+                  style: helveticaText.copyWith(
+                    color: white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    "Check this option for make your phone number visible to other users as contact info.",
+                    style: helveticaText.copyWith(
+                      color: white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: WhiteRegularButton(
+                    disabled: false,
+                    onTap: () {
+                      phoneTutorial!.finish();
+                    },
+                    text: 'Done',
+                    padding: ButtonSize().smallSize(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  initTutorial() {
+    phoneTutorial = TutorialCoachMark(
+      targets: targets,
+      onFinish: () async {
+        // print('finish tutorial');
+        // var box = await Hive.openBox('onBoarding');
+        // box.put("firstLogin", false);
+      },
+      skipWidget: WhiteRegularButton(
+        text: 'Skip',
+        disabled: false,
+        onTap: () {
+          phoneTutorial!.skip();
+        },
+        padding: ButtonSize().smallSize(),
+      ),
+      hideSkip: true,
+    );
+    addTargetTutorial();
+    phoneTutorial!.show(context: context);
+  }
+
+  Future initGetUserProfile() {
+    return apiReq.getUserProfile().then((value) {
       // print("User Profile -> $value");
       if (value['Status'].toString() == "200") {
         setState(() {
@@ -118,7 +203,10 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   void initState() {
     super.initState();
     scrollController = widget.scrollController;
-    initGetUserProfile();
+
+    initGetUserProfile().then((value) {
+      initTutorial();
+    });
     nameNode.addListener(() {
       setState(() {});
     });
@@ -410,18 +498,21 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
           ),
           inputRow(
             '',
-            BlackCheckBox(
-              selectedValue: phoneOptions,
-              onChanged: (value) {
-                if (phoneOptions) {
-                  phoneOptions = false;
-                } else {
-                  phoneOptions = true;
-                }
-                setState(() {});
-              },
-              filled: true,
-              label: 'Let other user see my phone number as contact info.',
+            SizedBox(
+              key: checkPhoneKey,
+              child: BlackCheckBox(
+                selectedValue: phoneOptions,
+                onChanged: (value) {
+                  if (phoneOptions) {
+                    phoneOptions = false;
+                  } else {
+                    phoneOptions = true;
+                  }
+                  setState(() {});
+                },
+                filled: true,
+                label: 'Let other user see my phone number as contact info.',
+              ),
             ),
           ),
           divider(),

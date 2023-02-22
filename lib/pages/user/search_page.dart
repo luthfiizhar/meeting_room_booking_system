@@ -203,7 +203,7 @@ class _SearchPageState extends State<SearchPage> {
     );
     targets.add(
       TargetFocus(
-        identify: "Seaerch Setting",
+        identify: "Search Setting",
         keyTarget: searchContainerKey,
         shape: ShapeLightFocus.RRect,
         radius: 10,
