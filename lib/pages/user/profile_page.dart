@@ -121,25 +121,41 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   }
 
   initTutorial() {
-    phoneTutorial = TutorialCoachMark(
-      targets: targets,
-      onFinish: () async {
-        // print('finish tutorial');
-        // var box = await Hive.openBox('onBoarding');
-        // box.put("firstLogin", false);
-      },
-      skipWidget: WhiteRegularButton(
-        text: 'Skip',
-        disabled: false,
-        onTap: () {
-          phoneTutorial!.skip();
-        },
-        padding: ButtonSize().smallSize(),
-      ),
-      hideSkip: true,
-    );
-    addTargetTutorial();
-    phoneTutorial!.show(context: context);
+    apiReq.userEvents('ChecklistPhoneTutorial').then((value) {
+      print(value);
+      if (value['Status'].toString() == "200") {
+        if (value['Data']['Value'] == true) {
+          phoneTutorial = TutorialCoachMark(
+            targets: targets,
+            onFinish: () async {
+              // print('finish tutorial');
+              // var box = await Hive.openBox('onBoarding');
+              // box.put("firstLogin", false);
+            },
+            skipWidget: WhiteRegularButton(
+              text: 'Skip',
+              disabled: false,
+              onTap: () {
+                phoneTutorial!.skip();
+              },
+              padding: ButtonSize().smallSize(),
+            ),
+            hideSkip: true,
+          );
+          addTargetTutorial();
+          phoneTutorial!.show(context: context);
+        }
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: "Error userEvent",
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
   }
 
   Future initGetUserProfile() {

@@ -566,26 +566,60 @@ class _SearchPageState extends State<SearchPage> {
     var firstLogin = box.get('firstLogin') ?? true;
 
     showOnBoard = firstLogin;
-    if (showOnBoard) {
-      tutorialCoachMark = TutorialCoachMark(
-          targets: targets,
-          onFinish: () async {
-            // print('finish tutorial');
-            var box = await Hive.openBox('onBoarding');
-            box.put("firstLogin", false);
-            showOnBoard = false;
-          },
-          skipWidget: WhiteRegularButton(
-            text: 'Skip',
-            disabled: false,
-            onTap: () {
-              tutorialCoachMark.skip();
-            },
-            padding: ButtonSize().smallSize(),
-          ));
-      addTarget();
-      tutorialCoachMark.show(context: context);
-    }
+
+    // if (showOnBoard) {
+    //   tutorialCoachMark = TutorialCoachMark(
+    //       targets: targets,
+    //       onFinish: () async {
+    //         // print('finish tutorial');
+    //         var box = await Hive.openBox('onBoarding');
+    //         box.put("firstLogin", false);
+    //         showOnBoard = false;
+    //       },
+    //       skipWidget: WhiteRegularButton(
+    //         text: 'Skip',
+    //         disabled: false,
+    //         onTap: () {
+    //           tutorialCoachMark.skip();
+    //         },
+    //         padding: ButtonSize().smallSize(),
+    //       ));
+    //   addTarget();
+    //   tutorialCoachMark.show(context: context);
+    // }
+
+    apiReq.userEvents('SearchTutorial').then((value) {
+      if (value['Status'].toString() == "200") {
+        if (value['Data']['Value'] == true) {
+          tutorialCoachMark = TutorialCoachMark(
+              targets: targets,
+              onFinish: () async {
+                // print('finish tutorial');
+                var box = await Hive.openBox('onBoarding');
+                box.put("firstLogin", false);
+                showOnBoard = false;
+              },
+              skipWidget: WhiteRegularButton(
+                text: 'Skip',
+                disabled: false,
+                onTap: () {
+                  tutorialCoachMark.skip();
+                },
+                padding: ButtonSize().smallSize(),
+              ));
+          addTarget();
+          tutorialCoachMark.show(context: context);
+        }
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Error userEvent',
+          contentText: error.toString(),
+        ),
+      );
+    });
 
     setState(() {});
   }
