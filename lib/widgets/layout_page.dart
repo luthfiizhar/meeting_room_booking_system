@@ -179,6 +179,13 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
     }
     apiReq.getUserProfile().then((value) {
       if (value['Status'] == "200") {
+        String admin = value['Data']['Admin'].toString();
+        if (value['Data']['ChecklistPhoneTutorial']) {
+          context.goNamed('setting', params: {
+            'isAdmin': admin == "1" ? "true" : "false",
+            'menu': 'Profile'
+          });
+        }
         setState(() {
           employeeName = value['Data']['EmpName'];
           employeeEmail = value['Data']['Email'];
