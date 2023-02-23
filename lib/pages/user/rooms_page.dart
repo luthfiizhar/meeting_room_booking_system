@@ -1236,7 +1236,7 @@ class _RoomsPageState extends State<RoomsPage> {
               ),
               showAvatar: false,
               visibleResourceCount:
-                  MediaQuery.of(context).size.width < 1366 ? 2 : 5,
+                  MediaQuery.of(context).size.width <= 1366 ? 2 : 5,
             ),
             // resourceViewHeaderBuilder: (context, details) {
             //   return Container(
