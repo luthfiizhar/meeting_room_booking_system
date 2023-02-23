@@ -669,6 +669,7 @@ class _RoomsPageState extends State<RoomsPage> {
   // }
 
   ScrollController scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     // WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -676,9 +677,9 @@ class _RoomsPageState extends State<RoomsPage> {
     //     assignDataToCalendar(value['Data']);
     //   });
     // });
-    resetState() {
-      setState(() {});
-    }
+    // resetState() {
+    //   setState(() {});
+    // }
 
     return LayoutPageWeb(
       scrollController: scrollController,
@@ -718,15 +719,16 @@ class _RoomsPageState extends State<RoomsPage> {
                             maxDate:
                                 DateTime.now().add(const Duration(days: 30)),
                           ),
-                          // const SizedBox(
-                          //   height: 20,
-                          // ),
-                          // AvailableRoomContainer(
-                          //   height: 425,
-                          // ),
-                          // const SizedBox(
-                          //   height: 20,
-                          // )
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          AvailableRoomContainer(
+                            height: 275,
+                            smallFont: true,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          )
                         ],
                       ),
                     ),
@@ -928,13 +930,31 @@ class _RoomsPageState extends State<RoomsPage> {
   }
 
   Widget calendarRoomPage(MainModel model) {
-    double calendarHeight =
-        dataRoom.length > 2 ? 330 : (150 * dataRoom.length) + 30;
+    double screenW = MediaQuery.of(context).size.width;
+    double calendarTemp = MediaQuery.of(context).size.height - 70 - 75;
+    double calendarHeight = calendarTemp;
+    if (screenW > 1366) {
+      if (dataRoom.length <= 6) {
+        calendarHeight = dataRoom.length * 150;
+      }
+    } else {
+      if (dataRoom.length <= 3) {
+        calendarHeight = dataRoom.length * 150;
+      }
+    }
+    // double calendarHeight = screenW > 1366
+    //     ? dataRoom.length < 5
+    //         ? (150 * dataRoom.length)
+    //         : calendarTemp
+    //     : dataRoom.length < 2
+    //         ? (150 * dataRoom.length)
+    //         : calendarTemp;
+    // dataRoom.length > 2 ? 330 : (150 * dataRoom.length) + 30;
     return Stack(
       children: [
         Container(
           // color: Colors.amber,
-          height: MediaQuery.of(context).size.height - 70 - 115 - 105,
+          height: dataRoom.isNotEmpty ? calendarHeight : 500,
           // height: dataRoom.isNotEmpty ? calendarHeight : 500,
           child: SfCalendar(
             key: const ValueKey(CalendarView.timelineDay),
@@ -1235,8 +1255,13 @@ class _RoomsPageState extends State<RoomsPage> {
                 color: culturedWhite,
               ),
               showAvatar: false,
-              visibleResourceCount:
-                  MediaQuery.of(context).size.width <= 1366 ? 2 : 5,
+              visibleResourceCount: screenW > 1366
+                  ? dataRoom.length <= 6
+                      ? -1
+                      : 6
+                  : dataRoom.length <= 3
+                      ? -1
+                      : 3,
             ),
             // resourceViewHeaderBuilder: (context, details) {
             //   return Container(
@@ -1292,7 +1317,7 @@ class _RoomsPageState extends State<RoomsPage> {
                 width: double.infinity,
                 // height:
                 //     dataRoom.isNotEmpty ? (150 * dataRoom.length) + 40 : 500,
-                height: MediaQuery.of(context).size.height - 180 - 110,
+                height: calendarHeight,
                 child: const Center(
                   child: CircularProgressIndicator(
                     color: eerieBlack,

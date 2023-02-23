@@ -383,7 +383,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                                     ConstrainedBox(
                                         constraints: BoxConstraints(
                                           minHeight: screenWidth > 1000
-                                              ? screenHeight - 115 - 70
+                                              ? screenHeight - 75 - 70
                                               : 0,
                                         ),
                                         child: widget.child!),

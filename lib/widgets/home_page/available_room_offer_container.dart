@@ -14,9 +14,11 @@ class AvailableRoomContainer extends StatefulWidget {
   AvailableRoomContainer({
     super.key,
     this.height = 375,
+    this.smallFont = false,
   });
 
   final double height;
+  bool smallFont;
 
   @override
   State<AvailableRoomContainer> createState() => _AvailableRoomContainerState();
@@ -226,7 +228,7 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
                                   Text(
                                     "Rooms Currently Not Available",
                                     style: helveticaText.copyWith(
-                                      fontSize: 32,
+                                      fontSize: widget.smallFont ? 24 : 32,
                                       fontWeight: FontWeight.w700,
                                       color: white,
                                     ),
@@ -263,7 +265,7 @@ class _AvailableRoomContainerState extends State<AvailableRoomContainer> {
                                   Text(
                                     roomName,
                                     style: helveticaText.copyWith(
-                                      fontSize: 32,
+                                      fontSize: widget.smallFont ? 24 : 32,
                                       fontWeight: FontWeight.w700,
                                       color: white,
                                     ),
