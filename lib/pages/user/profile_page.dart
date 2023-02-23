@@ -80,34 +80,36 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
             ),
             // customPosition: CustomTargetContentPosition(top: 100, right: 200),
             child: Center(
-              child: SizedBox(
-                width: 700,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Set your phone as public",
-                      style: helveticaText.copyWith(
-                        color: white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 10.0),
-                      child: Text(
-                        "Show your contact to other people so they can easily reach you out when need something.",
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 350,
+                ),
+                child: SizedBox(
+                  width: 700,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Set your phone as public",
                         style: helveticaText.copyWith(
                           color: white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
+                      Padding(
+                        padding: EdgeInsets.only(top: 10.0),
+                        child: Text(
+                          "Show your contact to other people so they can easily reach you out when need something.",
+                          style: helveticaText.copyWith(
+                            color: white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                      Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: WhiteRegularButton(
                           disabled: false,
@@ -118,8 +120,8 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                           padding: ButtonSize().smallSize(),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
