@@ -67,52 +67,61 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   addTargetTutorial() {
     targets.add(
       TargetFocus(
-        identify: "Area Type",
+        identify: "Phone Tutorial",
         keyTarget: checkPhoneKey,
         shape: ShapeLightFocus.RRect,
         radius: 10,
         contents: [
           TargetContent(
-            align: ContentAlign.right,
+            align: ContentAlign.bottom,
             padding: const EdgeInsets.only(
+              top: 20,
               bottom: 200,
             ),
             // customPosition: CustomTargetContentPosition(top: 100, right: 200),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Show Phone Number",
-                  style: helveticaText.copyWith(
-                    color: white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Check this option for make your phone number visible to other users as contact info.",
-                    style: helveticaText.copyWith(
-                      color: white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
+            child: Center(
+              child: SizedBox(
+                width: 700,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Set your phone as public",
+                      style: helveticaText.copyWith(
+                        color: white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        "Show your contact to other people so they can easily reach you out when need something.",
+                        style: helveticaText.copyWith(
+                          color: white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: WhiteRegularButton(
+                          disabled: false,
+                          onTap: () {
+                            phoneTutorial!.finish();
+                          },
+                          text: 'Done',
+                          padding: ButtonSize().smallSize(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: WhiteRegularButton(
-                    disabled: false,
-                    onTap: () {
-                      phoneTutorial!.finish();
-                    },
-                    text: 'Done',
-                    padding: ButtonSize().smallSize(),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ],
@@ -124,7 +133,12 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
     apiReq.userEvents('ChecklistPhoneTutorial').then((value) {
       print(value);
       if (value['Status'].toString() == "200") {
-        if (value['Data']['Value'] == true) {
+        // if (value['Data']['Value'] == true) {
+        scrollController!
+            .animateTo(50,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.linear)
+            .then((value) {
           phoneTutorial = TutorialCoachMark(
             targets: targets,
             onFinish: () async {
@@ -144,7 +158,9 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
           );
           addTargetTutorial();
           phoneTutorial!.show(context: context);
-        }
+        });
+
+        // }
       }
     }).onError((error, stackTrace) {
       showDialog(
