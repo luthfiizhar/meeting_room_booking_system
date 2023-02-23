@@ -691,7 +691,7 @@ class _RoomsPageState extends State<RoomsPage> {
         child: Consumer<MainModel>(builder: (context, model, child) {
           return ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height - 180,
+              minHeight: MediaQuery.of(context).size.height - 185,
             ),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.end,
@@ -718,15 +718,15 @@ class _RoomsPageState extends State<RoomsPage> {
                             maxDate:
                                 DateTime.now().add(const Duration(days: 30)),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          AvailableRoomContainer(
-                            height: 425,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          )
+                          // const SizedBox(
+                          //   height: 20,
+                          // ),
+                          // AvailableRoomContainer(
+                          //   height: 425,
+                          // ),
+                          // const SizedBox(
+                          //   height: 20,
+                          // )
                         ],
                       ),
                     ),
@@ -745,7 +745,7 @@ class _RoomsPageState extends State<RoomsPage> {
                       ),
                     ),
                     AnimatedSwitcher(
-                      duration: Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 200),
                       switchInCurve: Curves.easeIn,
                       switchOutCurve: Curves.easeOut,
                       child: isShowDetail
@@ -760,12 +760,14 @@ class _RoomsPageState extends State<RoomsPage> {
                                 //     : (100 * dataRoom.length) >= 600
                                 //         ? (100 * dataRoom.length) + 100 + 63
                                 //         : null,
-                                height: (150 * dataRoom.length) >= 600
-                                    ? (150 * dataRoom.length) + 100 + 63
-                                    : MediaQuery.of(context).size.width > 1366
-                                        ? MediaQuery.of(context).size.height -
-                                            180
-                                        : 785,
+                                // height: (150 * dataRoom.length) >= 600
+                                //     ? (150 * dataRoom.length) + 100 + 63
+                                //     : MediaQuery.of(context).size.width > 1366
+                                //         ? MediaQuery.of(context).size.height -
+                                //             180
+                                //         : 785,
+                                height:
+                                    MediaQuery.of(context).size.height - 205,
                                 child: DetailAppointmentContainer(
                                   // event: selectedEvent,
                                   closeDetail: closeDetail,
@@ -926,12 +928,14 @@ class _RoomsPageState extends State<RoomsPage> {
   }
 
   Widget calendarRoomPage(MainModel model) {
+    double calendarHeight =
+        dataRoom.length > 2 ? 330 : (150 * dataRoom.length) + 30;
     return Stack(
       children: [
         Container(
           // color: Colors.amber,
-          // height: MediaQuery.of(context).size.height - 60,
-          height: dataRoom.isNotEmpty ? (150 * dataRoom.length) + 30 : 500,
+          height: MediaQuery.of(context).size.height - 70 - 115 - 105,
+          // height: dataRoom.isNotEmpty ? calendarHeight : 500,
           child: SfCalendar(
             key: const ValueKey(CalendarView.timelineDay),
             view: CalendarView.timelineDay,
@@ -1222,15 +1226,17 @@ class _RoomsPageState extends State<RoomsPage> {
             ),
             todayHighlightColor: orangeAccent,
             resourceViewHeaderBuilder: resourceViewHeaderBuilder,
-            resourceViewSettings: const ResourceViewSettings(
+            resourceViewSettings: ResourceViewSettings(
               size: 120,
-              displayNameTextStyle: TextStyle(
+              displayNameTextStyle: const TextStyle(
                 fontFamily: 'Helvetica',
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: culturedWhite,
               ),
               showAvatar: false,
+              visibleResourceCount:
+                  MediaQuery.of(context).size.width < 1366 ? 2 : 5,
             ),
             // resourceViewHeaderBuilder: (context, details) {
             //   return Container(
@@ -1247,45 +1253,46 @@ class _RoomsPageState extends State<RoomsPage> {
             // },
           ),
         ),
-        Column(
-          children: [
-            const SizedBox(
-              height: 30,
-            ),
-            SizedBox(
-              height: dataRoom.isNotEmpty ? (150 * dataRoom.length) + 30 : 500,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: dataRoom.map((e) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 150,
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              width: double.infinity,
-                              height: 7,
-                              color: Colors.transparent,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
-        ),
+        // Column(
+        //   children: [
+        //     const SizedBox(
+        //       height: 30,
+        //     ),
+        //     SizedBox(
+        //       height: dataRoom.isNotEmpty ? (150 * dataRoom.length) + 30 : 500,
+        //       child: Column(
+        //         mainAxisAlignment: MainAxisAlignment.start,
+        //         children: dataRoom.map((e) {
+        //           return Row(
+        //             children: [
+        //               Expanded(
+        //                 child: SizedBox(
+        //                   height: 150,
+        //                   child: Align(
+        //                     alignment: Alignment.bottomCenter,
+        //                     child: Container(
+        //                       width: double.infinity,
+        //                       height: 7,
+        //                       color: Colors.transparent,
+        //                     ),
+        //                   ),
+        //                 ),
+        //               ),
+        //             ],
+        //           );
+        //         }).toList(),
+        //       ),
+        //     ),
+        //   ],
+        // ),
         !loadingGetCalendar
             ? const SizedBox()
             : Container(
                 color: eerieBlack.withOpacity(0.6),
                 width: double.infinity,
-                height:
-                    dataRoom.isNotEmpty ? (150 * dataRoom.length) + 40 : 500,
+                // height:
+                //     dataRoom.isNotEmpty ? (150 * dataRoom.length) + 40 : 500,
+                height: MediaQuery.of(context).size.height - 180 - 110,
                 child: const Center(
                   child: CircularProgressIndicator(
                     color: eerieBlack,
