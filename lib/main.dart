@@ -17,6 +17,7 @@ import 'package:meeting_room_booking_system/pages/loading_login.dart';
 import 'package:meeting_room_booking_system/pages/login_page.dart';
 import 'package:meeting_room_booking_system/pages/admin/bug_list.dart';
 import 'package:meeting_room_booking_system/pages/admin/feedback_list.dart';
+import 'package:meeting_room_booking_system/pages/user/event_confirm_page.dart';
 import 'package:meeting_room_booking_system/pages/user/google_workspace_page.dart';
 // import 'package:meeting_room_booking_system/pages/user/calendar_view_page.dart'
 //     deferred as calendarViewPage;
@@ -264,7 +265,7 @@ class MyApp extends StatelessWidget {
         routes: [
           GoRoute(
             name: 'detail_booking_list',
-            path: 'detail_event/eventID=:eventId',
+            path: 'detail_event/:eventId',
             pageBuilder: (context, state) => NoTransitionPage<void>(
               key: state.pageKey,
               child: DetailEventPage(
@@ -295,6 +296,22 @@ class MyApp extends StatelessWidget {
               ),
             );
           }),
+      GoRoute(
+        name: 'comfirm_event',
+        path: '/confirm_event/:eventId',
+        pageBuilder: (context, state) => NoTransitionPage<void>(
+          key: state.pageKey,
+          child: ConfirmEventPage(
+            bookingId: state.params['eventId'],
+          ),
+        ),
+        // routes: [
+        //   GoRoute(
+        //     name: 'detail_event_edit',
+        //     path: 'edit/roomId=:roomId&date=:date&',
+        //   )
+        // ],
+      ),
       GoRoute(
         name: 'detail_event',
         path: '/detail_event/eventID=:eventId',

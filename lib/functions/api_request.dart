@@ -2272,6 +2272,62 @@ class ReqAPI {
     }
   }
 
+  Future userConfirmEventContinue(String bookingId) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(
+        apiUrlGlobal, '/MRBS_Backend/public/api/user/booking/confirm');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+    var bodySend = """
+    {
+        "BookingID" : "$bookingId"
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future userConfirmEventCancel(String bookingId) async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/user/booking/reject');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+    var bodySend = """
+    {
+        "BookingID" : "$bookingId"
+    }
+    """;
+    try {
+      var response =
+          await http.post(url, headers: requestHeader, body: bodySend);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
   //END CLASS REQ API
 }
 
