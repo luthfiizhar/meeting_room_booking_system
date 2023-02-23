@@ -462,7 +462,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
             height: 20,
           ),
           inputRow(
-            'Avaya',
+            'Extension',
             SizedBox(
               width: 150,
               child: BlackInputField(
@@ -470,7 +470,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                 enabled: true,
                 focusNode: avayaNode,
                 obsecureText: false,
-                hintText: 'Avaya here ...',
+                hintText: 'Avaya ext here ...',
                 onSaved: (newValue) {
                   avaya = newValue.toString();
                 },
