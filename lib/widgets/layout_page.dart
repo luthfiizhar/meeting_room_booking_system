@@ -57,6 +57,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
   // bool upBottonVisible = false;
   String employeeName = "";
   String employeeEmail = "";
+  String employeePhoto = "";
 
   bool isAdmin = false;
 
@@ -178,9 +179,17 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
     }
     apiReq.getUserProfile().then((value) {
       if (value['Status'] == "200") {
+        String admin = value['Data']['Admin'].toString();
+        if (value['Data']['ChecklistPhoneTutorial']) {
+          context.goNamed('setting', params: {
+            'isAdmin': admin == "1" ? "true" : "false",
+            'menu': 'Profile'
+          });
+        }
         setState(() {
           employeeName = value['Data']['EmpName'];
           employeeEmail = value['Data']['Email'];
+          employeePhoto = value['Data']['Photo'];
           if (value['Data']['Admin'] == 1) {
             isAdmin = true;
           }
@@ -359,6 +368,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                           popUpStatus: profileVisible,
                           resetState: resetState,
                           updateLogin: updateAfterLogin,
+                          photo: employeePhoto,
                         ),
                       ),
                       Expanded(
@@ -373,7 +383,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                                     ConstrainedBox(
                                         constraints: BoxConstraints(
                                           minHeight: screenWidth > 1000
-                                              ? screenHeight - 115 - 70
+                                              ? screenHeight - 75 - 70
                                               : 0,
                                         ),
                                         child: widget.child!),
@@ -453,6 +463,7 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                           child: PopUpProfile(
                             name: employeeName,
                             email: employeeEmail,
+                            photo: employeePhoto,
                             popUpProfile: popUpProfile,
                             resetState: resetState,
                             isAdmin: isAdmin,

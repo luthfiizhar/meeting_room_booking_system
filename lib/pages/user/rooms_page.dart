@@ -192,6 +192,8 @@ class _RoomsPageState extends State<RoomsPage> {
           detailEvent.bookingType = value['Data']['BookingType'] ?? "";
           detailEvent.originalBookingDate =
               value['Data']['BookingDateOriginal'];
+          detailEvent.phoneOptions =
+              value['Data']['DisplayPhoneNumber'] ?? false;
           if (!isShowDetail) {
             isShowDetail = true;
           }
@@ -667,6 +669,7 @@ class _RoomsPageState extends State<RoomsPage> {
   // }
 
   ScrollController scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     // WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -674,9 +677,9 @@ class _RoomsPageState extends State<RoomsPage> {
     //     assignDataToCalendar(value['Data']);
     //   });
     // });
-    resetState() {
-      setState(() {});
-    }
+    // resetState() {
+    //   setState(() {});
+    // }
 
     return LayoutPageWeb(
       scrollController: scrollController,
@@ -689,7 +692,7 @@ class _RoomsPageState extends State<RoomsPage> {
         child: Consumer<MainModel>(builder: (context, model, child) {
           return ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height - 180,
+              minHeight: MediaQuery.of(context).size.height - 185,
             ),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.end,
@@ -720,7 +723,8 @@ class _RoomsPageState extends State<RoomsPage> {
                             height: 20,
                           ),
                           AvailableRoomContainer(
-                            height: 425,
+                            height: 275,
+                            smallFont: true,
                           ),
                           const SizedBox(
                             height: 20,
@@ -743,7 +747,7 @@ class _RoomsPageState extends State<RoomsPage> {
                       ),
                     ),
                     AnimatedSwitcher(
-                      duration: Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 200),
                       switchInCurve: Curves.easeIn,
                       switchOutCurve: Curves.easeOut,
                       child: isShowDetail
@@ -758,12 +762,19 @@ class _RoomsPageState extends State<RoomsPage> {
                                 //     : (100 * dataRoom.length) >= 600
                                 //         ? (100 * dataRoom.length) + 100 + 63
                                 //         : null,
-                                height: (150 * dataRoom.length) >= 600
-                                    ? (150 * dataRoom.length) + 100 + 63
-                                    : MediaQuery.of(context).size.width > 1366
-                                        ? MediaQuery.of(context).size.height -
-                                            180
-                                        : 785,
+                                // height: (150 * dataRoom.length) >= 600
+                                //     ? (150 * dataRoom.length) + 100 + 63
+                                //     : MediaQuery.of(context).size.width > 1366
+                                //         ? MediaQuery.of(context).size.height -
+                                //             180
+                                //         : 785,
+                                height: MediaQuery.of(context).size.width > 1366
+                                    ? MediaQuery.of(context).size.height -
+                                        145 +
+                                        50
+                                    : MediaQuery.of(context).size.height -
+                                        145 +
+                                        115,
                                 child: DetailAppointmentContainer(
                                   // event: selectedEvent,
                                   closeDetail: closeDetail,
@@ -924,12 +935,32 @@ class _RoomsPageState extends State<RoomsPage> {
   }
 
   Widget calendarRoomPage(MainModel model) {
+    double screenW = MediaQuery.of(context).size.width;
+    double calendarTemp = MediaQuery.of(context).size.height - 70 - 75;
+    double calendarHeight = calendarTemp;
+    if (screenW > 1366) {
+      if (dataRoom.length <= 6) {
+        calendarHeight = dataRoom.length * 150;
+      }
+    } else {
+      if (dataRoom.length <= 4) {
+        calendarHeight = dataRoom.length * 150;
+      }
+    }
+    // double calendarHeight = screenW > 1366
+    //     ? dataRoom.length < 5
+    //         ? (150 * dataRoom.length)
+    //         : calendarTemp
+    //     : dataRoom.length < 2
+    //         ? (150 * dataRoom.length)
+    //         : calendarTemp;
+    // dataRoom.length > 2 ? 330 : (150 * dataRoom.length) + 30;
     return Stack(
       children: [
         Container(
           // color: Colors.amber,
-          // height: MediaQuery.of(context).size.height - 60,
-          height: dataRoom.isNotEmpty ? (150 * dataRoom.length) + 30 : 500,
+          height: dataRoom.isNotEmpty ? calendarHeight : 500,
+          // height: dataRoom.isNotEmpty ? calendarHeight : 500,
           child: SfCalendar(
             key: const ValueKey(CalendarView.timelineDay),
             view: CalendarView.timelineDay,
@@ -1220,15 +1251,22 @@ class _RoomsPageState extends State<RoomsPage> {
             ),
             todayHighlightColor: orangeAccent,
             resourceViewHeaderBuilder: resourceViewHeaderBuilder,
-            resourceViewSettings: const ResourceViewSettings(
+            resourceViewSettings: ResourceViewSettings(
               size: 120,
-              displayNameTextStyle: TextStyle(
+              displayNameTextStyle: const TextStyle(
                 fontFamily: 'Helvetica',
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: culturedWhite,
               ),
               showAvatar: false,
+              visibleResourceCount: screenW > 1366
+                  ? dataRoom.length <= 6
+                      ? -1
+                      : 6
+                  : dataRoom.length <= 4
+                      ? -1
+                      : 4,
             ),
             // resourceViewHeaderBuilder: (context, details) {
             //   return Container(
@@ -1245,45 +1283,46 @@ class _RoomsPageState extends State<RoomsPage> {
             // },
           ),
         ),
-        Column(
-          children: [
-            const SizedBox(
-              height: 30,
-            ),
-            SizedBox(
-              height: dataRoom.isNotEmpty ? (150 * dataRoom.length) + 30 : 500,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: dataRoom.map((e) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 150,
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              width: double.infinity,
-                              height: 7,
-                              color: Colors.transparent,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
-        ),
+        // Column(
+        //   children: [
+        //     const SizedBox(
+        //       height: 30,
+        //     ),
+        //     SizedBox(
+        //       height: dataRoom.isNotEmpty ? (150 * dataRoom.length) + 30 : 500,
+        //       child: Column(
+        //         mainAxisAlignment: MainAxisAlignment.start,
+        //         children: dataRoom.map((e) {
+        //           return Row(
+        //             children: [
+        //               Expanded(
+        //                 child: SizedBox(
+        //                   height: 150,
+        //                   child: Align(
+        //                     alignment: Alignment.bottomCenter,
+        //                     child: Container(
+        //                       width: double.infinity,
+        //                       height: 7,
+        //                       color: Colors.transparent,
+        //                     ),
+        //                   ),
+        //                 ),
+        //               ),
+        //             ],
+        //           );
+        //         }).toList(),
+        //       ),
+        //     ),
+        //   ],
+        // ),
         !loadingGetCalendar
             ? const SizedBox()
             : Container(
                 color: eerieBlack.withOpacity(0.6),
                 width: double.infinity,
-                height:
-                    dataRoom.isNotEmpty ? (150 * dataRoom.length) + 40 : 500,
+                // height:
+                //     dataRoom.isNotEmpty ? (150 * dataRoom.length) + 40 : 500,
+                height: calendarHeight,
                 child: const Center(
                   child: CircularProgressIndicator(
                     color: eerieBlack,
@@ -1465,6 +1504,7 @@ class BookingDetail {
     this.bookingType = "",
     this.startTime = "",
     this.originalBookingDate = "",
+    this.phoneOptions = false,
   });
   String bookingId;
   String empNip;
@@ -1490,4 +1530,6 @@ class BookingDetail {
 
   String type;
   String originalBookingDate;
+
+  bool phoneOptions;
 }

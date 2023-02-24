@@ -420,7 +420,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
       child: Stack(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height - 70 - 115,
+            height: MediaQuery.of(context).size.height - 70 - 75,
             child: Stack(
               children: [
                 Row(
@@ -442,12 +442,10 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
                                   color: eerieBlack,
                                 )
                               : SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.width > 1366
-                                          ? MediaQuery.of(context).size.height -
-                                              70 -
-                                              115
-                                          : null,
+                                  height: MediaQuery.of(context).size.width >
+                                          1366
+                                      ? MediaQuery.of(context).size.height - 145
+                                      : null,
                                   child: DetailAppointmentContainer(
                                     // event: selectedEvent,
                                     closeDetail: closeDetail,

@@ -1,17 +1,21 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/user.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
+import 'package:meeting_room_booking_system/widgets/button/regular_button_white.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
+import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'dart:html' as html;
 
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProfileMenuSetting extends StatefulWidget {
   ProfileMenuSetting({
@@ -36,6 +40,10 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   final TextEditingController _phone = TextEditingController();
   final TextEditingController _phoneCode = TextEditingController();
 
+  List<TargetFocus> targets = [];
+  TutorialCoachMark? phoneTutorial;
+  GlobalKey checkPhoneKey = GlobalKey();
+
   FocusNode nameNode = FocusNode();
   FocusNode nipNode = FocusNode();
   FocusNode emailNode = FocusNode();
@@ -52,10 +60,123 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
 
   bool isConnectedToGoogle = false;
 
+  bool phoneOptions = false;
+
   bool isLoadingSync = false;
 
-  initGetUserProfile() {
-    apiReq.getUserProfile().then((value) {
+  addTargetTutorial() {
+    targets.add(
+      TargetFocus(
+        identify: "Phone Tutorial",
+        keyTarget: checkPhoneKey,
+        shape: ShapeLightFocus.RRect,
+        radius: 10,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            padding: const EdgeInsets.only(
+              top: 20,
+              bottom: 200,
+            ),
+            // customPosition: CustomTargetContentPosition(top: 100, right: 200),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 350,
+                ),
+                child: SizedBox(
+                  width: 700,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Set your phone as public",
+                        style: helveticaText.copyWith(
+                          color: white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 10.0),
+                        child: Text(
+                          "Show your contact to other people so they can easily reach you out when need something.",
+                          style: helveticaText.copyWith(
+                            color: white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: WhiteRegularButton(
+                          disabled: false,
+                          onTap: () {
+                            phoneTutorial!.finish();
+                          },
+                          text: 'Done',
+                          padding: ButtonSize().smallSize(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  initTutorial() {
+    apiReq.userEvents('ChecklistPhoneTutorial').then((value) {
+      print(value);
+      if (value['Status'].toString() == "200") {
+        if (value['Data']['Value'] == true) {
+          scrollController!
+              .animateTo(50,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linear)
+              .then((value) {
+            phoneTutorial = TutorialCoachMark(
+              targets: targets,
+              onFinish: () async {
+                // print('finish tutorial');
+                // var box = await Hive.openBox('onBoarding');
+                // box.put("firstLogin", false);
+              },
+              skipWidget: WhiteRegularButton(
+                text: 'Skip',
+                disabled: false,
+                onTap: () {
+                  phoneTutorial!.skip();
+                },
+                padding: ButtonSize().smallSize(),
+              ),
+              hideSkip: true,
+            );
+            addTargetTutorial();
+            phoneTutorial!.show(context: context);
+          });
+        }
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: "Error userEvent",
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
+  Future initGetUserProfile() {
+    return apiReq.getUserProfile().then((value) {
       // print("User Profile -> $value");
       if (value['Status'].toString() == "200") {
         setState(() {
@@ -65,6 +186,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
           avaya = value['Data']['AvayaNumber'] ?? "-";
           phoneCode = value['Data']['CountryCode'];
           phone = value['Data']['PhoneNumber'];
+          phoneOptions = value['Data']['DisplayPhoneNumber'];
           int gooleSync = value['Data']['GoogleAccountSync'];
           if (gooleSync == 1) {
             isConnectedToGoogle = true;
@@ -114,7 +236,10 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
   void initState() {
     super.initState();
     scrollController = widget.scrollController;
-    initGetUserProfile();
+
+    initGetUserProfile().then((value) {
+      initTutorial();
+    });
     nameNode.addListener(() {
       setState(() {});
     });
@@ -337,7 +462,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
             height: 20,
           ),
           inputRow(
-            'Avaya',
+            'Extension',
             SizedBox(
               width: 150,
               child: BlackInputField(
@@ -345,7 +470,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                 enabled: true,
                 focusNode: avayaNode,
                 obsecureText: false,
-                hintText: 'Avaya here ...',
+                hintText: 'Avaya ext here ...',
                 onSaved: (newValue) {
                   avaya = newValue.toString();
                 },
@@ -363,7 +488,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                   width: 93,
                   child: BlackInputField(
                     controller: _phoneCode,
-                    enabled: true,
+                    enabled: false,
                     focusNode: phoneCodeNode,
                     obsecureText: false,
                     prefixIcon: const Icon(
@@ -386,7 +511,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                   width: 225,
                   child: BlackInputField(
                     controller: _phone,
-                    enabled: true,
+                    enabled: false,
                     focusNode: phoneNode,
                     obsecureText: false,
                     hintText: 'Phone Number here ...',
@@ -399,6 +524,28 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                   ),
                 ),
               ],
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          inputRow(
+            '',
+            SizedBox(
+              key: checkPhoneKey,
+              child: BlackCheckBox(
+                selectedValue: phoneOptions,
+                onChanged: (value) {
+                  if (phoneOptions) {
+                    phoneOptions = false;
+                  } else {
+                    phoneOptions = true;
+                  }
+                  setState(() {});
+                },
+                filled: true,
+                label: 'Let other user see my phone number as contact info.',
+              ),
             ),
           ),
           divider(),
@@ -532,6 +679,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                     user.avaya = avaya;
                     user.phoneCode = phoneCode;
                     user.phoneNumber = phone;
+                    user.phoneOptions = phoneOptions;
 
                     apiReq.updateUserProfile(user).then((value) {
                       if (value["Status"].toString() == "200") {

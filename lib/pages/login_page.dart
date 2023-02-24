@@ -6,10 +6,12 @@ import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
+import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -76,13 +78,19 @@ class _LoginPageState extends State<LoginPage> {
         });
 
         if (value['Status'].toString() == "200") {
-          print(value);
-          var box = await Hive.openBox('userLogin');
-          box.put('feedback', value['Data']['Feedback'] ?? false);
-          box.put('feedbackBanner', value['Data']['FeedbackBanner'] ?? false);
+          print("LOGIN --> $value");
+          // var box = await Hive.openBox('userLogin');
+          // box.put('feedback', value['Data']['Feedback'] ?? false);
+          // box.put('feedbackBanner', value['Data']['FeedbackBanner'] ?? false);
+          // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          // Provider.of<MainModel>(context, listen: false).setFeedback(
+          //     value['Data']['Feedback'], value['Data']['FeedbackBanner']);
+          // });
+
           dynamic firstLogin = value['Data']['LoginCount'].toString();
+          bool checkPhoneTutorial = value['Data']['ChecklistPhoneTutorial'];
           apiReq.getUserProfile().then((value) async {
-            // print("getUserProfile $value");
+            print("getUserProfile $value");
             if (value['Status'].toString() == "200") {
               // await widget.resetState!();
               // await widget.updateLogin!(
@@ -92,9 +100,11 @@ class _LoginPageState extends State<LoginPage> {
               //   firstLogin,
               // );
               var admin = value['Data']['Admin'].toString();
-              if (firstLogin == "1") {
-                context.goNamed('setting',
-                    params: {'isAdmin': admin == "1" ? "true" : "false"});
+              if (firstLogin == "1" || checkPhoneTutorial) {
+                context.goNamed('setting', params: {
+                  'isAdmin': admin == "1" ? "true" : "false",
+                  'menu': 'Profile'
+                });
                 // Navigator.of(context).pop(true);
               } else {
                 context.goNamed('home');

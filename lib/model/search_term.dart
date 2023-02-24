@@ -1,10 +1,11 @@
 class SearchTerm {
   SearchTerm({
     this.keyWords = "",
-    this.max = "5",
+    this.max = "10",
     this.pageNumber = "1",
     this.orderBy = "",
     this.orderDir = "DESC",
+    this.status = "",
     List? rating,
   }) : rating = rating ?? [];
 
@@ -13,6 +14,7 @@ class SearchTerm {
   String pageNumber;
   String orderBy;
   String orderDir;
+  String status;
   List? rating;
 
   @override

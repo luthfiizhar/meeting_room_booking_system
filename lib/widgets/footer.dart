@@ -10,7 +10,7 @@ class FooterWeb extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.zero,
-      height: 115,
+      height: 75,
       decoration: const BoxDecoration(
         // border: Border(
         //     top: BorderSide(
@@ -27,12 +27,12 @@ class FooterWeb extends StatelessWidget {
         // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Positioned(
-            top: 20,
+            top: 10,
             left: 40,
             child: Container(
               // color: Colors.red,
-              width: 230,
-              height: 75,
+              width: 170,
+              height: 55,
               child: Image.asset(
                 'assets/navbarlogo.png',
                 fit: BoxFit.contain,
@@ -41,7 +41,7 @@ class FooterWeb extends StatelessWidget {
           ),
           Positioned(
             // alignment: Alignment.center,
-            top: 49,
+            top: 28,
             left: 100,
             right: 100,
             child: Container(
@@ -61,7 +61,7 @@ class FooterWeb extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 49,
+            top: 28,
             right: 40,
             child: Container(
               // color: Colors.pink,
