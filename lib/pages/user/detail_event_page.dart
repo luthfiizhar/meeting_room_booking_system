@@ -103,7 +103,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
     // TODO: implement initState
     super.initState();
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
-      print(value);
+      print("Booking detail --> $value");
       if (value['Status'].toString() == "200") {
         setState(() {
           isInitLoading = false;
@@ -187,7 +187,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
         }
       }
       apiReq.getUserProfile().then((value) {
-        print(value);
+        // print(value);
         if (value["Status"].toString() == "200") {
           if (bookingDate!.isBefore(DateTime.now())) {
             setState(() {
@@ -1149,7 +1149,9 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   ? true
                   : isOwner
                       ? true
-                      : false,
+                      : isPhoneShowed
+                          ? true
+                          : false,
           child: Column(
             children: [
               divider2(),
