@@ -146,6 +146,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
           additionalNotes = value['Data']['AdditionalNotes'] ?? "";
           bookingHistory = value['Data']['History'];
           repeatType = value['Data']['RepeatType'] ?? "NONE";
+          isPhoneShowed = value['Data']['DisplayPhoneNumber'] ?? false;
           if (bookingType == "RECURSIVE") {
             repeatEndDate = DateTime.parse(value['Data']['RepeatEndDate']);
             monthAbs = value['Data']['MonthAbsolute'].toString();
