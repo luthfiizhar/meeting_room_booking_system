@@ -95,6 +95,7 @@ class _DetailAppointmentContainerState
     bookingType = widget.bookingDetail!.bookingType;
     startTime = widget.bookingDetail!.startTime;
     isPhonNumberShowed = widget.bookingDetail!.phoneOptions;
+    setState(() {});
     if (bookingType == "GOOGLE") {
     } else {}
 
