@@ -938,7 +938,7 @@ class _RoomsPageState extends State<RoomsPage> {
         calendarHeight = dataRoom.length * 150;
       }
     } else {
-      if (dataRoom.length <= 3) {
+      if (dataRoom.length <= 4) {
         calendarHeight = dataRoom.length * 150;
       }
     }
@@ -1259,9 +1259,9 @@ class _RoomsPageState extends State<RoomsPage> {
                   ? dataRoom.length <= 6
                       ? -1
                       : 6
-                  : dataRoom.length <= 3
+                  : dataRoom.length <= 4
                       ? -1
-                      : 3,
+                      : 4,
             ),
             // resourceViewHeaderBuilder: (context, details) {
             //   return Container(
