@@ -304,9 +304,11 @@ class _DetailAppointmentContainerState
                     Visibility(
                       visible: isAdmin
                           ? true
-                          : isPhonNumberShowed
+                          : isOwner
                               ? true
-                              : false,
+                              : isPhonNumberShowed
+                                  ? true
+                                  : false,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
