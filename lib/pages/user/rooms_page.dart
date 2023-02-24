@@ -245,6 +245,7 @@ class _RoomsPageState extends State<RoomsPage> {
           detailEvent.empNip = "";
           detailEvent.phoneNumber = "-";
           detailEvent.location = value['Data']['RoomName'];
+          detailEvent.phoneNumber = value['Data']['PhoneNumber'];
           detailEvent.summary = value['Data']['Summary'] ?? "";
           detailEvent.description = value['Data']['Description'] ?? "";
           detailEvent.eventDate = value['Data']['BookingDate'];
@@ -265,6 +266,8 @@ class _RoomsPageState extends State<RoomsPage> {
           detailEvent.startTime = value['Data']['BookingStart'];
           detailEvent.originalBookingDate =
               value['Data']['BookingDateOriginal'] ?? "";
+          detailEvent.phoneOptions =
+              value['Data']['DisplayPhoneNumber'] ?? false;
           if (!isShowDetail) {
             isShowDetail = true;
           }
