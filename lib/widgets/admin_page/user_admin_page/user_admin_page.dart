@@ -24,7 +24,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
 
   SearchTerm searchTerm = SearchTerm(
     keyWords: "",
-    max: "5",
+    max: "10",
     pageNumber: "1",
     orderBy: "EmpNIP",
     orderDir: "ASC",

@@ -1,7 +1,7 @@
 class SearchTerm {
   SearchTerm({
     this.keyWords = "",
-    this.max = "5",
+    this.max = "10",
     this.pageNumber = "1",
     this.orderBy = "",
     this.orderDir = "DESC",
