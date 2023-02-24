@@ -805,7 +805,7 @@ class ListApprovalBody {
     this.statusRoom = "Requested",
     this.roomType = "Auditorium",
     this.keyWords = "",
-    this.max = "5",
+    this.max = "10",
     this.pageNumber = "1",
     this.orderBy = "BookingDate",
     this.orderDir = "DESC",
