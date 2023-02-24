@@ -60,7 +60,7 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
 
   bool isConnectedToGoogle = false;
 
-  bool phoneOptions = false;
+  bool phoneOptions = true;
 
   bool isLoadingSync = false;
 
