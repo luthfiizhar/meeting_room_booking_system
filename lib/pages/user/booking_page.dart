@@ -1355,9 +1355,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                             FilteringTextInputFormatter
                                                 .digitsOnly
                                           ],
-                                          // validator: (value) => value == ""
-                                          //     ? "Min. $participantMin"
-                                          //     : null,
+                                          validator: (value) => value == ""
+                                              ? "Min. $participantMin"
+                                              : null,
                                           // validator: (value) {
                                           //   if (value.toString() != "") {
                                           //     if (int.parse(value) >=
