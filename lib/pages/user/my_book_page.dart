@@ -965,7 +965,7 @@ class MyListBody {
   MyListBody({
     this.roomType = "MeetingRoom",
     this.keyWords = "",
-    this.max = "5",
+    this.max = "10",
     this.pageNumber = "1",
     this.orderBy = "BookingDate",
     this.orderDir = "DESC",
