@@ -420,7 +420,7 @@ class _CalendarViewPageState extends State<CalendarViewPage> {
       child: Stack(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height - 70 - 115,
+            height: MediaQuery.of(context).size.height - 70 - 75,
             child: Stack(
               children: [
                 Row(
