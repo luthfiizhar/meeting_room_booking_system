@@ -105,8 +105,8 @@ class _DetailAppointmentContainerState
     print(date);
     apiReq.getUserProfile().then((value) {
       if (value['Status'].toString() == "200") {
+        userNip = value['Data']['EmpNIP'];
         if (value['Data']['Admin'].toString() == "1") {
-          userNip = value['Data']['EmpNIP'];
           setState(() {
             isAdmin = true;
             isPhonNumberShowed = true;
