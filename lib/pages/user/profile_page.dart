@@ -136,8 +136,6 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
       print(value);
       if (value['Status'].toString() == "200") {
         if (value['Data']['Value'] == true) {
-          phoneOptions = true;
-          setState(() {});
           scrollController!
               .animateTo(50,
                   duration: const Duration(milliseconds: 500),
