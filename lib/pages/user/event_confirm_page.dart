@@ -1431,10 +1431,10 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
         Align(
           alignment: Alignment.bottomCenter,
           child: Material(
-            child: SlideTransition(
-              position: _offsetAnimation,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 200),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 200),
+              child: SlideTransition(
+                position: _offsetAnimation,
                 child: Container(
                   padding: const EdgeInsets.only(
                     right: 25,
