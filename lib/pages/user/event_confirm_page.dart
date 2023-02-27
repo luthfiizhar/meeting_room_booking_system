@@ -1461,7 +1461,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                           Expanded(
                             child: TransparentButtonWhite(
                               padding: const EdgeInsets.symmetric(
-                                vertical: 20,
+                                vertical: 13,
                               ),
                               text: 'Cancel Event',
                               fontWeight: FontWeight.w300,
@@ -1535,7 +1535,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                           Expanded(
                             child: WhiteRegularButton(
                               padding: const EdgeInsets.symmetric(
-                                vertical: 20,
+                                vertical: 13,
                               ),
                               text: 'Confirm Event',
                               disabled: false,
