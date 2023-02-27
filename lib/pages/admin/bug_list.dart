@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:html' as html;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
@@ -33,6 +34,8 @@ class _BugListPageState extends State<BugListPage> {
 
   List<Bug> bugList = [];
 
+  List typeList = [];
+
   bool isLoading = false;
 
   int currentPaginatedPage = 1;
@@ -64,6 +67,14 @@ class _BugListPageState extends State<BugListPage> {
 
   resetState() {}
 
+  onChangeStatus(String status) {
+    searchTerm.status = status;
+    updateList().then((value) {
+      countPagination(resultRows);
+      setState(() {});
+    });
+  }
+
   onTapHeader(String orderBy) {
     setState(() {
       if (searchTerm.orderBy == orderBy) {
@@ -87,11 +98,15 @@ class _BugListPageState extends State<BugListPage> {
 
   Future updateList() {
     bugList.clear();
+    initTabCount();
+    isLoading = true;
+    setState(() {});
     return apiReq.bugList(searchTerm).then((value) {
+      isLoading = false;
+      setState(() {});
       if (value['Status'].toString() == "200") {
         List listResult = value['Data']['List'];
         resultRows = value['Data']['TotalRows'];
-
         for (var element in listResult) {
           bugList.add(
             Bug(
@@ -100,6 +115,8 @@ class _BugListPageState extends State<BugListPage> {
               empNIP: element['EmpNIP'],
               empName: element['EmpName'],
               createdAt: element['Created_At'],
+              photo: element['Photo'],
+              isSolved: element['Status'] == "RESOLVED" ? true : false,
             ),
           );
         }
@@ -160,6 +177,45 @@ class _BugListPageState extends State<BugListPage> {
     });
   }
 
+  initTabCount() {
+    apiReq.bugTabCount().then((value) {
+      print(value);
+      if (value['Status'] == "200") {
+        setState(() {
+          // mainModel.updateApprovalCountList(value['Data']);
+          typeList = value['Data'];
+        });
+      } else if (value['Status'].toString() == "401") {
+        showDialog(
+          context: context,
+          builder: (context) => TokenExpiredDialog(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogBlack(
+            title: value['Title'],
+            contentText: value['Message'],
+            isSuccess: false,
+          ),
+        );
+      }
+    }).onError((error, stackTrace) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogBlack(
+          title: 'Failed connect API',
+          contentText: error.toString(),
+          isSuccess: false,
+        ),
+      );
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -209,6 +265,9 @@ class _BugListPageState extends State<BugListPage> {
               index: 0,
               searchController: _search,
               statusApproval: "ACTIVE",
+              getRoomStatus: onChangeStatus,
+              typeList: typeList,
+              tabCount: initTabCount,
             ),
             const SizedBox(
               height: 30,
@@ -310,16 +369,44 @@ class _BugListPageState extends State<BugListPage> {
             const SizedBox(
               height: 12,
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: bugList.length,
-              itemBuilder: (context, index) => BugContainerList(
-                bug: bugList[index],
-                index: index,
-                close: closeDetail,
-                onClick: onClickBugItem,
-              ),
-            ),
+            isLoading
+                ? const SizedBox(
+                    height: 200,
+                    width: double.infinity,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: eerieBlack,
+                      ),
+                    ),
+                  )
+                : bugList.isEmpty
+                    ? Center(
+                        child: SizedBox(
+                          width: 900,
+                          height: 200,
+                          child: Center(
+                            child: Text(
+                              'Sorry, there are no rating at the moment.',
+                              style: helveticaText.copyWith(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w300,
+                                color: davysGray,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: bugList.length,
+                        itemBuilder: (context, index) => BugContainerList(
+                          bug: bugList[index],
+                          index: index,
+                          close: closeDetail,
+                          onClick: onClickBugItem,
+                          updateList: updateList,
+                        ),
+                      ),
             const SizedBox(
               height: 60,
             ),
@@ -391,7 +478,7 @@ class _BugListPageState extends State<BugListPage> {
                                   }
                                   searchTerm.pageNumber =
                                       currentPaginatedPage.toString();
-                                  updateList();
+                                  updateList().then((value) {});
                                 });
                               }
                             : null,
@@ -450,7 +537,7 @@ class _BugListPageState extends State<BugListPage> {
                                             });
                                             searchTerm.pageNumber =
                                                 currentPaginatedPage.toString();
-                                            updateList();
+                                            updateList().then((value) {});
                                           },
                                     child: Container(
                                       width: 35,
@@ -532,7 +619,7 @@ class _BugListPageState extends State<BugListPage> {
                                   }
                                   searchTerm.pageNumber =
                                       currentPaginatedPage.toString();
-                                  updateList();
+                                  updateList().then((value) {});
                                 });
                               }
                             : null,
@@ -616,6 +703,7 @@ class BugContainerList extends StatefulWidget {
     this.onClick,
     this.close,
     this.expanded = false,
+    this.updateList,
   }) : bug = bug ?? Bug();
 
   Bug? bug;
@@ -623,142 +711,286 @@ class BugContainerList extends StatefulWidget {
   Function? onClick;
   Function? close;
   bool expanded;
+  Function? updateList;
 
   @override
   State<BugContainerList> createState() => _BugContainerListState();
 }
 
 class _BugContainerListState extends State<BugContainerList> {
+  TransparentButtonBugList? solvedButton = TransparentButtonBugList();
+  ReqAPI apiReq = ReqAPI();
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    solvedButton = TransparentButtonBugList(
+      text: 'Solved',
+      padding: const EdgeInsets.symmetric(
+        vertical: 20,
+        horizontal: 32,
+      ),
+      fontSize: 14,
+      disabled: false,
       onTap: () {
-        if (widget.bug!.isExpanded) {
-          widget.close!(widget.index);
-        } else {
-          widget.onClick!(widget.index);
-        }
+        apiReq.solveBug(widget.bug!.idBug).then((value) {
+          if (value['Status'].toString() == "200") {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialogBlack(
+                title: value['Title'],
+                contentText: value['Message'],
+                isSuccess: true,
+              ),
+            ).then((value) {
+              widget.updateList!();
+            });
+          } else if (value['Status'].toString() == "401") {
+            showDialog(
+              context: context,
+              builder: (context) => TokenExpiredDialog(
+                title: value['Title'],
+                contentText: value['Message'],
+              ),
+            );
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialogBlack(
+                title: value['Title'],
+                contentText: value['Message'],
+                isSuccess: false,
+              ),
+            );
+          }
+        }).onError((error, stackTrace) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialogBlack(
+              title: "Error solveReport",
+              contentText: error.toString(),
+              isSuccess: false,
+            ),
+          );
+        });
       },
-      child: !widget.bug!.isExpanded
-          ? Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    widget.bug!.idBug,
-                    style: helveticaText.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: davysGray,
-                    ),
-                  ),
+    );
+
+    return Column(
+      children: [
+        widget.index == 0
+            ? const SizedBox()
+            : const Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: 18,
                 ),
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    widget.bug!.description,
-                    style: helveticaText.copyWith(
-                      fontSize: 16,
-                      color: davysGray,
-                    ),
-                  ),
+                child: Divider(
+                  color: grayx11,
+                  thickness: 0.5,
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    widget.bug!.createdAt,
-                    style: helveticaText.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      color: davysGray,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 150,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TransparentButtonBugList(
-                        text: 'Solved',
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 15,
-                          horizontal: 32,
-                        ),
-                        disabled: false,
-                        onTap: () {},
-                      ),
-                      // const SizedBox(width: 30,)
-                      const Icon(Icons.keyboard_arrow_right_sharp),
-                    ],
-                  ),
-                )
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.bug!.idBug,
-                      style: helveticaText.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: davysGray,
-                      ),
-                    ),
-                    const Icon(Icons.keyboard_arrow_down_sharp),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
+              ),
+        InkWell(
+          splashFactory: NoSplash.splashFactory,
+          hoverColor: Colors.transparent,
+          onTap: () {
+            if (widget.bug!.isExpanded) {
+              widget.close!(widget.index);
+            } else {
+              widget.onClick!(widget.index);
+            }
+          },
+          child: !widget.bug!.isExpanded
+              ? Row(
                   children: [
                     Expanded(
+                      flex: 1,
                       child: Text(
-                        widget.bug!.description,
+                        widget.bug!.idBug,
                         style: helveticaText.copyWith(
                           fontSize: 16,
+                          fontWeight: FontWeight.w700,
                           color: davysGray,
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      width: 50,
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Submitted: ${widget.bug!.empNIP} - ${widget.bug!.empName} / ${widget.bug!.createdAt}",
-                      style: helveticaText.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
-                        color: sonicSilver,
+                    Expanded(
+                      flex: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          right: 50,
+                        ),
+                        child: Text(
+                          widget.bug!.description,
+                          style: helveticaText.copyWith(
+                            fontSize: 16,
+                            color: davysGray,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
-                    TransparentButtonBugList(
-                      text: 'Solved',
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                        horizontal: 32,
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        widget.bug!.createdAt,
+                        style: helveticaText.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w300,
+                          color: davysGray,
+                        ),
                       ),
-                      disabled: false,
-                      onTap: () {},
+                    ),
+                    SizedBox(
+                      width: 150,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          widget.bug!.isSolved
+                              ? Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  runAlignment: WrapAlignment.end,
+                                  spacing: 10,
+                                  children: [
+                                    const ImageIcon(
+                                      AssetImage(
+                                        'assets/icons/check_icon.png',
+                                      ),
+                                      color: greenAcent,
+                                    ),
+                                    Text(
+                                      'Solved',
+                                      style: helveticaText.copyWith(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w300,
+                                        color: davysGray,
+                                      ),
+                                    )
+                                  ],
+                                )
+                              : solvedButton!,
+                          // const SizedBox(width: 30,)
+                          const Icon(Icons.keyboard_arrow_right_sharp),
+                        ],
+                      ),
                     )
                   ],
                 )
-              ],
-            ),
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          widget.bug!.idBug,
+                          style: helveticaText.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: davysGray,
+                          ),
+                        ),
+                        const Icon(Icons.keyboard_arrow_down_sharp),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            widget.bug!.description,
+                            style: helveticaText.copyWith(
+                              fontSize: 16,
+                              color: davysGray,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 50,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    widget.bug!.photo!.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: Wrap(
+                              alignment: WrapAlignment.start,
+                              spacing: 20,
+                              children: widget.bug!.photo!
+                                  .map(
+                                    (e) => SizedBox(
+                                      height: 150,
+                                      width: 200,
+                                      child: CachedNetworkImage(
+                                        imageUrl: e['ImageURL'],
+                                        alignment: Alignment.centerLeft,
+                                        imageBuilder: (context, imageProvider) {
+                                          return Container(
+                                            height: 150,
+                                            width: 200,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                7.5,
+                                              ),
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          )
+                        : SizedBox(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Submitted: ${widget.bug!.empNIP} - ${widget.bug!.empName} / ${widget.bug!.createdAt}",
+                          style: helveticaText.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300,
+                            color: sonicSilver,
+                          ),
+                        ),
+                        widget.bug!.isSolved
+                            ? Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                runAlignment: WrapAlignment.end,
+                                spacing: 10,
+                                children: [
+                                  const ImageIcon(
+                                    AssetImage(
+                                      'assets/icons/check_icon.png',
+                                    ),
+                                    color: greenAcent,
+                                  ),
+                                  Text(
+                                    'Solved',
+                                    style: helveticaText.copyWith(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w300,
+                                      color: davysGray,
+                                    ),
+                                  )
+                                ],
+                              )
+                            : solvedButton!,
+                      ],
+                    )
+                  ],
+                ),
+        ),
+      ],
     );
   }
 }
@@ -796,10 +1028,12 @@ class FilterSearchBarReportList extends StatefulWidget {
     this.getRoomStatus,
     this.search,
     this.searchController,
+    List? typeList,
+    this.tabCount,
     // this.filterList,
     // this.updateFilter,
     // this.mainModel,
-  });
+  }) : typeList = typeList ?? [];
 
   int? index;
   String? statusApproval;
@@ -807,7 +1041,8 @@ class FilterSearchBarReportList extends StatefulWidget {
   Function? search;
   TextEditingController? searchController;
   List? filterList;
-  Function? updateFilter;
+  List typeList;
+  Function? tabCount;
   MainModel? mainModel;
 
   @override
@@ -848,42 +1083,44 @@ class _FilterSearchBarReportListState extends State<FilterSearchBarReportList> {
       indexColor = _random.nextInt(color.length);
       selectedColor = color[indexColor];
 
-      apiReq.bugTabCount().then((value) {
-        print(value);
-        if (value['Status'] == "200") {
-          setState(() {
-            // mainModel.updateApprovalCountList(value['Data']);
-            typeList = value['Data'];
-          });
-        } else if (value['Status'].toString() == "401") {
-          showDialog(
-            context: context,
-            builder: (context) => TokenExpiredDialog(
-              title: value['Title'],
-              contentText: value['Message'],
-              isSuccess: false,
-            ),
-          );
-        } else {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialogBlack(
-              title: value['Title'],
-              contentText: value['Message'],
-              isSuccess: false,
-            ),
-          );
-        }
-      }).onError((error, stackTrace) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialogBlack(
-            title: 'Failed connect API',
-            contentText: error.toString(),
-            isSuccess: false,
-          ),
-        );
-      });
+      widget.tabCount;
+      setState(() {});
+      // apiReq.bugTabCount().then((value) {
+      //   print(value);
+      //   if (value['Status'] == "200") {
+      //     setState(() {
+      //       // mainModel.updateApprovalCountList(value['Data']);
+      //       typeList = value['Data'];
+      //     });
+      //   } else if (value['Status'].toString() == "401") {
+      //     showDialog(
+      //       context: context,
+      //       builder: (context) => TokenExpiredDialog(
+      //         title: value['Title'],
+      //         contentText: value['Message'],
+      //         isSuccess: false,
+      //       ),
+      //     );
+      //   } else {
+      //     showDialog(
+      //       context: context,
+      //       builder: (context) => AlertDialogBlack(
+      //         title: value['Title'],
+      //         contentText: value['Message'],
+      //         isSuccess: false,
+      //       ),
+      //     );
+      //   }
+      // }).onError((error, stackTrace) {
+      //   showDialog(
+      //     context: context,
+      //     builder: (context) => AlertDialogBlack(
+      //       title: 'Failed connect API',
+      //       contentText: error.toString(),
+      //       isSuccess: false,
+      //     ),
+      //   );
+      // });
     });
   }
 
@@ -940,7 +1177,7 @@ class _FilterSearchBarReportListState extends State<FilterSearchBarReportList> {
                   Container(
                     // width: 500,
                     child: Row(
-                      children: typeList!.map((e) {
+                      children: widget.typeList.map((e) {
                         return Padding(
                           padding: const EdgeInsets.only(
                             right: 50,
