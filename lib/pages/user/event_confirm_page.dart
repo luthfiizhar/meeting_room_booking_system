@@ -1916,6 +1916,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
               )
             : ListView.builder(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: bookingHistory.length,
                 itemBuilder: (context, index) {
                   return Column(
