@@ -293,7 +293,9 @@ class PopUpProfile extends StatelessWidget {
                           height: 15,
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.goNamed('bug_list');
+                          },
                           child: Text(
                             'Bug List',
                             style: helveticaText.copyWith(
