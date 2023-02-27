@@ -1446,6 +1446,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                     color: eerieBlack,
                   ),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
