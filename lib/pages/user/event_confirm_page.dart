@@ -105,54 +105,54 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
   int bookingStep = 0;
   resetStatus(bool value) {}
 
-  OverlayEntry confirmOverlay() {
-    return OverlayEntry(
-      builder: (context) => Align(
-        alignment: Alignment.bottomCenter,
-        // bottom: 0,
-        child: Material(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-            // height: ,
-            decoration: const BoxDecoration(
-              color: eerieBlack,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Is this event still going on?',
-                  style: helveticaText.copyWith(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: white,
-                  ),
-                ),
-                Wrap(
-                  spacing: 10,
-                  children: [
-                    TransparentButtonWhite(
-                      text: 'Cancel Event',
-                      disabled: false,
-                      onTap: () {},
-                      padding: ButtonSize().smallSize(),
-                    ),
-                    WhiteRegularButton(
-                      text: 'Confirm Event',
-                      disabled: false,
-                      onTap: () {},
-                      padding: ButtonSize().smallSize(),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // OverlayEntry confirmOverlay() {
+  //   return OverlayEntry(
+  //     builder: (context) => Align(
+  //       alignment: Alignment.bottomCenter,
+  //       // bottom: 0,
+  //       child: Material(
+  //         child: Container(
+  //           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+  //           // height: ,
+  //           decoration: const BoxDecoration(
+  //             color: eerieBlack,
+  //           ),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             children: [
+  //               Text(
+  //                 'Is this event still going on?',
+  //                 style: helveticaText.copyWith(
+  //                   fontSize: 22,
+  //                   fontWeight: FontWeight.w700,
+  //                   color: white,
+  //                 ),
+  //               ),
+  //               Wrap(
+  //                 spacing: 10,
+  //                 children: [
+  //                   TransparentButtonWhite(
+  //                     text: 'Cancel Event',
+  //                     disabled: false,
+  //                     onTap: () {},
+  //                     padding: ButtonSize().smallSize(),
+  //                   ),
+  //                   WhiteRegularButton(
+  //                     text: 'Confirm Event',
+  //                     disabled: false,
+  //                     onTap: () {},
+  //                     padding: ButtonSize().smallSize(),
+  //                   ),
+  //                 ],
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   late final AnimationController _controller = AnimationController(
     duration: const Duration(milliseconds: 1000),
@@ -1466,7 +1466,63 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                               text: 'Cancel Event',
                               fontWeight: FontWeight.w300,
                               disabled: false,
-                              onTap: () {},
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => const ConfirmDialogBlack(
+                                      title: 'Cancel Event?',
+                                      contentText:
+                                          "Your event will erased from the room list & marked as canceled."),
+                                ).then((value) {
+                                  if (value) {
+                                    apiReq
+                                        .userConfirmEventCancel(
+                                            widget.bookingId!)
+                                        .then((value) {
+                                      if (value['Status'].toString() == "200") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        );
+                                      } else if (value['Status'].toString() ==
+                                          "401") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              TokenExpiredDialog(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
+                                      }
+                                    }).onError((error, stackTrace) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: "Error userConfirmEvent",
+                                          contentText: error.toString(),
+                                          isSuccess: false,
+                                        ),
+                                      );
+                                    });
+                                  }
+                                });
+                              },
                             ),
                           ),
                         ],
@@ -1483,7 +1539,63 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                               ),
                               text: 'Confirm Event',
                               disabled: false,
-                              onTap: () {},
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => const ConfirmDialogBlack(
+                                      title: 'Confirm Event?',
+                                      contentText:
+                                          "Your event will stay listed in the system."),
+                                ).then((value) {
+                                  if (value) {
+                                    apiReq
+                                        .userConfirmEventContinue(
+                                            widget.bookingId!)
+                                        .then((value) {
+                                      if (value['Status'].toString() == "200") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        );
+                                      } else if (value['Status'].toString() ==
+                                          "401") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              TokenExpiredDialog(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
+                                      }
+                                    }).onError((error, stackTrace) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: "Error userConfirmEvent",
+                                          contentText: error.toString(),
+                                          isSuccess: false,
+                                        ),
+                                      );
+                                    });
+                                  }
+                                });
+                              },
                             ),
                           ),
                         ],
@@ -1674,7 +1786,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
         amenities.isEmpty
             ? SizedBox(
                 width: double.infinity,
-                height: 125,
+                height: 100,
                 child: Center(
                   child: Text(
                     'No facilities requested',
@@ -1687,6 +1799,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                 ),
               )
             : GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: amenities.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -1720,6 +1833,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                 ),
               )
             : GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: foodAmenities.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

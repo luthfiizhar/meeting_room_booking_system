@@ -30,7 +30,7 @@ class _RoomFacilityItemDetailState extends State<RoomFacilityItemDetail> {
     return Padding(
       padding: const EdgeInsets.only(
         right: 15,
-        bottom: 15,
+        bottom: 5,
       ),
       child: Container(
         height: 165,
@@ -53,36 +53,32 @@ class _RoomFacilityItemDetailState extends State<RoomFacilityItemDetail> {
                   const SizedBox(
                     height: 10,
                   ),
-                  SizedBox(
-                    // width: 100,
-                    height: 50,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            widget.result!['AmenitiesName'],
-                            style: helveticaText.copyWith(
-                              fontSize: 14,
-                              color: eerieBlack,
-                              fontWeight: FontWeight.w300,
-                              height: 1.3,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          "${widget.result!['Amount']!} Unit",
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.result!['AmenitiesName'],
                           style: helveticaText.copyWith(
                             fontSize: 14,
-                            color: davysGray,
+                            color: eerieBlack,
                             fontWeight: FontWeight.w300,
                             height: 1.3,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Text(
+                        "${widget.result!['Amount']!} Unit",
+                        style: helveticaText.copyWith(
+                          fontSize: 14,
+                          color: davysGray,
+                          fontWeight: FontWeight.w300,
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
                   )
                 ],
               ),
