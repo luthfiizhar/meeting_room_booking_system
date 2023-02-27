@@ -1338,95 +1338,164 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
   }
 
   Widget mobile() {
-    return LayoutPageWebMobile(
-      scrollController: scrollController,
-      child: Container(
-        padding: const EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20,
-          bottom: 20,
-        ),
-        child: isInitLoading
-            ? const Align(
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(
-                  color: eerieBlack,
-                ),
-              )
-            : Column(
-                children: [
-                  coverURL == ""
-                      ? Container(
-                          height: 200,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: platinum,
-                          ),
-                        )
-                      : CachedNetworkImage(
-                          imageUrl: coverURL,
-                          imageBuilder: (context, imageProvider) {
-                            return Container(
+    return Stack(
+      children: [
+        LayoutPageWebMobile(
+          scrollController: scrollController,
+          child: Container(
+            padding: const EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 20,
+              bottom: 20,
+            ),
+            child: isInitLoading
+                ? const Align(
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(
+                      color: eerieBlack,
+                    ),
+                  )
+                : Column(
+                    children: [
+                      coverURL == ""
+                          ? Container(
                               height: 200,
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
                                 color: platinum,
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.cover,
-                                ),
                               ),
-                            );
-                          },
+                            )
+                          : CachedNetworkImage(
+                              imageUrl: coverURL,
+                              imageBuilder: (context, imageProvider) {
+                                return Container(
+                                  height: 200,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: platinum,
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
                         ),
-                  const SizedBox(
-                    height: 20,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              summary,
+                              style: const TextStyle(
+                                fontFamily: 'Helvetica',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Text(
+                              description,
+                              style: const TextStyle(
+                                fontFamily: 'Helvetica',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w300,
+                                height: 1.3,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            eventDetailContainer(),
+                            const SizedBox(
+                              height: 25,
+                            ),
+                            detailContainer2()
+                          ],
+                        ),
+                      )
+                    ],
                   ),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          summary,
-                          style: const TextStyle(
-                            fontFamily: 'Helvetica',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Material(
+            child: SlideTransition(
+              position: _offsetAnimation,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 200),
+                child: Container(
+                  padding: const EdgeInsets.all(25),
+                  decoration: const BoxDecoration(
+                    color: eerieBlack,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Is this event still going on?',
+                        style: helveticaText.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: white,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TransparentButtonWhite(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 20,
+                              ),
+                              text: 'Cancel Event',
+                              fontWeight: FontWeight.w300,
+                              disabled: false,
+                              onTap: () {},
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Text(
-                          description,
-                          style: const TextStyle(
-                            fontFamily: 'Helvetica',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w300,
-                            height: 1.3,
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: WhiteRegularButton(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 20,
+                              ),
+                              text: 'Confirm Event',
+                              disabled: false,
+                              onTap: () {},
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        eventDetailContainer(),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        detailContainer2()
-                      ],
-                    ),
-                  )
-                ],
+                        ],
+                      )
+                    ],
+                  ),
+                ),
               ),
-      ),
+            ),
+          ),
+        )
+      ],
     );
   }
 
@@ -1605,7 +1674,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
         amenities.isEmpty
             ? SizedBox(
                 width: double.infinity,
-                height: 100,
+                height: 125,
                 child: Center(
                   child: Text(
                     'No facilities requested',

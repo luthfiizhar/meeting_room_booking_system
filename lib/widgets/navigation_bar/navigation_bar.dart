@@ -738,11 +738,11 @@ class _NavigationBarWebMobileState extends State<NavigationBarWebMobile> {
               ),
             ),
           ),
-          InkWell(
-              onTap: () {
-                Scaffold.of(context).openEndDrawer();
-              },
-              child: const Icon(Icons.menu)),
+          // InkWell(
+          //     onTap: () {
+          //       Scaffold.of(context).openEndDrawer();
+          //     },
+          //     child: const Icon(Icons.menu)),
         ],
       ),
     );

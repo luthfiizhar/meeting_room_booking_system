@@ -9,6 +9,7 @@ class TransparentButtonWhite extends StatelessWidget {
     this.onTap,
     this.backgroundColor,
     required this.disabled,
+    this.fontWeight = FontWeight.w700,
     this.padding,
   });
 
@@ -16,6 +17,7 @@ class TransparentButtonWhite extends StatelessWidget {
   final double? fontSize;
   final VoidCallback? onTap;
   final Color? backgroundColor;
+  final FontWeight? fontWeight;
   final bool? disabled;
   final EdgeInsetsGeometry? padding;
 
@@ -64,7 +66,7 @@ class TransparentButtonWhite extends StatelessWidget {
           (states) {
             return helveticaText.copyWith(
               fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontWeight: fontWeight,
             );
           },
         ),
