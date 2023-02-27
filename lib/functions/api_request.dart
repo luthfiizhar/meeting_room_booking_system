@@ -2204,12 +2204,12 @@ class ReqAPI {
 
     var bodySend = """
     {
-      "Keywords": "",
+      "Keywords": "${searchTerm.keyWords}",
       "MaxRecord": "${searchTerm.max}",
       "PageNumber": "${searchTerm.pageNumber}",
       "SortBy": "${searchTerm.orderBy}",
       "SortOrder": "${searchTerm.orderDir}",
-      "Status": ${searchTerm.status}
+      "Status": "${searchTerm.status}"
     }
     """;
     try {
