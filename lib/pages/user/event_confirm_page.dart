@@ -1215,7 +1215,6 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                           onTap: () {
                             showDialog(
                               context: context,
-                              barrierDismissible: false,
                               builder: (context) => const ConfirmDialogBlack(
                                   title: 'Cancel Event?',
                                   contentText:
@@ -1273,7 +1272,6 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                           onTap: () {
                             showDialog(
                               context: context,
-                              barrierDismissible: false,
                               builder: (context) => const ConfirmDialogBlack(
                                   title: 'Confirm Event?',
                                   contentText:
@@ -1438,7 +1436,12 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 200),
                 child: Container(
-                  padding: const EdgeInsets.all(25),
+                  padding: const EdgeInsets.only(
+                    right: 25,
+                    left: 25,
+                    top: 25,
+                    bottom: 10,
+                  ),
                   decoration: const BoxDecoration(
                     color: eerieBlack,
                   ),
@@ -1454,7 +1457,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                         ),
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       Row(
                         children: [
@@ -1469,7 +1472,6 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                               onTap: () {
                                 showDialog(
                                   context: context,
-                                  barrierDismissible: false,
                                   builder: (context) => const ConfirmDialogBlack(
                                       title: 'Cancel Event?',
                                       contentText:
@@ -1542,7 +1544,6 @@ class _ConfirmEventPageState extends State<ConfirmEventPage>
                               onTap: () {
                                 showDialog(
                                   context: context,
-                                  barrierDismissible: false,
                                   builder: (context) => const ConfirmDialogBlack(
                                       title: 'Confirm Event?',
                                       contentText:
