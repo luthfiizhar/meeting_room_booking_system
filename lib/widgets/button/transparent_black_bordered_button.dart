@@ -205,7 +205,7 @@ class TransparentButtonBugList extends StatelessWidget {
     if (states.any(interactiveStates.contains)) {
       return culturedWhite;
     }
-    return disabled! ? platinum : eerieBlack;
+    return disabled! ? platinum : greenAcent;
   }
 
   @override
