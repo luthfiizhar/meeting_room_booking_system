@@ -87,68 +87,71 @@ class FooterWebMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      height: 182,
-      width: double.infinity,
-      color: platinum,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 60,
-            width: 185.6,
-            child: Image.asset('assets/navbarlogo.png'),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 220,
-            child: Text(
-              '@Copyright Kawan Lama Group 2022.',
-              style: helveticaText.copyWith(
-                fontWeight: FontWeight.w300,
-                fontSize: 12,
-                color: davysGray,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: 100,
+        maxHeight: 120,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        width: double.infinity,
+        color: platinum,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 40,
+              width: 125,
+              child: Image.asset('assets/navbarlogo.png'),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 220,
-            child: Text(
-              'All Rights Reserved.',
-              style: helveticaText.copyWith(
-                fontWeight: FontWeight.w300,
-                fontSize: 12,
-                color: davysGray,
+            SizedBox(
+              width: 220,
+              child: Text(
+                '@Copyright Kawan Lama Group 2022.',
+                style: helveticaText.copyWith(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 10,
+                  color: davysGray,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: 240,
-            child: Text(
-              'Facility Management. 2022.',
-              style: helveticaText.copyWith(
-                fontWeight: FontWeight.w300,
-                fontSize: 12,
-                color: davysGray,
+            const SizedBox(
+              height: 5,
+            ),
+            SizedBox(
+              width: 220,
+              child: Text(
+                'All Rights Reserved.',
+                style: helveticaText.copyWith(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 10,
+                  color: davysGray,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
               ),
-              textAlign: TextAlign.center,
             ),
-          ),
-        ],
+            const SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              width: 240,
+              child: Text(
+                'Facility Management. 2022.',
+                style: helveticaText.copyWith(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 10,
+                  color: davysGray,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

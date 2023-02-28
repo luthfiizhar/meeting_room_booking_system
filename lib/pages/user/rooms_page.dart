@@ -314,6 +314,7 @@ class _RoomsPageState extends State<RoomsPage> {
     setState(() {
       selectedDate = date;
       // calendarControl!.selectedDate = selectedDate;
+      datePickerControl.displayDate = selectedDate;
       calendarControl!.displayDate = selectedDate;
     });
   }
