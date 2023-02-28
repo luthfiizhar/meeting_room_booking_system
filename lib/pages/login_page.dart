@@ -11,6 +11,7 @@ import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
+import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -24,6 +25,8 @@ class _LoginPageState extends State<LoginPage> {
   ReqAPI apiReq = ReqAPI();
   final TextEditingController _username = TextEditingController();
   final TextEditingController _password = TextEditingController();
+
+  ScrollController scrollController = ScrollController();
 
   final FocusNode _usernameNode = FocusNode();
   final FocusNode _passwordNode = FocusNode();
@@ -191,6 +194,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     // print(MediaQuery.of(context).size.width);
 
+    return MediaQuery.of(context).size.width < 1200 ? mobile() : desktop();
+  }
+
+  Widget desktop() {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: ConstrainedBox(
@@ -484,6 +491,55 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget mobile() {
+    return LayoutPageWebMobile(
+      scrollController: scrollController,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 45,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 110,
+              width: 145,
+              child: Image.asset(
+                'assets/empty_page.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(
+              height: 60,
+            ),
+            Text(
+              'Oops!',
+              style: helveticaText.copyWith(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: eerieBlack,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'This page is available on desktop mode only. Please try again using other device.',
+              style: helveticaText.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+                color: davysGray,
+                height: 1.375,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
