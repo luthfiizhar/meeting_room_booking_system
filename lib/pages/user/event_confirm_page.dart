@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -36,7 +37,8 @@ class ConfirmEventPage extends StatefulWidget {
   State<ConfirmEventPage> createState() => _ConfirmEventPageState();
 }
 
-class _ConfirmEventPageState extends State<ConfirmEventPage> {
+class _ConfirmEventPageState extends State<ConfirmEventPage>
+    with TickerProviderStateMixin {
   ReqAPI apiReq = ReqAPI();
 
   OverlayEntry? confirmOverlayEntry;
@@ -103,54 +105,68 @@ class _ConfirmEventPageState extends State<ConfirmEventPage> {
   int bookingStep = 0;
   resetStatus(bool value) {}
 
-  OverlayEntry confirmOverlay() {
-    return OverlayEntry(
-      builder: (context) => Align(
-        alignment: Alignment.bottomCenter,
-        // bottom: 0,
-        child: Material(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-            // height: ,
-            decoration: const BoxDecoration(
-              color: eerieBlack,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Is this event still going on?',
-                  style: helveticaText.copyWith(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: white,
-                  ),
-                ),
-                Wrap(
-                  spacing: 10,
-                  children: [
-                    TransparentButtonWhite(
-                      text: 'Cancel Event',
-                      disabled: false,
-                      onTap: () {},
-                      padding: ButtonSize().smallSize(),
-                    ),
-                    WhiteRegularButton(
-                      text: 'Confirm Event',
-                      disabled: false,
-                      onTap: () {},
-                      padding: ButtonSize().smallSize(),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // OverlayEntry confirmOverlay() {
+  //   return OverlayEntry(
+  //     builder: (context) => Align(
+  //       alignment: Alignment.bottomCenter,
+  //       // bottom: 0,
+  //       child: Material(
+  //         child: Container(
+  //           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+  //           // height: ,
+  //           decoration: const BoxDecoration(
+  //             color: eerieBlack,
+  //           ),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             children: [
+  //               Text(
+  //                 'Is this event still going on?',
+  //                 style: helveticaText.copyWith(
+  //                   fontSize: 22,
+  //                   fontWeight: FontWeight.w700,
+  //                   color: white,
+  //                 ),
+  //               ),
+  //               Wrap(
+  //                 spacing: 10,
+  //                 children: [
+  //                   TransparentButtonWhite(
+  //                     text: 'Cancel Event',
+  //                     disabled: false,
+  //                     onTap: () {},
+  //                     padding: ButtonSize().smallSize(),
+  //                   ),
+  //                   WhiteRegularButton(
+  //                     text: 'Confirm Event',
+  //                     disabled: false,
+  //                     onTap: () {},
+  //                     padding: ButtonSize().smallSize(),
+  //                   ),
+  //                 ],
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(milliseconds: 1000),
+    vsync: this,
+  );
+  late final Animation<Offset> _offsetAnimation = Tween<Offset>(
+    end: Offset.zero,
+    begin: const Offset(0, 2.0),
+  ).animate(
+    CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeIn,
+    ),
+  );
 
   @override
   void initState() {
@@ -159,65 +175,64 @@ class _ConfirmEventPageState extends State<ConfirmEventPage> {
     // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
     // confirmOverlayEntry = confirmOverlay();
     // Overlay.of(context)!.insert(confirmOverlayEntry!);
-
+    _controller.forward(from: 0);
     apiReq.getBookingDetail(widget.bookingId!).then((value) {
       print(value);
       if (value['Status'].toString() == "200") {
-        setState(() {
-          isInitLoading = false;
-          roomId = value['Data']['RoomID'];
-          bookingNip = value['Data']['EmpNIP'];
-          coverURL = value['Data']['RoomPhotos'];
-          summary = value['Data']['Summary'];
-          description = value['Data']['Description'] ?? "";
-          roomType = value['Data']['RoomType'];
+        isInitLoading = false;
+        roomId = value['Data']['RoomID'];
+        bookingNip = value['Data']['EmpNIP'];
+        coverURL = value['Data']['RoomPhotos'];
+        summary = value['Data']['Summary'];
+        description = value['Data']['Description'] ?? "";
+        roomType = value['Data']['RoomType'];
 
-          bookingType = value['Data']['BookingType'];
+        bookingType = value['Data']['BookingType'];
 
-          bookingStep = value['Data']['BookingStep'];
-          bookingStatus = value['Data']['Status'];
+        bookingStep = value['Data']['BookingStep'];
+        bookingStatus = value['Data']['Status'];
 
-          startTime = value['Data']['BookingStartTime'];
-          endTime = value['Data']['BookingEndTime'];
-          location = value['Data']['RoomName'];
-          floor = value['Data']['AreaName'];
-          eventDate = value['Data']['BookingDate'];
+        startTime = value['Data']['BookingStartTime'];
+        endTime = value['Data']['BookingEndTime'];
+        location = value['Data']['RoomName'];
+        floor = value['Data']['AreaName'];
+        eventDate = value['Data']['BookingDate'];
 
-          eventTime =
-              "${value['Data']['BookingStartTime']} - ${value['Data']['BookingEndTime']} WIB";
-          duration = value['Data']['Duration'];
-          participantTotal = value['Data']['AttendantsNumber'].toString();
-          eventType = value['Data']['MeetingType'];
-          repeat = value['Data']['Repeat'] ?? "";
+        eventTime =
+            "${value['Data']['BookingStartTime']} - ${value['Data']['BookingEndTime']} WIB";
+        duration = value['Data']['Duration'];
+        participantTotal = value['Data']['AttendantsNumber'].toString();
+        eventType = value['Data']['MeetingType'];
+        repeat = value['Data']['Repeat'] ?? "";
 
-          host = value['Data']['EmpName'];
-          meetUrl = value['Data']['GoogleMeetLink'] ?? "";
-          avaya = value['Data']['AvayaNumber'] ?? "";
-          phoneNumber = value['Data']['PhoneNumber'] ?? "";
-          hostEmail = value['Data']['Email'];
-          layoutName = value['Data']['LayoutName'] ?? "";
-          layoutImage = value['Data']['LayoutImg'] ?? "";
-          layoutId = value['Data']['LayoutID'] ?? "";
-          amenities = value['Data']['Amenities'];
-          foodAmenities = value['Data']['FoodAmenities'];
-          guestInvited = value['Data']['Attendants'];
-          additionalNotes = value['Data']['AdditionalNotes'] ?? "";
-          bookingHistory = value['Data']['History'];
-          repeatType = value['Data']['RepeatType'] ?? "NONE";
-          if (bookingType == "RECURSIVE") {
-            repeatEndDate = DateTime.parse(value['Data']['RepeatEndDate']);
-            monthAbs = value['Data']['MonthAbsolute'].toString();
-            days = value['Data']['Days'];
-            interval = value['Data']['RepInterval'].toString();
-          }
-          formattedDate = DateFormat('yyyy-mm-dd')
-              .format(DateTime.parse(value['Data']['BookingDateOriginal']));
-          DateFormat format = DateFormat("yyyy-MM-dd HH:mm:ss");
-          bookingDate = format.parse(
-              "${value['Data']['BookingDateOriginal']} ${value['Data']['BookingStartTime']}:00");
+        host = value['Data']['EmpName'];
+        meetUrl = value['Data']['GoogleMeetLink'] ?? "";
+        avaya = value['Data']['AvayaNumber'] ?? "";
+        phoneNumber = value['Data']['PhoneNumber'] ?? "";
+        hostEmail = value['Data']['Email'];
+        layoutName = value['Data']['LayoutName'] ?? "";
+        layoutImage = value['Data']['LayoutImg'] ?? "";
+        layoutId = value['Data']['LayoutID'] ?? "";
+        amenities = value['Data']['Amenities'];
+        foodAmenities = value['Data']['FoodAmenities'];
+        guestInvited = value['Data']['Attendants'];
+        additionalNotes = value['Data']['AdditionalNotes'] ?? "";
+        bookingHistory = value['Data']['History'];
+        repeatType = value['Data']['RepeatType'] ?? "NONE";
+        if (bookingType == "RECURSIVE") {
+          repeatEndDate = DateTime.parse(value['Data']['RepeatEndDate']);
+          monthAbs = value['Data']['MonthAbsolute'].toString();
+          days = value['Data']['Days'];
+          interval = value['Data']['RepInterval'].toString();
+        }
+        formattedDate = DateFormat('yyyy-mm-dd')
+            .format(DateTime.parse(value['Data']['BookingDateOriginal']));
+        DateFormat format = DateFormat("yyyy-MM-dd HH:mm:ss");
+        bookingDate = format.parse(
+            "${value['Data']['BookingDateOriginal']} ${value['Data']['BookingStartTime']}:00");
 
-          selectedDate = value['Data']['BookingDateOriginal'];
-        });
+        selectedDate = value['Data']['BookingDateOriginal'];
+        setState(() {});
       } else if (value['Status'].toString() == "401") {
         showDialog(
           context: context,
@@ -357,10 +372,16 @@ class _ConfirmEventPageState extends State<ConfirmEventPage> {
     // confirmOverlayEntry!.remove();
     scrollController.removeListener(() {});
     scrollController.dispose();
+    _controller.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+    return screenWidth < 1100 ? mobile() : desktop();
+  }
+
+  Widget desktop() {
     return Stack(
       children: [
         LayoutPageWeb(
@@ -1164,150 +1185,430 @@ class _ConfirmEventPageState extends State<ConfirmEventPage> {
           alignment: Alignment.bottomCenter,
           // bottom: 0,
           child: Material(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-              // height: ,
-              decoration: const BoxDecoration(
-                color: eerieBlack,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Is this event still going on?',
-                    style: helveticaText.copyWith(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: white,
+            child: SlideTransition(
+              position: _offsetAnimation,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                // height: ,
+                decoration: const BoxDecoration(
+                  color: eerieBlack,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Is this event still going on?',
+                      style: helveticaText.copyWith(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: white,
+                      ),
                     ),
-                  ),
-                  Wrap(
-                    spacing: 10,
-                    children: [
-                      TransparentButtonWhite(
-                        text: 'Cancel Event',
-                        disabled: false,
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => const ConfirmDialogBlack(
-                                title: 'Cancel Event?',
-                                contentText:
-                                    "Your event will erased from the room list & marked as canceled."),
-                          ).then((value) {
-                            if (value) {
-                              apiReq
-                                  .userConfirmEventCancel(widget.bookingId!)
-                                  .then((value) {
-                                if (value['Status'].toString() == "200") {
+                    Wrap(
+                      spacing: 10,
+                      children: [
+                        TransparentButtonWhite(
+                          text: 'Cancel Event',
+                          disabled: false,
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => const ConfirmDialogBlack(
+                                  title: 'Cancel Event?',
+                                  contentText:
+                                      "Your event will erased from the room list & marked as canceled."),
+                            ).then((value) {
+                              if (value) {
+                                apiReq
+                                    .userConfirmEventCancel(widget.bookingId!)
+                                    .then((value) {
+                                  if (value['Status'].toString() == "200") {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogBlack(
+                                        title: value['Title'],
+                                        contentText: value['Message'],
+                                      ),
+                                    );
+                                  } else if (value['Status'].toString() ==
+                                      "401") {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => TokenExpiredDialog(
+                                        title: value['Title'],
+                                        contentText: value['Message'],
+                                      ),
+                                    );
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogBlack(
+                                        title: value['Title'],
+                                        contentText: value['Message'],
+                                        isSuccess: false,
+                                      ),
+                                    );
+                                  }
+                                }).onError((error, stackTrace) {
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialogBlack(
-                                      title: value['Title'],
-                                      contentText: value['Message'],
-                                    ),
-                                  );
-                                } else if (value['Status'].toString() ==
-                                    "401") {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => TokenExpiredDialog(
-                                      title: value['Title'],
-                                      contentText: value['Message'],
-                                    ),
-                                  );
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialogBlack(
-                                      title: value['Title'],
-                                      contentText: value['Message'],
+                                      title: "Error userConfirmEvent",
+                                      contentText: error.toString(),
                                       isSuccess: false,
                                     ),
                                   );
-                                }
-                              }).onError((error, stackTrace) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogBlack(
-                                    title: "Error userConfirmEvent",
-                                    contentText: error.toString(),
-                                    isSuccess: false,
-                                  ),
-                                );
-                              });
-                            }
-                          });
-                        },
-                        padding: ButtonSize().smallSize(),
-                      ),
-                      WhiteRegularButton(
-                        text: 'Confirm Event',
-                        disabled: false,
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => const ConfirmDialogBlack(
-                                title: 'Confirm Event?',
-                                contentText:
-                                    "Your event will stay listed in the system."),
-                          ).then((value) {
-                            if (value) {
-                              apiReq
-                                  .userConfirmEventContinue(widget.bookingId!)
-                                  .then((value) {
-                                if (value['Status'].toString() == "200") {
+                                });
+                              }
+                            });
+                          },
+                          padding: ButtonSize().smallSize(),
+                        ),
+                        WhiteRegularButton(
+                          text: 'Confirm Event',
+                          disabled: false,
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => const ConfirmDialogBlack(
+                                  title: 'Confirm Event?',
+                                  contentText:
+                                      "Your event will stay listed in the system."),
+                            ).then((value) {
+                              if (value) {
+                                apiReq
+                                    .userConfirmEventContinue(widget.bookingId!)
+                                    .then((value) {
+                                  if (value['Status'].toString() == "200") {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogBlack(
+                                        title: value['Title'],
+                                        contentText: value['Message'],
+                                      ),
+                                    );
+                                  } else if (value['Status'].toString() ==
+                                      "401") {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => TokenExpiredDialog(
+                                        title: value['Title'],
+                                        contentText: value['Message'],
+                                      ),
+                                    );
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialogBlack(
+                                        title: value['Title'],
+                                        contentText: value['Message'],
+                                        isSuccess: false,
+                                      ),
+                                    );
+                                  }
+                                }).onError((error, stackTrace) {
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialogBlack(
-                                      title: value['Title'],
-                                      contentText: value['Message'],
-                                    ),
-                                  );
-                                } else if (value['Status'].toString() ==
-                                    "401") {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => TokenExpiredDialog(
-                                      title: value['Title'],
-                                      contentText: value['Message'],
-                                    ),
-                                  );
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialogBlack(
-                                      title: value['Title'],
-                                      contentText: value['Message'],
+                                      title: "Error userConfirmEvent",
+                                      contentText: error.toString(),
                                       isSuccess: false,
                                     ),
                                   );
-                                }
-                              }).onError((error, stackTrace) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialogBlack(
-                                    title: "Error userConfirmEvent",
-                                    contentText: error.toString(),
-                                    isSuccess: false,
-                                  ),
-                                );
-                              });
-                            }
-                          });
-                        },
-                        padding: ButtonSize().smallSize(),
-                      ),
-                    ],
-                  )
-                ],
+                                });
+                              }
+                            });
+                          },
+                          padding: ButtonSize().smallSize(),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),
         ),
+      ],
+    );
+  }
+
+  Widget mobile() {
+    return Stack(
+      children: [
+        LayoutPageWebMobile(
+          scrollController: scrollController,
+          child: Container(
+            padding: const EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 20,
+              bottom: 20,
+            ),
+            child: isInitLoading
+                ? const Align(
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(
+                      color: eerieBlack,
+                    ),
+                  )
+                : Column(
+                    children: [
+                      coverURL == ""
+                          ? Container(
+                              height: 200,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: platinum,
+                              ),
+                            )
+                          : CachedNetworkImage(
+                              imageUrl: coverURL,
+                              imageBuilder: (context, imageProvider) {
+                                return Container(
+                                  height: 200,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: platinum,
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              summary,
+                              style: const TextStyle(
+                                fontFamily: 'Helvetica',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Text(
+                              description,
+                              style: const TextStyle(
+                                fontFamily: 'Helvetica',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w300,
+                                height: 1.3,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            eventDetailContainer(),
+                            const SizedBox(
+                              height: 25,
+                            ),
+                            detailContainer2()
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Material(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 200),
+              child: SlideTransition(
+                position: _offsetAnimation,
+                child: Container(
+                  padding: const EdgeInsets.only(
+                    right: 25,
+                    left: 25,
+                    top: 25,
+                    bottom: 10,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: eerieBlack,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Is this event still going on?',
+                        style: helveticaText.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: white,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TransparentButtonWhite(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 13,
+                              ),
+                              text: 'Cancel Event',
+                              fontWeight: FontWeight.w300,
+                              disabled: false,
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => const ConfirmDialogBlack(
+                                      title: 'Cancel Event?',
+                                      contentText:
+                                          "Your event will erased from the room list & marked as canceled."),
+                                ).then((value) {
+                                  if (value) {
+                                    apiReq
+                                        .userConfirmEventCancel(
+                                            widget.bookingId!)
+                                        .then((value) {
+                                      if (value['Status'].toString() == "200") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        );
+                                      } else if (value['Status'].toString() ==
+                                          "401") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              TokenExpiredDialog(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
+                                      }
+                                    }).onError((error, stackTrace) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: "Error userConfirmEvent",
+                                          contentText: error.toString(),
+                                          isSuccess: false,
+                                        ),
+                                      );
+                                    });
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: WhiteRegularButton(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 13,
+                              ),
+                              text: 'Confirm Event',
+                              disabled: false,
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => const ConfirmDialogBlack(
+                                      title: 'Confirm Event?',
+                                      contentText:
+                                          "Your event will stay listed in the system."),
+                                ).then((value) {
+                                  if (value) {
+                                    apiReq
+                                        .userConfirmEventContinue(
+                                            widget.bookingId!)
+                                        .then((value) {
+                                      if (value['Status'].toString() == "200") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        );
+                                      } else if (value['Status'].toString() ==
+                                          "401") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              TokenExpiredDialog(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                          ),
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              AlertDialogBlack(
+                                            title: value['Title'],
+                                            contentText: value['Message'],
+                                            isSuccess: false,
+                                          ),
+                                        );
+                                      }
+                                    }).onError((error, stackTrace) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBlack(
+                                          title: "Error userConfirmEvent",
+                                          contentText: error.toString(),
+                                          isSuccess: false,
+                                        ),
+                                      );
+                                    });
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        )
       ],
     );
   }
@@ -1500,6 +1801,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage> {
                 ),
               )
             : GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: amenities.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -1533,6 +1835,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage> {
                 ),
               )
             : GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: foodAmenities.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -1613,6 +1916,7 @@ class _ConfirmEventPageState extends State<ConfirmEventPage> {
               )
             : ListView.builder(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: bookingHistory.length,
                 itemBuilder: (context, index) {
                   return Column(
@@ -1662,20 +1966,26 @@ class _ConfirmEventPageState extends State<ConfirmEventPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: helveticaText.copyWith(
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: sonicSilver,
+        SizedBox(
+          width: 100,
+          child: Text(
+            label,
+            style: helveticaText.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              color: sonicSilver,
+            ),
           ),
         ),
-        Text(
-          content,
-          style: helveticaText.copyWith(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: davysGray,
+        Expanded(
+          child: Text(
+            content,
+            textAlign: TextAlign.right,
+            style: helveticaText.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: davysGray,
+            ),
           ),
         ),
       ],
@@ -1686,24 +1996,30 @@ class _ConfirmEventPageState extends State<ConfirmEventPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: helveticaText.copyWith(
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: sonicSilver,
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            html.window.open(content, '');
-          },
+        SizedBox(
+          width: 100,
           child: Text(
-            content,
+            label,
             style: helveticaText.copyWith(
               fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: davysGray,
+              fontWeight: FontWeight.w300,
+              color: sonicSilver,
+            ),
+          ),
+        ),
+        Expanded(
+          child: InkWell(
+            onTap: () {
+              html.window.open(content, '');
+            },
+            child: Text(
+              content,
+              textAlign: TextAlign.right,
+              style: helveticaText.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: davysGray,
+              ),
             ),
           ),
         ),

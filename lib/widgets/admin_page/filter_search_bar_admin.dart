@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
+import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/black_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/search_input_field.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/white_input_field.dart';
+import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as html;
 
 class FilterSearchBarAdmin extends StatefulWidget {
@@ -22,6 +24,7 @@ class FilterSearchBarAdmin extends StatefulWidget {
     this.searchController,
     this.filterList,
     this.updateFilter,
+    this.mainModel,
   });
 
   int? index;
@@ -31,6 +34,7 @@ class FilterSearchBarAdmin extends StatefulWidget {
   TextEditingController? searchController;
   List? filterList;
   Function? updateFilter;
+  MainModel? mainModel;
 
   @override
   State<FilterSearchBarAdmin> createState() => _FilterSearchBarAdminState();
@@ -38,6 +42,7 @@ class FilterSearchBarAdmin extends StatefulWidget {
 
 class _FilterSearchBarAdminState extends State<FilterSearchBarAdmin> {
   ReqAPI apiReq = ReqAPI();
+  MainModel mainModel = MainModel();
   int? index;
   bool _hovering = false;
   bool onSelected = false;
@@ -53,49 +58,57 @@ class _FilterSearchBarAdminState extends State<FilterSearchBarAdmin> {
   late Color selectedColor = blueAccent;
   final _random = Random();
 
+  Future initMainModel() async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      mainModel = Provider.of<MainModel>(context, listen: false);
+    });
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    index = widget.index;
-    statusApproval = widget.statusApproval;
-    indexColor = _random.nextInt(color.length);
-    selectedColor = color[indexColor];
+    initMainModel().then((_) {
+      index = widget.index;
+      statusApproval = widget.statusApproval;
+      indexColor = _random.nextInt(color.length);
+      selectedColor = color[indexColor];
 
-    apiReq.approvalListBookingCount().then((value) {
-      print(value);
-      if (value['Status'] == "200") {
-        setState(() {
-          typeList = value['Data'];
-        });
-      } else if (value['Status'].toString() == "401") {
-        showDialog(
-          context: context,
-          builder: (context) => TokenExpiredDialog(
-            title: value['Title'],
-            contentText: value['Message'],
-            isSuccess: false,
-          ),
-        );
-      } else {
+      apiReq.approvalListBookingCount().then((value) {
+        print(value);
+        if (value['Status'] == "200") {
+          setState(() {
+            mainModel.updateApprovalCountList(value['Data']);
+            typeList = value['Data'];
+          });
+        } else if (value['Status'].toString() == "401") {
+          showDialog(
+            context: context,
+            builder: (context) => TokenExpiredDialog(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialogBlack(
+              title: value['Title'],
+              contentText: value['Message'],
+              isSuccess: false,
+            ),
+          );
+        }
+      }).onError((error, stackTrace) {
         showDialog(
           context: context,
           builder: (context) => AlertDialogBlack(
-            title: value['Title'],
-            contentText: value['Message'],
+            title: 'Failed connect API',
+            contentText: error.toString(),
             isSuccess: false,
           ),
         );
-      }
-    }).onError((error, stackTrace) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialogBlack(
-          title: 'Failed connect API',
-          contentText: error.toString(),
-          isSuccess: false,
-        ),
-      );
+      });
     });
   }
 
@@ -156,7 +169,7 @@ class _FilterSearchBarAdminState extends State<FilterSearchBarAdmin> {
                   Container(
                     // width: 500,
                     child: Row(
-                      children: typeList!.map((e) {
+                      children: mainModel.approvalCountList.map((e) {
                         return Padding(
                           padding: const EdgeInsets.only(
                             right: 50,

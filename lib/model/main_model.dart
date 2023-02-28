@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/room_event_class.dart';
 import 'package:meeting_room_booking_system/model/room_event_data_source.dart';
+import 'package:meeting_room_booking_system/model/search_term.dart';
+import 'package:meeting_room_booking_system/pages/admin/admin_list_approval_page.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MainModel extends ChangeNotifier {
@@ -28,6 +31,8 @@ class MainModel extends ChangeNotifier {
   bool _upBottonVisible = false;
 
   bool _shadowActive = false;
+  bool _feedback = false;
+  bool _feedbackBanner = false;
 
   bool _isScrolling = false;
   bool _isScrollAtEdge = false;
@@ -35,6 +40,11 @@ class MainModel extends ChangeNotifier {
 
   RoomEventDataSource _events =
       RoomEventDataSource(<RoomEvent>[], <CalendarResource>[]);
+  List _approvalList = [];
+  List _approvalCountList = [];
+  SearchTerm _searchTerm = SearchTerm();
+  ListApprovalBody _approvalBody = ListApprovalBody();
+  int _approvalTotalResult = 0;
 
   String get jwtToken => _jwtToken;
   ScrollController get layoutController => _layoutController;
@@ -45,6 +55,9 @@ class MainModel extends ChangeNotifier {
   bool get isScrolling => _isScrolling;
   bool get isScrollAtEdge => _isScrollAtEdge;
   double get scrollPosition => _scrollPosition;
+
+  bool get feedback => _feedback;
+  bool get feedbackBanner => _feedbackBanner;
 
   String get selectedDate => _selectedDate;
   String get selectedArea => _selectedArea;
@@ -66,6 +79,12 @@ class MainModel extends ChangeNotifier {
   Offset get offsetNavbar => _offsetNavbar;
 
   int get testScroll => _testScroll;
+
+  List get approvalList => _approvalList;
+  List get approvalCountList => _approvalCountList;
+  SearchTerm get searchTerm => _searchTerm;
+  ListApprovalBody get approvalBody => _approvalBody;
+  int get approvalTotalResult => _approvalTotalResult;
 
   void setJwtToken(String value) {
     _jwtToken = value;
@@ -203,6 +222,32 @@ class MainModel extends ChangeNotifier {
 
   setEvent(RoomEventDataSource value) {
     _events = value;
+    notifyListeners();
+  }
+
+  setApprovalTotalResult(int value) {
+    _approvalTotalResult = value;
+    notifyListeners();
+  }
+
+  setAprrovalBody(ListApprovalBody value) {
+    _approvalBody = value;
+    notifyListeners();
+  }
+
+  updateApprovalList(List value) {
+    _approvalList = value;
+    notifyListeners();
+  }
+
+  updateApprovalCountList(List value) {
+    _approvalCountList = value;
+    notifyListeners();
+  }
+
+  setFeedback(bool feedbackVal, bool bannerVal) {
+    _feedback = feedbackVal;
+    _feedbackBanner = bannerVal;
     notifyListeners();
   }
 }

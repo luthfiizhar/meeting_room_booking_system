@@ -542,7 +542,7 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
             isLoading
                 ? const SizedBox(
                     height: 200,
-                    width: 900,
+                    width: double.infinity,
                     child: Center(
                       child: CircularProgressIndicator(
                         color: eerieBlack,
@@ -552,7 +552,7 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
                 : feedbackList.isEmpty
                     ? Center(
                         child: SizedBox(
-                          width: 900,
+                          width: double.infinity,
                           height: 200,
                           child: Center(
                             child: Text(
