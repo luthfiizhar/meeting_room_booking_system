@@ -944,6 +944,59 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    return MediaQuery.of(context).size.width < 1200 ? mobile() : desktop();
+  }
+
+  Widget mobile() {
+    return LayoutPageWebMobile(
+      scrollController: scrollController,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 45,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 110,
+              width: 145,
+              child: Image.asset(
+                'assets/empty_page.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(
+              height: 60,
+            ),
+            Text(
+              'Oops!',
+              style: helveticaText.copyWith(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: eerieBlack,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'This page is available on desktop mode only. Please try again using other device.',
+              style: helveticaText.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+                color: davysGray,
+                height: 1.375,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget desktop() {
     return LayoutPageWeb(
       resetState: resetState,
       scrollController: scrollController,
