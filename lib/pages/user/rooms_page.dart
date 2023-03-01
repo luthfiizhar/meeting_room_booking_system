@@ -940,7 +940,7 @@ class _RoomsPageState extends State<RoomsPage> {
 
   Widget calendarRoomPage(MainModel model) {
     double screenW = MediaQuery.of(context).size.width;
-    double calendarTemp = MediaQuery.of(context).size.height - 70 - 75;
+    double calendarTemp = MediaQuery.of(context).size.height - 100;
     double calendarHeight = calendarTemp;
     if (screenW > 1366) {
       if (dataRoom.length <= 6) {
@@ -967,6 +967,11 @@ class _RoomsPageState extends State<RoomsPage> {
           // height: dataRoom.isNotEmpty ? calendarHeight : 500,
           child: SfCalendar(
             key: const ValueKey(CalendarView.timelineDay),
+            // loadMoreWidgetBuilder: (context, loadMoreAppointments) =>
+            //     CircularProgressIndicator(),
+            // onSelectionChanged: (calendarSelectionDetails) {
+            //   print(calendarSelectionDetails);
+            // },
             view: CalendarView.timelineDay,
             maxDate: DateTime(DateTime.now().year, DateTime.now().month,
                     DateTime.now().day, 24)
@@ -1264,13 +1269,14 @@ class _RoomsPageState extends State<RoomsPage> {
                 color: culturedWhite,
               ),
               showAvatar: false,
-              visibleResourceCount: screenW > 1366
-                  ? dataRoom.length <= 6
-                      ? -1
-                      : 6
-                  : dataRoom.length <= 4
-                      ? -1
-                      : 4,
+              // visibleResourceCount: screenW > 1366
+              //     ? dataRoom.length <= 6
+              //         ? -1
+              //         : -1
+              //     : dataRoom.length <= 4
+              //         ? -1
+              //         : -1,
+              visibleResourceCount: -1,
             ),
             // resourceViewHeaderBuilder: (context, details) {
             //   return Container(
