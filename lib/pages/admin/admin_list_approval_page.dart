@@ -711,7 +711,7 @@ class _AdminListPageState extends State<AdminListPage> {
                 ],
               ),
               const SizedBox(
-                height: 20,
+                height: 100,
               ),
             ],
           ),

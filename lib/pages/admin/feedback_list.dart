@@ -811,7 +811,7 @@ class _FeedBackListPageState extends State<FeedBackListPage> {
               ],
             ),
             const SizedBox(
-              height: 50,
+              height: 100,
             ),
           ],
         ),

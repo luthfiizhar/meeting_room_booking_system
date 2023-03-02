@@ -830,7 +830,7 @@ class _MyBookingPageState extends State<MyBookingPage> {
                 //   ],
                 // ),
                 const SizedBox(
-                  height: 20,
+                  height: 100,
                 ),
                 // BlackBannerLandscape(
                 //   title: 'Link your Google account',
