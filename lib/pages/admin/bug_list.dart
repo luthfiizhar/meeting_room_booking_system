@@ -639,7 +639,7 @@ class _BugListPageState extends State<BugListPage> {
               ],
             ),
             const SizedBox(
-              height: 50,
+              height: 100,
             ),
           ],
         ),
