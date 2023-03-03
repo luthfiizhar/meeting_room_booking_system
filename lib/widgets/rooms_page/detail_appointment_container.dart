@@ -284,7 +284,7 @@ class _DetailAppointmentContainerState
                         thickness: 0.5,
                       ),
                     ),
-                    rowDetailEmail(
+                    rowDetailCopy(
                       'Email',
                       email,
                     ),
@@ -297,7 +297,7 @@ class _DetailAppointmentContainerState
                         thickness: 0.5,
                       ),
                     ),
-                    rowDetail(
+                    rowDetailCopy(
                       'Avaya',
                       avaya,
                     ),
@@ -321,7 +321,7 @@ class _DetailAppointmentContainerState
                               thickness: 0.5,
                             ),
                           ),
-                          rowDetail(
+                          rowDetailCopy(
                             'Phone',
                             phoneNumber,
                           ),
@@ -513,7 +513,7 @@ class _DetailAppointmentContainerState
     );
   }
 
-  Widget rowDetailEmail(String label, String content) {
+  Widget rowDetailCopy(String label, String content) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -541,7 +541,7 @@ class _DetailAppointmentContainerState
                     const SnackBar(
                       duration: Duration(seconds: 1),
                       content: Text(
-                        'Email copied.',
+                        'Text copied.',
                         maxLines: 1,
                       ),
                     ),
