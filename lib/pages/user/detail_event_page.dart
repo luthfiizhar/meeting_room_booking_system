@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
@@ -1139,9 +1140,9 @@ class _DetailEventPageState extends State<DetailEventPage> {
         divider(),
         detailContent('Host', host),
         divider2(),
-        detailContent('Email', hostEmail),
+        detailContentCopy('Email', hostEmail),
         divider2(),
-        detailContent('Avaya', avaya),
+        detailContentCopy('Avaya', avaya),
         Visibility(
           visible: isAdmin
               ? true
@@ -1155,7 +1156,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
           child: Column(
             children: [
               divider2(),
-              detailContent('Phone', phoneNumber),
+              detailContentCopy('Phone', phoneNumber),
             ],
           ),
         ),
@@ -1415,9 +1416,10 @@ class _DetailEventPageState extends State<DetailEventPage> {
                         ),
                         child: bookingDetail(
                           bookingHistory[index]['EmpName'] ??
-                              bookingHistory[index]['EmpNIP'],
-                          bookingHistory[index]['Status'],
-                          bookingHistory[index]['LogDate'],
+                              bookingHistory[index]['EmpNIP'] ??
+                              "",
+                          bookingHistory[index]['Status'] ?? "",
+                          bookingHistory[index]['LogDate'] ?? "",
                           comments: bookingHistory[index]['Description'] ?? "-",
                         ),
                       ),
@@ -1467,6 +1469,44 @@ class _DetailEventPageState extends State<DetailEventPage> {
             fontSize: 16,
             fontWeight: FontWeight.w700,
             color: davysGray,
+          ),
+        ),
+      ],
+    );
+  }
+
+  detailContentCopy(String label, String content) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: helveticaText.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: sonicSilver,
+          ),
+        ),
+        InkWell(
+          onTap: () async {
+            await Clipboard.setData(ClipboardData(text: content));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                duration: Duration(seconds: 1),
+                content: Text(
+                  'Text copied.',
+                  maxLines: 1,
+                ),
+              ),
+            );
+          },
+          child: Text(
+            content,
+            style: helveticaText.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: davysGray,
+            ),
           ),
         ),
       ],

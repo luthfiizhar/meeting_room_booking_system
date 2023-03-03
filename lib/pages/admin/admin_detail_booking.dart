@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
@@ -827,9 +828,9 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
         divider(),
         detailContent('Host', host),
         divider2(),
-        detailContent('Email', hostEmail),
+        detailContentCopy('Email', hostEmail),
         divider2(),
-        detailContent('Avaya', avaya),
+        detailContentCopy('Avaya', avaya),
         Visibility(
           visible: isAdmin
               ? true
@@ -839,7 +840,7 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
           child: Column(
             children: [
               divider2(),
-              detailContent('Phone', phoneNumber),
+              detailContentCopy('Phone', phoneNumber),
             ],
           ),
         ),
@@ -1074,10 +1075,11 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                         ),
                         child: bookingDetail(
                           bookingHistory[index]['EmpName'] ??
-                              bookingHistory[index]['EmpNIP'],
-                          bookingHistory[index]['Status'],
-                          bookingHistory[index]['LogDate'],
-                          bookingHistory[index]['Description'],
+                              bookingHistory[index]['EmpNIP'] ??
+                              "",
+                          bookingHistory[index]['Status'] ?? "",
+                          bookingHistory[index]['LogDate'] ?? "",
+                          desc: bookingHistory[index]['Description'] ?? "-",
                         ),
                       ),
                       index == bookingHistory.length - 1
@@ -1118,6 +1120,44 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
             textAlign: TextAlign.end,
+          ),
+        ),
+      ],
+    );
+  }
+
+  detailContentCopy(String label, String content) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: helveticaText.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: sonicSilver,
+          ),
+        ),
+        InkWell(
+          onTap: () async {
+            await Clipboard.setData(ClipboardData(text: content));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                duration: Duration(seconds: 1),
+                content: Text(
+                  'Text copied.',
+                  maxLines: 1,
+                ),
+              ),
+            );
+          },
+          child: Text(
+            content,
+            style: helveticaText.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: davysGray,
+            ),
           ),
         ),
       ],
@@ -1171,8 +1211,8 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
     );
   }
 
-  Widget bookingDetail(
-      String name, String status, String logDate, String desc) {
+  Widget bookingDetail(String name, String status, String logDate,
+      {String desc = "-"}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
