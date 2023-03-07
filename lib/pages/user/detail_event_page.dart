@@ -219,10 +219,12 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   isGoogleMeetShowed = true;
                   isButtonShowed = true;
                   if (bookingStatus != "WAITING APPROVAL" ||
-                      bookingStatus != "CREATED" ||
-                      bookingStatus != "CANCELED") {
+                      bookingStatus != "CREATED") {
                     print('if declined');
                     isButtonShowed = true;
+                  }
+                  if (bookingStatus == "CANCELED") {
+                    isButtonShowed = false;
                   }
                 });
               } else if (value["Data"]["Pic"].toString() == "1") {
@@ -238,10 +240,12 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   isButtonShowed = true;
                   isGoogleMeetShowed = true;
                   if (bookingStatus != "WAITING APPROVAL" ||
-                      bookingStatus != "CREATED" ||
-                      bookingStatus != "CANCELED") {
+                      bookingStatus != "CREATED") {
                     print('if declined');
                     isButtonShowed = true;
+                  }
+                  if (bookingStatus == "CANCELED") {
+                    isButtonShowed = false;
                   }
                 });
               } else {
