@@ -219,7 +219,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   isGoogleMeetShowed = true;
                   isButtonShowed = true;
                   if (bookingStatus != "WAITING APPROVAL" ||
-                      bookingStatus != "CREATED") {
+                      bookingStatus != "CREATED" ||
+                      bookingStatus != "CANCELED") {
                     print('if declined');
                     isButtonShowed = true;
                   }
@@ -237,7 +238,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   isButtonShowed = true;
                   isGoogleMeetShowed = true;
                   if (bookingStatus != "WAITING APPROVAL" ||
-                      bookingStatus != "CREATED") {
+                      bookingStatus != "CREATED" ||
+                      bookingStatus != "CANCELED") {
                     print('if declined');
                     isButtonShowed = true;
                   }
