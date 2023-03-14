@@ -1050,14 +1050,16 @@ class _FeedbackListItemState extends State<FeedbackListItem> {
                               const SizedBox(
                                 width: 20,
                               ),
-                              Text(
-                                widget.feedback!.empName,
-                                style: helveticaText.copyWith(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                  color: eerieBlack,
+                              Expanded(
+                                child: Text(
+                                  widget.feedback!.empName,
+                                  style: helveticaText.copyWith(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w400,
+                                    color: eerieBlack,
+                                  ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -1153,35 +1155,38 @@ class _FeedbackListItemState extends State<FeedbackListItem> {
                               const SizedBox(
                                 width: 20,
                               ),
-                              SizedBox(
-                                width: 300,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      widget.feedback!.empName,
-                                      style: helveticaText.copyWith(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                        color: eerieBlack,
+                              Expanded(
+                                child: SizedBox(
+                                  // width: 300,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        widget.feedback!.empName,
+                                        style: helveticaText.copyWith(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w400,
+                                          color: eerieBlack,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      widget.feedback!.comment,
-                                      style: helveticaText.copyWith(
-                                        fontSize: 16,
-                                        // fontWeight: FontWeight.w300,
-                                        color: davysGray,
-                                        // height: 1,
+                                      const SizedBox(
+                                        height: 10,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      softWrap: false,
-                                    ),
-                                  ],
+                                      Text(
+                                        widget.feedback!.comment,
+                                        style: helveticaText.copyWith(
+                                          fontSize: 16,
+                                          // fontWeight: FontWeight.w300,
+                                          color: davysGray,
+                                          // height: 1,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        softWrap: false,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               )
                             ],

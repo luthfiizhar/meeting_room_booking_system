@@ -151,12 +151,15 @@ class _ApprovalListContainerState extends State<ApprovalListContainer> {
                   //EVENT NAME
                   Expanded(
                     flex: 2,
-                    child: Text(
-                      widget.eventName,
-                      style: helveticaText.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: davysGray,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: Text(
+                        widget.eventName,
+                        style: helveticaText.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: davysGray,
+                        ),
                       ),
                     ),
                   ),
