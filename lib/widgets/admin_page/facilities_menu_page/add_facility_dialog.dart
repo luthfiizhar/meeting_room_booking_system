@@ -417,31 +417,41 @@ class _AddNewFacilityDialogState extends State<AddNewFacilityDialog> {
                             ),
                           )
                         : urlImage.startsWith('data')
-                            ? Container(
-                                width: 250,
-                                height: 150,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  image: DecorationImage(
-                                    image: MemoryImage(
-                                      Base64Decoder()
-                                          .convert(urlImage.split(',').last),
+                            ? InkWell(
+                                onTap: () {
+                                  getImage();
+                                },
+                                child: Container(
+                                  width: 250,
+                                  height: 150,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    image: DecorationImage(
+                                      image: MemoryImage(
+                                        Base64Decoder()
+                                            .convert(urlImage.split(',').last),
+                                      ),
+                                      fit: BoxFit.cover,
                                     ),
-                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               )
                             : CachedNetworkImage(
                                 imageUrl: urlImage,
                                 imageBuilder: (context, imageProvider) {
-                                  return Container(
-                                    width: 250,
-                                    height: 150,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
+                                  return InkWell(
+                                    onTap: () {
+                                      getImage();
+                                    },
+                                    child: Container(
+                                      width: 250,
+                                      height: 150,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                   );
