@@ -1712,6 +1712,7 @@ class ReqAPI {
     "DefaultAmenities": ${room.defaultFacilities},
     "ProhibitedFacilites": ${room.prohibitedFacilities},
     "Photos": ${room.areaPhoto},
+    "PrimaryRoom" : ${room.isPrimary},
     "CoverPhoto": "${room.coverPhoto}"
   }
   """;
@@ -1750,6 +1751,7 @@ class ReqAPI {
     "DefaultAmenities": ${room.defaultFacilities},
     "ProhibitedFacilites": ${room.prohibitedFacilities},
     "Photos": ${room.areaPhoto},
+    "PrimaryRoom" : ${room.isPrimary},
     "CoverPhoto": "${room.coverPhoto}"
   }
   """;
