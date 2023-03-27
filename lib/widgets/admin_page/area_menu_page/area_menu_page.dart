@@ -129,6 +129,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
             prohibitedFacilities: element['ForbiddenAmenities'] ?? [],
             areaPhoto: element['RoomPhotos'] ?? "",
             availability: element['Status'],
+            isPrimary: element['PrimaryRoom'] == 0 ? false : true,
             isCollapsed: false,
           ));
         }
@@ -322,6 +323,7 @@ class _AreaMenuPageState extends State<AreaMenuPage> {
             prohibitedFacility: room[index].prohibitedFacilities,
             photoList: room[index].areaPhoto,
             availability: room[index].availability,
+            primary: room[index].isPrimary,
           );
         },
       ),
@@ -628,6 +630,7 @@ class AreaListContainer extends StatefulWidget {
     this.index,
     this.close,
     this.resetState,
+    this.primary = false,
     this.availability = "",
   });
 
@@ -642,6 +645,7 @@ class AreaListContainer extends StatefulWidget {
   String maxDuration;
   String coverPhoto;
   String availability;
+  bool primary;
 
   List? facility;
   List? prohibitedFacility;
@@ -913,6 +917,8 @@ class _AreaListContainerState extends State<AreaListContainer> {
                         detailInfo('Building: ', widget.building),
                         detailInfo('Floor: ', widget.floor),
                         detailInfo('Type: ', widget.roomType),
+                        detailInfo(
+                            'Primary Room: ', widget.primary ? "Yes" : "No"),
                       ],
                     ),
                   ),

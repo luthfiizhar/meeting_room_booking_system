@@ -18,6 +18,7 @@ import 'package:meeting_room_booking_system/widgets/booking_page/select_amenitie
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
 import 'package:meeting_room_booking_system/widgets/button/regular_button.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_button_black.dart';
+import 'package:meeting_room_booking_system/widgets/checkboxes/black_checkbox.dart';
 import 'package:meeting_room_booking_system/widgets/checkboxes/radio_button.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
@@ -67,11 +68,13 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   String minCapacity = "";
   String maxCapacity = "";
   String maxDuration = "";
+  bool selectedPrimary = false;
   // String buildingValue = "1";
   // String floorValue = "AR-1";
   // String roomTypeValue = "MeetingRoom";
 
   String availabilityValue = "INACTIVE";
+  String primaryChoicesValue = "false";
 
   List buildingList = [];
   List floorList = [];
@@ -89,6 +92,19 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
       isSelected: true,
       text: 'Not Visible',
       value: "INACTIVE",
+    ),
+  ];
+
+  List<RadioModel> primaryRoomChoices = [
+    RadioModel(
+      isSelected: true,
+      text: 'Yes',
+      value: "true",
+    ),
+    RadioModel(
+      isSelected: true,
+      text: 'No',
+      value: "false",
     ),
   ];
 
@@ -522,6 +538,8 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
         maxDuration = "${maxDurationSec / 3600}";
         availabilityValue = value['Data']['Status'];
         coverPhotoBase64 = value['Data']['CoverPhoto'];
+        primaryChoicesValue =
+            value['Data']['PrimaryRoom'] == 0 ? "false" : "true";
         _areaName.text = areaName;
         _areaAlias.text = areaAlias;
         _minCapacity.text = minCapacity;
@@ -826,78 +844,108 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                           width: 38,
                         ),
                         Expanded(
-                            child: Column(
-                          children: [
-                            inputField2(
-                              'Min. Capacity (Person)',
-                              SizedBox(
-                                width: 100,
-                                child: BlackInputField(
-                                  controller: _minCapacity,
-                                  enabled: true,
-                                  focusNode: minCapacityNode,
-                                  hintText: '...',
-                                  onSaved: (newValue) {
-                                    minCapacity = newValue.toString();
-                                  },
-                                  validator: (value) =>
-                                      value == "" ? "Required" : null,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
+                          child: Column(
+                            children: [
+                              inputField(
+                                'Primary Room:',
+                                Wrap(
+                                  // crossAxisAlignment: CrossAxisAlignment.start,
+                                  direction: Axis.horizontal,
+                                  spacing: 15,
+                                  children: primaryRoomChoices.map((e) {
+                                    return CustomRadioButton(
+                                      group: primaryChoicesValue,
+                                      label: e.text,
+                                      value: e.value,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          primaryChoicesValue = value;
+                                          if (value == "true") {
+                                            selectedPrimary = true;
+                                          } else {
+                                            selectedPrimary = false;
+                                          }
+
+                                          print(selectedPrimary);
+                                        });
+                                      },
+                                    );
+                                  }).toList(),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            inputField2(
-                              'Max. Capacity (Person)',
-                              SizedBox(
-                                width: 100,
-                                child: BlackInputField(
-                                  controller: _maxCapacity,
-                                  enabled: true,
-                                  focusNode: maxCpacityNode,
-                                  hintText: '...',
-                                  onSaved: (newValue) {
-                                    maxCapacity = newValue.toString();
-                                  },
-                                  validator: (value) =>
-                                      value == "" ? "Required" : null,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              inputField2(
+                                'Min. Capacity (Person)',
+                                SizedBox(
+                                  width: 100,
+                                  child: BlackInputField(
+                                    controller: _minCapacity,
+                                    enabled: true,
+                                    focusNode: minCapacityNode,
+                                    hintText: '...',
+                                    onSaved: (newValue) {
+                                      minCapacity = newValue.toString();
+                                    },
+                                    validator: (value) =>
+                                        value == "" ? "Required" : null,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            inputField2(
-                              'Max. Duration (Hours)',
-                              SizedBox(
-                                width: 100,
-                                child: BlackInputField(
-                                  controller: _maxDuration,
-                                  enabled: true,
-                                  focusNode: maxDurationNode,
-                                  hintText: '...',
-                                  onSaved: (newValue) {
-                                    maxDuration = newValue.toString();
-                                  },
-                                  validator: (value) =>
-                                      value == "" ? "Required" : null,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              inputField2(
+                                'Max. Capacity (Person)',
+                                SizedBox(
+                                  width: 100,
+                                  child: BlackInputField(
+                                    controller: _maxCapacity,
+                                    enabled: true,
+                                    focusNode: maxCpacityNode,
+                                    hintText: '...',
+                                    onSaved: (newValue) {
+                                      maxCapacity = newValue.toString();
+                                    },
+                                    validator: (value) =>
+                                        value == "" ? "Required" : null,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            inputField3(
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              inputField2(
+                                'Max. Duration (Hours)',
+                                SizedBox(
+                                  width: 100,
+                                  child: BlackInputField(
+                                    controller: _maxDuration,
+                                    enabled: true,
+                                    focusNode: maxDurationNode,
+                                    hintText: '...',
+                                    onSaved: (newValue) {
+                                      maxDuration = newValue.toString();
+                                    },
+                                    validator: (value) =>
+                                        value == "" ? "Required" : null,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              inputField3(
                                 'Availability:',
                                 Wrap(
                                   // crossAxisAlignment: CrossAxisAlignment.start,
@@ -916,9 +964,11 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                       },
                                     );
                                   }).toList(),
-                                )),
-                          ],
-                        ))
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -1482,6 +1532,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   room.maxBookingDuration = maxDuration;
                                   // room.prohibitedFacilities = prohibitedFacility;
                                   room.coverPhoto = coverPhotoBase64;
+                                  room.isPrimary = selectedPrimary;
                                   // room.areaPhoto = areaPhoto;
 
                                   for (var element in defaultFacility) {
