@@ -16,6 +16,7 @@ class Room {
     List? areaPhoto,
     List? defaultFacilities,
     List? prohibitedFacilities,
+    this.isPrimary = false,
     this.isCollapsed = false,
   })  : areaPhoto = areaPhoto ?? [],
         defaultFacilities = defaultFacilities ?? [],
@@ -37,6 +38,7 @@ class Room {
   List? areaPhoto;
   List? defaultFacilities;
   List? prohibitedFacilities;
+  bool isPrimary;
   bool isCollapsed;
 
   Map<String, dynamic> toJson() => {
