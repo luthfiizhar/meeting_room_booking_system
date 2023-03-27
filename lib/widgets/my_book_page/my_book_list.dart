@@ -152,6 +152,12 @@ class _MyBookListContainerState extends State<MyBookListContainer> {
                               size: 16,
                               color: orangeAccent,
                             );
+                          case 'Not Presented':
+                            return const Icon(
+                              Icons.remove_circle_sharp,
+                              size: 16,
+                              color: orangeAccent,
+                            );
                           case 'Declined':
                             return const Icon(
                               Icons.remove_circle_sharp,
