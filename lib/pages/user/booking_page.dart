@@ -742,10 +742,13 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       roomType = "Canteen";
     }
     selectedDate = DateTime.parse(widget.date!);
-    apiReq.getUserProfile().then((value) {
-      phoneOptions = value['Data']['DisplayPhoneNumber'];
-      setState(() {});
-    });
+    if (widget.isEdit == false) {
+      apiReq.getUserProfile().then((value) {
+        phoneOptions = value['Data']['DisplayPhoneNumber'];
+        setState(() {});
+      });
+    }
+
     apiReq.getRoomDetail(widget.roomId!).then((value) {
       if (value['Status'].toString() == "200") {
         setState(() {
@@ -916,6 +919,10 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
             }
             participantValue = double.parse(editData['participant'].toString());
             _totalParticipant.text = participantValue.toString();
+
+            apiReq.getBookingDetail(widget.edit['bookingId']).then((value) {
+              phoneOptions = value['Data']['DisplayPhoneNumber'];
+            });
             setState(() {});
           } else {
             isEdit = false;
