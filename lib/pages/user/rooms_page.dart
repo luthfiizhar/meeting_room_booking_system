@@ -684,7 +684,23 @@ class _RoomsPageState extends State<RoomsPage> {
     // resetState() {
     //   setState(() {});
     // }
-
+    double screenW = MediaQuery.of(context).size.width;
+    double sideBarHeight = 0;
+    if (screenW > 1366) {
+      sideBarHeight = MediaQuery.of(context).size.height;
+      if (dataRoom.length > 6) {
+        sideBarHeight = sideBarHeight + 20;
+      } else {
+        sideBarHeight - 145;
+      }
+    } else {
+      sideBarHeight = MediaQuery.of(context).size.height;
+      if (dataRoom.length > 4) {
+        sideBarHeight = sideBarHeight - 15;
+      } else {
+        sideBarHeight = sideBarHeight + 40;
+      }
+    }
     return LayoutPageWeb(
       scrollController: scrollController,
       topButtonVisible: false,
@@ -696,7 +712,7 @@ class _RoomsPageState extends State<RoomsPage> {
         child: Consumer<MainModel>(builder: (context, model, child) {
           return ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height - 185,
+              minHeight: MediaQuery.of(context).size.height - 145,
             ),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.end,
@@ -772,13 +788,10 @@ class _RoomsPageState extends State<RoomsPage> {
                                 //         ? MediaQuery.of(context).size.height -
                                 //             180
                                 //         : 785,
-                                height: MediaQuery.of(context).size.width > 1366
-                                    ? MediaQuery.of(context).size.height -
-                                        145 +
-                                        50
-                                    : MediaQuery.of(context).size.height -
-                                        145 +
-                                        115,
+                                // height: MediaQuery.of(context).size.width > 1366
+                                //     ? MediaQuery.of(context).size.height - 145
+                                //     : MediaQuery.of(context).size.height - 100,
+                                height: sideBarHeight,
                                 child: DetailAppointmentContainer(
                                   // event: selectedEvent,
                                   closeDetail: closeDetail,
