@@ -1301,6 +1301,78 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const GreetingContainer(),
+        //GWS BANNER
+        Visibility(
+          visible: isAccSyncToGoogle ? false : true,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 30,
+              ),
+              InkWell(
+                onTap: () {
+                  context.go('/gws');
+                },
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 780,
+                    minWidth: 780,
+                  ),
+                  child: const WhiteBannerLandscape(
+                    title: 'Link your Google account',
+                    subtitle: '& enjoy your benefits.',
+                    imagePath: 'assets/banner_pict_google.png',
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        //END GWS BANNER
+        const SizedBox(
+          height: 30,
+        ),
+        HomeRoomSearchContainer(
+          dateController: _dateController,
+          participantController: _participantController,
+          timeController: _timeController,
+          facilityController: _facilityController,
+          setDatePickerStatus: setDatePickerVisible,
+          datePickerStatus: datePickerVisible,
+          setTimeContainerStatus: setTimePickerStatus,
+          timePickerStatus: timePickerContainerVisible,
+          setParticipantStatus: setParticipantStatus,
+          participantStatus: participantContainerVisible,
+          setAmenitiesStatus: setAmenitiesStatus,
+          amenitiesStatus: amenitiesContainerVisible,
+          setMeetingTypeStatus: setMeetingTypeContainerStatus,
+          meetingTypeStatus: meetingTypeContainerVisible,
+          roomTypeName: roomTypeName,
+          roomTypeSelected: roomTypeValue,
+          roomTypeUrl: roomTypeImage,
+          searchRoom: search,
+          initLoading: initLoading,
+          datePickerKey: datePickerKey,
+          participantKey: participantKey,
+          timeFieldKey: timeFieldkey,
+          facilityKey: facilityKey,
+          roomTypeKey: roomTypeKey,
+          datePickerLayerLink: datePickerLayerLink,
+          participantLayerLink: participantLayerLink,
+          timeFieldLayerLink: timeFieldLayerLink,
+          facilityLayerLink: facilityLayerLink,
+          roomTypeLayerLink: roomTypeLayerLink,
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        StatisticContainer(),
+        const SizedBox(
+          height: 30,
+        ),
+        UpcomingEventContainer(),
+        //FEEDBACK BANNER
         Visibility(
           // visible: isAccSyncToGoogle ? false : true,
           // child: InkWell(
@@ -1352,75 +1424,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ],
           ),
         ),
-        const SizedBox(
-          height: 30,
-        ),
-        HomeRoomSearchContainer(
-          dateController: _dateController,
-          participantController: _participantController,
-          timeController: _timeController,
-          facilityController: _facilityController,
-          setDatePickerStatus: setDatePickerVisible,
-          datePickerStatus: datePickerVisible,
-          setTimeContainerStatus: setTimePickerStatus,
-          timePickerStatus: timePickerContainerVisible,
-          setParticipantStatus: setParticipantStatus,
-          participantStatus: participantContainerVisible,
-          setAmenitiesStatus: setAmenitiesStatus,
-          amenitiesStatus: amenitiesContainerVisible,
-          setMeetingTypeStatus: setMeetingTypeContainerStatus,
-          meetingTypeStatus: meetingTypeContainerVisible,
-          roomTypeName: roomTypeName,
-          roomTypeSelected: roomTypeValue,
-          roomTypeUrl: roomTypeImage,
-          searchRoom: search,
-          initLoading: initLoading,
-          datePickerKey: datePickerKey,
-          participantKey: participantKey,
-          timeFieldKey: timeFieldkey,
-          facilityKey: facilityKey,
-          roomTypeKey: roomTypeKey,
-          datePickerLayerLink: datePickerLayerLink,
-          participantLayerLink: participantLayerLink,
-          timeFieldLayerLink: timeFieldLayerLink,
-          facilityLayerLink: facilityLayerLink,
-          roomTypeLayerLink: roomTypeLayerLink,
-        ),
-        const SizedBox(
-          height: 30,
-        ),
-        StatisticContainer(),
-        const SizedBox(
-          height: 30,
-        ),
-        UpcomingEventContainer(),
-        Visibility(
-          visible: isAccSyncToGoogle ? false : true,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 30,
-              ),
-              InkWell(
-                onTap: () {
-                  context.go('/gws');
-                },
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: 780,
-                    minWidth: 780,
-                  ),
-                  child: const WhiteBannerLandscape(
-                    title: 'Link your Google account',
-                    subtitle: '& enjoy your benefits.',
-                    imagePath: 'assets/banner_pict_google.png',
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        //END FEEDBACK BANNER
       ],
     );
   }
