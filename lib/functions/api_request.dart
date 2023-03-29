@@ -2303,13 +2303,13 @@ class ReqAPI {
   }
 
   Future userConfirmEventContinue(String bookingId) async {
-    // var box = await Hive.openBox('userLogin');
-    // var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
 
-    var url =
-        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/booking/confirm');
+    var url = Uri.https(
+        apiUrlGlobal, '/MRBS_Backend/public/api/user/booking/confirm');
     Map<String, String> requestHeader = {
-      // 'Authorization': 'Bearer $jwt',
+      'Authorization': 'Bearer $jwt',
       // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
       'Content-Type': 'application/json',
     };
