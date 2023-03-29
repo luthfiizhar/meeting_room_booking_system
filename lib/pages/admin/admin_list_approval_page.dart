@@ -54,9 +54,11 @@ class _AdminListPageState extends State<AdminListPage> {
 
   statusRoomChanged(String value) {
     setState(() {
+      _search.text = "";
       currentPaginatedPage = 1;
       searchTerm.pageNumber = currentPaginatedPage.toString();
       searchTerm.statusRoom = value;
+      searchTerm.keyWords = _search.text;
       statusApproval = value;
       updateList().then((value) {
         countPagination(resultRows);
