@@ -153,9 +153,11 @@ class _MyBookingPageState extends State<MyBookingPage> {
 
   roomTypeChanged(String value) {
     setState(() {
+      _search.text = "";
       currentPaginatedPage = 1;
       searchTerm.pageNumber = currentPaginatedPage.toString();
       searchTerm.roomType = value;
+      searchTerm.keyWords = _search.text;
       roomType = value;
       // apiReq.getMyBookingList(searchTerm).then((value) {
       //   myBookList = value['Data']['List'];
