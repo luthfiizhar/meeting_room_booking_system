@@ -465,6 +465,8 @@ class _AdminListPageState extends State<AdminListPage> {
                             focusNode: showPerRowsNode,
                             onChanged: (value) {
                               setState(() {
+                                currentPaginatedPage = 1;
+                                searchTerm.pageNumber = "1";
                                 searchTerm.max = value!.toString();
                                 updateList().then((value) {
                                   countPagination(resultRows);
