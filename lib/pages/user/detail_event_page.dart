@@ -95,6 +95,9 @@ class _DetailEventPageState extends State<DetailEventPage> {
   bool isOwner = false;
   bool isButtonShowed = true;
   bool isGoogleMeetShowed = false;
+  bool isConfirmButtonShowed = true;
+  bool isCancelButtonShowed = true;
+  bool isPrimaryRoom = false;
 
   int bookingStep = 0;
   resetStatus(bool value) {}
@@ -154,6 +157,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
             days = value['Data']['Days'];
             interval = value['Data']['RepInterval'].toString();
           }
+          isPrimaryRoom = value['Data']['PrimaryRoom'];
           formattedDate = DateFormat('yyyy-mm-dd')
               .format(DateTime.parse(value['Data']['BookingDateOriginal']));
           DateFormat format = DateFormat("yyyy-MM-dd HH:mm:ss");
@@ -193,7 +197,18 @@ class _DetailEventPageState extends State<DetailEventPage> {
           if (bookingDate!.isBefore(DateTime.now())) {
             setState(() {
               print('sudah lewat event nya');
-              isButtonShowed = false;
+              if (bookingDate!
+                  .add(const Duration(
+                    minutes: 30,
+                  ))
+                  .isAfter(DateTime.now())) {
+                isButtonContainerShowed = true;
+                isCancelButtonShowed = true;
+              } else {
+                isButtonContainerShowed = false;
+                isCancelButtonShowed = false;
+              }
+              isEditButtonShowed = false;
               if (value["Data"]["Admin"].toString() == "1") {
                 isAdmin = true;
                 isPhoneShowed = true;
@@ -210,7 +225,9 @@ class _DetailEventPageState extends State<DetailEventPage> {
             });
           } else {
             setState(() {
-              isButtonShowed = true;
+              isEditButtonShowed = true;
+              isButtonContainerShowed = true;
+              isCancelButtonShowed = true;
               if (value["Data"]["Admin"].toString() == "1") {
                 setState(() {
                   isAdmin = true;
@@ -221,10 +238,14 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   if (bookingStatus != "WAITING APPROVAL" ||
                       bookingStatus != "CREATED") {
                     print('if declined');
-                    isButtonShowed = true;
+                    isEditButtonShowed = true;
+                    isButtonContainerShowed = true;
+                    isCancelButtonShowed = true;
                   }
                   if (bookingStatus == "CANCELED") {
-                    isButtonShowed = false;
+                    isEditButtonShowed = false;
+                    isButtonContainerShowed = false;
+                    isCancelButtonShowed = false;
                   }
                 });
               } else if (value["Data"]["Pic"].toString() == "1") {
@@ -237,28 +258,41 @@ class _DetailEventPageState extends State<DetailEventPage> {
                 setState(() {
                   isPhoneShowed = true;
                   isOwner = true;
-                  isButtonShowed = true;
+                  isEditButtonShowed = true;
+                  isButtonContainerShowed = true;
+                  isCancelButtonShowed = true;
                   isGoogleMeetShowed = true;
                   if (bookingStatus != "WAITING APPROVAL" ||
                       bookingStatus != "CREATED") {
                     print('if declined');
-                    isButtonShowed = true;
+                    isEditButtonShowed = true;
+                    isButtonContainerShowed = true;
+                    isCancelButtonShowed = true;
                   }
                   if (bookingStatus == "CANCELED") {
-                    isButtonShowed = false;
+                    isEditButtonShowed = false;
+                    isButtonContainerShowed = false;
+                    isCancelButtonShowed = false;
                   }
                 });
               } else {
                 print('else nip tidak cocok');
                 setState(() {
                   if (value["Data"]["Admin"].toString() == "1") {
-                    isButtonShowed = true;
+                    isEditButtonShowed = true;
+                    isButtonContainerShowed = true;
+                    isCancelButtonShowed = true;
                   } else {
-                    isButtonShowed = false;
+                    isEditButtonShowed = false;
+                    isButtonContainerShowed = false;
+                    isCancelButtonShowed = false;
                   }
                 });
               }
             });
+          }
+          if (!isPrimaryRoom) {
+            isConfirmButtonShowed = false;
           }
         } else if (value['Status'].toString() == "401") {
           showDialog(
@@ -646,28 +680,35 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                         ),
                                                       );
                                                     });
-                                                  }
-                                                  if (bookingType ==
-                                                      "RECURRENT") {
-                                                    apiReq
-                                                        .deleteBookingRecurrent(
-                                                            widget.bookingId!)
-                                                        .then((value) {
-                                                      // print(value);
-                                                      if (value['Status']
-                                                              .toString() ==
-                                                          "200") {
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (context) =>
-                                                              AlertDialogBlack(
-                                                            title:
-                                                                value['Title'],
-                                                            contentText: value[
-                                                                'Message'],
-                                                          ),
-                                                        ).then((value) {
-                                                          context.go('/rooms');
+                                                  },
+                                                  padding:
+                                                      ButtonSize().mediumSize(),
+                                                ),
+                                                verticalDivider(),
+                                              ],
+                                            ),
+                                          ),
+                                          Visibility(
+                                            visible: isCancelButtonShowed,
+                                            child: Row(
+                                              children: [
+                                                TransparentButtonBlack(
+                                                  text: 'Cancel Event',
+                                                  disabled: false,
+                                                  onTap: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          const ConfirmDialogBlack(
+                                                        title: 'Cancel Booking',
+                                                        contentText:
+                                                            'Are you sure want cancel this booking?',
+                                                      ),
+                                                    ).then((value) {
+                                                      if (value) {
+                                                        setState(() {
+                                                          isCancelLoading =
+                                                              true;
                                                         });
                                                       } else {
                                                         showDialog(
