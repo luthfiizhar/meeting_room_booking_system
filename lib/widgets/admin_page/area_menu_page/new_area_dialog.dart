@@ -240,7 +240,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
   }
 
   initRoomType() async {
-    apiReq.getRoomType().then((value) {
+    apiReq.getRoomTypeAdmin().then((value) {
       if (value['Status'].toString() == "200") {
         setState(() {
           roomType = value['Data'];
