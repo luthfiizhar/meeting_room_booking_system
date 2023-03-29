@@ -97,6 +97,8 @@ class _DetailEventPageState extends State<DetailEventPage> {
   bool isButtonContainerShowed = true;
   bool isGoogleMeetShowed = false;
   bool isConfirmButtonShowed = true;
+  bool isCancelButtonShowed = true;
+  bool isPrimaryRoom = false;
 
   int bookingStep = 0;
   resetStatus(bool value) {}
@@ -198,8 +200,10 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   ))
                   .isAfter(DateTime.now())) {
                 isButtonContainerShowed = true;
+                isCancelButtonShowed = true;
               } else {
                 isButtonContainerShowed = false;
+                isCancelButtonShowed = false;
               }
               isEditButtonShowed = false;
               if (value["Data"]["Admin"].toString() == "1") {
@@ -220,6 +224,7 @@ class _DetailEventPageState extends State<DetailEventPage> {
             setState(() {
               isEditButtonShowed = true;
               isButtonContainerShowed = true;
+              isCancelButtonShowed = true;
               if (value["Data"]["Admin"].toString() == "1") {
                 setState(() {
                   isAdmin = true;
@@ -233,10 +238,12 @@ class _DetailEventPageState extends State<DetailEventPage> {
                     print('if declined');
                     isEditButtonShowed = true;
                     isButtonContainerShowed = true;
+                    isCancelButtonShowed = true;
                   }
                   if (bookingStatus == "CANCELED") {
                     isEditButtonShowed = false;
                     isButtonContainerShowed = false;
+                    isCancelButtonShowed = false;
                   }
                 });
               } else if (value["Data"]["Pic"].toString() == "1") {
@@ -251,16 +258,19 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   isOwner = true;
                   isEditButtonShowed = true;
                   isButtonContainerShowed = true;
+                  isCancelButtonShowed = true;
                   isGoogleMeetShowed = true;
                   if (bookingStatus != "WAITING APPROVAL" ||
                       bookingStatus != "CREATED") {
                     print('if declined');
                     isEditButtonShowed = true;
                     isButtonContainerShowed = true;
+                    isCancelButtonShowed = true;
                   }
                   if (bookingStatus == "CANCELED") {
                     isEditButtonShowed = false;
                     isButtonContainerShowed = false;
+                    isCancelButtonShowed = false;
                   }
                 });
               } else {
@@ -269,9 +279,11 @@ class _DetailEventPageState extends State<DetailEventPage> {
                   if (value["Data"]["Admin"].toString() == "1") {
                     isEditButtonShowed = true;
                     isButtonContainerShowed = true;
+                    isCancelButtonShowed = true;
                   } else {
                     isEditButtonShowed = false;
                     isButtonContainerShowed = false;
+                    isCancelButtonShowed = false;
                   }
                 });
               }
@@ -699,6 +711,13 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                   padding:
                                                       ButtonSize().mediumSize(),
                                                 ),
+                                              ],
+                                            ),
+                                          ),
+                                          Visibility(
+                                            visible: isCancelButtonShowed,
+                                            child: Row(
+                                              children: [
                                                 verticalDivider(),
                                                 TransparentButtonBlack(
                                                   text: 'Cancel Event',
