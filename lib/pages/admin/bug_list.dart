@@ -10,6 +10,7 @@ import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
 import 'package:meeting_room_booking_system/model/search_term.dart';
 import 'package:meeting_room_booking_system/widgets/button/transparent_black_bordered_button.dart';
+import 'package:meeting_room_booking_system/widgets/detail_picture.dart';
 import 'package:meeting_room_booking_system/widgets/dialogs/alert_dialog_black.dart';
 import 'package:meeting_room_booking_system/widgets/dropdown/black_dropdown.dart';
 import 'package:meeting_room_booking_system/widgets/input_field/search_input_field.dart';
@@ -928,17 +929,28 @@ class _BugContainerListState extends State<BugContainerList> {
                                         imageUrl: e['ImageURL'],
                                         alignment: Alignment.centerLeft,
                                         imageBuilder: (context, imageProvider) {
-                                          return Container(
-                                            height: 150,
-                                            width: 200,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                7.5,
-                                              ),
-                                              image: DecorationImage(
-                                                image: imageProvider,
-                                                fit: BoxFit.cover,
+                                          return InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    PictureDetail(
+                                                  urlImage: e['ImageURL'],
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              height: 150,
+                                              width: 200,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                  7.5,
+                                                ),
+                                                image: DecorationImage(
+                                                  image: imageProvider,
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
                                             ),
                                           );
