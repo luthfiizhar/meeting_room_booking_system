@@ -54,9 +54,11 @@ class _AdminListPageState extends State<AdminListPage> {
 
   statusRoomChanged(String value) {
     setState(() {
+      _search.text = "";
       currentPaginatedPage = 1;
       searchTerm.pageNumber = currentPaginatedPage.toString();
       searchTerm.statusRoom = value;
+      searchTerm.keyWords = _search.text;
       statusApproval = value;
       updateList().then((value) {
         countPagination(resultRows);
@@ -465,7 +467,8 @@ class _AdminListPageState extends State<AdminListPage> {
                               setState(() {
                                 searchTerm.max = value!.toString();
                                 updateList().then((value) {
-                                  // showedPage = availablePage.take(5).toList();
+                                  countPagination(resultRows);
+                                  showedPage = availablePage.take(5).toList();
                                 });
                                 // getMyBookingList(searchTerm).then((value) {
                                 //   myBookList = value['Data']['List'];
