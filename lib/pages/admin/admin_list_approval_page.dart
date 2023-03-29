@@ -467,7 +467,8 @@ class _AdminListPageState extends State<AdminListPage> {
                               setState(() {
                                 searchTerm.max = value!.toString();
                                 updateList().then((value) {
-                                  // showedPage = availablePage.take(5).toList();
+                                  countPagination(resultRows);
+                                  showedPage = availablePage.take(5).toList();
                                 });
                                 // getMyBookingList(searchTerm).then((value) {
                                 //   myBookList = value['Data']['List'];
