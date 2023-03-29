@@ -469,7 +469,9 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                                               onConfirm: approveAudi,
                                             ),
                                           ).then((value) {
-                                            context.goNamed('admin_list');
+                                            if (value) {
+                                              context.goNamed('admin_list');
+                                            }
                                           });
                                         },
                                         padding: ButtonSize().mediumSize(),
@@ -489,7 +491,9 @@ class _AdminDetailBookingState extends State<AdminDetailBooking> {
                                               onConfirm: rejectAudi,
                                             ),
                                           ).then((value) {
-                                            context.goNamed('admin_list');
+                                            if (value) {
+                                              context.goNamed('admin_list');
+                                            }
                                           });
                                         },
                                         padding: ButtonSize().mediumSize(),
