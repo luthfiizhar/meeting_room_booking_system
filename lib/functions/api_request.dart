@@ -2358,6 +2358,26 @@ class ReqAPI {
     }
   }
 
+  Future getRoomTypeAdmin() async {
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+    var url =
+        Uri.https(apiUrlGlobal, '/MRBS_Backend/public/api/admin/type/room');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      var response = await http.get(url, headers: requestHeader);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
   //END CLASS REQ API
 }
 
