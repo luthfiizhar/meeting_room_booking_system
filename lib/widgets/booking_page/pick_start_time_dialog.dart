@@ -228,48 +228,71 @@ class _PickStartTimeDialogState extends State<PickStartTimeDialog> {
                             color: culturedWhite,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          padding: const EdgeInsets.all(15),
-                          child: ScrollConfiguration(
-                            behavior: ScrollConfiguration.of(context)
-                                .copyWith(scrollbars: false),
-                            child: ListView.builder(
-                              itemCount: timeList.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  // mainAxisSize: MainAxisSize.min,
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                                scrollbarTheme: ScrollbarThemeData(
+                              thumbColor:
+                                  MaterialStateProperty.resolveWith<Color?>(
+                                      (states) {
+                                if (states.contains(MaterialState.hovered)) {
+                                  return lightGray;
+                                }
+
+                                return lightGray.withOpacity(0.5);
+                              }),
+                            )),
+                            child: SingleChildScrollView(
+                              child: Container(
+                                padding: const EdgeInsets.all(15),
+                                child: Column(
                                   children: [
-                                    index == 0 || index == timeList.length
-                                        ? const SizedBox()
-                                        : const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 10,
+                                    ListView.builder(
+                                      itemCount: timeList.length,
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        return Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          // mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            index == 0 ||
+                                                    index == timeList.length
+                                                ? const SizedBox()
+                                                : const Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      vertical: 10,
+                                                    ),
+                                                    child: Divider(
+                                                      color: davysGray,
+                                                    ),
+                                                  ),
+                                            InkWell(
+                                              onTap: () {
+                                                // widget.selectedTime = timeList[index];
+                                                widget.setStartTime!(
+                                                    timeList[index]['Time']);
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text(
+                                                timeList[index]['Time'],
+                                                style: const TextStyle(
+                                                  color: davysGray,
+                                                  fontSize: 16,
+                                                  height: 1.3,
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                              ),
                                             ),
-                                            child: Divider(
-                                              color: davysGray,
-                                            ),
-                                          ),
-                                    InkWell(
-                                      onTap: () {
-                                        // widget.selectedTime = timeList[index];
-                                        widget.setStartTime!(
-                                            timeList[index]['Time']);
-                                        Navigator.of(context).pop();
+                                          ],
+                                        );
                                       },
-                                      child: Text(
-                                        timeList[index]['Time'],
-                                        style: const TextStyle(
-                                          color: davysGray,
-                                          fontSize: 16,
-                                          height: 1.3,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
                                     ),
                                   ],
-                                );
-                              },
+                                ),
+                              ),
                             ),
                           ),
                         ),
