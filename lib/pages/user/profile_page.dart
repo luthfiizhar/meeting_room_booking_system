@@ -1,5 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
@@ -499,6 +500,9 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                     onSaved: (newValue) {
                       phoneCode = newValue.toString();
                     },
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                     validator: (value) =>
                         _phone.text == "" || value == "" ? "" : null,
                     // hintText: 'Email here ...',
@@ -518,6 +522,9 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
                     onSaved: (newValue) {
                       phone = newValue.toString();
                     },
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                     validator: (value) => value == "" || _phoneCode.text == ""
                         ? "This field is required"
                         : null,
