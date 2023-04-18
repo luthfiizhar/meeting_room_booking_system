@@ -974,336 +974,349 @@ class _RoomsPageState extends State<RoomsPage> {
     // dataRoom.length > 2 ? 330 : (150 * dataRoom.length) + 30;
     return Stack(
       children: [
-        Container(
-          // color: Colors.amber,
-          height: dataRoom.isNotEmpty ? calendarHeight : 500,
-          // height: dataRoom.isNotEmpty ? calendarHeight : 500,
-          child: SfCalendar(
-            key: const ValueKey(CalendarView.timelineDay),
-            // loadMoreWidgetBuilder: (context, loadMoreAppointments) =>
-            //     CircularProgressIndicator(),
-            // onSelectionChanged: (calendarSelectionDetails) {
-            //   print(calendarSelectionDetails);
-            // },
-            view: CalendarView.timelineDay,
-            maxDate: DateTime(DateTime.now().year, DateTime.now().month,
-                    DateTime.now().day, 24)
-                .add(const Duration(days: 30)),
-            onViewChanged: (viewChangedDetails) {
-              selectedDate = viewChangedDetails.visibleDates.first;
-              if (dataRoom == []) {
-                _events!.appointments!.clear();
-                Provider.of<MainModel>(context, listen: false)
-                    .events
-                    .appointments!
-                    .clear();
-              } else {
-                // setState(() {
-                //   loadingGetCalendar = true;
-                // });
+        Theme(
+          data: Theme.of(context).copyWith(scrollbarTheme: ScrollbarThemeData(
+            thumbColor: MaterialStateProperty.resolveWith<Color?>((states) {
+              if (states.contains(MaterialState.hovered)) {
+                return davysGray;
+              }
 
-                updateCalendar(viewChangedDetails.visibleDates[0].toString());
-              }
-            },
-            headerHeight: 0,
-            viewHeaderHeight: 0,
-            viewHeaderStyle: const ViewHeaderStyle(
-              dayTextStyle: TextStyle(
-                fontFamily: 'Helvetica',
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: eerieBlack,
-              ),
-              dateTextStyle: TextStyle(
-                fontFamily: 'Helvetica',
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: eerieBlack,
-              ),
-            ),
-            initialDisplayDate:
-                selectedDate!.subtract(const Duration(minutes: 15)),
-            onTap: (calendarTapDetails) {
-              if (calendarTapDetails.targetElement ==
-                  CalendarElement.appointment) {
-                if ((jwtToken != null || jwtToken != "") && isTokenValid) {
-                  setState(() {
-                    RoomEvent list = calendarTapDetails.appointments![0];
-                    selectedEvent = list;
-                    if (isShowDetail) {
-                      isShowDetail = false;
-                    }
-                    if (list.type == "MRBS") {
-                      getMrbsBookingDetail();
-                    }
-                    if (list.type == "GOOGLE") {
-                      getGoogleBookingDetail();
-                    }
-                  });
+              return davysGray.withOpacity(0.8);
+            }),
+          )),
+          child: Container(
+            // color: Colors.amber,
+            height: dataRoom.isNotEmpty ? calendarHeight : 500,
+            // height: dataRoom.isNotEmpty ? calendarHeight : 500,
+            child: SfCalendar(
+              key: const ValueKey(CalendarView.timelineDay),
+              // loadMoreWidgetBuilder: (context, loadMoreAppointments) =>
+              //     CircularProgressIndicator(),
+              // onSelectionChanged: (calendarSelectionDetails) {
+              //   print(calendarSelectionDetails);
+              // },
+              view: CalendarView.timelineDay,
+              maxDate: DateTime(DateTime.now().year, DateTime.now().month,
+                      DateTime.now().day, 24)
+                  .add(const Duration(days: 30)),
+              onViewChanged: (viewChangedDetails) {
+                selectedDate = viewChangedDetails.visibleDates.first;
+                if (dataRoom == []) {
+                  _events!.appointments!.clear();
+                  Provider.of<MainModel>(context, listen: false)
+                      .events
+                      .appointments!
+                      .clear();
                 } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) => const AlertDialogBlack(
-                      title: 'Access denied',
-                      contentText: 'Login first!',
-                      isSuccess: false,
-                    ),
-                  );
+                  // setState(() {
+                  //   loadingGetCalendar = true;
+                  // });
+
+                  updateCalendar(viewChangedDetails.visibleDates[0].toString());
                 }
-              }
-              if (calendarTapDetails.targetElement ==
-                  CalendarElement.calendarCell) {
-                if ((jwtToken != null || jwtToken != "") && isTokenValid) {
-                  if (calendarTapDetails.date!.compareTo(DateTime.now()) > 0) {
-                    // bookingDetail.startDate = calendarTapDetails.date;
-                    // bookingDetail.roomId =
-                    //     calendarTapDetails.resource!.id.toString();
-                    // bookingDetail.endDate =
-                    //     calendarTapDetails.date!.add(Duration(hours: 2));
-                    // bookingDetail.attendantsNumber = '3';
-                    // bookingDetail.recursive = '';
-                    // bookingDetail.description = 'Test Book !!!!!!!!!!';
-                    // bookingDetail.summary = 'Masih Tes';
-                    // bookingDetail.meetingType = 'Internal';
-                    // bookingDetail.recursive = 'NONE';
-                    // bookingDetail.attendants = [];
-                    // bookingDetail.amenities = [];
-                    // bookingDetail.foodAmenities = [];
-                    // print('data Room ' + dataRoom.toString());
-                    // print('selected area ' + selectedArea!);
-                    // print('event room ' + eventRoom.toString());
-                    // print('Selected Date -> ${selectedDate.toString()}');
-                    // forRefreshCalendar();
-                    // Provider.of<MainModel>(context, listen: false)
-                    //     .setSelectedDate(selectedDate!.toString());
-                    // Provider.of<MainModel>(context, listen: false)
-                    //     .setSelectedArea(selectedArea!);
-                    // Provider.of<MainModel>(context, listen: false)
-                    //     .setDataAndEventRoom(dataRoom);
-                    // Provider.of<MainModel>(context, listen: false)
-                    //     .setEventRoom(eventRoom);
+              },
+              headerHeight: 0,
+              viewHeaderHeight: 0,
+              viewHeaderStyle: const ViewHeaderStyle(
+                dayTextStyle: TextStyle(
+                  fontFamily: 'Helvetica',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
+                  color: eerieBlack,
+                ),
+                dateTextStyle: TextStyle(
+                  fontFamily: 'Helvetica',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
+                  color: eerieBlack,
+                ),
+              ),
+              initialDisplayDate:
+                  selectedDate!.subtract(const Duration(minutes: 15)),
+              onTap: (calendarTapDetails) {
+                if (calendarTapDetails.targetElement ==
+                    CalendarElement.appointment) {
+                  if ((jwtToken != null || jwtToken != "") && isTokenValid) {
                     setState(() {
-                      model.setSelectedDate(selectedDate!.toString());
-                      model.setSelectedArea(selectedArea!);
-                      model.setDataAndEventRoom(dataRoom);
-                      model.setEventRoom(eventRoom);
+                      RoomEvent list = calendarTapDetails.appointments![0];
+                      selectedEvent = list;
+                      if (isShowDetail) {
+                        isShowDetail = false;
+                      }
+                      if (list.type == "MRBS") {
+                        getMrbsBookingDetail();
+                      }
+                      if (list.type == "GOOGLE") {
+                        getGoogleBookingDetail();
+                      }
                     });
-
-                    // mainModel.setSelectedDate(selectedDate!.toString());
-                    // mainModel.setSelectedArea(selectedArea!);
-                    // mainModel.setDataAndEventRoom(dataRoom);
-                    // mainModel.setEventRoom(eventRoom);
-                    // context.pushNamed(
-                    //   'booking',
-                    //   params: {
-                    //     "roomId": calendarTapDetails.resource!.id.toString(),
-                    //     'date': calendarTapDetails.date.toString().substring(0, 10),
-                    //     'startTime':
-                    //         calendarTapDetails.date.toString().substring(11, 16),
-                    //     'endTime': calendarTapDetails.date!
-                    //         .add(const Duration(hours: 1))
-                    //         .toString()
-                    //         .substring(11, 16),
-                    //     'participant': '1',
-                    //     'facilities': '[]',
-                    //     'roomType': 'meeting_room',
-                    //   },
-                    // );
-                    //BOOK WITH DIALOG
-                    // showDialog(
-                    //   context: context,
-                    //   builder: (context) => BookingRoomPageDialog(
-                    //     roomId: calendarTapDetails.resource!.id.toString(),
-                    //     date: calendarTapDetails.date.toString().substring(0, 10),
-                    //     startTime: calendarTapDetails.date.toString().substring(11, 16),
-                    //     endTime: calendarTapDetails.date!
-                    //         .add(const Duration(hours: 1))
-                    //         .toString()
-                    //         .substring(11, 16),
-                    //     participant: '1',
-                    //     facilities: '[]',
-                    //     roomType: 'MeetingRoom',
-                    //   ),
-                    // ).then((value) {
-                    //   getBookingListRoom(selectedArea!, selectedDate.toString())
-                    //       .then((value) {
-                    //     assignDataToCalendar(value['Data']);
-                    //   });
-                    // });
-                    //END BOOK WITH DIALOG
-                    // _events!.appointments!.clear();
-                    context.goNamed(
-                      'booking_rooms',
-                      params: {
-                        "roomId": calendarTapDetails.resource!.id.toString(),
-                        'date':
-                            calendarTapDetails.date.toString().substring(0, 10),
-                        'startTime': calendarTapDetails.date
-                            .toString()
-                            .substring(11, 16),
-                        'endTime': calendarTapDetails.date!
-                            .add(const Duration(hours: 1))
-                            .toString()
-                            .substring(11, 16),
-                        'participant': '0',
-                        'roomType': 'MeetingRoom',
-                        'isEdit': 'false',
-                        'floor': selectedArea.toString(),
-                      },
-                      // queryParams: {
-                      //   "roomId": calendarTapDetails.resource!.id.toString(),
-                      //   'date': calendarTapDetails.date.toString().substring(0, 10),
-                      //   'startTime':
-                      //       calendarTapDetails.date.toString().substring(11, 16),
-                      //   'endTime': calendarTapDetails.date!
-                      //       .add(const Duration(hours: 1))
-                      //       .toString()
-                      //       .substring(11, 16),
-                      //   'participant': '1',
-                      //   'facilities': '[]',
-                      //   'roomType': 'MeetingRoom',
-                      //   'isEdit': 'false',
-                      // },
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const AlertDialogBlack(
+                        title: 'Access denied',
+                        contentText: 'Login first!',
+                        isSuccess: false,
+                      ),
                     );
-                    // Navigator.of(context)
-                    //     .push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => BookingRoomPage(
-                    //       roomId: calendarTapDetails.resource!.id.toString(),
-                    //       participant: '1',
-                    //       facilities: '[]',
-                    //       roomType: 'meeting_room',
-                    //       date: calendarTapDetails.date.toString().substring(0, 10),
-                    //       startTime:
-                    //           calendarTapDetails.date.toString().substring(11, 16),
-                    //       endTime: calendarTapDetails.date!
-                    //           .add(const Duration(hours: 1))
-                    //           .toString()
-                    //           .substring(11, 16),
-                    //     ),
-                    //   ),
-                    // )
-                    //     .then((value) {
-                    //   getBookingListRoom(selectedArea!, selectedDate.toString())
-                    //       .then((value) {
-                    //     assignDataToCalendar(value['Data']);
-                    //   });
-                    //   setState(() {});
-                    // });
-
-                    // showDialog(
-                    //   context: context,
-                    //   builder: (context) => BookingRoomDialog(
-                    //     roomId: calendarTapDetails.resource!.id.toString(),
-                    //     startDate: calendarTapDetails.date,
-                    //     nip: 'HAHAHA',
-                    //     bookingDetail: bookingDetail,
-                    //   ),
-                    // ).then((value) {
-                    //   _events!.appointments!.clear();
-                    //   getBookingListRoom('AR-1', DateTime.now().toString())
-                    //       .then((value) {
-                    //     assignDataToCalendar(value['Data']);
-                    //     // dataRoom = value['Data'];
-                    //     // int length = dataRoom.length;
-                    //     // // print(dataRoom);
-                    //     // for (var i = 0; i < length; i++) {
-                    //     //   eventRoom = dataRoom[i]['Bookings'];
-
-                    //     //   for (var j = 0; j < eventRoom.length; j++) {
-                    //     //     _events!.appointments!.add(
-                    //     //       RoomEvent(
-                    //     //         // subject: ,
-                    //     //         resourceIds: [dataRoom[i]['RoomID']],
-                    //     //         from: DateTime.parse(eventRoom[j]['StartDateTime']),
-                    //     //         to: DateTime.parse(eventRoom[j]['EndDateTime']),
-                    //     //         background: davysGray,
-                    //     //         capacity: 5,
-                    //     //         contactID: "1111",
-                    //     //         isAllDay: false,
-                    //     //         eventName: eventRoom[j]['Description'],
-                    //     //         organizer: "",
-                    //     //         recurrenceRule: "NONE",
-                    //     //         endTimeZone: "",
-                    //     //         startTimeZone: "",
-                    //     //       ),
-                    //     //     );
-                    //     //   }
-                    //     // }
-                    //     // _events!.notifyListeners(
-                    //     //     CalendarDataSourceAction.reset, _events!.appointments!);
-                    //     // setState(() {});
-                    //   });
-                    // });
                   }
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) => const AlertDialogBlack(
-                      title: 'Access denied',
-                      contentText: 'Login first!',
-                      isSuccess: false,
-                    ),
-                  );
                 }
-              }
-            },
-            dataSource: Provider.of<MainModel>(context, listen: false)
-                .events, //_events, //_getRoomDataSource(selectedRoom!, resetState),
-            showDatePickerButton: true,
-            showNavigationArrow: true,
-            appointmentBuilder: appointmentBuilder,
-            controller: calendarControl,
-            timeSlotViewSettings: const TimeSlotViewSettings(
-              timeIntervalHeight: -1,
-              timeIntervalWidth: 50,
-              timeInterval: Duration(minutes: 15),
-              timelineAppointmentHeight: 170,
-              // dateFormat: 'd',
-              // dayFormat: 'EEE',
-              timeTextStyle: TextStyle(
-                fontFamily: 'Helvetica',
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-                color: spanishGray,
+                if (calendarTapDetails.targetElement ==
+                    CalendarElement.calendarCell) {
+                  if ((jwtToken != null || jwtToken != "") && isTokenValid) {
+                    if (calendarTapDetails.date!.compareTo(DateTime.now()) >
+                        0) {
+                      // bookingDetail.startDate = calendarTapDetails.date;
+                      // bookingDetail.roomId =
+                      //     calendarTapDetails.resource!.id.toString();
+                      // bookingDetail.endDate =
+                      //     calendarTapDetails.date!.add(Duration(hours: 2));
+                      // bookingDetail.attendantsNumber = '3';
+                      // bookingDetail.recursive = '';
+                      // bookingDetail.description = 'Test Book !!!!!!!!!!';
+                      // bookingDetail.summary = 'Masih Tes';
+                      // bookingDetail.meetingType = 'Internal';
+                      // bookingDetail.recursive = 'NONE';
+                      // bookingDetail.attendants = [];
+                      // bookingDetail.amenities = [];
+                      // bookingDetail.foodAmenities = [];
+                      // print('data Room ' + dataRoom.toString());
+                      // print('selected area ' + selectedArea!);
+                      // print('event room ' + eventRoom.toString());
+                      // print('Selected Date -> ${selectedDate.toString()}');
+                      // forRefreshCalendar();
+                      // Provider.of<MainModel>(context, listen: false)
+                      //     .setSelectedDate(selectedDate!.toString());
+                      // Provider.of<MainModel>(context, listen: false)
+                      //     .setSelectedArea(selectedArea!);
+                      // Provider.of<MainModel>(context, listen: false)
+                      //     .setDataAndEventRoom(dataRoom);
+                      // Provider.of<MainModel>(context, listen: false)
+                      //     .setEventRoom(eventRoom);
+                      setState(() {
+                        model.setSelectedDate(selectedDate!.toString());
+                        model.setSelectedArea(selectedArea!);
+                        model.setDataAndEventRoom(dataRoom);
+                        model.setEventRoom(eventRoom);
+                      });
+
+                      // mainModel.setSelectedDate(selectedDate!.toString());
+                      // mainModel.setSelectedArea(selectedArea!);
+                      // mainModel.setDataAndEventRoom(dataRoom);
+                      // mainModel.setEventRoom(eventRoom);
+                      // context.pushNamed(
+                      //   'booking',
+                      //   params: {
+                      //     "roomId": calendarTapDetails.resource!.id.toString(),
+                      //     'date': calendarTapDetails.date.toString().substring(0, 10),
+                      //     'startTime':
+                      //         calendarTapDetails.date.toString().substring(11, 16),
+                      //     'endTime': calendarTapDetails.date!
+                      //         .add(const Duration(hours: 1))
+                      //         .toString()
+                      //         .substring(11, 16),
+                      //     'participant': '1',
+                      //     'facilities': '[]',
+                      //     'roomType': 'meeting_room',
+                      //   },
+                      // );
+                      //BOOK WITH DIALOG
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (context) => BookingRoomPageDialog(
+                      //     roomId: calendarTapDetails.resource!.id.toString(),
+                      //     date: calendarTapDetails.date.toString().substring(0, 10),
+                      //     startTime: calendarTapDetails.date.toString().substring(11, 16),
+                      //     endTime: calendarTapDetails.date!
+                      //         .add(const Duration(hours: 1))
+                      //         .toString()
+                      //         .substring(11, 16),
+                      //     participant: '1',
+                      //     facilities: '[]',
+                      //     roomType: 'MeetingRoom',
+                      //   ),
+                      // ).then((value) {
+                      //   getBookingListRoom(selectedArea!, selectedDate.toString())
+                      //       .then((value) {
+                      //     assignDataToCalendar(value['Data']);
+                      //   });
+                      // });
+                      //END BOOK WITH DIALOG
+                      // _events!.appointments!.clear();
+                      context.goNamed(
+                        'booking_rooms',
+                        params: {
+                          "roomId": calendarTapDetails.resource!.id.toString(),
+                          'date': calendarTapDetails.date
+                              .toString()
+                              .substring(0, 10),
+                          'startTime': calendarTapDetails.date
+                              .toString()
+                              .substring(11, 16),
+                          'endTime': calendarTapDetails.date!
+                              .add(const Duration(hours: 1))
+                              .toString()
+                              .substring(11, 16),
+                          'participant': '0',
+                          'roomType': 'MeetingRoom',
+                          'isEdit': 'false',
+                          'floor': selectedArea.toString(),
+                        },
+                        // queryParams: {
+                        //   "roomId": calendarTapDetails.resource!.id.toString(),
+                        //   'date': calendarTapDetails.date.toString().substring(0, 10),
+                        //   'startTime':
+                        //       calendarTapDetails.date.toString().substring(11, 16),
+                        //   'endTime': calendarTapDetails.date!
+                        //       .add(const Duration(hours: 1))
+                        //       .toString()
+                        //       .substring(11, 16),
+                        //   'participant': '1',
+                        //   'facilities': '[]',
+                        //   'roomType': 'MeetingRoom',
+                        //   'isEdit': 'false',
+                        // },
+                      );
+                      // Navigator.of(context)
+                      //     .push(
+                      //   MaterialPageRoute(
+                      //     builder: (context) => BookingRoomPage(
+                      //       roomId: calendarTapDetails.resource!.id.toString(),
+                      //       participant: '1',
+                      //       facilities: '[]',
+                      //       roomType: 'meeting_room',
+                      //       date: calendarTapDetails.date.toString().substring(0, 10),
+                      //       startTime:
+                      //           calendarTapDetails.date.toString().substring(11, 16),
+                      //       endTime: calendarTapDetails.date!
+                      //           .add(const Duration(hours: 1))
+                      //           .toString()
+                      //           .substring(11, 16),
+                      //     ),
+                      //   ),
+                      // )
+                      //     .then((value) {
+                      //   getBookingListRoom(selectedArea!, selectedDate.toString())
+                      //       .then((value) {
+                      //     assignDataToCalendar(value['Data']);
+                      //   });
+                      //   setState(() {});
+                      // });
+
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (context) => BookingRoomDialog(
+                      //     roomId: calendarTapDetails.resource!.id.toString(),
+                      //     startDate: calendarTapDetails.date,
+                      //     nip: 'HAHAHA',
+                      //     bookingDetail: bookingDetail,
+                      //   ),
+                      // ).then((value) {
+                      //   _events!.appointments!.clear();
+                      //   getBookingListRoom('AR-1', DateTime.now().toString())
+                      //       .then((value) {
+                      //     assignDataToCalendar(value['Data']);
+                      //     // dataRoom = value['Data'];
+                      //     // int length = dataRoom.length;
+                      //     // // print(dataRoom);
+                      //     // for (var i = 0; i < length; i++) {
+                      //     //   eventRoom = dataRoom[i]['Bookings'];
+
+                      //     //   for (var j = 0; j < eventRoom.length; j++) {
+                      //     //     _events!.appointments!.add(
+                      //     //       RoomEvent(
+                      //     //         // subject: ,
+                      //     //         resourceIds: [dataRoom[i]['RoomID']],
+                      //     //         from: DateTime.parse(eventRoom[j]['StartDateTime']),
+                      //     //         to: DateTime.parse(eventRoom[j]['EndDateTime']),
+                      //     //         background: davysGray,
+                      //     //         capacity: 5,
+                      //     //         contactID: "1111",
+                      //     //         isAllDay: false,
+                      //     //         eventName: eventRoom[j]['Description'],
+                      //     //         organizer: "",
+                      //     //         recurrenceRule: "NONE",
+                      //     //         endTimeZone: "",
+                      //     //         startTimeZone: "",
+                      //     //       ),
+                      //     //     );
+                      //     //   }
+                      //     // }
+                      //     // _events!.notifyListeners(
+                      //     //     CalendarDataSourceAction.reset, _events!.appointments!);
+                      //     // setState(() {});
+                      //   });
+                      // });
+                    }
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const AlertDialogBlack(
+                        title: 'Access denied',
+                        contentText: 'Login first!',
+                        isSuccess: false,
+                      ),
+                    );
+                  }
+                }
+              },
+              dataSource: Provider.of<MainModel>(context, listen: false)
+                  .events, //_events, //_getRoomDataSource(selectedRoom!, resetState),
+              showDatePickerButton: true,
+              showNavigationArrow: true,
+              appointmentBuilder: appointmentBuilder,
+              controller: calendarControl,
+              timeSlotViewSettings: const TimeSlotViewSettings(
+                timeIntervalHeight: -1,
+                timeIntervalWidth: 50,
+                timeInterval: Duration(minutes: 15),
+                timelineAppointmentHeight: 170,
+                // dateFormat: 'd',
+                // dayFormat: 'EEE',
+                timeTextStyle: TextStyle(
+                  fontFamily: 'Helvetica',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w300,
+                  color: spanishGray,
+                ),
+                timeFormat: 'H:mm',
+                startHour: 6,
+                endHour: 19,
               ),
-              timeFormat: 'H:mm',
-              startHour: 6,
-              endHour: 19,
-            ),
-            todayHighlightColor: orangeAccent,
-            resourceViewHeaderBuilder: resourceViewHeaderBuilder,
-            resourceViewSettings: ResourceViewSettings(
-              size: 120,
-              displayNameTextStyle: const TextStyle(
-                fontFamily: 'Helvetica',
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: culturedWhite,
+              todayHighlightColor: orangeAccent,
+              resourceViewHeaderBuilder: resourceViewHeaderBuilder,
+              resourceViewSettings: ResourceViewSettings(
+                size: 120,
+                displayNameTextStyle: const TextStyle(
+                  fontFamily: 'Helvetica',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: culturedWhite,
+                ),
+                showAvatar: false,
+                // visibleResourceCount: screenW > 1366
+                //     ? dataRoom.length <= 6
+                //         ? -1
+                //         : -1
+                //     : dataRoom.length <= 4
+                //         ? -1
+                //         : -1,
+                visibleResourceCount: -1,
               ),
-              showAvatar: false,
-              // visibleResourceCount: screenW > 1366
-              //     ? dataRoom.length <= 6
-              //         ? -1
-              //         : -1
-              //     : dataRoom.length <= 4
-              //         ? -1
-              //         : -1,
-              visibleResourceCount: -1,
+              // resourceViewHeaderBuilder: (context, details) {
+              //   return Container(
+              //     height: 10,
+              //     width: 10,
+              //     color: Colors.black,
+              //   );
+              // },
+              // resourceViewHeaderBuilder: (context, details) {
+              //   return Container(
+              //     height: 20,
+              //     child: Text(details.resource.displayName),
+              //   );
+              // },
             ),
-            // resourceViewHeaderBuilder: (context, details) {
-            //   return Container(
-            //     height: 10,
-            //     width: 10,
-            //     color: Colors.black,
-            //   );
-            // },
-            // resourceViewHeaderBuilder: (context, details) {
-            //   return Container(
-            //     height: 20,
-            //     child: Text(details.resource.displayName),
-            //   );
-            // },
           ),
         ),
         // Column(
