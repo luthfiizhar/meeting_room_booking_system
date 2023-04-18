@@ -38,7 +38,6 @@ import 'package:meeting_room_booking_system/pages/user/google_workspace_page.dar
 import 'package:meeting_room_booking_system/pages/user/calendar_view_page.dart';
 import 'package:meeting_room_booking_system/pages/user/home_page.dart';
 import 'package:meeting_room_booking_system/pages/user/my_book_page.dart';
-import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
 import 'package:meeting_room_booking_system/pages/user/rooms_page.dart';
 import 'package:meeting_room_booking_system/pages/user/search_page.dart';
 import 'package:meeting_room_booking_system/pages/user/booking_page.dart';
