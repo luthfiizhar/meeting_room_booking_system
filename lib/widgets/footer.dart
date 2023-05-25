@@ -96,7 +96,7 @@ class FooterWebMobile extends StatelessWidget {
         child: Text(
           '© 2023 Facility Management. All Rights Reserved.',
           style: helveticaText.copyWith(
-            fontSize: 10,
+            fontSize: 12,
             fontWeight: FontWeight.w300,
             color: davysGray,
           ),
