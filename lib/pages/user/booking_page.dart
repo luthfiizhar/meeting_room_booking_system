@@ -1032,7 +1032,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       setState(() {
         if (emailNode.hasFocus) {
           suggestEmailOverlayEntry = emailOverlay();
-          Overlay.of(context)!.insert(suggestEmailOverlayEntry!);
+          Overlay.of(context).insert(suggestEmailOverlayEntry!);
           if (_email.text != "") {
             initContactList();
           } else {

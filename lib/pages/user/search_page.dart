@@ -9,7 +9,6 @@ import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/main_model.dart';
-import 'package:meeting_room_booking_system/pages/user/onboard_page.dart';
 import 'package:meeting_room_booking_system/widgets/amenities_container.dart';
 import 'package:meeting_room_booking_system/widgets/banner/landscape_white_banner.dart';
 import 'package:meeting_room_booking_system/widgets/button/button_size.dart';
@@ -343,7 +342,7 @@ class _SearchPageState extends State<SearchPage> {
       );
     });
 
-    overlayState!.insert(overlayEntry);
+    overlayState.insert(overlayEntry);
   }
 
   initTime() {
@@ -622,23 +621,6 @@ class _SearchPageState extends State<SearchPage> {
     });
 
     setState(() {});
-  }
-
-  showBoardingPage() {
-    // print(Provider.of<MainModel>(context, listen: false).firstLogin);
-    if (Provider.of<MainModel>(context, listen: false).firstLogin) {
-      Future.delayed(
-        Duration(milliseconds: 500),
-        () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return OnBoardPage();
-            },
-          );
-        },
-      );
-    } else {}
   }
 
   FocusNode dateNode = FocusNode();
