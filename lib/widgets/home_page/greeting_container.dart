@@ -20,9 +20,9 @@ class _GreetingContainerState extends State<GreetingContainer> {
   String name = "";
   String greeting = "";
   List imageWelcome = [
-    "assets/Welcome Image/Asset 1.png",
-    "assets/Welcome Image/Asset 2.png",
-    "assets/Welcome Image/Asset 3.png"
+    "assets/Welcome Image/Asset 3@2x.png",
+    "assets/Welcome Image/Asset 4@2x.png",
+    "assets/Welcome Image/Asset 5@2x.png"
   ];
   int indexImage = 0;
   final _random = Random();
@@ -157,6 +157,8 @@ class _GreetingContainerState extends State<GreetingContainer> {
               height: 200,
               child: Image.asset(
                 imageWelcome[indexImage],
+                isAntiAlias: true,
+                scale: 1,
                 fit: BoxFit.contain,
               ),
             )
