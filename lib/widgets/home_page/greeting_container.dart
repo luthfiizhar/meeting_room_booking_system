@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -18,6 +19,13 @@ class _GreetingContainerState extends State<GreetingContainer> {
   ReqAPI apiReq = ReqAPI();
   String name = "";
   String greeting = "";
+  List imageWelcome = [
+    "assets/Welcome Image/Asset 3@2x.png",
+    "assets/Welcome Image/Asset 4@2x.png",
+    "assets/Welcome Image/Asset 5@2x.png"
+  ];
+  int indexImage = 0;
+  final _random = Random();
   checkData() async {
     // var box = await Hive.openBox('userLogin');
 
@@ -35,6 +43,7 @@ class _GreetingContainerState extends State<GreetingContainer> {
   setGreeting(String value) {
     if (mounted) {
       setState(() {
+        indexImage = _random.nextInt(imageWelcome.length);
         greeting = value;
       });
     }
@@ -88,7 +97,7 @@ class _GreetingContainerState extends State<GreetingContainer> {
       //   maxHeight: 200,
       //   minHeight: 200,
       // ),
-      constraints: homeLeftSideConstrains,
+      constraints: homeLeftSideConstrains.copyWith(maxHeight: 200),
       child: Container(
         decoration: BoxDecoration(
           color: white,
@@ -97,47 +106,62 @@ class _GreetingContainerState extends State<GreetingContainer> {
             color: platinum,
             width: 1,
           ),
-          image: const DecorationImage(
-            image: AssetImage('assets/greeting_bg.png'),
-            fit: BoxFit.cover,
-          ),
         ),
         // height: 200,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 35,
-          vertical: 30,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
+
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Clock(),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Text(
-                  '$greeting,',
-                  style: helveticaText.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w300,
-                    color: davysGray,
+            Container(
+              padding: const EdgeInsets.only(
+                left: 35,
+                top: 30,
+                bottom: 30,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Clock(),
+                  const SizedBox(
+                    height: 10,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              name,
-              style: helveticaText.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.w400,
-                color: eerieBlack,
+                  Row(
+                    children: [
+                      Text(
+                        '$greeting,',
+                        style: helveticaText.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w300,
+                          color: davysGray,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    name,
+                    style: helveticaText.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                      color: eerieBlack,
+                    ),
+                  ),
+                ],
               ),
             ),
+            SizedBox(
+              // color: violetAccent,
+              height: 200,
+              child: Image.asset(
+                imageWelcome[indexImage],
+                isAntiAlias: true,
+                scale: 1,
+                fit: BoxFit.contain,
+              ),
+            )
           ],
         ),
       ),
