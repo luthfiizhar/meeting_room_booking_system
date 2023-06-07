@@ -43,7 +43,6 @@ class _GreetingContainerState extends State<GreetingContainer> {
   setGreeting(String value) {
     if (mounted) {
       setState(() {
-        indexImage = _random.nextInt(imageWelcome.length);
         greeting = value;
       });
     }
@@ -63,12 +62,16 @@ class _GreetingContainerState extends State<GreetingContainer> {
     print(now.hour);
     if (now.hour >= 5 && now.hour < 12) {
       setGreeting('Good Morning');
+      indexImage = 2;
     } else if (now.hour >= 12 && now.hour < 17) {
       setGreeting('Good Afternoon');
+      indexImage = 1;
     } else if (now.hour >= 17 && now.hour < 21) {
       setGreeting('Good Evening');
+      indexImage = 0;
     } else if (now.hour >= 21 || now.hour < 5) {
       setGreeting('Good Night');
+      indexImage = 0;
     }
   }
 
