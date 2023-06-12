@@ -17,6 +17,7 @@ import 'package:meeting_room_booking_system/widgets/home_page/apporval_message.d
 import 'package:meeting_room_booking_system/widgets/home_page/available_room_offer_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/greeting_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/home_search_container.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/phone_reminder_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/report_banner.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/room_type_home_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/schedule_container.dart';
@@ -585,6 +586,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ));
   }
 
+  checkPhoneTutorial() {
+    apiReq.getUserProfile().then((value) {
+      if (value["Status"].toString() == "200") {
+        if (value["Data"]["PhoneBookingTutorial"] == true) {
+          // Future.delayed(Duration(seconds: )).then((value) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            showDialog(
+              context: context,
+              builder: (context) => PhoneReminderDialog(),
+            );
+          });
+
+          // });
+        }
+      }
+    }).onError((error, stackTrace) {});
+  }
+
   @override
   void dispose() {
     // _controller.dispose();
@@ -601,7 +620,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
+    checkPhoneTutorial();
     String formattedDate = DateFormat('d MMM yyyy').format(DateTime.now());
     _dateController.text = formattedDate;
     _facilityController.text = 'None';
@@ -687,7 +706,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (value) {
       setOpacityOn(true);
       datePickerOverlayEntry = datePickerOverlay();
-      Overlay.of(context).insert(datePickerOverlayEntry!);
+      Overlay.of(context)!.insert(datePickerOverlayEntry!);
     } else {
       datePickerOverlayEntry!.remove();
 
@@ -750,7 +769,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     opacityOn = value;
     if (value) {
       selectTimeOverlayEntry = timePickerOverlay();
-      Overlay.of(context).insert(selectTimeOverlayEntry!);
+      Overlay.of(context)!.insert(selectTimeOverlayEntry!);
     } else {
       selectTimeOverlayEntry!.remove();
       setOpacityOn(false);
@@ -774,7 +793,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     startTimeContainerVisible = value;
     if (value) {
       startTimeOverlayEntry = startTimeOverlay();
-      Overlay.of(context).insert(startTimeOverlayEntry!);
+      Overlay.of(context)!.insert(startTimeOverlayEntry!);
     } else {
       if (startTimeOverlayEntry != null) {
         if (startTimeOverlayEntry!.mounted) {
@@ -789,7 +808,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     endTimeContainerVisible = value;
     if (value) {
       endTimeOverlayEntry = endTimeOverlay();
-      Overlay.of(context).insert(endTimeOverlayEntry!);
+      Overlay.of(context)!.insert(endTimeOverlayEntry!);
     } else {
       if (endTimeOverlayEntry != null) {
         if (endTimeOverlayEntry!.mounted) {
@@ -854,7 +873,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     opacityOn = value;
     if (value) {
       participantOverlayEntry = participantOverlay();
-      Overlay.of(context).insert(participantOverlayEntry!);
+      Overlay.of(context)!.insert(participantOverlayEntry!);
     } else {
       participantOverlayEntry!.remove();
       setOpacityOn(false);
@@ -877,7 +896,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     opacityOn = value;
     if (value) {
       facilityOverlayEntry = facilityOverlay();
-      Overlay.of(context).insert(facilityOverlayEntry!);
+      Overlay.of(context)!.insert(facilityOverlayEntry!);
     } else {
       facilityOverlayEntry!.remove();
       setOpacityOn(value);
@@ -890,7 +909,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     opacityOn = value;
     if (value) {
       roomTypeOverlayEntry = roomTypeOverlay();
-      Overlay.of(context).insert(roomTypeOverlayEntry!);
+      Overlay.of(context)!.insert(roomTypeOverlayEntry!);
     } else {
       roomTypeOverlayEntry!.remove();
     }
