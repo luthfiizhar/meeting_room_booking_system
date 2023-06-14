@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/constant/custom_scroll_behavior.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/main.dart';
 import 'package:meeting_room_booking_system/model/booking_class.dart';
@@ -19,6 +20,7 @@ import 'package:meeting_room_booking_system/widgets/dropdown/white_dropdown.dart
 import 'package:meeting_room_booking_system/widgets/home_page/available_room_offer_container.dart';
 import 'package:meeting_room_booking_system/widgets/layout_page.dart';
 import 'package:meeting_room_booking_system/widgets/rooms_page/detail_appointment_container.dart';
+import 'package:meeting_room_booking_system/widgets/rooms_page/scroll_reminder.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:http/http.dart' as http;
@@ -362,6 +364,23 @@ class _RoomsPageState extends State<RoomsPage> {
     return _itemsHeights;
   }
 
+  reminderScroll() {
+    apiReq.getUserProfile().then((value) {
+      if (value["Status"].toString() == "200") {
+        if (value["Data"]["BookingScrollTutorial"]) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            showDialog(
+              context: context,
+              builder: (context) => ScrollReminder(),
+            );
+          });
+        }
+      }
+    }).onError((error, stackTrace) {
+      print(error);
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -479,6 +498,8 @@ class _RoomsPageState extends State<RoomsPage> {
     areaNode.addListener(() {
       setState(() {});
     });
+
+    reminderScroll();
   }
 
   @override
@@ -673,6 +694,7 @@ class _RoomsPageState extends State<RoomsPage> {
   // }
 
   ScrollController scrollController = ScrollController();
+  bool disableScroll = false;
 
   @override
   Widget build(BuildContext context) {
@@ -701,9 +723,11 @@ class _RoomsPageState extends State<RoomsPage> {
         sideBarHeight = sideBarHeight + 40;
       }
     }
+
     return LayoutPageWeb(
       scrollController: scrollController,
       topButtonVisible: false,
+      disableScroll: disableScroll,
       index: 2,
       setDatePickerStatus: setDatePickerStatus,
       resetState: resetState,
@@ -931,22 +955,22 @@ class _RoomsPageState extends State<RoomsPage> {
             ),
           ],
         ),
-        const SizedBox(
-          height: 10,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 100,
-          ),
-          child: Text(
-            DateFormat('d EEEE').format(selectedDate!),
-            style: helveticaText.copyWith(
-              fontSize: 16,
-              fontWeight: FontWeight.w300,
-              color: eerieBlack,
-            ),
-          ),
-        )
+        // const SizedBox(
+        //   height: 10,
+        // ),
+        // Padding(
+        //   padding: const EdgeInsets.only(
+        //     left: 100,
+        //   ),
+        //   child: Text(
+        //     DateFormat('d EEEE').format(selectedDate!),
+        //     style: helveticaText.copyWith(
+        //       fontSize: 16,
+        //       fontWeight: FontWeight.w300,
+        //       color: eerieBlack,
+        //     ),
+        //   ),
+        // )
       ],
     );
   }
@@ -974,27 +998,21 @@ class _RoomsPageState extends State<RoomsPage> {
     // dataRoom.length > 2 ? 330 : (150 * dataRoom.length) + 30;
     return Stack(
       children: [
-        Theme(
-          data: Theme.of(context).copyWith(scrollbarTheme: ScrollbarThemeData(
-            thumbColor: MaterialStateProperty.resolveWith<Color?>((states) {
-              if (states.contains(MaterialState.hovered)) {
-                return davysGray;
-              }
-
-              return davysGray.withOpacity(0.8);
-            }),
-          )),
-          child: Container(
-            // color: Colors.amber,
-            height: dataRoom.isNotEmpty ? calendarHeight : 500,
-            // height: dataRoom.isNotEmpty ? calendarHeight : 500,
+        Container(
+          // color: Colors.amber,
+          height: dataRoom.isNotEmpty ? calendarHeight : 500,
+          // height: dataRoom.isNotEmpty ? calendarHeight : 500,
+          child: MouseRegion(
+            onEnter: (event) {
+              disableScroll = true;
+              setState(() {});
+            },
+            onExit: (event) {
+              disableScroll = false;
+              setState(() {});
+            },
             child: SfCalendar(
               key: const ValueKey(CalendarView.timelineDay),
-              // loadMoreWidgetBuilder: (context, loadMoreAppointments) =>
-              //     CircularProgressIndicator(),
-              // onSelectionChanged: (calendarSelectionDetails) {
-              //   print(calendarSelectionDetails);
-              // },
               view: CalendarView.timelineDay,
               maxDate: DateTime(DateTime.now().year, DateTime.now().month,
                       DateTime.now().day, 24)

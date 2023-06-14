@@ -29,6 +29,7 @@ class LayoutPageWeb extends StatefulWidget {
     this.resetState,
     this.model,
     this.topButtonVisible = true,
+    this.disableScroll = false,
   });
 
   Widget? child;
@@ -40,6 +41,7 @@ class LayoutPageWeb extends StatefulWidget {
   bool? topButtonVisible;
   // GlobalKey<ScaffoldState>? scaffoldKey;
   // bool isAdmin;
+  bool disableScroll;
 
   @override
   State<LayoutPageWeb> createState() => _LayoutPageWebState();
@@ -378,6 +380,9 @@ class _LayoutPageWebState extends State<LayoutPageWeb> {
                               controller: _scrollController,
                               child: SingleChildScrollView(
                                 controller: _scrollController,
+                                physics: widget.disableScroll
+                                    ? NeverScrollableScrollPhysics()
+                                    : null,
                                 child: Column(
                                   children: [
                                     ConstrainedBox(
