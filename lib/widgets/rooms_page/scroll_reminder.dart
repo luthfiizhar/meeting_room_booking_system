@@ -38,7 +38,7 @@ class _ScrollReminderState extends State<ScrollReminder> {
               ),
               padding: const EdgeInsets.all(25),
               height: 600,
-              width: 600,
+              width: 625,
               child: Center(
                 child: SizedBox(
                   child: Image.asset(
@@ -77,7 +77,7 @@ class _ScrollReminderState extends State<ScrollReminder> {
                       height: 25,
                     ),
                     SizedBox(
-                      width: 300,
+                      width: 325,
                       height: 165,
                       child: Image.asset(
                         "assets/scroll_reminder3.png",
@@ -91,7 +91,7 @@ class _ScrollReminderState extends State<ScrollReminder> {
                       ),
                     ),
                     SizedBox(
-                      width: 300,
+                      width: 325,
                       height: 165,
                       child: Image.asset(
                         "assets/scroll_reminder2.png",
