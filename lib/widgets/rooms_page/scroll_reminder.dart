@@ -80,7 +80,7 @@ class _ScrollReminderState extends State<ScrollReminder> {
                       width: 300,
                       height: 165,
                       child: Image.asset(
-                        "assets/scroll_reminder2.png",
+                        "assets/scroll_reminder3.png",
                         fit: BoxFit.contain,
                       ),
                     ),
