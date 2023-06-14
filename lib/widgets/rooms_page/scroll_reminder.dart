@@ -65,6 +65,9 @@ class _ScrollReminderState extends State<ScrollReminder> {
                         color: davysGray,
                       ),
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Text(
                       "Room Horizontal List Scroll",
                       style: helveticaText.copyWith(
@@ -76,28 +79,122 @@ class _ScrollReminderState extends State<ScrollReminder> {
                     const SizedBox(
                       height: 25,
                     ),
-                    SizedBox(
-                      width: 325,
-                      height: 165,
-                      child: Image.asset(
-                        "assets/scroll_reminder3.png",
-                        fit: BoxFit.contain,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ImageIcon(
+                          Image.asset(
+                            "assets/touchpad_mouse.png",
+                            fit: BoxFit.contain,
+                          ).image,
+                          color: blueAccent,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Using Mouse",
+                          style: helveticaText.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: eerieBlack,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Center(
+                      child: SizedBox(
+                        height: 70,
+                        width: 160,
+                        child: Image.asset(
+                          "assets/click.png",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Text(
+                      "Click and drag your cursor on room list area",
+                      style: helveticaText.copyWith(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300,
+                          color: davysGray),
+                    ),
+                    // SizedBox(
+                    //   width: 325,
+                    //   height: 165,
+                    //   child: Image.asset(
+                    //     "assets/scroll_reminder3.png",
+                    //     fit: BoxFit.contain,
+                    //   ),
+                    // ),
                     const Padding(
                       padding: EdgeInsetsDirectional.symmetric(vertical: 13),
                       child: Divider(
                         color: lightGray,
                       ),
                     ),
-                    SizedBox(
-                      width: 325,
-                      height: 165,
-                      child: Image.asset(
-                        "assets/scroll_reminder2.png",
-                        fit: BoxFit.contain,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ImageIcon(
+                          Image.asset(
+                            "assets/swipe.png",
+                            fit: BoxFit.contain,
+                          ).image,
+                          color: blueAccent,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Touchpad",
+                          style: helveticaText.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: eerieBlack,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Center(
+                      child: SizedBox(
+                        height: 70,
+                        width: 160,
+                        child: Image.asset(
+                          "assets/swipe2.png",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Text(
+                      "Drag two finger when cursor is on room list area",
+                      style: helveticaText.copyWith(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300,
+                          color: davysGray),
+                    ),
+                    // SizedBox(
+                    //   width: 325,
+                    //   height: 165,
+                    //   child: Image.asset(
+                    //     "assets/scroll_reminder2.png",
+                    //     fit: BoxFit.contain,
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 30,
                     ),
