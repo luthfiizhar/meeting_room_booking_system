@@ -727,7 +727,6 @@ class _RoomsPageState extends State<RoomsPage> {
     return LayoutPageWeb(
       scrollController: scrollController,
       topButtonVisible: false,
-      disableScroll: disableScroll,
       index: 2,
       setDatePickerStatus: setDatePickerStatus,
       resetState: resetState,
@@ -1003,14 +1002,14 @@ class _RoomsPageState extends State<RoomsPage> {
           height: dataRoom.isNotEmpty ? calendarHeight : 500,
           // height: dataRoom.isNotEmpty ? calendarHeight : 500,
           child: MouseRegion(
-            onEnter: (event) {
-              disableScroll = true;
-              setState(() {});
-            },
-            onExit: (event) {
-              disableScroll = false;
-              setState(() {});
-            },
+            // onEnter: (event) {
+            //   disableScroll = true;
+            //   setState(() {});
+            // },
+            // onExit: (event) {
+            //   disableScroll = false;
+            //   setState(() {});
+            // },
             child: SfCalendar(
               key: const ValueKey(CalendarView.timelineDay),
               view: CalendarView.timelineDay,
