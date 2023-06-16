@@ -357,9 +357,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     setState(() {
       datePickerVisible = value;
       datePickerRepeatVisible = value;
-      emailNode.unfocus();
+      // emailNode.nextFocus();
       emailSuggestionVisible = false;
-
+      // suggestEmailOverlayEntry!.remove();
       // filterContactList = contactList;
     });
   }
@@ -551,14 +551,23 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
     });
   }
 
+  Future addGuest(String value) async {
+    invitedGuest.add(value);
+    _email.text = "";
+  }
+
   selectGuest(String value) {
-    setState(() {
-      print("select");
-      emailSuggestionVisible = false;
-      emailNode.unfocus();
-      invitedGuest.add(value);
-      _email.text = "";
-    });
+    print("tap");
+    invitedGuest.add(value);
+    _email.text = "";
+    // addGuest(value).then((value) {
+    //   // suggestEmailOverlayEntry!.remove();
+    //   // emailNode.unfocus();
+    //   // emailSuggestionVisible = false;
+
+    //   // setState(() {});
+    // });
+    setState(() {});
   }
 
   OverlayEntry emailOverlay() {
@@ -591,9 +600,9 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   }
 
   initContactList() {
-    print(_email.text);
+    // print(_email.text);
     apiReq.getContactList(_email.text).then((value) {
-      print(value);
+      ;
       // emailSuggestionVisible = true;
       if (value['Status'].toString() == "200") {
         if (value['Data'].toString() == "[]") {
@@ -607,7 +616,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           isContactEmpty = false;
           setState(() {});
         }
-        suggestEmailOverlayEntry!.markNeedsBuild();
+        // suggestEmailOverlayEntry!.markNeedsBuild();
       } else if (value['Status'].toString() == "401") {
         showDialog(
           context: context,
@@ -631,7 +640,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialogBlack(
-          title: 'Failed connect to API',
+          title: 'Failed get contact',
           contentText: error.toString(),
           isSuccess: false,
         ),
@@ -966,19 +975,20 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
       if (_email.text != "") {
         // filterContactList.clear();
         setState(() {
-          // emailSuggestionVisible = true;
+          emailSuggestionVisible = true;
 
           initContactList();
         });
       }
       if (_email.text == "") {
         setState(() {
-          initContactList();
-          suggestEmailOverlayEntry!.markNeedsBuild();
-          // emailSuggestionVisible = false;
+          // initContactList();
+          // suggestEmailOverlayEntry!.markNeedsBuild();
+          emailSuggestionVisible = false;
           // if (suggestEmailOverlayEntry!.mounted) {
           //   suggestEmailOverlayEntry!.remove();
           // }
+          // emailSuggestionVisible = true;
           isContactEmpty = true;
         });
       }
@@ -1028,28 +1038,34 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
         setState(() {});
       },
     );
-    emailNode.addListener(() async {
+    emailNode.addListener(() {
       setState(() {
         if (emailNode.hasFocus) {
-          suggestEmailOverlayEntry = emailOverlay();
-          Overlay.of(context).insert(suggestEmailOverlayEntry!);
-          if (_email.text != "") {
-            initContactList();
-          } else {
-            initContactList();
-            setState(() {
-              // _overlayEntry = emailOverlay();
-              // Overlay.of(context)!.insert(_overlayEntry!);
-              isContactEmpty = true;
-              emailSuggestionVisible = false;
-            });
-          }
-        } else {
-          // emailSuggestionVisible = false;
-          // _overlayEntry!.remove();
-          suggestEmailOverlayEntry!.remove();
+          emailSuggestionVisible = true;
         }
       });
+      // setState(() {
+      //   // emailSuggestionVisible = true;
+      //   if (emailSuggestionVisible) {
+      //     // suggestEmailOverlayEntry = emailOverlay();
+      //     // Overlay.of(context).insert(suggestEmailOverlayEntry!);
+      //     if (_email.text != "") {
+      //       initContactList();
+      //     } else {
+      //       initContactList();
+      //       setState(() {
+      //         // _overlayEntry = emailOverlay();
+      //         // Overlay.of(context)!.insert(_overlayEntry!);
+      //         isContactEmpty = true;
+      //         // emailSuggestionVisible = false;
+      //       });
+      //     }
+      //   } else {
+      //     // emailSuggestionVisible = false;
+      //     // _overlayEntry!.remove();
+      //     suggestEmailOverlayEntry!.remove();
+      //   }
+      // });
     });
     additionalNoteNode.addListener(() {
       setState(() {});
@@ -2535,20 +2551,20 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                         ),
                       ),
                     ),
-                    // Visibility(
-                    //   visible: emailSuggestionVisible,
-                    //   child: Positioned(
-                    //     top: 475,
-                    //     right: 0,
-                    //     child: EmailSuggestionContainer(
-                    //       contactList: contactList,
-                    //       emptyMessage: messageEmptyContact,
-                    //       isEmpty: isContactEmpty,
-                    //       filter: filterContact,
-                    //       selectGuest: selectGuest,
-                    //     ),
-                    //   ),
-                    // ),
+                    Visibility(
+                      visible: emailSuggestionVisible,
+                      child: Positioned(
+                        top: 475,
+                        right: 0,
+                        child: EmailSuggestionContainer(
+                          contactList: contactList,
+                          emptyMessage: messageEmptyContact,
+                          isEmpty: isContactEmpty,
+                          filter: filterContact,
+                          selectGuest: selectGuest,
+                        ),
+                      ),
+                    ),
                     Visibility(
                       visible: datePickerVisible,
                       child: Positioned(
