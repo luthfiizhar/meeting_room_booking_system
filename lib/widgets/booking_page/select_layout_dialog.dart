@@ -201,369 +201,373 @@ class _SelectLayoutDialogState extends State<SelectLayoutDialog> {
           minHeight: 550,
           maxHeight: 600,
         ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 30,
-            vertical: 25,
-          ),
-          decoration: BoxDecoration(
-            color: culturedWhite,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Select Layout',
-                style: TextStyle(
-                  fontFamily: 'Helvetica',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 24,
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 30,
+              vertical: 25,
+            ),
+            decoration: BoxDecoration(
+              color: culturedWhite,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Select Layout',
+                  style: TextStyle(
+                    fontFamily: 'Helvetica',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 24,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: platinum,
-                      borderRadius: BorderRadius.circular(7.5),
-                    ),
-                    height: 375,
-                    width: 500,
-                    child: Center(
-                      child: emptyImage
-                          ? Text(
-                              'No Layout Selected',
-                              style: helveticaText.copyWith(
-                                color: davysGray,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            )
-                          : otherPict
-                              ? Container(
-                                  height: 375,
-                                  width: 500,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: MemoryImage(
-                                        Base64Decoder().convert(
-                                            base64image!.split(',').last),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: platinum,
+                        borderRadius: BorderRadius.circular(7.5),
+                      ),
+                      height: 375,
+                      width: 500,
+                      child: Center(
+                        child: emptyImage
+                            ? Text(
+                                'No Layout Selected',
+                                style: helveticaText.copyWith(
+                                  color: davysGray,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              )
+                            : otherPict
+                                ? Container(
+                                    height: 375,
+                                    width: 500,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: MemoryImage(
+                                          Base64Decoder().convert(
+                                              base64image!.split(',').last),
+                                        ),
+                                        fit: BoxFit.contain,
                                       ),
-                                      fit: BoxFit.contain,
                                     ),
-                                  ),
-                                )
-                              // : Container(
-                              //     height: 375,
-                              //     width: 500,
-                              //     decoration: BoxDecoration(
-                              //       image: DecorationImage(
-                              //         image: NetworkImage(urlImage),
-                              //         fit: BoxFit.cover,
-                              //       ),
-                              //     ),
-                              //   ),
-                              : urlImage == ""
-                                  ? const SizedBox()
-                                  : CachedNetworkImage(
-                                      imageUrl: urlImage,
-                                      placeholder: (context, url) {
-                                        return Shimmer(
-                                          gradient: const LinearGradient(
-                                            colors: [
-                                              platinum,
-                                              grayx11,
-                                              davysGray
-                                            ],
-                                          ),
-                                          direction: ShimmerDirection.rtl,
-                                          child: Container(
+                                  )
+                                // : Container(
+                                //     height: 375,
+                                //     width: 500,
+                                //     decoration: BoxDecoration(
+                                //       image: DecorationImage(
+                                //         image: NetworkImage(urlImage),
+                                //         fit: BoxFit.cover,
+                                //       ),
+                                //     ),
+                                //   ),
+                                : urlImage == ""
+                                    ? const SizedBox()
+                                    : CachedNetworkImage(
+                                        imageUrl: urlImage,
+                                        placeholder: (context, url) {
+                                          return Shimmer(
+                                            gradient: const LinearGradient(
+                                              colors: [
+                                                platinum,
+                                                grayx11,
+                                                davysGray
+                                              ],
+                                            ),
+                                            direction: ShimmerDirection.rtl,
+                                            child: Container(
+                                              height: 375,
+                                              width: 500,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(7.5),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        imageBuilder: (context, imageProvider) {
+                                          return Container(
                                             height: 375,
                                             width: 500,
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(7.5),
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                      imageBuilder: (context, imageProvider) {
-                                        return Container(
-                                          height: 375,
-                                          width: 500,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 20,
+                                          );
+                                        },
+                                      ),
                       ),
-                      child: Stack(
-                        children: [
-                          Container(
-                            height: 375,
-                            child: ScrollConfiguration(
-                              behavior: ScrollConfiguration.of(context)
-                                  .copyWith(scrollbars: false),
-                              child: ListView.builder(
-                                physics: NeverScrollableScrollPhysics(),
-                                controller: _scrollController,
-                                shrinkWrap: true,
-                                itemCount: layoutList.length + 1,
-                                itemBuilder: (context, index) {
-                                  if (index == layoutList.length) {
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20,
+                        ),
+                        child: Stack(
+                          children: [
+                            Container(
+                              height: 375,
+                              child: ScrollConfiguration(
+                                behavior: ScrollConfiguration.of(context)
+                                    .copyWith(scrollbars: false),
+                                child: ListView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  controller: _scrollController,
+                                  shrinkWrap: true,
+                                  itemCount: layoutList.length + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index == layoutList.length) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                        ),
+                                        child: InkWell(
+                                          onTap: () {
+                                            getImage().then((value) {
+                                              setState(() {
+                                                selectedLayout = 9999;
+                                                otherPict = true;
+                                                emptyImage = false;
+                                                layoutName = "OTHERS";
+                                                layoutId = "";
+                                                urlImage = "";
+                                                // widget.setLayout!(
+                                                //   "OTHERS",
+                                                //   "",
+                                                //   base64image,
+                                                //   "",
+                                                //   true,
+                                                // );
+                                              });
+                                            });
+                                          },
+                                          child: Container(
+                                            height: 100,
+                                            // color: Colors.green,
+                                            child: DottedBorder(
+                                              borderType: BorderType.RRect,
+                                              color: spanishGray,
+                                              padding: EdgeInsets.zero,
+                                              radius:
+                                                  const Radius.circular(7.5),
+                                              dashPattern: const [4, 5],
+                                              strokeWidth: 2,
+                                              strokeCap: StrokeCap.round,
+                                              child: Center(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Image.asset(
+                                                        'assets/add_circle.png'),
+                                                    const SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    const Text(
+                                                      'Add Layout',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Helvetica',
+                                                        fontSize: 16,
+                                                        color: spanishGray,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 10,
                                       ),
                                       child: InkWell(
                                         onTap: () {
-                                          getImage().then((value) {
-                                            setState(() {
-                                              selectedLayout = 9999;
-                                              otherPict = true;
-                                              emptyImage = false;
-                                              layoutName = "OTHERS";
-                                              layoutId = "";
-                                              urlImage = "";
-                                              // widget.setLayout!(
-                                              //   "OTHERS",
-                                              //   "",
-                                              //   base64image,
-                                              //   "",
-                                              //   true,
-                                              // );
-                                            });
+                                          setState(() {
+                                            // final ByteData imageData =
+                                            //     await NetworkAssetBundle(
+                                            //             Uri.parse(
+                                            //                 layoutList[index]
+                                            //                     ['LayoutImg']))
+                                            //         .load("");
+                                            // final Uint8List bytes =
+                                            //     imageData.buffer.asUint8List();
+                                            // print(bytes);
+                                            selectedLayout =
+                                                layoutList[index].layoutId;
+                                            emptyImage = false;
+                                            otherPict = false;
+                                            urlImage =
+                                                layoutList[index].imageUrl;
+                                            layoutName =
+                                                layoutList[index].layoutName;
+                                            layoutId = layoutList[index]
+                                                .layoutId
+                                                .toString();
+                                            base64image = "";
+                                            // widget.setLayout!(
+                                            //   layoutList[index]['LayoutName'],
+                                            //   layoutList[index]['LayoutID']
+                                            //       .toString(),
+                                            //   "",
+                                            //   urlImage,
+                                            //   false,
+                                            // );
                                           });
                                         },
                                         child: Container(
                                           height: 100,
-                                          // color: Colors.green,
-                                          child: DottedBorder(
-                                            borderType: BorderType.RRect,
-                                            color: spanishGray,
-                                            padding: EdgeInsets.zero,
-                                            radius: const Radius.circular(7.5),
-                                            dashPattern: const [4, 5],
-                                            strokeWidth: 2,
-                                            strokeCap: StrokeCap.round,
-                                            child: Center(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Image.asset(
-                                                      'assets/add_circle.png'),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  const Text(
-                                                    'Add Layout',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Helvetica',
-                                                      fontSize: 16,
-                                                      color: spanishGray,
-                                                    ),
+                                          // color: Colors.amber,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border: selectedLayout ==
+                                                    layoutList[index].layoutId
+                                                ? Border.all(
+                                                    color: greenAcent,
+                                                    width: 1,
                                                   )
-                                                ],
+                                                : null,
+                                            image: DecorationImage(
+                                              image: NetworkImage(
+                                                layoutList[index].imageUrl,
                                               ),
+                                              fit: BoxFit.cover,
                                             ),
                                           ),
                                         ),
                                       ),
                                     );
-                                  }
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 10,
-                                    ),
-                                    child: InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          // final ByteData imageData =
-                                          //     await NetworkAssetBundle(
-                                          //             Uri.parse(
-                                          //                 layoutList[index]
-                                          //                     ['LayoutImg']))
-                                          //         .load("");
-                                          // final Uint8List bytes =
-                                          //     imageData.buffer.asUint8List();
-                                          // print(bytes);
-                                          selectedLayout =
-                                              layoutList[index].layoutId;
-                                          emptyImage = false;
-                                          otherPict = false;
-                                          urlImage = layoutList[index].imageUrl;
-                                          layoutName =
-                                              layoutList[index].layoutName;
-                                          layoutId = layoutList[index]
-                                              .layoutId
-                                              .toString();
-                                          base64image = "";
-                                          // widget.setLayout!(
-                                          //   layoutList[index]['LayoutName'],
-                                          //   layoutList[index]['LayoutID']
-                                          //       .toString(),
-                                          //   "",
-                                          //   urlImage,
-                                          //   false,
-                                          // );
-                                        });
-                                      },
-                                      child: Container(
-                                        height: 100,
-                                        // color: Colors.amber,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: selectedLayout ==
-                                                  layoutList[index].layoutId
-                                              ? Border.all(
-                                                  color: greenAcent,
-                                                  width: 1,
-                                                )
-                                              : null,
-                                          image: DecorationImage(
-                                            image: NetworkImage(
-                                              layoutList[index].imageUrl,
-                                            ),
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 375,
-                            child: Stack(
-                              children: [
-                                Visibility(
-                                  visible: upButtonVisible,
-                                  child: Align(
-                                    alignment: Alignment.topCenter,
-                                    child: InkWell(
-                                      onTap: () {
-                                        _scrollController.animateTo(
-                                            _scrollController.offset - 125,
-                                            duration: const Duration(
-                                                milliseconds: 200),
-                                            curve: Curves.easeInToLinear);
-                                      },
-                                      child: Container(
-                                        width: 25,
-                                        height: 25,
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: eerieBlack,
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.keyboard_arrow_up_sharp,
-                                            size: 16,
-                                            color: culturedWhite,
+                            SizedBox(
+                              height: 375,
+                              child: Stack(
+                                children: [
+                                  Visibility(
+                                    visible: upButtonVisible,
+                                    child: Align(
+                                      alignment: Alignment.topCenter,
+                                      child: InkWell(
+                                        onTap: () {
+                                          _scrollController.animateTo(
+                                              _scrollController.offset - 125,
+                                              duration: const Duration(
+                                                  milliseconds: 200),
+                                              curve: Curves.easeInToLinear);
+                                        },
+                                        child: Container(
+                                          width: 25,
+                                          height: 25,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: eerieBlack,
+                                          ),
+                                          child: const Center(
+                                            child: Icon(
+                                              Icons.keyboard_arrow_up_sharp,
+                                              size: 16,
+                                              color: culturedWhite,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Visibility(
-                                  visible: downButtonVisible,
-                                  child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: InkWell(
-                                      onTap: () {
-                                        _scrollController.animateTo(
-                                            _scrollController.offset + 125,
-                                            duration: const Duration(
-                                                milliseconds: 500),
-                                            curve: Curves.ease);
-                                      },
-                                      child: Container(
-                                        width: 25,
-                                        height: 25,
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: eerieBlack,
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.keyboard_arrow_down_sharp,
-                                            size: 16,
-                                            color: culturedWhite,
+                                  Visibility(
+                                    visible: downButtonVisible,
+                                    child: Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: InkWell(
+                                        onTap: () {
+                                          _scrollController.animateTo(
+                                              _scrollController.offset + 125,
+                                              duration: const Duration(
+                                                  milliseconds: 500),
+                                              curve: Curves.ease);
+                                        },
+                                        child: Container(
+                                          width: 25,
+                                          height: 25,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: eerieBlack,
+                                          ),
+                                          child: const Center(
+                                            child: Icon(
+                                              Icons.keyboard_arrow_down_sharp,
+                                              size: 16,
+                                              color: culturedWhite,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TransparentButtonBlack(
+                      text: 'Cancel',
+                      disabled: false,
+                      padding: ButtonSize().smallSize(),
+                      onTap: () {
+                        Navigator.of(context).pop(false);
+                      },
                     ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TransparentButtonBlack(
-                    text: 'Cancel',
-                    disabled: false,
-                    padding: ButtonSize().smallSize(),
-                    onTap: () {
-                      Navigator.of(context).pop(false);
-                    },
-                  ),
-                  const SizedBox(
-                    width: 25,
-                  ),
-                  RegularButton(
-                    text: 'Confirm',
-                    disabled: false,
-                    padding: ButtonSize().smallSize(),
-                    onTap: () async {
-                      await widget.setLayout!(
-                        layoutName,
-                        layoutId,
-                        base64image,
-                        urlImage,
-                        otherPict,
-                      );
-                      Navigator.of(context).pop(true);
-                    },
-                  )
-                ],
-              )
-            ],
+                    const SizedBox(
+                      width: 25,
+                    ),
+                    RegularButton(
+                      text: 'Confirm',
+                      disabled: false,
+                      padding: ButtonSize().smallSize(),
+                      onTap: () async {
+                        await widget.setLayout!(
+                          layoutName,
+                          layoutId,
+                          base64image,
+                          urlImage,
+                          otherPict,
+                        );
+                        Navigator.of(context).pop(true);
+                      },
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
