@@ -24,11 +24,6 @@ class EmailSuggestionContainer extends StatefulWidget {
 }
 
 class _EmailSuggestionContainerState extends State<EmailSuggestionContainer> {
-  selectGuest(String value) {
-    print('select guest 2');
-    widget.selectGuest!(value);
-  }
-
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
@@ -106,7 +101,7 @@ class EmailSuggestionListBody extends StatelessWidget {
   String email;
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
