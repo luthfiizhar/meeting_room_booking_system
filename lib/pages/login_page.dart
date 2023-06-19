@@ -194,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     // print(MediaQuery.of(context).size.width);
 
-    return MediaQuery.of(context).size.width < 1200 ? mobile() : desktop();
+    return MediaQuery.of(context).size.width < 1100 ? mobile() : desktop();
   }
 
   Widget desktop() {

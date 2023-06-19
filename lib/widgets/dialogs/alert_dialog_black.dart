@@ -22,12 +22,12 @@ class AlertDialogBlack extends StatelessWidget {
     return Dialog(
       backgroundColor: eerieBlack,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      insetPadding: MediaQuery.of(context).size.width < 1200
+      insetPadding: MediaQuery.of(context).size.width < 1100
           ? const EdgeInsets.symmetric(
               horizontal: 13,
             )
           : null,
-      child: MediaQuery.of(context).size.width < 1200
+      child: MediaQuery.of(context).size.width < 1100
           ? mobile(context)
           : desktop(context),
     );

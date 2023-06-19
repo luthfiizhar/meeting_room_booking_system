@@ -963,7 +963,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return MediaQuery.of(context).size.width < 1200 ? mobile() : desktop();
+    return MediaQuery.of(context).size.width < 1100 ? mobile() : desktop();
   }
 
   Widget mobile() {
