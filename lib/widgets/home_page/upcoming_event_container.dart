@@ -234,14 +234,16 @@ class _UpcomingEventContainerState extends State<UpcomingEventContainer> {
                               const SizedBox(
                                 width: 13,
                               ),
-                              Text(
-                                summary,
-                                style: helveticaText.copyWith(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: bookingId == "-"
-                                      ? orangeAccent
-                                      : culturedWhite,
+                              Expanded(
+                                child: Text(
+                                  summary,
+                                  style: helveticaText.copyWith(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                    color: bookingId == "-"
+                                        ? orangeAccent
+                                        : culturedWhite,
+                                  ),
                                 ),
                               )
                             ],
