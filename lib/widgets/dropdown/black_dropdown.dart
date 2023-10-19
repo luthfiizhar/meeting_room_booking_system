@@ -36,6 +36,7 @@ class BlackDropdown extends StatelessWidget {
       items: items,
       customItemsHeights: customHeights,
       onChanged: onChanged,
+      isExpanded: true,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
@@ -82,13 +83,17 @@ class BlackDropdown extends StatelessWidget {
         ),
         contentPadding: const EdgeInsets.only(
           right: 15,
-          left: 15,
+          // left: 15,
           top: 0,
           bottom: 12,
         ),
         // suffixIcon: suffixIcon,
         suffixIconColor: eerieBlack,
       ),
+      // dropdownPadding: const EdgeInsets.only(
+      //   left: 20,
+      //   right: 20,
+      // ),
       itemPadding: const EdgeInsets.only(
         left: 20,
         right: 20,
