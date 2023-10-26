@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 // import 'package:meeting_room_booking_system/app_view.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
+import 'package:meeting_room_booking_system/constant/key.dart';
 // import 'package:meeting_room_booking_system/constant/custom_scroll_behavior.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 // import 'package:meeting_room_booking_system/model/booking_room_info.dart';
@@ -259,7 +260,9 @@ class MyApp extends StatelessWidget {
         // builder: (context, state) => CalendarViewPage(),
         pageBuilder: (context, state) => NoTransitionPage<void>(
           key: state.pageKey,
-          child: MyBookingPage(),
+          child: MyBookingPage(
+            key: myEventKey,
+          ),
         ),
         routes: [
           GoRoute(
