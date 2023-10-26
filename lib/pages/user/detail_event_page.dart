@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:meeting_room_booking_system/constant/color.dart';
 import 'package:meeting_room_booking_system/constant/constant.dart';
+import 'package:meeting_room_booking_system/constant/key.dart';
 import 'package:meeting_room_booking_system/functions/api_request.dart';
 import 'package:meeting_room_booking_system/model/amenities_class.dart';
 import 'package:meeting_room_booking_system/model/booking_class.dart';
@@ -679,6 +680,9 @@ class _DetailEventPageState extends State<DetailEventPage> {
                                                               ),
                                                             ).then((value) {
                                                               getDetail();
+                                                              myEventKey
+                                                                  .currentState
+                                                                  ?.updateList();
                                                               setState(() {});
                                                             });
                                                           } else {
