@@ -2336,7 +2336,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                                     const ConfirmDialogBlack(
                                                   title: "Confirm Booking?",
                                                   contentText:
-                                                      "After this, your event needs to be approved by admin. (Admin: Ridwan / +62 812-9430-5206)",
+                                                      "After this, your event needs to be approved by admin. (Admin: Ridwan / +62 896-3026-5630)",
                                                 ),
                                               ).then((value) {
                                                 if (value) {
