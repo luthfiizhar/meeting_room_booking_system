@@ -17,6 +17,7 @@ import 'package:meeting_room_booking_system/widgets/home_page/apporval_message.d
 import 'package:meeting_room_booking_system/widgets/home_page/available_room_offer_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/greeting_container.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/home_search_container.dart';
+import 'package:meeting_room_booking_system/widgets/home_page/notif_image_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/phone_reminder_dialog.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/report_banner.dart';
 import 'package:meeting_room_booking_system/widgets/home_page/room_type_home_container.dart';
@@ -604,6 +605,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }).onError((error, stackTrace) {});
   }
 
+  notifImage() {
+    apiReq.getUserProfile().then((value) {
+      print("userProfile $value");
+      if (value["Status"].toString() == "200") {
+        if (value["Data"]["Promo"] == true) {
+          // Future.delayed(Duration(seconds: )).then((value) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            showDialog(
+              context: context,
+              builder: (context) => NotificationImageDialog(),
+            );
+          });
+
+          // });
+        }
+      }
+    }).onError((error, stackTrace) {});
+  }
+
   @override
   void dispose() {
     // _controller.dispose();
@@ -632,6 +652,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     initRoomType();
     initGetUserProfile();
     feedbackCheck();
+    notifImage();
     // initUpcomingEvent();
   }
 
