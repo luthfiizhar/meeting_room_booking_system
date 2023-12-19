@@ -615,7 +615,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             showDialog(
               context: context,
               builder: (context) => NotificationImageDialog(),
-            );
+            ).then((value) {
+              apiReq.userEvents("Promo").then((value) {
+                if (value["Status"].toString() == "200") {
+                  Navigator.of(context).pop();
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialogBlack(
+                      title: value["Title"],
+                      contentText: value["Message"],
+                      isSuccess: false,
+                    ),
+                  );
+                }
+              }).onError((error, stackTrace) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialogBlack(
+                    title: "Error userEvents",
+                    contentText: error.toString(),
+                    isSuccess: false,
+                  ),
+                );
+              });
+            });
           });
 
           // });
