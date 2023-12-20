@@ -618,7 +618,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ).then((value) {
               apiReq.userEvents("Promo").then((value) {
                 if (value["Status"].toString() == "200") {
-                  Navigator.of(context).pop();
+                  // Navigator.of(context).pop();
                 } else {
                   showDialog(
                     context: context,
