@@ -149,7 +149,7 @@ class _ConfirmBookingPhoneDialogState extends State<ConfirmBookingPhoneDialog> {
                 onChanged: (value) {
                   useProfileData = !useProfileData;
                   if (useProfileData) {
-                    _avaya.text = phoneNumberProfile;
+                    _avaya.text = avayaProfile;
                     _phoneCode.text = phoneCodeProfile;
                     _phoneNumber.text = phoneNumberProfile;
                   } else {
