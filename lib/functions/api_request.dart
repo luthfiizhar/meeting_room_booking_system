@@ -38,6 +38,9 @@ class ReqAPI {
       "RoomID": "${booking.roomId}",
       "Summary": "${booking.summary}",
       "DisplayPhoneNumber" : ${booking.displayPhoneNumber},
+      "Avaya" : "${booking.avaya}",
+      "PhoneNumber" : "${booking.phoneNumber}",
+      "Code" : "${booking.phoneCode}",
       "AdditionalNotes" : "${booking.additionalNote}",
       "Description": "${booking.description}",
       "StartDate": "${booking.startDate.toString().substring(0, 19)}",
@@ -135,6 +138,9 @@ class ReqAPI {
       "AdditionalNotes" : "${booking.additionalNote}",
       "Description": "${booking.description}",
       "DisplayPhoneNumber" : ${booking.displayPhoneNumber},
+      "Avaya" : "${booking.avaya}",
+      "PhoneNumber" : "${booking.phoneNumber}",
+      "Code" : "${booking.phoneCode}",
       "StartDate": "${booking.startDate.toString().substring(0, 19)}",
       "EndDate": "${booking.endDate.toString().substring(0, 19)}",
       "Recursive": "${booking.recursive}",
@@ -150,6 +156,39 @@ class ReqAPI {
       "Amenities": ${booking.amenities},
       "Attendants": ${booking.attendants},
       "FoodAmenities": ${booking.foodAmenities}
+  }
+  """;
+    try {
+      var response =
+          await http.post(url, body: bodySend, headers: requestHeader);
+
+      var data = json.decode(response.body);
+      return data;
+    } on Error catch (e) {
+      return e;
+    }
+  }
+
+  Future validatePhoneDialog(
+      String avaya, String phoneNumber, String phoneCode) async {
+    // booking.toJson();
+    var box = await Hive.openBox('userLogin');
+    var jwt = box.get('jwTtoken') != "" ? box.get('jwtToken') : "";
+
+    var url = Uri.https(
+        apiUrlGlobal, '/MRBS_Backend/public/api/user/booking/validate-phone');
+    Map<String, String> requestHeader = {
+      'Authorization': 'Bearer $jwt',
+      // 'AppToken': 'mDMgDh4Eq9B0KRJLSOFI',
+      'Content-Type': 'application/json',
+    };
+
+    // dynamic bodySend = booking.toJson();
+    var bodySend = """
+  {
+    "Avaya" : "$avaya",
+    "PhoneNumber" : "$phoneNumber",
+    "Code" : "$phoneCode"
   }
   """;
     try {
