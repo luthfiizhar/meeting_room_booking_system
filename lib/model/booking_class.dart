@@ -24,6 +24,9 @@ class Booking {
     this.monthAbs,
     this.roomType = "MeetingRoom",
     this.displayPhoneNumber = false,
+    this.phoneCode = "",
+    this.phoneNumber = "",
+    this.avaya = "",
   });
 
   String? bookingId;
@@ -48,6 +51,9 @@ class Booking {
   List? daysWeek;
   String? roomType;
   bool? displayPhoneNumber;
+  String phoneNumber;
+  String phoneCode;
+  String avaya;
 
   // Booking.fromJSon(Map<String, dynamic> json)
   //     : roomId = json['RoomID'],

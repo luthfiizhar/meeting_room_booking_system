@@ -548,6 +548,12 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
         List areaPhotoResult = value['Data']['RoomPhotos'];
         List defaultFacilityResult = value['Data']['DefaultAmenities'];
         List prohibitedFacilityResult = value['Data']['ForbiddenAmenities'];
+        if (primaryChoicesValue == "false") {
+          selectedPrimary = false;
+        }
+        if (primaryChoicesValue == "true") {
+          selectedPrimary = true;
+        }
         for (var element in areaPhotoResult) {
           areaPhoto.insert(areaPhoto.length - 1,
               {'base64': element['Photo'], 'isLast': false});
@@ -631,27 +637,13 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
         initFloorList();
       });
     }
-    areaNameNode.addListener(() {
-      setState(() {});
-    });
-    minCapacityNode.addListener(() {
-      setState(() {});
-    });
-    maxCpacityNode.addListener(() {
-      setState(() {});
-    });
-    maxDurationNode.addListener(() {
-      setState(() {});
-    });
-    buildingNode.addListener(() {
-      setState(() {});
-    });
-    floorNode.addListener(() {
-      setState(() {});
-    });
-    roomTypeNode.addListener(() {
-      setState(() {});
-    });
+    areaNameNode.addListener(() {});
+    minCapacityNode.addListener(() {});
+    maxCpacityNode.addListener(() {});
+    maxDurationNode.addListener(() {});
+    buildingNode.addListener(() {});
+    floorNode.addListener(() {});
+    roomTypeNode.addListener(() {});
   }
 
   @override
@@ -1563,6 +1555,7 @@ class _NewAreaDialogState extends State<NewAreaDialog> {
                                   room.prohibitedFacilities =
                                       selectedProhibited;
                                   room.areaPhoto = areaPhotoValue;
+
                                   // print("AREA PHOTO --> $areaPhotoValue");
                                   if (widget.isEdit) {
                                     room.roomId = widget.roomId;

@@ -23,10 +23,10 @@ class MyBookingPage extends StatefulWidget {
   const MyBookingPage({Key? key}) : super(key: key);
 
   @override
-  State<MyBookingPage> createState() => _MyBookingPageState();
+  State<MyBookingPage> createState() => MyBookingPageState();
 }
 
-class _MyBookingPageState extends State<MyBookingPage> {
+class MyBookingPageState extends State<MyBookingPage> {
   ReqAPI apiReq = ReqAPI();
   setDatePickerStatus(bool value) {}
 
