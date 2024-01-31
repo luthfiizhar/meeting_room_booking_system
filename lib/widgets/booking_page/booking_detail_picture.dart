@@ -261,7 +261,7 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                             style: TextStyle(
                               fontFamily: 'Helvetica',
                               fontSize: 20,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w400,
                               color:
                                   widget.isPrimaryRoom ? greenAcent : redBright,
                             ),
