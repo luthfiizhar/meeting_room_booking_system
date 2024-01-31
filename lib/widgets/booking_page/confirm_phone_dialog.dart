@@ -35,7 +35,7 @@ class _ConfirmBookingPhoneDialogState extends State<ConfirmBookingPhoneDialog> {
   FocusNode phoneNumberNode = FocusNode();
 
   String avaya = "";
-  String phoneCode = "";
+  String phoneCode = "62";
   String phoneNumber = "";
 
   String avayaProfile = "";
@@ -154,7 +154,7 @@ class _ConfirmBookingPhoneDialogState extends State<ConfirmBookingPhoneDialog> {
                     _phoneNumber.text = phoneNumberProfile;
                   } else {
                     _avaya.text = "";
-                    _phoneCode.text = "";
+                    _phoneCode.text = "62";
                     _phoneNumber.text = "";
                   }
                   setState(() {});
