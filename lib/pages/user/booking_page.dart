@@ -131,6 +131,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
 
   String roomName = "";
   String floor = "";
+  bool isPrimaryRoom = false;
 
   String filterContact = "";
   String messageEmptyContact = "";
@@ -602,7 +603,6 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   initContactList() {
     // print(_email.text);
     apiReq.getContactList(_email.text).then((value) {
-      ;
       // emailSuggestionVisible = true;
       if (value['Status'].toString() == "200") {
         if (value['Data'].toString() == "[]") {
@@ -764,6 +764,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
           participantValue = double.parse(widget.participant!);
           pictureLoading = false;
           roomName = value['Data']['RoomName'];
+          isPrimaryRoom = value["Data"]["PrimaryRoom"] == 1 ? true : false;
           floor = value['Data']['AreaName'];
           participantMax = value['Data']['MaxCapacity'];
           participantMin = value['Data']['MinCapacity'];
@@ -2757,6 +2758,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                   pictNotFound: isPictEmpty,
                                   minCapacity: participantMin.toString(),
                                   maxCapacity: participantMax.toString(),
+                                  isPrimaryRoom: isPrimaryRoom,
                                 ),
                         ),
                       ),

@@ -13,6 +13,7 @@ class BookingRoomPicture extends StatefulWidget {
     this.minCapacity = "",
     this.maxCapacity = "",
     this.pictNotFound = true,
+    this.isPrimaryRoom = false,
   });
 
   List? pictures;
@@ -21,6 +22,7 @@ class BookingRoomPicture extends StatefulWidget {
   String? minCapacity;
   String? maxCapacity;
   bool pictNotFound = false;
+  bool isPrimaryRoom;
 
   @override
   State<BookingRoomPicture> createState() => _BookingRoomPictureState();
@@ -216,7 +218,7 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                 ],
               ),
               const SizedBox(
-                height: 13,
+                height: 12,
               ),
               Wrap(
                 crossAxisAlignment: WrapCrossAlignment.end,
@@ -232,6 +234,39 @@ class _BookingRoomPictureState extends State<BookingRoomPicture> {
                       fontSize: 20,
                       fontWeight: FontWeight.w300,
                     ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 12,
+              ),
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.end,
+                spacing: 12,
+                children: [
+                  const Icon(
+                    Icons.check_circle,
+                  ),
+                  RichText(
+                    text: TextSpan(
+                        text: "Confirmation: ",
+                        style: const TextStyle(
+                          fontFamily: 'Helvetica',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w300,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: widget.isPrimaryRoom ? "Yes" : "No",
+                            style: TextStyle(
+                              fontFamily: 'Helvetica',
+                              fontSize: 20,
+                              fontWeight: FontWeight.w300,
+                              color:
+                                  widget.isPrimaryRoom ? greenAcent : redBright,
+                            ),
+                          ),
+                        ]),
                   ),
                 ],
               ),
