@@ -2456,23 +2456,23 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
                                           if (formKey.currentState!
                                               .validate()) {
                                             formKey.currentState!.save();
-                                            // if (phoneOptions) {
-                                            //   confirmBooking();
-                                            // } else {
-                                            Navigator.of(context)
-                                                .push(DialogRoute(
-                                              context: context,
-                                              builder: (context) =>
-                                                  ConfirmBookingPhoneDialog(
-                                                submit: submitDialogPhone,
-                                              ),
-                                            ))
-                                                .then((value) {
-                                              if (value == 1) {
-                                                confirmBooking();
-                                              }
-                                            });
-                                            // }
+                                            if (widget.isEdit == "true") {
+                                              confirmBooking();
+                                            } else {
+                                              Navigator.of(context)
+                                                  .push(DialogRoute(
+                                                context: context,
+                                                builder: (context) =>
+                                                    ConfirmBookingPhoneDialog(
+                                                  submit: submitDialogPhone,
+                                                ),
+                                              ))
+                                                  .then((value) {
+                                                if (value == 1) {
+                                                  confirmBooking();
+                                                }
+                                              });
+                                            }
                                           } //END IF VALIDATE
                                           else {
                                             scrollController.animateTo(0,
