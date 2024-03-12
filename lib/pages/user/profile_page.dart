@@ -533,33 +533,36 @@ class _ProfileMenuSettingState extends State<ProfileMenuSetting> {
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              inputRow(
-                '',
-                SizedBox(
-                  key: checkPhoneKey,
-                  child: BlackCheckBox(
-                    selectedValue: phoneOptions,
-                    onChanged: (value) {
-                      if (phoneOptions) {
-                        phoneOptions = false;
-                      } else {
-                        phoneOptions = true;
-                      }
-                      setState(() {});
-                    },
-                    filled: true,
-                    label:
-                        'Let other user see my phone number as contact info.',
+          Visibility(
+            visible: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                inputRow(
+                  '',
+                  SizedBox(
+                    key: checkPhoneKey,
+                    child: BlackCheckBox(
+                      selectedValue: phoneOptions,
+                      onChanged: (value) {
+                        if (phoneOptions) {
+                          phoneOptions = false;
+                        } else {
+                          phoneOptions = true;
+                        }
+                        setState(() {});
+                      },
+                      filled: true,
+                      label:
+                          'Let other user see my phone number as contact info.',
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           divider(),
           Text(
