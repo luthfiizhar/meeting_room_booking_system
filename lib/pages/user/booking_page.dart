@@ -140,7 +140,7 @@ class _BookingRoomPageState extends State<BookingRoomPage> {
   List filterContactList = [];
   bool isContactEmpty = true;
 
-  bool phoneOptions = false;
+  bool phoneOptions = true;
 
   bool emptyLayout = true;
   String layoutId = "";
