@@ -86,7 +86,8 @@ class _NavigationBarWebState extends State<NavigationBarWeb> {
       },
       onSkip: () {
         Provider.of<MainModel>(context, listen: false).onBoardDone();
-        print("skip");
+        return true;
+        // print("skip");
       },
       onFinish: () {
         print("finish");
