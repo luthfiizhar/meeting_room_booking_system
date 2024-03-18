@@ -751,7 +751,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (value) {
       setOpacityOn(true);
       datePickerOverlayEntry = datePickerOverlay();
-      Overlay.of(context)!.insert(datePickerOverlayEntry!);
+      Overlay.of(context).insert(datePickerOverlayEntry!);
     } else {
       datePickerOverlayEntry!.remove();
 
@@ -814,7 +814,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     opacityOn = value;
     if (value) {
       selectTimeOverlayEntry = timePickerOverlay();
-      Overlay.of(context)!.insert(selectTimeOverlayEntry!);
+      Overlay.of(context).insert(selectTimeOverlayEntry!);
     } else {
       selectTimeOverlayEntry!.remove();
       setOpacityOn(false);
@@ -838,7 +838,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     startTimeContainerVisible = value;
     if (value) {
       startTimeOverlayEntry = startTimeOverlay();
-      Overlay.of(context)!.insert(startTimeOverlayEntry!);
+      Overlay.of(context).insert(startTimeOverlayEntry!);
     } else {
       if (startTimeOverlayEntry != null) {
         if (startTimeOverlayEntry!.mounted) {
@@ -853,7 +853,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     endTimeContainerVisible = value;
     if (value) {
       endTimeOverlayEntry = endTimeOverlay();
-      Overlay.of(context)!.insert(endTimeOverlayEntry!);
+      Overlay.of(context).insert(endTimeOverlayEntry!);
     } else {
       if (endTimeOverlayEntry != null) {
         if (endTimeOverlayEntry!.mounted) {
@@ -918,7 +918,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     opacityOn = value;
     if (value) {
       participantOverlayEntry = participantOverlay();
-      Overlay.of(context)!.insert(participantOverlayEntry!);
+      Overlay.of(context).insert(participantOverlayEntry!);
     } else {
       participantOverlayEntry!.remove();
       setOpacityOn(false);
@@ -941,7 +941,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     opacityOn = value;
     if (value) {
       facilityOverlayEntry = facilityOverlay();
-      Overlay.of(context)!.insert(facilityOverlayEntry!);
+      Overlay.of(context).insert(facilityOverlayEntry!);
     } else {
       facilityOverlayEntry!.remove();
       setOpacityOn(value);
@@ -954,7 +954,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     opacityOn = value;
     if (value) {
       roomTypeOverlayEntry = roomTypeOverlay();
-      Overlay.of(context)!.insert(roomTypeOverlayEntry!);
+      Overlay.of(context).insert(roomTypeOverlayEntry!);
     } else {
       roomTypeOverlayEntry!.remove();
     }
